@@ -208,13 +208,74 @@ const resources = {
       "nav_brand": "NexusOS",
       "nav_btn": "تهيئة النظام",
       "nav_contact": "التواصل",
-      "hero_status": "النظام يعمل - الإصدار 3.0",
-      "hero_title": "النظام البيئي<br/>الذكي<br/>للأعمال.",
-      "hero_desc": "أتمت سير عملك، استخرج بيانات حيوية، وأغلق صفقاتك بكل سهولة مع حزمة NexusOS البرمجية المتطورة.",
+      "hero_status": "النظام يعمل - الإصدار 4.0 - بنية تحتية مجانية",
+      "hero_title": "أدوات محلية<br/>قوية<br/>لشركات B2B.",
+      "hero_desc": "عالج بيانات شركتك والـ B2B بسرية تامة 100% وبدون الحاجة لرفعها للسحابة. أنظمة تعمل بالكامل داخل متصفحك لتوفير آلاف الدولارات.",
       "btn_deploy": "نشر النظام",
       "btn_view": "عرض الهيكلية",
       "section_modules_title": "وحدات وخدمات NexusOS",
       "section_modules_desc": "برمجيات وخدمات تقنية مخصصة للشركات الطامحة للهيمنة.",
+
+        "prod_leadscrub_title": "Nexus LeadScrub",
+        "prod_leadscrub_price": "$49/شهرياً",
+        "prod_leadscrub_desc": "أداة تنظيف إيميلات وكالات التسويق. قم بتنظيف ملايين الإيميلات المحظورة (DNC) محلياً بدون رفع بيانات عملائك للسحابة.",
+        
+        "prod_ecommatch_title": "Nexus EcomMatch",
+        "prod_ecommatch_price": "$79/شهرياً",
+        "prod_ecommatch_desc": "مطابقة تقارير شوبيفاي مع سترايب للمحاسبين. وفر ساعات من العمل اليدوي ومطابقة آمنة بنسبة 100%.",
+        
+        "prod_paydiff_title": "Nexus PayDiff",
+        "prod_paydiff_price": "$99/شهرياً",
+        "prod_paydiff_desc": "مقارنة الرواتب لشركات الـ HR. اكتشف أي تغير في الرواتب بضغطة زر مع ضمان سرية معلومات الموظفين.",
+        
+        "prod_searchmerge_title": "Nexus SearchMerge",
+        "prod_searchmerge_price": "$39/شهرياً",
+        "prod_searchmerge_desc": "أداة لدمج بيانات SEO (GSC و Ahrefs) للمسوقين.",
+        
+        "prod_contractcompare_title": "Nexus Contract-Compare",
+        "prod_contractcompare_price": "$59/شهرياً",
+        "prod_contractcompare_desc": "أداة مقارنة العقود القانونية للمحامين، آمنة ومحلية.",
+        
+        "prod_adspendaudit_title": "Nexus AdSpend-Audit",
+        "prod_adspendaudit_price": "$29/شهرياً",
+        "prod_adspendaudit_desc": "دمج تقارير إعلانات فيسبوك وجوجل محلياً.",
+        
+        "prod_payoutsplit_title": "Nexus Payout-Split",
+        "prod_payoutsplit_price": "$99/شهرياً",
+        "prod_payoutsplit_desc": "توزيع أرباح الفنانين لشركات الإنتاج الموسيقي.",
+        
+        "prod_bankconvert_title": "Nexus Bank-Convert",
+        "prod_bankconvert_price": "$49/شهرياً",
+        "prod_bankconvert_desc": "تحويل الكشوفات البنكية من PDF إلى CSV محلياً.",
+        
+        "prod_crmmapper_title": "Nexus CRM-Mapper",
+        "prod_crmmapper_price": "$79/شهرياً",
+        "prod_crmmapper_desc": "مطابقة داتا Salesforce مع HubSpot لنقل البيانات.",
+        
+        "prod_inventorysync_title": "Nexus Inventory-Sync",
+        "prod_inventorysync_price": "$59/شهرياً",
+        "prod_inventorysync_desc": "مطابقة الجرد والمخازن لاكتشاف النواقص.",
+        
+        "prod_reviewscrubber_title": "Nexus Review-Scrubber",
+        "prod_reviewscrubber_price": "$39/شهرياً",
+        "prod_reviewscrubber_desc": "فلترة وتحليل تقييمات Trustpilot بسرعة فائقة.",
+        
+        "prod_fleetlog_title": "Nexus Fleet-Log",
+        "prod_fleetlog_price": "$89/شهرياً",
+        "prod_fleetlog_desc": "مطابقة استهلاك الوقود مع GPS لشركات الشحن.",
+        
+        "prod_atsfilter_title": "Nexus ATS-Filter",
+        "prod_atsfilter_price": "$49/شهرياً",
+        "prod_atsfilter_desc": "فلترة السير الذاتية بالكلمات المفتاحية محلياً.",
+        
+        "prod_subtitlesync_title": "Nexus Subtitle-Sync",
+        "prod_subtitlesync_price": "$29/شهرياً",
+        "prod_subtitlesync_desc": "مطابقة وتصحيح توقيتات الترجمة (SRT).",
+        
+        "prod_medicalredact_title": "Nexus Medical-Redact",
+        "prod_medicalredact_price": "$99/شهرياً",
+        "prod_medicalredact_desc": "حذف أسماء المرضى من التقارير الطبية بسرية تامة.",
+
       
       "prod_lead_title": "مستخرج داتا NexusOS",
       "prod_lead_price": "$97",
