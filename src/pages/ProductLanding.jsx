@@ -5,9 +5,21 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, Play, CheckCircle2, Shield, Zap, ArrowLeft, Bot, MessageSquare, Search, Monitor, Wrench, Hexagon } from 'lucide-react';
 
 const productsData = {
-  'lead': { icon: Search, titleKey: 'prod_lead_title', priceKey: 'prod_lead_price', painKey: 'modal_lead_pain', agitateKey: 'modal_lead_agitate', solveKey: 'modal_lead_solve', link: 'http://localhost:3000/login' },
-  'wa': { icon: MessageSquare, titleKey: 'prod_wa_title', priceKey: 'prod_wa_price', painKey: 'modal_wa_pain', agitateKey: 'modal_wa_agitate', solveKey: 'modal_wa_solve', link: 'http://localhost:3000/login' },
-  'ai-agent': { icon: Bot, titleKey: 'prod_ai_title', priceKey: 'prod_ai_price', painKey: 'modal_ai_pain', agitateKey: 'modal_ai_agitate', solveKey: 'modal_ai_solve', link: 'http://localhost:3000/login' }
+  'leadscrub': { icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', painKey: 'modal_leadscrub_pain', agitateKey: 'modal_leadscrub_agitate', solveKey: 'modal_leadscrub_solve', link: 'http://localhost:3000/login' },
+  'ecommatch': { icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', painKey: 'modal_ecommatch_pain', agitateKey: 'modal_ecommatch_agitate', solveKey: 'modal_ecommatch_solve', link: 'http://localhost:3000/login' },
+  'paydiff': { icon: Hexagon, titleKey: 'prod_paydiff_title', priceKey: 'prod_paydiff_price', painKey: 'modal_paydiff_pain', agitateKey: 'modal_paydiff_agitate', solveKey: 'modal_paydiff_solve', link: 'http://localhost:3000/login' },
+  'searchmerge': { icon: Search, titleKey: 'prod_searchmerge_title', priceKey: 'prod_searchmerge_price', painKey: 'modal_searchmerge_pain', agitateKey: 'modal_searchmerge_agitate', solveKey: 'modal_searchmerge_solve', link: 'http://localhost:3000/login' },
+  'contractcompare': { icon: Shield, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', painKey: 'modal_contractcompare_pain', agitateKey: 'modal_contractcompare_agitate', solveKey: 'modal_contractcompare_solve', link: 'http://localhost:3000/login' },
+  'adspendaudit': { icon: Zap, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', painKey: 'modal_adspendaudit_pain', agitateKey: 'modal_adspendaudit_agitate', solveKey: 'modal_adspendaudit_solve', link: 'http://localhost:3000/login' },
+  'payoutsplit': { icon: Hexagon, titleKey: 'prod_payoutsplit_title', priceKey: 'prod_payoutsplit_price', painKey: 'modal_payoutsplit_pain', agitateKey: 'modal_payoutsplit_agitate', solveKey: 'modal_payoutsplit_solve', link: 'http://localhost:3000/login' },
+  'bankconvert': { icon: Search, titleKey: 'prod_bankconvert_title', priceKey: 'prod_bankconvert_price', painKey: 'modal_bankconvert_pain', agitateKey: 'modal_bankconvert_agitate', solveKey: 'modal_bankconvert_solve', link: 'http://localhost:3000/login' },
+  'crmmapper': { icon: Shield, titleKey: 'prod_crmmapper_title', priceKey: 'prod_crmmapper_price', painKey: 'modal_crmmapper_pain', agitateKey: 'modal_crmmapper_agitate', solveKey: 'modal_crmmapper_solve', link: 'http://localhost:3000/login' },
+  'inventorysync': { icon: Zap, titleKey: 'prod_inventorysync_title', priceKey: 'prod_inventorysync_price', painKey: 'modal_inventorysync_pain', agitateKey: 'modal_inventorysync_agitate', solveKey: 'modal_inventorysync_solve', link: 'http://localhost:3000/login' },
+  'reviewscrubber': { icon: Hexagon, titleKey: 'prod_reviewscrubber_title', priceKey: 'prod_reviewscrubber_price', painKey: 'modal_reviewscrubber_pain', agitateKey: 'modal_reviewscrubber_agitate', solveKey: 'modal_reviewscrubber_solve', link: 'http://localhost:3000/login' },
+  'fleetlog': { icon: Search, titleKey: 'prod_fleetlog_title', priceKey: 'prod_fleetlog_price', painKey: 'modal_fleetlog_pain', agitateKey: 'modal_fleetlog_agitate', solveKey: 'modal_fleetlog_solve', link: 'http://localhost:3000/login' },
+  'atsfilter': { icon: Shield, titleKey: 'prod_atsfilter_title', priceKey: 'prod_atsfilter_price', painKey: 'modal_atsfilter_pain', agitateKey: 'modal_atsfilter_agitate', solveKey: 'modal_atsfilter_solve', link: 'http://localhost:3000/login' },
+  'subtitlesync': { icon: Zap, titleKey: 'prod_subtitlesync_title', priceKey: 'prod_subtitlesync_price', painKey: 'modal_subtitlesync_pain', agitateKey: 'modal_subtitlesync_agitate', solveKey: 'modal_subtitlesync_solve', link: 'http://localhost:3000/login' },
+  'medicalredact': { icon: Hexagon, titleKey: 'prod_medicalredact_title', priceKey: 'prod_medicalredact_price', painKey: 'modal_medicalredact_pain', agitateKey: 'modal_medicalredact_agitate', solveKey: 'modal_medicalredact_solve', link: 'http://localhost:3000/login' },
 };
 
 export default function ProductLanding() {
