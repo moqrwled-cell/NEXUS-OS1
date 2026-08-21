@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoMarketer Pro - Quantum Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --sidebar-bg: rgba(17, 24, 39, 0.7);
+            --border: rgba(55, 65, 81, 0.5);
+            --primary: #38BDF8;
+            --primary-hover: #0EA5E9;
+            --accent: #818CF8;
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --radius: 16px;
+            --font-en: 'Inter', sans-serif;
+            --font-ar: 'Tajawal', sans-serif;
+            --glow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #F8FAFC;
+            --sidebar-bg: rgba(255, 255, 255, 0.7);
+            --border: rgba(203, 213, 225, 0.5);
+            --primary: #0284C7;
+            --primary-hover: #0369A1;
+            --accent: #4F46E5;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --glow: 0 0 20px rgba(2, 132, 199, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-en);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.4s, color 0.4s;
+            position: relative;
+        }
+
+        /* 3D Animated Background */
+        .background-tech {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px; height: 400px;
+            background: var(--primary);
+            top: -100px; left: -100px;
+        }
+
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: var(--accent);
+            bottom: -200px; right: -100px;
+            animation-delay: -5s;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.2;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(100px, 50px) scale(1.2); }
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        html[dir="rtl"] body {
+            font-family: var(--font-ar);
+        }
+
+        /* Glassmorphism Sidebar */
+        .sidebar {
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        html[dir="rtl"] .sidebar {
+            border-right: none;
+            border-left: 1px solid var(--border);
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lang-select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: rgba(0,0,0,0.2);
+            color: var(--text-main);
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-select:hover {
+            border-color: var(--primary);
+        }
+
+        .tech-box {
+            margin-top: auto;
+            padding: 24px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: scanline 4s infinite linear;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 60px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-wrapper {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--sidebar-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .content-wrapper:hover {
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        h1 {
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 12px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        [data-theme="light"] .form-control {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+
+        textarea.form-control {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
+        }
+        
+        .spinner {
+            display: none;
+            margin-top: 24px;
+            text-align: center;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 2px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Result Area */
+        .result-area {
+            margin-top: 40px;
+            display: none;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .result-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 32px;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 15px;
+            color: var(--text-main);
+            box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.1);
+            max-height: 500px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        [data-theme="light"] .result-box {
+            background: rgba(255,255,255,0.8);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="background-tech">
+        <div class="grid-overlay"></div>
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="sidebar">
+        <div class="header-controls">
+            <div class="logo">AutoMarketer PRO</div>
+            <div style="display: flex; gap: 8px;">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+                <select class="lang-select" id="langSelect" onchange="changeLanguage()">
+                    <option value="en">EN</option>
+                    <option value="ar">AR</option>
+                    <option value="es">ES</option>
+                    <option value="fr">FR</option>
+                    <option value="de">DE</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 40px; color: var(--text-muted); font-size: 14px; line-height: 1.7;" id="t-welcome">
+            <strong>SYSTEM ONLINE</strong><br><br>The Elite AI Campaign Builder. Generating high-converting assets using Quantum AI networks.
+        </div>
+
+        <div class="tech-box">
+            <div style="font-size: 12px; color: var(--primary); letter-spacing: 2px; margin-bottom: 8px;">STATUS</div>
+            <div style="font-size: 14px; font-weight: 600;">Neural Network: <span style="color: #10B981;">CONNECTED</span></div>
+            <div style="font-size: 14px; font-weight: 600; margin-top: 4px;">API Key: <span style="color: #10B981;">BYPASSED (FREE)</span></div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="content-wrapper">
+            <h1 id="t-title">Campaign Architecture</h1>
+            <p class="subtitle" id="t-subtitle">Define your parameters to engineer the perfect marketing campaign. Neural network ready.</p>
+
+            <div class="form-group">
+                <label id="t-labelApiKey" style="color: #38BDF8;">OpenAI API Key <small style="color: var(--text-muted); font-weight: normal;">(Your key is never stored, used locally)</small></label>
+                <input type="password" id="apiKey" class="form-control" placeholder="sk-proj-...">
+            </div>
+
+            <div class="form-group">
+                <label id="t-labelProduct">Product or Service Name</label>
+                <input type="text" id="productName" class="form-control" placeholder="e.g. NexusOS Elite">
+            </div>
+
+            <div class="form-group">
+                <label id="t-labelDesc">Target Audience & Value Proposition</label>
+                <textarea id="productDesc" class="form-control" placeholder="e.g. A premium software tool for freelancers to automate their workflows and save 20 hours a week..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label id="t-labelType">Marketing Asset Type</label>
+                <select id="campaignType" class="form-control">
+                    <option value="ads" id="t-optAds">Facebook & Google Ads Masterclass</option>
+                    <option value="email" id="t-optEmail">High-Converting Cold Email Sequence</option>
+                    <option value="social" id="t-optSocial">Viral 30-Day Social Media Strategy</option>
+                    <option value="seo" id="t-optSeo">SEO Blog Post & Content Strategy</option>
+                </select>
+            </div>
+
+            <button class="btn-generate" id="generateBtn" onclick="generateCampaign()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span id="t-btnGenerate">INITIALIZE AI GENERATION</span>
+            </button>
+            
+            <div class="spinner" id="loadingSpinner">Establishing neural link... engineering master plan...</div>
+
+            <div class="result-area" id="resultArea">
+                <h3 style="font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: 1px; margin-bottom: 16px; text-transform: uppercase;" id="t-resultTitle">GENERATED ASSETS</h3>
+                <div class="result-box" id="resultText"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=2"></script>
+</body>
+</html>
