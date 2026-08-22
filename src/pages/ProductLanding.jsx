@@ -165,17 +165,17 @@ export default function ProductLanding() {
             >
               <div className="mb-8 border-b border-white/10 pb-8">
                 <h2 className="text-gray-400 mb-2 uppercase text-sm font-bold tracking-widest">
-                  {isRtl ? 'استثمارك لمرة واحدة' : 'One-Time Investment'}
+                  {isRtl ? 'رخصة الاستخدام (بدون حدود)' : 'UNLIMITED ENTERPRISE LICENSE'}
                 </h2>
                 <div className="flex items-baseline gap-2">
                   <span className={`${fontHeading} text-5xl font-bold text-white`}>
                     {t(product.priceKey)}
                   </span>
-                  {!product.isCustom && <span className="text-gray-500 line-through text-xl">$997</span>}
+                  {!product.isCustom && <span className="text-gray-500 text-sm mx-2">{isRtl ? 'بدلاً من الدفع لكل عملية (Pay-per-credit)' : 'vs. pay-per-credit'}</span>}
                 </div>
                 {!product.isCustom && (
                   <div className="mt-4 bg-nexus-emerald/10 text-nexus-emerald px-4 py-2 rounded-lg text-sm font-medium border border-nexus-emerald/20 inline-block">
-                    {isRtl ? '🔥 خصم خاص متاح اليوم فقط' : '🔥 Special Discount Available Today'}
+                    {isRtl ? '✓ يتم المعالجة محلياً - 0% رفع للسحابة' : '✓ Processed Locally - 0% Cloud Uploads'}
                   </div>
                 )}
               </div>
