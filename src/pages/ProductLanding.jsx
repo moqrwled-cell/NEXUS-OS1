@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, Play, CheckCircle2, Shield, Zap, ArrowLeft, Bot, MessageSquare, Search, Monitor, Wrench, Hexagon } from 'lucide-react';
 
 const productsData = {
-  'leadscrub': { icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', painKey: 'modal_leadscrub_pain', agitateKey: 'modal_leadscrub_agitate', solveKey: 'modal_leadscrub_solve', link: 'http://localhost:3000/login' },
+  'leadscrub': { icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', painKey: 'modal_leadscrub_pain', agitateKey: 'modal_leadscrub_agitate', solveKey: 'modal_leadscrub_solve', link: 'https://whop.com/nexus-os-85c8/nexus-leadscrub-enterprise-license' },
   'ecommatch': { icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', painKey: 'modal_ecommatch_pain', agitateKey: 'modal_ecommatch_agitate', solveKey: 'modal_ecommatch_solve', link: 'http://localhost:3000/login' },
   'paydiff': { icon: Hexagon, titleKey: 'prod_paydiff_title', priceKey: 'prod_paydiff_price', painKey: 'modal_paydiff_pain', agitateKey: 'modal_paydiff_agitate', solveKey: 'modal_paydiff_solve', link: 'http://localhost:3000/login' },
   'searchmerge': { icon: Search, titleKey: 'prod_searchmerge_title', priceKey: 'prod_searchmerge_price', painKey: 'modal_searchmerge_pain', agitateKey: 'modal_searchmerge_agitate', solveKey: 'modal_searchmerge_solve', link: 'http://localhost:3000/login' },
