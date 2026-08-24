@@ -23,17 +23,21 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Mock validation for MVP
-      if (licenseKey.startsWith("WHOP-") || licenseKey === "NEXUS-ADMIN") {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('/.netlify/functions/validate-key', {
+        method: 'POST',
+        body: JSON.stringify({ licenseKey })
+      });
+      
+      const data = await response.json();
+
+      if (response.ok && data.valid) {
         localStorage.setItem("nexus_license", licenseKey);
         navigate("/app/leadscrub");
       } else {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setError(isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key.");
+        setError(data.error || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
       }
     } catch (err) {
-      setError(isRtl ? "حدث خطأ في الاتصال بالخادم." : "Server error.");
+      setError(isRtl ? "حدث خطأ في الاتصال بخادم التحقق." : "Server error.");
     } finally {
       setIsLoading(false);
     }
