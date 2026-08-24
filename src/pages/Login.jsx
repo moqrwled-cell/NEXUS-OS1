@@ -23,21 +23,26 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/.netlify/functions/validate-key', {
+      // Call the secure Netlify serverless function to validate the key via Whop API
+      const response = await fetch('/.netlify/functions/validate-license', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ licenseKey })
       });
-      
+
       const data = await response.json();
 
       if (response.ok && data.valid) {
         localStorage.setItem("nexus_license", licenseKey);
         navigate("/app/leadscrub");
       } else {
-        setError(data.error || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
+        setError(data.message || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
       }
     } catch (err) {
-      setError(isRtl ? "حدث خطأ في الاتصال بخادم التحقق." : "Server error.");
+      console.error(err);
+      setError(isRtl ? "حدث خطأ في الاتصال بالخادم." : "Server connection error.");
     } finally {
       setIsLoading(false);
     }
