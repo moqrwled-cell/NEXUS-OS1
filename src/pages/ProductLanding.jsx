@@ -86,25 +86,22 @@ export default function ProductLanding() {
           </h1>
         </motion.div>
 
-        {/* Video Placeholder */}
+        {/* Video Player */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="w-full aspect-video liquid-glass-strong rounded-3xl border border-nexus-emerald/30 flex flex-col items-center justify-center relative overflow-hidden mb-16 group cursor-pointer shadow-[0_0_50px_rgba(0,255,157,0.1)] hover:shadow-[0_0_80px_rgba(0,255,157,0.2)] transition-shadow duration-500"
+          className="w-full aspect-video liquid-glass-strong rounded-3xl border border-nexus-emerald/30 overflow-hidden mb-16 shadow-[0_0_50px_rgba(0,255,157,0.1)] hover:shadow-[0_0_80px_rgba(0,255,157,0.2)] transition-shadow duration-500 relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-tr from-black/80 to-transparent z-10" />
-          <div className="relative z-20 flex flex-col items-center">
-            <div className="w-20 h-20 rounded-full bg-nexus-emerald/20 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-nexus-emerald/40 transition-all duration-300 backdrop-blur-md border border-nexus-emerald/50">
-              <Play className="text-nexus-mint ml-1" size={32} fill="currentColor" />
-            </div>
-            <p className="text-gray-300 font-medium text-lg">
-              {isRtl ? 'اضغط لتشغيل فيديو الشرح والنتائج الحية' : 'Click to play Demo & Results Video'}
-            </p>
-            <p className="text-nexus-emerald/60 text-sm mt-2">
-              (Video Placeholder - Upload your video here)
-            </p>
-          </div>
+          <video 
+            src="/promo-video.mp4" 
+            controls 
+            autoPlay 
+            muted 
+            loop 
+            className="w-full h-full object-cover"
+            poster="/Nexus_Whop_Product.png"
+          />
         </motion.div>
 
         {/* Psychological Copywriting Section (PAS Formula) */}
