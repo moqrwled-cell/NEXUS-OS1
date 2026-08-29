@@ -1,23 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import Papa from 'papaparse';
 import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock } from 'lucide-react';
+import DashboardLayout from '../components/DashboardLayout';
 
 export default function LeadScrub() {
-  const navigate = useNavigate();
   const [leadsFile, setLeadsFile] = useState(null);
   const [dncFile, setDncFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    // Check if user is logged in
-    const license = localStorage.getItem('nexus_license');
-    if (!license) {
-      navigate('/login');
-    }
-  }, [navigate]);
 
   const handleFileUpload = (e, setFile) => {
     const file = e.target.files?.[0];
@@ -102,34 +93,22 @@ export default function LeadScrub() {
     document.body.removeChild(link);
   };
 
-  const logout = () => {
-    localStorage.removeItem('nexus_license');
-    navigate('/login');
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white font-sans p-8">
-      <div className="max-w-6xl mx-auto">
+    <DashboardLayout>
+      <div className="max-w-5xl mx-auto">
         
         {/* Header */}
-        <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-nexus-emerald/30 shadow-[0_0_20px_rgba(0,255,157,0.2)]">
-              <Shield className="text-nexus-emerald" size={24} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Nexus LeadScrub</h1>
-              <p className="text-gray-400 text-sm">Enterprise DNC Local Engine</p>
-            </div>
+        <div className="flex justify-between items-end mb-10 pb-6 border-b border-white/5">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+              <Shield className="text-nexus-emerald" size={32} />
+              LeadScrub Engine
+            </h1>
+            <p className="text-gray-400">Locally cross-reference millions of rows against your DNC lists.</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-nexus-emerald text-sm bg-nexus-emerald/10 px-4 py-2 rounded-full border border-nexus-emerald/20">
-              <Lock size={14} />
-              <span>100% Local Processing</span>
-            </div>
-            <button onClick={logout} className="text-gray-400 hover:text-white transition-colors text-sm">
-              Logout
-            </button>
+          <div className="hidden md:flex items-center gap-2 text-nexus-emerald text-sm bg-nexus-emerald/10 px-4 py-2 rounded-full border border-nexus-emerald/20">
+            <Lock size={14} />
+            <span>100% Local Processing</span>
           </div>
         </div>
 
@@ -227,6 +206,6 @@ export default function LeadScrub() {
         )}
 
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
