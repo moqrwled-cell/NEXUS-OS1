@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock } from 'lucide-react';
-import DashboardLayout from '../components/DashboardLayout';
+import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock, LogOut } from 'lucide-react';
 
 export default function LeadScrub() {
+  const navigate = useNavigate();
   const [leadsFile, setLeadsFile] = useState(null);
   const [dncFile, setDncFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
+
+  // 100% Protected Route Logic
+  useEffect(() => {
+    const license = localStorage.getItem('nexus_license');
+    if (!license) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handleFileUpload = (e, setFile) => {
     const file = e.target.files?.[0];
@@ -93,22 +102,39 @@ export default function LeadScrub() {
     document.body.removeChild(link);
   };
 
+  const logout = () => {
+    localStorage.removeItem('nexus_license');
+    navigate('/login');
+  };
+
   return (
-    <DashboardLayout>
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-black text-white font-sans p-8 relative">
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-nexus-emerald/5 to-transparent -z-10 pointer-events-none" />
+      <div className="max-w-6xl mx-auto">
         
-        {/* Header */}
-        <div className="flex justify-between items-end mb-10 pb-6 border-b border-white/5">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-              <Shield className="text-nexus-emerald" size={32} />
-              LeadScrub Engine
-            </h1>
-            <p className="text-gray-400">Locally cross-reference millions of rows against your DNC lists.</p>
+        {/* Header - Standalone */}
+        <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-nexus-emerald/30 shadow-[0_0_20px_rgba(0,255,157,0.2)]">
+              <Shield className="text-nexus-emerald" size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Nexus LeadScrub</h1>
+              <p className="text-gray-400 text-sm">Enterprise DNC Local Engine</p>
+            </div>
           </div>
-          <div className="hidden md:flex items-center gap-2 text-nexus-emerald text-sm bg-nexus-emerald/10 px-4 py-2 rounded-full border border-nexus-emerald/20">
-            <Lock size={14} />
-            <span>100% Local Processing</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 text-nexus-emerald text-sm bg-nexus-emerald/10 px-4 py-2 rounded-full border border-nexus-emerald/20">
+              <Lock size={14} />
+              <span>100% Local Processing</span>
+            </div>
+            <button 
+              onClick={logout} 
+              className="flex items-center gap-2 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-4 py-2 rounded-xl transition-all text-sm font-medium border border-white/10 hover:border-red-500/30"
+            >
+              <LogOut size={16} />
+              Disconnect
+            </button>
           </div>
         </div>
 
@@ -121,7 +147,7 @@ export default function LeadScrub() {
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Box 1: DNC */}
-          <div className="liquid-glass-strong p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
+          <div className="liquid-glass-strong p-8 rounded-3xl border border-white/5 relative overflow-hidden group hover:border-white/10 transition-colors">
             <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl group-hover:bg-red-500/10 transition-colors"></div>
             <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
               <FileSpreadsheet className="text-red-400" />
@@ -141,7 +167,7 @@ export default function LeadScrub() {
           </div>
 
           {/* Box 2: Leads */}
-          <div className="liquid-glass-strong p-8 rounded-3xl border border-white/5 relative overflow-hidden group">
+          <div className="liquid-glass-strong p-8 rounded-3xl border border-white/5 relative overflow-hidden group hover:border-white/10 transition-colors">
             <div className="absolute top-0 right-0 w-32 h-32 bg-nexus-cyan/5 rounded-full blur-3xl group-hover:bg-nexus-cyan/10 transition-colors"></div>
             <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
               <FileSpreadsheet className="text-nexus-cyan" />
@@ -174,7 +200,7 @@ export default function LeadScrub() {
 
         {/* Results */}
         {results && (
-          <div className="liquid-glass-strong p-8 rounded-3xl border border-nexus-emerald/30">
+          <div className="liquid-glass-strong p-8 rounded-3xl border border-nexus-emerald/30 shadow-[0_0_50px_rgba(0,255,157,0.1)]">
             <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
               <CheckCircle2 className="text-nexus-emerald" />
               Scrubbing Complete
@@ -206,6 +232,6 @@ export default function LeadScrub() {
         )}
 
       </div>
-    </DashboardLayout>
+    </div>
   );
 }
