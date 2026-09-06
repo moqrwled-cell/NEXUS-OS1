@@ -17,15 +17,15 @@ const resources = {
       "section_modules_desc": "Powerful, private, local-first tools for your business.",
 
       "prod_leadscrub_title": "Nexus LeadScrub",
-      "prod_leadscrub_price": "$49/mo",
+      "prod_leadscrub_price": "$49 Lifetime",
       "prod_leadscrub_desc": "B2B Cold Email DNC Cleaner. Instantly scrub millions of emails locally. 100% private, zero cloud uploads. The ultimate domain protection.",
       
       "prod_ecommatch_title": "Nexus EcomMatch",
-      "prod_ecommatch_price": "$79/mo",
+      "prod_ecommatch_price": "$79 Lifetime",
       "prod_ecommatch_desc": "Shopify vs Stripe Reconciliation. Stop losing hours to Excel crashes. Match payments in milliseconds offline.",
       
       "prod_paydiff_title": "Nexus PayDiff",
-      "prod_paydiff_price": "$99/mo",
+      "prod_paydiff_price": "$99 Lifetime",
       "prod_paydiff_desc": "Payroll Variance Auditor for HR. Instantly spot salary anomalies with absolute local-first employee data security.",
       
       "prod_searchmerge_title": "Nexus SearchMerge",
@@ -41,15 +41,15 @@ const resources = {
       "prod_adspendaudit_desc": "Multi-Platform Ad Aggregator. Combine Facebook and Google reports locally.",
       
       "prod_payoutsplit_title": "Nexus Payout-Split",
-      "prod_payoutsplit_price": "$99/mo",
+      "prod_payoutsplit_price": "$99 Lifetime",
       "prod_payoutsplit_desc": "Royalties Splitter for Record Labels. Calculate artist splits automatically.",
       
       "prod_bankconvert_title": "Nexus Bank-Convert",
-      "prod_bankconvert_price": "$49/mo",
+      "prod_bankconvert_price": "$49 Lifetime",
       "prod_bankconvert_desc": "PDF Bank Statement to CSV. Instant parsing, 100% offline.",
       
       "prod_crmmapper_title": "Nexus CRM-Mapper",
-      "prod_crmmapper_price": "$79/mo",
+      "prod_crmmapper_price": "$79 Lifetime",
       "prod_crmmapper_desc": "Salesforce to HubSpot CSV Mapper. Migrate CRM data safely.",
       
       "prod_inventorysync_title": "Nexus Inventory-Sync",
@@ -65,7 +65,7 @@ const resources = {
       "prod_fleetlog_desc": "GPS vs Fuel CSV Matcher. Stop fleet fuel theft.",
       
       "prod_atsfilter_title": "Nexus ATS-Filter",
-      "prod_atsfilter_price": "$49/mo",
+      "prod_atsfilter_price": "$49 Lifetime",
       "prod_atsfilter_desc": "Resume Keyword Matcher. Process thousands of resumes locally.",
       
       "prod_subtitlesync_title": "Nexus Subtitle-Sync",
@@ -73,7 +73,7 @@ const resources = {
       "prod_subtitlesync_desc": "SRT Time Aligner for Video Editors. Fix audio delays.",
       
       "prod_medicalredact_title": "Nexus Medical-Redact",
-      "prod_medicalredact_price": "$99/mo",
+      "prod_medicalredact_price": "$99 Lifetime",
       "prod_medicalredact_desc": "Patient Name Redactor. 100% HIPAA compliant local redaction.",
 
         "modal_leadscrub_pain": "You're paying hundreds for cloud email scrubbers, risking your client's NDA by uploading their private lists.",
@@ -129,15 +129,15 @@ const resources = {
       
       // Products
       "prod_lead_title": "Nexus LeadScrub",
-      "prod_lead_price": "$49/mo",
+      "prod_lead_price": "$49 Lifetime",
       "prod_lead_desc": "Local B2B List Cleaner. Instantly scrub millions of emails against your DNC list. 100% private in-browser processing.",
       
       "prod_wa_title": "Nexus EcomMatch",
-      "prod_wa_price": "$79/mo",
+      "prod_wa_price": "$79 Lifetime",
       "prod_wa_desc": "Shopify vs Stripe Reconciliation tool tailored specifically for fast-paced e-commerce accountants.",
       
       "prod_ai_title": "Nexus PayDiff",
-      "prod_ai_price": "$99/mo",
+      "prod_ai_price": "$99 Lifetime",
       "prod_ai_desc": "Instant Payroll Variance tool for HR. Securely process sensitive payroll files completely offline.",
       
       "prod_voice_title": "Nexus Voice Agent",
@@ -267,15 +267,15 @@ const resources = {
       "section_modules_desc": "برمجيات وخدمات تقنية مخصصة للشركات الطامحة للهيمنة.",
 
         "prod_leadscrub_title": "Nexus LeadScrub",
-        "prod_leadscrub_price": "$49/شهرياً",
+        "prod_leadscrub_price": "$49 مدى الحياة",
         "prod_leadscrub_desc": "أداة تنظيف إيميلات وكالات التسويق. قم بتنظيف ملايين الإيميلات المحظورة (DNC) محلياً بدون رفع بيانات عملائك للسحابة.",
         
         "prod_ecommatch_title": "Nexus EcomMatch",
-        "prod_ecommatch_price": "$79/شهرياً",
+        "prod_ecommatch_price": "$79 مدى الحياة",
         "prod_ecommatch_desc": "مطابقة تقارير شوبيفاي مع سترايب للمحاسبين. وفر ساعات من العمل اليدوي ومطابقة آمنة بنسبة 100%.",
         
         "prod_paydiff_title": "Nexus PayDiff",
-        "prod_paydiff_price": "$99/شهرياً",
+        "prod_paydiff_price": "$99 مدى الحياة",
         "prod_paydiff_desc": "مقارنة الرواتب لشركات الـ HR. اكتشف أي تغير في الرواتب بضغطة زر مع ضمان سرية معلومات الموظفين.",
         
         "prod_searchmerge_title": "Nexus SearchMerge",
@@ -291,15 +291,15 @@ const resources = {
         "prod_adspendaudit_desc": "دمج تقارير إعلانات فيسبوك وجوجل محلياً.",
         
         "prod_payoutsplit_title": "Nexus Payout-Split",
-        "prod_payoutsplit_price": "$99/شهرياً",
+        "prod_payoutsplit_price": "$99 مدى الحياة",
         "prod_payoutsplit_desc": "توزيع أرباح الفنانين لشركات الإنتاج الموسيقي.",
         
         "prod_bankconvert_title": "Nexus Bank-Convert",
-        "prod_bankconvert_price": "$49/شهرياً",
+        "prod_bankconvert_price": "$49 مدى الحياة",
         "prod_bankconvert_desc": "تحويل الكشوفات البنكية من PDF إلى CSV محلياً.",
         
         "prod_crmmapper_title": "Nexus CRM-Mapper",
-        "prod_crmmapper_price": "$79/شهرياً",
+        "prod_crmmapper_price": "$79 مدى الحياة",
         "prod_crmmapper_desc": "مطابقة داتا Salesforce مع HubSpot لنقل البيانات.",
         
         "prod_inventorysync_title": "Nexus Inventory-Sync",
@@ -315,7 +315,7 @@ const resources = {
         "prod_fleetlog_desc": "مطابقة استهلاك الوقود مع GPS لشركات الشحن.",
         
         "prod_atsfilter_title": "Nexus ATS-Filter",
-        "prod_atsfilter_price": "$49/شهرياً",
+        "prod_atsfilter_price": "$49 مدى الحياة",
         "prod_atsfilter_desc": "فلترة السير الذاتية بالكلمات المفتاحية محلياً.",
         
         "prod_subtitlesync_title": "Nexus Subtitle-Sync",
@@ -323,7 +323,7 @@ const resources = {
         "prod_subtitlesync_desc": "مطابقة وتصحيح توقيتات الترجمة (SRT).",
         
         "prod_medicalredact_title": "Nexus Medical-Redact",
-        "prod_medicalredact_price": "$99/شهرياً",
+        "prod_medicalredact_price": "$99 مدى الحياة",
         "prod_medicalredact_desc": "حذف أسماء المرضى من التقارير الطبية بسرية تامة.",
 
         "modal_leadscrub_pain": "أنت تدفع مئات الدولارات شهرياً لمنصات تنظيف الإيميلات، والمصيبة الأكبر؟ أنت تقوم برفع داتا عملائك السرية لسيرفرات خارجية مما يكسر اتفاقيات الخصوصية (NDA).",

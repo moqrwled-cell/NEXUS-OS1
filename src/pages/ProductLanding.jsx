@@ -168,7 +168,7 @@ export default function ProductLanding() {
                   <span className={`${fontHeading} text-5xl font-bold text-white`}>
                     {t(product.priceKey)}
                   </span>
-                  {!product.isCustom && <span className="text-gray-500 text-sm mx-2">{isRtl ? 'بدلاً من الدفع لكل عملية (Pay-per-credit)' : 'vs. pay-per-credit'}</span>}
+                  {!product.isCustom && <span className="text-gray-500 text-sm mx-2">{isRtl ? '(دفع لمرة واحدة)' : '(One-Time Payment)'}</span>}
                 </div>
                 {!product.isCustom && (
                   <div className="mt-4 bg-nexus-emerald/10 text-nexus-emerald px-4 py-2 rounded-lg text-sm font-medium border border-nexus-emerald/20 inline-block">
