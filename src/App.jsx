@@ -221,13 +221,13 @@ export default function App() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-nexus-emerald to-transparent"></div>
               <h2 className={`${currentLang.fontHeading} text-2xl md:text-3xl mb-4 font-bold text-white leading-relaxed`}>
                 {isRtl 
-                  ? 'في هذه اللحظة، هناك وكالة تخسر أهم عملائها لأنها سربت بياناتهم السرية بالخطأ لمواقع التنظيف السحابية.' 
-                  : 'Right now, an agency is losing its biggest client due to a silent NDA breach on a cloud scrubber.'}
+                  ? 'في هذه اللحظة، هناك شركة تدفع آلاف الدولارات شهرياً لأدوات سحابية تسرب بياناتها وتستنزف أرباحها.' 
+                  : 'Right now, an agency is bleeding thousands of dollars on cloud APIs that secretly leak their data.'}
               </h2>
               <p className="text-nexus-emerald text-lg font-medium">
                 {isRtl 
-                  ? 'الشركات الكبرى لا ترحم الأخطاء الأمنية.. إما أن تحمي بياناتك محلياً، أو تشاهد سمعتك تنهار ببطء.' 
-                  : 'Enterprise clients do not forgive data leaks. Process your data locally, or watch your reputation slowly bleed out.'}
+                  ? 'الإمبراطوريات الكبرى لا تُبنى على البرمجيات المستأجرة.. إما أن تمتلك بنيتك التحتية محلياً، أو تشاهد أرباحك تنهار ببطء.' 
+                  : 'Empires are not built on rented software. Own your infrastructure locally, or watch your profit margins slowly collapse.'}
               </p>
             </motion.div>
           </div>
