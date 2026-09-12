@@ -221,13 +221,13 @@ export default function App() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-nexus-emerald to-transparent"></div>
               <h2 className={`${currentLang.fontHeading} text-2xl md:text-3xl mb-4 font-bold text-white leading-relaxed`}>
                 {isRtl 
-                  ? 'في هذه اللحظة، هناك عميل يغادر موقعك بسبب بطء الرد، ومنافس يستخدم أنظمتنا لالتقاطه.' 
-                  : 'At this exact moment, a client is leaving you due to human delay, and a competitor is using our systems to close them.'}
+                  ? 'في هذه اللحظة، هناك وكالة تخسر أهم عملائها لأنها سربت بياناتهم السرية بالخطأ لمواقع التنظيف السحابية.' 
+                  : 'Right now, an agency is losing its biggest client due to a silent NDA breach on a cloud scrubber.'}
               </h2>
               <p className="text-nexus-emerald text-lg font-medium">
                 {isRtl 
-                  ? 'الأسواق لا ترحم المترددين.. إما أن تؤتمت مبيعاتك، أو تشاهد إمبراطوريتك تنهار ببطء.' 
-                  : 'Markets do not forgive hesitation. Automate your sales, or watch your empire slowly bleed out.'}
+                  ? 'الشركات الكبرى لا ترحم الأخطاء الأمنية.. إما أن تحمي بياناتك محلياً، أو تشاهد سمعتك تنهار ببطء.' 
+                  : 'Enterprise clients do not forgive data leaks. Process your data locally, or watch your reputation slowly bleed out.'}
               </p>
             </motion.div>
           </div>
