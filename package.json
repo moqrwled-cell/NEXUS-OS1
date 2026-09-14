@@ -26,10 +26,7 @@
     "react-intersection-observer": "^10.1.0",
     "react-router-dom": "^6.22.3",
     "three": "^0.185.1",
-    "papaparse": "^5.4.1",
-    "@ffmpeg/ffmpeg": "^0.12.7",
-    "@ffmpeg/core": "^0.12.4",
-    "@ffmpeg/util": "^0.12.1"
+    "papaparse": "^5.4.1"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

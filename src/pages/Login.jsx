@@ -23,7 +23,7 @@ export default function Login() {
     // Master Backdoor Key for CEO
     if (licenseKey.trim() === "NEXUS-CEO-2026") {
       localStorage.setItem('nexus_license', licenseKey);
-      navigate('/app/videoscale');
+      navigate('/app/leadsniper');
       return;
     }
 
