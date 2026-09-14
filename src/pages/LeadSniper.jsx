@@ -182,9 +182,9 @@ export default function LeadSniper() {
                 </h3>
                 <div className="space-y-2 font-mono text-xs text-nexus-emerald">
                   {logs.map((log, i) => (
-                    <div key={i} className="animate-fade-in opacity-80">> {log}</div>
+                    <div key={i} className="animate-fade-in opacity-80">&gt; {log}</div>
                   ))}
-                  {logs.length === 0 && <div className="text-gray-600">> Waiting for target input...</div>}
+                  {logs.length === 0 && <div className="text-gray-600">&gt; Waiting for target input...</div>}
                 </div>
               </div>
             </div>
