@@ -86,19 +86,7 @@ export default function ProductLanding() {
           </h1>
         </motion.div>
 
-        {/* Product Cover Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="w-full aspect-video liquid-glass-strong rounded-3xl border border-nexus-emerald/30 overflow-hidden mb-16 shadow-[0_0_50px_rgba(0,255,157,0.1)] hover:shadow-[0_0_80px_rgba(0,255,157,0.2)] transition-shadow duration-500 relative flex items-center justify-center bg-black/50"
-        >
-          <img 
-            src="/Nexus_Whop_Product.png" 
-            alt="Nexus Product Demo" 
-            className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-500"
-          />
-        </motion.div>
+
 
         {/* Psychological Copywriting Section (PAS Formula) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
