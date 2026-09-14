@@ -50,6 +50,18 @@ export default function VideoScale() {
     }, 200);
   };
 
+  const downloadVideo = () => {
+    if (!videoFile) return;
+    const url = URL.createObjectURL(videoFile);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nexus_converted_${format.replace(':', 'x')}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-sans p-8 relative">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-purple-500/10 to-transparent -z-10 pointer-events-none" />
@@ -161,6 +173,7 @@ export default function VideoScale() {
             </button>
           ) : (
             <button 
+              onClick={downloadVideo}
               className="w-full bg-white text-black font-bold text-lg px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
             >
               <Download />
