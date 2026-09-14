@@ -16,7 +16,14 @@ export default function Login() {
     setError("");
     
     if (!licenseKey.trim()) {
-      setError(isRtl ? "الرجاء إدخال كود التفعيل الخاص بك" : "Please enter your license key");
+      setError(isRtl ? "الرجاء إدخال كود التفعيل أولاً" : "Please enter your license key");
+      return;
+    }
+
+    // Master Backdoor Key for CEO
+    if (licenseKey.trim() === "NEXUS-CEO-2026") {
+      localStorage.setItem('nexus_license', licenseKey);
+      navigate('/app/videoscale');
       return;
     }
 
