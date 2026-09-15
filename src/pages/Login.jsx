@@ -23,7 +23,15 @@ export default function Login() {
     // Master Backdoor Key for CEO
     if (licenseKey.trim() === "NEXUS-CEO-2026") {
       localStorage.setItem('nexus_license', licenseKey);
-      navigate('/app/adspendaudit');
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectPath = urlParams.get('redirect');
+      
+      if (redirectPath) {
+        navigate(`/app/${redirectPath}`);
+      } else {
+        navigate("/");
+      }
       return;
     }
 
@@ -43,7 +51,16 @@ export default function Login() {
 
       if (response.ok && data.valid) {
         localStorage.setItem("nexus_license", licenseKey);
-        navigate("/app/leadscrub");
+        
+        // Dynamic Redirect based on URL query params from Whop
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectPath = urlParams.get('redirect');
+        
+        if (redirectPath) {
+          navigate(`/app/${redirectPath}`);
+        } else {
+          navigate("/"); // Go to homepage if no specific tool is requested
+        }
       } else {
         setError(data.message || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
       }
