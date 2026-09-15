@@ -78,7 +78,6 @@ export default function App() {
       const products = [
     { id: 'leadscrub', icon: Search, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', descKey: 'prod_leadscrub_desc', link: 'http://localhost:3000/dashboard/leadscrub' },
     { id: 'ecommatch', icon: Search, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', descKey: 'prod_ecommatch_desc', link: 'http://localhost:3000/dashboard/ecommatch' },
-    { id: 'paydiff', icon: Search, titleKey: 'prod_paydiff_title', priceKey: 'prod_paydiff_price', descKey: 'prod_paydiff_desc', link: 'http://localhost:3000/dashboard/paydiff' },
     { id: 'searchmerge', icon: Search, titleKey: 'prod_searchmerge_title', priceKey: 'prod_searchmerge_price', descKey: 'prod_searchmerge_desc', link: 'http://localhost:3000/dashboard/searchmerge' },
     { id: 'contractcompare', icon: Search, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', descKey: 'prod_contractcompare_desc', link: 'http://localhost:3000/dashboard/contractcompare' },
     { id: 'adspendaudit', icon: Search, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', descKey: 'prod_adspendaudit_desc', link: 'http://localhost:3000/dashboard/adspendaudit' },
