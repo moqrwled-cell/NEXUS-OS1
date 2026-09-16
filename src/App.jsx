@@ -15,7 +15,7 @@ import {
   Monitor,
   Wrench,
   Hexagon
-} from 'lucide-react';
+, Shield, Zap, TrendingDown, Briefcase} from 'lucide-react';
 import Nexus3DNode from './components/Nexus3DNode';
 import ContactModal from './components/ContactModal';
 
