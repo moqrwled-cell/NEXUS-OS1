@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Lock, LogOut, FileWarning, ArrowRightLeft, Shield, Download, RefreshCcw } from 'lucide-react';
+import { FileText, Lock, LogOut, FileWarning, ArrowRightLeft, Shield, Download, RefreshCcw , ArrowLeft } from 'lucide-react';
 import * as diffLib from 'diff';
 
 export default function ContractCompare() {
