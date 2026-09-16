@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock, LogOut } from 'lucide-react';
+import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock, LogOut, ArrowLeft } from \'lucide-react\';
 
 export default function LeadScrub() {
   const navigate = useNavigate();
@@ -102,9 +102,8 @@ export default function LeadScrub() {
     document.body.removeChild(link);
   };
 
-  const logout = () => {
-    localStorage.removeItem('nexus_license');
-    navigate('/login');
+  const goHome = () => {
+    navigate('/');
   };
 
   return (
@@ -129,7 +128,7 @@ export default function LeadScrub() {
               <span>100% Local Processing</span>
             </div>
             <button 
-              onClick={logout} 
+              onClick={goHome} 
               className="flex items-center gap-2 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-4 py-2 rounded-xl transition-all text-sm font-medium border border-white/10 hover:border-red-500/30"
             >
               <LogOut size={16} />

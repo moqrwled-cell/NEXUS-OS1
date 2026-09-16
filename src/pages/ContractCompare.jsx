@@ -18,9 +18,8 @@ export default function ContractCompare() {
     }
   }, [navigate]);
 
-  const logout = () => {
-    localStorage.removeItem('nexus_license');
-    navigate('/login');
+  const goHome = () => {
+    navigate('/');
   };
 
   const processComparison = () => {
@@ -68,11 +67,10 @@ export default function ContractCompare() {
               <span>100% In-Browser (Zero NDA Breaches)</span>
             </div>
             <button 
-              onClick={logout} 
+              onClick={goHome} 
               className="flex items-center gap-2 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-4 py-2 rounded-xl transition-all text-sm font-medium border border-white/10 hover:border-red-500/30"
             >
-              <LogOut size={16} />
-              Exit
+              <ArrowLeft size={16} /> Back to Nexus
             </button>
           </div>
         </div>
