@@ -26,14 +26,26 @@ export default function ContractCompare() {
     if (!originalText.trim() || !revisedText.trim()) return;
     setIsProcessing(true);
     
-    // Simulate slight delay for effect, but diff is instant in browser
     setTimeout(() => {
-      let results;
-      if (compareMode === 'words') {
-        results = diffLib.diffWords(originalText, revisedText);
-      } else {
-        results = diffLib.diffLines(originalText, revisedText);
+      const originalArray = compareMode === 'words' ? originalText.split(/(\s+)/) : originalText.split('\n');
+      const revisedArray = compareMode === 'words' ? revisedText.split(/(\s+)/) : revisedText.split('\n');
+      
+      let results = [];
+      let i = 0, j = 0;
+      
+      while (i < originalArray.length || j < revisedArray.length) {
+        if (i < originalArray.length && j < revisedArray.length && originalArray[i] === revisedArray[j]) {
+          results.push({ value: originalArray[i] + (compareMode === 'lines' ? '\n' : '') });
+          i++; j++;
+        } else if (j < revisedArray.length && (i >= originalArray.length || !originalArray.includes(revisedArray[j]))) {
+          results.push({ added: true, value: revisedArray[j] + (compareMode === 'lines' ? '\n' : '') });
+          j++;
+        } else if (i < originalArray.length) {
+          results.push({ removed: true, value: originalArray[i] + (compareMode === 'lines' ? '\n' : '') });
+          i++;
+        }
       }
+      
       setDiffResults(results);
       setIsProcessing(false);
     }, 400);
