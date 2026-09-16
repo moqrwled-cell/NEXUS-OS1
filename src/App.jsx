@@ -79,9 +79,7 @@ export default function App() {
       { id: 'leadscrub', icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', descKey: 'prod_leadscrub_desc' },
       { id: 'ecommatch', icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', descKey: 'prod_ecommatch_desc' },
       { id: 'contractcompare', icon: Hexagon, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', descKey: 'prod_contractcompare_desc' },
-      { id: 'adspendaudit', icon: TrendingDown, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', descKey: 'prod_adspendaudit_desc' },
-      { id: 'webdesign', icon: Monitor, titleKey: 'prod_webdesign_title', priceKey: 'prod_webdesign_price', descKey: 'prod_webdesign_desc', isService: true },
-      { id: 'companysetup', icon: Briefcase, titleKey: 'prod_companysetup_title', priceKey: 'prod_companysetup_price', descKey: 'prod_companysetup_desc', isService: true }
+      { id: 'adspendaudit', icon: TrendingDown, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', descKey: 'prod_adspendaudit_desc' }
     ];
 
   return (
