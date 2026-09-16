@@ -5,21 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { ArrowRight, Play, CheckCircle2, Shield, Zap, ArrowLeft, Bot, MessageSquare, Search, Monitor, Wrench, Hexagon } from 'lucide-react';
 
 const productsData = {
-  'leadscrub': { icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', painKey: 'modal_leadscrub_pain', agitateKey: 'modal_leadscrub_agitate', solveKey: 'modal_leadscrub_solve', link: 'https://whop.com/nexus-os-85c8/nexus-leadscrub-enterprise-license' },
-  'ecommatch': { icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', painKey: 'modal_ecommatch_pain', agitateKey: 'modal_ecommatch_agitate', solveKey: 'modal_ecommatch_solve', link: 'http://localhost:3000/login' },
-  'paydiff': { icon: Hexagon, titleKey: 'prod_paydiff_title', priceKey: 'prod_paydiff_price', painKey: 'modal_paydiff_pain', agitateKey: 'modal_paydiff_agitate', solveKey: 'modal_paydiff_solve', link: 'http://localhost:3000/login' },
-  'searchmerge': { icon: Search, titleKey: 'prod_searchmerge_title', priceKey: 'prod_searchmerge_price', painKey: 'modal_searchmerge_pain', agitateKey: 'modal_searchmerge_agitate', solveKey: 'modal_searchmerge_solve', link: 'http://localhost:3000/login' },
-  'contractcompare': { icon: Shield, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', painKey: 'modal_contractcompare_pain', agitateKey: 'modal_contractcompare_agitate', solveKey: 'modal_contractcompare_solve', link: 'http://localhost:3000/login' },
-  'adspendaudit': { icon: Zap, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', painKey: 'modal_adspendaudit_pain', agitateKey: 'modal_adspendaudit_agitate', solveKey: 'modal_adspendaudit_solve', link: 'http://localhost:3000/login' },
-  'payoutsplit': { icon: Hexagon, titleKey: 'prod_payoutsplit_title', priceKey: 'prod_payoutsplit_price', painKey: 'modal_payoutsplit_pain', agitateKey: 'modal_payoutsplit_agitate', solveKey: 'modal_payoutsplit_solve', link: 'http://localhost:3000/login' },
-  'bankconvert': { icon: Search, titleKey: 'prod_bankconvert_title', priceKey: 'prod_bankconvert_price', painKey: 'modal_bankconvert_pain', agitateKey: 'modal_bankconvert_agitate', solveKey: 'modal_bankconvert_solve', link: 'http://localhost:3000/login' },
-  'crmmapper': { icon: Shield, titleKey: 'prod_crmmapper_title', priceKey: 'prod_crmmapper_price', painKey: 'modal_crmmapper_pain', agitateKey: 'modal_crmmapper_agitate', solveKey: 'modal_crmmapper_solve', link: 'http://localhost:3000/login' },
-  'inventorysync': { icon: Zap, titleKey: 'prod_inventorysync_title', priceKey: 'prod_inventorysync_price', painKey: 'modal_inventorysync_pain', agitateKey: 'modal_inventorysync_agitate', solveKey: 'modal_inventorysync_solve', link: 'http://localhost:3000/login' },
-  'reviewscrubber': { icon: Hexagon, titleKey: 'prod_reviewscrubber_title', priceKey: 'prod_reviewscrubber_price', painKey: 'modal_reviewscrubber_pain', agitateKey: 'modal_reviewscrubber_agitate', solveKey: 'modal_reviewscrubber_solve', link: 'http://localhost:3000/login' },
-  'fleetlog': { icon: Search, titleKey: 'prod_fleetlog_title', priceKey: 'prod_fleetlog_price', painKey: 'modal_fleetlog_pain', agitateKey: 'modal_fleetlog_agitate', solveKey: 'modal_fleetlog_solve', link: 'http://localhost:3000/login' },
-  'atsfilter': { icon: Shield, titleKey: 'prod_atsfilter_title', priceKey: 'prod_atsfilter_price', painKey: 'modal_atsfilter_pain', agitateKey: 'modal_atsfilter_agitate', solveKey: 'modal_atsfilter_solve', link: 'http://localhost:3000/login' },
-  'subtitlesync': { icon: Zap, titleKey: 'prod_subtitlesync_title', priceKey: 'prod_subtitlesync_price', painKey: 'modal_subtitlesync_pain', agitateKey: 'modal_subtitlesync_agitate', solveKey: 'modal_subtitlesync_solve', link: 'http://localhost:3000/login' },
-  'medicalredact': { icon: Hexagon, titleKey: 'prod_medicalredact_title', priceKey: 'prod_medicalredact_price', painKey: 'modal_medicalredact_pain', agitateKey: 'modal_medicalredact_agitate', solveKey: 'modal_medicalredact_solve', link: 'http://localhost:3000/login' },
+    'leadscrub': { icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', painKey: 'modal_leadscrub_pain', agitateKey: 'modal_leadscrub_agitate', solveKey: 'modal_leadscrub_solve', link: 'https://whop.com/nexus-os-85c8/nexus-leadscrub-enterprise-license' },
+    'ecommatch': { icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', painKey: 'modal_ecommatch_pain', agitateKey: 'modal_ecommatch_agitate', solveKey: 'modal_ecommatch_solve', link: 'https://whop.com/nexus-os-85c8/nexus-ecommatch-shopify-stripe-reconciliation' },
+    'contractcompare': { icon: Hexagon, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', painKey: 'modal_contractcompare_pain', agitateKey: 'modal_contractcompare_agitate', solveKey: 'modal_contractcompare_solve', link: 'https://whop.com/nexus-os-85c8/nexus-contract-compare-nda-legal-diff-engine' },
+    'adspendaudit': { icon: TrendingDown, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', painKey: 'modal_adspendaudit_pain', agitateKey: 'modal_adspendaudit_agitate', solveKey: 'modal_adspendaudit_solve', link: 'https://whop.com/nexus-os-85c8/nexus-adspend-audit-wasted-budget-detector' },
+    'webdesign': { icon: Monitor, titleKey: 'prod_webdesign_title', priceKey: 'prod_webdesign_price', painKey: 'modal_webdesign_pain', agitateKey: 'modal_webdesign_agitate', solveKey: 'modal_webdesign_solve', link: 'https://wa.me/962770281699', isService: True },
+    'companysetup': { icon: Briefcase, titleKey: 'prod_companysetup_title', priceKey: 'prod_companysetup_price', painKey: 'modal_companysetup_pain', agitateKey: 'modal_companysetup_agitate', solveKey: 'modal_companysetup_solve', link: 'https://wa.me/962770281699', isService: True }
 };
 
 export default function ProductLanding() {
@@ -176,15 +167,15 @@ export default function ProductLanding() {
               </ul>
 
               <a 
-                href={product.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
-              >
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
-                <span className="relative z-10">{product.isCustom ? t('modal_btn_email') : t('modal_btn')}</span>
-                <ArrowRight size={20} className={`relative z-10 transform ${isRtl ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'} transition-transform duration-300`} />
-              </a>
+                  href={product.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    {product.isService ? (isRtl ? 'تواصل معنا للحصول على عرض سعر' : 'Contact Us for a Quote') : (isRtl ? 'احصل على الترخيص الآن' : 'Get Full Lifetime Access')}
+                  </span>
+                </a>
 
               <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
                 <Shield size={16} />

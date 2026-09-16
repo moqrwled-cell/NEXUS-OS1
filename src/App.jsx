@@ -76,21 +76,13 @@ export default function App() {
   };
 
       const products = [
-    { id: 'leadscrub', icon: Search, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', descKey: 'prod_leadscrub_desc', link: 'http://localhost:3000/dashboard/leadscrub' },
-    { id: 'ecommatch', icon: Search, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', descKey: 'prod_ecommatch_desc', link: 'http://localhost:3000/dashboard/ecommatch' },
-    { id: 'searchmerge', icon: Search, titleKey: 'prod_searchmerge_title', priceKey: 'prod_searchmerge_price', descKey: 'prod_searchmerge_desc', link: 'http://localhost:3000/dashboard/searchmerge' },
-    { id: 'contractcompare', icon: Search, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', descKey: 'prod_contractcompare_desc', link: 'http://localhost:3000/dashboard/contractcompare' },
-    { id: 'adspendaudit', icon: Search, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', descKey: 'prod_adspendaudit_desc', link: 'http://localhost:3000/dashboard/adspendaudit' },
-    { id: 'payoutsplit', icon: Search, titleKey: 'prod_payoutsplit_title', priceKey: 'prod_payoutsplit_price', descKey: 'prod_payoutsplit_desc', link: 'http://localhost:3000/dashboard/payoutsplit' },
-    { id: 'bankconvert', icon: Search, titleKey: 'prod_bankconvert_title', priceKey: 'prod_bankconvert_price', descKey: 'prod_bankconvert_desc', link: 'http://localhost:3000/dashboard/bankconvert' },
-    { id: 'crmmapper', icon: Search, titleKey: 'prod_crmmapper_title', priceKey: 'prod_crmmapper_price', descKey: 'prod_crmmapper_desc', link: 'http://localhost:3000/dashboard/crmmapper' },
-    { id: 'inventorysync', icon: Search, titleKey: 'prod_inventorysync_title', priceKey: 'prod_inventorysync_price', descKey: 'prod_inventorysync_desc', link: 'http://localhost:3000/dashboard/inventorysync' },
-    { id: 'reviewscrubber', icon: Search, titleKey: 'prod_reviewscrubber_title', priceKey: 'prod_reviewscrubber_price', descKey: 'prod_reviewscrubber_desc', link: 'http://localhost:3000/dashboard/reviewscrubber' },
-    { id: 'fleetlog', icon: Search, titleKey: 'prod_fleetlog_title', priceKey: 'prod_fleetlog_price', descKey: 'prod_fleetlog_desc', link: 'http://localhost:3000/dashboard/fleetlog' },
-    { id: 'atsfilter', icon: Search, titleKey: 'prod_atsfilter_title', priceKey: 'prod_atsfilter_price', descKey: 'prod_atsfilter_desc', link: 'http://localhost:3000/dashboard/atsfilter' },
-    { id: 'subtitlesync', icon: Search, titleKey: 'prod_subtitlesync_title', priceKey: 'prod_subtitlesync_price', descKey: 'prod_subtitlesync_desc', link: 'http://localhost:3000/dashboard/subtitlesync' },
-    { id: 'medicalredact', icon: Search, titleKey: 'prod_medicalredact_title', priceKey: 'prod_medicalredact_price', descKey: 'prod_medicalredact_desc', link: 'http://localhost:3000/dashboard/medicalredact' }
-  ];
+      { id: 'leadscrub', icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', descKey: 'prod_leadscrub_desc' },
+      { id: 'ecommatch', icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', descKey: 'prod_ecommatch_desc' },
+      { id: 'contractcompare', icon: Hexagon, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', descKey: 'prod_contractcompare_desc' },
+      { id: 'adspendaudit', icon: TrendingDown, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', descKey: 'prod_adspendaudit_desc' },
+      { id: 'webdesign', icon: Monitor, titleKey: 'prod_webdesign_title', priceKey: 'prod_webdesign_price', descKey: 'prod_webdesign_desc', isService: True },
+      { id: 'companysetup', icon: Briefcase, titleKey: 'prod_companysetup_title', priceKey: 'prod_companysetup_price', descKey: 'prod_companysetup_desc', isService: True }
+    ];
 
   return (
     <div className={`bg-nexus-bg min-h-screen text-white overflow-x-hidden selection:bg-nexus-emerald selection:text-black ${currentLang.fontBody} ${isRtl ? 'rtl' : 'ltr'}`}>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Papa from 'papaparse';
-import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock, LogOut, ArrowLeft } from \'lucide-react\';
+import { Download, Upload, Shield, AlertTriangle, CheckCircle2, FileSpreadsheet, Lock, LogOut, ArrowLeft } from 'lucide-react';
 
 export default function LeadScrub() {
   const navigate = useNavigate();
