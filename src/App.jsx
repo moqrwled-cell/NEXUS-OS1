@@ -273,7 +273,7 @@ export default function App() {
         <ContactModal 
           isOpen={isContactModalOpen} 
           onClose={() => setIsContactModalOpen(false)} 
-          services={products}
+          services={products.map(p => t(p.titleKey))}
         />
 
         <footer className="border-t border-white/5 py-8 px-6 md:px-12 lg:px-24 mt-20">
