@@ -17,28 +17,28 @@ const resources = {
       "section_modules_desc": "Powerful, private, local-first tools for your business.",
 
 "prod_leadscrub_title": "Nexus LeadScrub",
-      "prod_leadscrub_price": " Lifetime",
+      "prod_leadscrub_price": "$49 Lifetime",
       "prod_leadscrub_desc": "B2B List Cleaner (Local-First). Never ruin your email deliverability again.",
       "modal_leadscrub_pain": "Are you tired of paying /mo for email verifiers just to clean your lists?",
       "modal_leadscrub_agitate": "Uploading your proprietary lead lists to third-party servers is a massive security risk. Your competitors can literally buy your leads.",
       "modal_leadscrub_solve": "Nexus LeadScrub is a completely local-first list cleaning engine. It processes hundreds of thousands of rows instantly inside your browser memory.",
       
       "prod_ecommatch_title": "Nexus EcomMatch",
-      "prod_ecommatch_price": " Lifetime",
+      "prod_ecommatch_price": "$49 Lifetime",
       "prod_ecommatch_desc": "Shopify & Stripe Reconciliation. Stop bleeding money and find missing payouts instantly.",
       "modal_ecommatch_pain": "E-commerce owners waste days trying to match Shopify orders with Stripe payouts on Excel.",
       "modal_ecommatch_agitate": "Did Stripe take a hidden fee? Did a payout fail? You are losing money without knowing it.",
       "modal_ecommatch_solve": "Upload your Store CSV and Gateway CSV. Our algorithm instantly finds perfect matches, mismatched amounts, and missing payouts locally.",
       
       "prod_contractcompare_title": "Nexus Contract-Compare",
-      "prod_contractcompare_price": " Lifetime",
+      "prod_contractcompare_price": "$49 Lifetime",
       "prod_contractcompare_desc": "NDA & Legal Diff Engine. Never miss a hidden clause again.",
       "modal_contractcompare_pain": "How do you know the other party didn't sneak a hidden clause changing your liability?",
       "modal_contractcompare_agitate": "Uploading confidential NDAs to random free cloud diff tools is a direct NDA violation. You are exposing yourself to lawsuits.",
       "modal_contractcompare_solve": "Nexus runs 100% locally. Paste the old and new contract, and it instantly exposes every single manipulated, added, or deleted word. They can't hide anything.",
       
       "prod_adspendaudit_title": "Nexus AdSpend-Audit",
-      "prod_adspendaudit_price": " Lifetime",
+      "prod_adspendaudit_price": "$45 Lifetime",
       "prod_adspendaudit_desc": "Wasted Budget Detector. Kill unprofitable ads before they drain your bank account.",
       "modal_adspendaudit_pain": "Media buyers and agencies are actively burning your money on unprofitable Facebook/Google ads while taking their monthly cut.",
       "modal_adspendaudit_agitate": "Checking every ad set manually is impossible. Giving third-party software access to your Ad Account gives them your exact winning formulas.",
@@ -92,17 +92,7 @@ const resources = {
       
       "seo_btn_copy_msg": "Copy Outreach Script",
       "seo_outreach_copied": "Script copied! Paste it in WhatsApp or Email.",
-      "seo_outreach_msg": "Hi there,
-
-I was browsing your website ({{url}}) and noticed a critical issue affecting your revenue.\nI ran a deep technical audit and discovered that Google is actively penalizing your site due to hidden structural errors! ⚠️
-
-Performance Score: {{perf}}/100\nSEO Score: {{seo}}/100
-
-I've attached a detailed PDF report proving this. These errors are causing you to lose potential clients to competitors every day.
-
-I am an enterprise systems engineer, and I can fix this infrastructure immediately.
-
-Let me know when you review the attached report so we can stop the bleeding.",
+      "seo_outreach_msg": "Hi there,\n\nI was browsing your website ({{url}}) and noticed a critical issue affecting your revenue.\nI ran a deep technical audit and discovered that Google is actively penalizing your site due to hidden structural errors! ⚠️\n\nPerformance Score: {{perf}}/100\nSEO Score: {{seo}}/100\n\nI've attached a detailed PDF report proving this. These errors are causing you to lose potential clients to competitors every day.\n\nI am an enterprise systems engineer, and I can fix this infrastructure immediately.\n\nLet me know when you review the attached report so we can stop the bleeding.",
 
       "seo_error_failed": "Analysis failed: {{msg}}. Please ensure the URL is correct and publicly accessible by Google.",
 
@@ -131,35 +121,44 @@ Let me know when you review the attached report so we can stop the bleeding.",
       "section_modules_title": "وحدات وخدمات NexusOS",
       "section_modules_desc": "برمجيات وخدمات تقنية مخصصة للشركات الطامحة للهيمنة.",
 
-        "prod_leadscrub_title": "مُنظف القوائم LeadScrub",
-      "prod_leadscrub_price": " مدى الحياة",
+      "prod_leadscrub_title": "مُنظف القوائم LeadScrub",
+      "prod_leadscrub_price": "$49 مدى الحياة",
       "prod_leadscrub_desc": "نظف قوائم الإيميلات الضخمة محلياً وبثوانٍ لتحافظ على قوة إرسالك.",
       "modal_leadscrub_pain": "هل تعبت من دفع اشتراكات شهرية باهظة لمواقع تنظيف الإيميلات؟",
       "modal_leadscrub_agitate": "رفع قوائم عملائك السرية لسيرفرات خارجية يعني أنك تسلم ثروتك لشركات قد تبيعها لمنافسيك.",
       "modal_leadscrub_solve": "أداة LeadScrub تعمل 100% داخل جهازك (بدون إنترنت). نظف مئات الآلاف من الإيميلات في ثوانٍ وبأمان تام واقطع الطريق على المتطفلين.",
       
       "prod_ecommatch_title": "المطابقة EcomMatch",
-      "prod_ecommatch_price": " مدى الحياة",
+      "prod_ecommatch_price": "$49 مدى الحياة",
       "prod_ecommatch_desc": "طابق طلبات متجرك (Shopify) مع دفعات (Stripe) واكتشف الأموال الضائعة.",
       "modal_ecommatch_pain": "تضييع أيام في محاولة مطابقة طلبات المتجر مع الحوالات البنكية على الإكسل.",
       "modal_ecommatch_agitate": "هل خصم البنك عمولة خفية؟ هل فشلت حوالة ولم تنتبه لها؟ بوابات الدفع تقتات بصمت على أرباحك وأنت غافل.",
       "modal_ecommatch_solve": "ارفع ملف طلبات المتجر وملف الدفعات، وخوارزميتنا ستكتشف فوراً التلاعب، النقص، والحوالات المفقودة كلياً لتعيد لك حقك.",
       
       "prod_contractcompare_title": "مقارن العقود Contract-Compare",
-      "prod_contractcompare_price": " مدى الحياة",
+      "prod_contractcompare_price": "$49 مدى الحياة",
       "prod_contractcompare_desc": "لا تفوت أي بند مخفي. قارن نسختين من أي عقد قانوني محلياً واكتشف التلاعب.",
       "modal_contractcompare_pain": "كيف تتأكد أن الطرف الآخر لم يدس بنداً خفياً يرفع الشرط الجزائي من 10 آلاف إلى 100 ألف؟",
       "modal_contractcompare_agitate": "رفع عقودك السرية والـ (NDA) لمواقع مقارنة مجانية يعرضك للمساءلة القانونية وكشف أسرار شركتك للعلن.",
       "modal_contractcompare_solve": "أداتنا تعمل 100% محلياً. ضع العقد القديم والجديد، وستفضح لك فوراً كل كلمة تم التلاعب بها، إضافتها، أو حذفها. لن يمر مكرهم عليك.",
       
       "prod_adspendaudit_title": "مدقق الإعلانات AdSpend-Audit",
-      "prod_adspendaudit_price": " مدى الحياة",
+      "prod_adspendaudit_price": "$45 مدى الحياة",
       "prod_adspendaudit_desc": "اكتشف فوراً الحملات الإعلانية التي تحرق ميزانيتك بدون أي مبيعات.",
       "modal_adspendaudit_pain": "المسوقون ووكالات الإعلان يحرقون آلاف الدولارات من مالك الخاص على حملات خاسرة بينما يتقاضون رواتبهم كاملة.",
       "modal_adspendaudit_agitate": "مراجعة الحملات يدوياً مستحيل، وإعطاء صلاحيات لبرامج خارجية للتدقيق يعني تسريب خلطة مبيعاتك السرية للمنافسين.",
-      "modal_adspendaudit_solve": "ارفع ملف الإعلانات (CSV)، وسنستخرج لك فوراً وبلا رحمة قائمة الإعدام (Kill List) للحملات التي تبتلع أموالك لإيقاف النزيف فوراً.",
+      "modal_adspendaudit_solve": "ارفع ملف الإعلانات (CSV)، وسنستخرج لك فوراً وبلا رحمة 'قائمة الإعدام' (Kill List) للحملات التي تبتلع أموالك لإيقاف النزيف فوراً.",
 
-        "seo_tool_title": "مغلق الصفقات والسيو",
+      "form_title": "تواصل مع NexusOS",
+      "form_email": "البريد الإلكتروني",
+      "form_service": "اختر الخدمة المطلوبة",
+      "form_msg": "رسالتك",
+      "form_send": "إرسال الرسالة",
+      "form_sending": "جاري الإرسال...",
+      "form_success": "تم استلام رسالتك بنجاح. سنتواصل معك قريباً.",
+      "form_error": "فشل الإرسال. يرجى المحاولة مرة أخرى.",
+
+      "seo_tool_title": "مغلق الصفقات والسيو",
       "seo_tool_desc": "مولّد تقارير مستقل",
       "seo_tool_generate_title": "توليد تقرير سيو للمبيعات",
       "seo_tool_generate_desc": "أدخل رابط موقع العميل لتوليد تقرير مدمر وعرض نقاط ضعفه باستخدام مقاييس جوجل الحقيقية.",
@@ -198,17 +197,7 @@ Let me know when you review the attached report so we can stop the bleeding.",
       
       "seo_btn_copy_msg": "نسخ رسالة الواتساب",
       "seo_outreach_copied": "تم نسخ رسالة الصدمة! اذهب للواتساب والصقها.",
-      "seo_outreach_msg": "أهلاً بك يا مدير،
-
-كنت أتصفح موقعكم ({{url}}) ولاحظت شيئاً خطيراً جداً يخص أرباحكم.\nقمت بعمل فحص تقني عميق للموقع واكتشفت أن جوجل يعاقب موقعكم حالياً بسبب أخطاء برمجية خفية! ⚠️
-
-نقطة أداء الموقع: {{perf}}/100\nنقطة السيو: {{seo}}/100
-
-أرسلت لك ملف PDF تفصيلي يثبت هذا الكلام بالأدلة. هذه الأخطاء تجعل منافسيك يسرقون عملائك يومياً من بحث جوجل.
-
-أنا مهندس أنظمة وتقنيات، ويمكنني حل هذه الكارثة لكم خلال 48 ساعة فقط وتصدر نتائج البحث.
-
-بانتظار ردك بعد قراءة التقرير المرفق لننقذ الموقع.",
+      "seo_outreach_msg": "أهلاً بك يا مدير،\n\nكنت أتصفح موقعكم ({{url}}) ولاحظت شيئاً خطيراً جداً يخص أرباحكم.\nقمت بعمل فحص تقني عميق للموقع واكتشفت أن جوجل يعاقب موقعكم حالياً بسبب أخطاء برمجية خفية! ⚠️\n\nنقطة أداء الموقع: {{perf}}/100\nنقطة السيو: {{seo}}/100\n\nأرسلت لك ملف PDF تفصيلي يثبت هذا الكلام بالأدلة. هذه الأخطاء تجعل منافسيك يسرقون عملائك يومياً من بحث جوجل.\n\nأنا مهندس أنظمة وتقنيات، ويمكنني حل هذه الكارثة لكم خلال 48 ساعة فقط وتصدر نتائج البحث.\n\nبانتظار ردك بعد قراءة التقرير المرفق لننقذ الموقع.",
 
       "seo_error_failed": "فشل التحليل: {{msg}}. تأكد من أن الرابط صحيح ويمكن الوصول إليه من محركات البحث.",
 
