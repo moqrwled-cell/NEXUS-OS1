@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import ContactModal from '../components/ContactModal';
 import { ArrowRight, Play, CheckCircle2, Shield, Zap, ArrowLeft, Bot, MessageSquare, Search, Monitor, Wrench, Hexagon } from 'lucide-react';
 
 const productsData = {
@@ -20,6 +21,7 @@ export default function ProductLanding() {
   const isRtl = i18n.dir() === 'rtl';
   
   const product = productsData[productId];
+  const [isContactOpen, setIsContactOpen] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -166,16 +168,27 @@ export default function ProductLanding() {
                 ))}
               </ul>
 
-              <a 
-                  href={product.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    {product.isService ? (isRtl ? 'تواصل معنا للحصول على عرض سعر' : 'Contact Us for a Quote') : (isRtl ? 'احصل على الترخيص الآن' : 'Get Full Lifetime Access')}
-                  </span>
-                </a>
+              {product.isService ? (
+                  <button 
+                    onClick={() => setIsContactOpen(true)}
+                    className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      {isRtl ? 'تواصل معنا للحصول على عرض سعر' : 'Contact Us for a Quote'}
+                    </span>
+                  </button>
+                ) : (
+                  <a 
+                    href={product.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      {isRtl ? 'احصل على الترخيص الآن' : 'Get Full Lifetime Access'}
+                    </span>
+                  </a>
+                )}
 
               <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
                 <Shield size={16} />
@@ -185,6 +198,14 @@ export default function ProductLanding() {
           </div>
         </div>
       </main>
+
+      {product.isService && (
+        <ContactModal 
+          isOpen={isContactOpen} 
+          onClose={() => setIsContactOpen(false)} 
+          services={[t(product.titleKey)]} 
+        />
+      )}
     </div>
   );
 }
