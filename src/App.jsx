@@ -58,6 +58,7 @@ const FadeInWhenVisible = ({ children, delay = 0 }) => {
 };
 
 export default function App() {
+  /* Force Netlify Build Trigger */
   const { t, i18n } = useTranslation();
   const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
   const isRtl = currentLang.dir === 'rtl';
