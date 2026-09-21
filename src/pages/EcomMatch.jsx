@@ -234,7 +234,7 @@ export default function EcomMatch() {
                 <div className="bg-orange-500/10 border-b border-orange-500/20 p-5 flex items-center gap-3">
                   <AlertTriangle className="text-orange-500" />
                   <div>
-                    <h3 className="font-bold text-orange-100">Fee Discrepancies (>5%)</h3>
+                    <h3 className="font-bold text-orange-100">Fee Discrepancies (&gt;5%)</h3>
                     <p className="text-xs text-orange-200/70">Payout amount is unusually lower than order amount.</p>
                   </div>
                 </div>
