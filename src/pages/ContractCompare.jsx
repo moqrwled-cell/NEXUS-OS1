@@ -23,7 +23,7 @@ export default function ContractCompare() {
   const [diffResults, setDiffResults] = useState(null);
   const [auditResults, setAuditResults] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [compareMode, setCompareMode] = useState('words'); 
+  const [compareMode] = useState('words'); 
 
   useEffect(() => {
     const license = localStorage.getItem('nexus_license');
