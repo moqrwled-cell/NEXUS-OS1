@@ -1,286 +1,263 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileSpreadsheet, CheckCircle, AlertTriangle, XCircle, Download, Shield, Lock, LogOut, Upload, ArrowRightLeft , ArrowLeft } from 'lucide-react';
+import { Upload, ArrowLeft, Trash2, CheckCircle, AlertTriangle, FileSpreadsheet, Layers, DollarSign } from 'lucide-react';
 import Papa from 'papaparse';
 
 export default function EcomMatch() {
   const navigate = useNavigate();
-  const [storeFile, setStoreFile] = useState(null);
-  const [gatewayFile, setGatewayFile] = useState(null);
+  const shopifyInputRef = useRef(null);
+  const stripeInputRef = useRef(null);
+  
+  const [shopifyFile, setShopifyFile] = useState(null);
+  const [stripeFile, setStripeFile] = useState(null);
+  
+  const [shopifyData, setShopifyData] = useState([]);
+  const [stripeData, setStripeData] = useState([]);
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     const license = localStorage.getItem('nexus_license');
-    if (!license) {
-      navigate('/login');
-    }
+    if (!license) navigate('/login');
   }, [navigate]);
 
-  const goHome = () => {
-    navigate('/');
+  const handleShopifyUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setShopifyFile(file);
+    Papa.parse(file, { header: true, skipEmptyLines: true, complete: (res) => setShopifyData(res.data) });
   };
 
-  const parseCSV = (file) => {
-    return new Promise((resolve, reject) => {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => resolve(results.data),
-        error: (err) => reject(err)
-      });
-    });
+  const handleStripeUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setStripeFile(file);
+    Papa.parse(file, { header: true, skipEmptyLines: true, complete: (res) => setStripeData(res.data) });
   };
 
-  const processReconciliation = async () => {
-    if (!storeFile || !gatewayFile) {
-      setError("Please upload both CSV files.");
-      return;
-    }
-    setError('');
+  const processReconciliation = () => {
+    if (!shopifyData.length || !stripeData.length) return;
     setIsProcessing(true);
 
-    try {
-      const storeData = await parseCSV(storeFile);
-      const gatewayData = await parseCSV(gatewayFile);
+    setTimeout(() => {
+      // Very basic mock algorithm to find missing orders for the MVP
+      // Assuming Shopify has 'Name' (Order ID like #1001) and 'Total'
+      // Assuming Stripe has 'Description' (containing Order ID) and 'Amount'
+      
+      let missingInStripe = [];
+      let amountMismatches = [];
+      let totalRecoverable = 0;
+      let matchedCount = 0;
 
-      let matched = [];
-      let mismatched = [];
-      let missing = [];
+      // Find the best columns
+      const sCols = Object.keys(shopifyData[0] || {});
+      const stCols = Object.keys(stripeData[0] || {});
+      
+      const sOrderCol = sCols.find(c => c.toLowerCase().includes('name') || c.toLowerCase().includes('order')) || sCols[0];
+      const sTotalCol = sCols.find(c => c.toLowerCase().includes('total') || c.toLowerCase().includes('amount')) || sCols[1];
+      
+      const stDescCol = stCols.find(c => c.toLowerCase().includes('description') || c.toLowerCase().includes('memo')) || stCols[0];
+      const stAmountCol = stCols.find(c => c.toLowerCase().includes('amount') || c.toLowerCase().includes('net')) || stCols[1];
 
-      // A simple but powerful real algorithm:
-      // Loop through store data (e.g., Shopify), look for the Order ID (Name) in the gateway data (Description or ID)
-      storeData.forEach(storeRow => {
-        // Find possible ID columns in Store (Shopify usually uses "Name" for order like #1001)
-        const orderId = storeRow['Name'] || storeRow['Order ID'] || storeRow['Order'] || storeRow['id'] || Object.values(storeRow)[0];
-        const storeAmount = parseFloat(storeRow['Total'] || storeRow['Total Price'] || storeRow['Amount'] || 0);
+      shopifyData.forEach(sRow => {
+        const orderId = String(sRow[sOrderCol]).trim();
+        const sAmount = parseFloat(String(sRow[sTotalCol]).replace(/[^0-9.-]+/g,"")) || 0;
+        
+        if (!orderId || sAmount <= 0) return;
 
-        if (!orderId) return;
-
-        // Search in Gateway data (Stripe uses "Description" to hold the order ID)
-        const matchedGatewayRow = gatewayData.find(gRow => {
-          const gValues = Object.values(gRow).join(' ').toLowerCase();
-          return gValues.includes(String(orderId).toLowerCase().replace('#', ''));
+        // Try to find in Stripe
+        const stripeMatch = stripeData.find(stRow => {
+          const desc = String(stRow[stDescCol]).toLowerCase();
+          return desc.includes(orderId.toLowerCase().replace('#', ''));
         });
 
-        if (matchedGatewayRow) {
-          const gatewayAmount = parseFloat(matchedGatewayRow['Amount'] || matchedGatewayRow['Net'] || matchedGatewayRow['Total'] || 0);
-          
-          if (Math.abs(storeAmount - gatewayAmount) > 0.5) { // 50 cents tolerance
-            mismatched.push({
-              orderId,
-              storeAmount,
-              gatewayAmount,
-              difference: Math.abs(storeAmount - gatewayAmount).toFixed(2),
-              status: 'Mismatched Amount'
-            });
-          } else {
-            matched.push({
-              orderId,
-              storeAmount,
-              gatewayAmount,
-              status: 'Perfect Match'
-            });
-          }
+        if (!stripeMatch) {
+          missingInStripe.push({ orderId, amount: sAmount });
+          totalRecoverable += sAmount;
         } else {
-          missing.push({
-            orderId,
-            storeAmount,
-            status: 'Missing in Gateway (Not Paid)'
-          });
+          const stAmount = parseFloat(String(stripeMatch[stAmountCol]).replace(/[^0-9.-]+/g,"")) || 0;
+          // Stripe amount is often slightly different due to fees, let's flag > 5% difference
+          const diff = Math.abs(sAmount - stAmount);
+          if (diff > (sAmount * 0.05)) {
+            amountMismatches.push({ orderId, sAmount, stAmount, diff });
+            totalRecoverable += diff;
+          } else {
+            matchedCount++;
+          }
         }
       });
 
       setResults({
-        totalAnalyzed: storeData.length,
-        matched,
-        mismatched,
-        missing
+        totalRecoverable,
+        matchedCount,
+        missing: missingInStripe,
+        mismatches: amountMismatches
       });
-
-    } catch (err) {
-      setError("Error parsing CSV files. Please ensure they are valid.");
-      console.error(err);
-    } finally {
       setIsProcessing(false);
-    }
-  };
-
-  const downloadResults = () => {
-    if (!results) return;
-    const combined = [
-      ...results.missing.map(i => ({ "Order ID": i.orderId, "Store Amount": i.storeAmount, "Gateway Amount": "0.00", "Status": i.status })),
-      ...results.mismatched.map(i => ({ "Order ID": i.orderId, "Store Amount": i.storeAmount, "Gateway Amount": i.gatewayAmount, "Status": i.status })),
-    ];
-    
-    if (combined.length === 0) {
-      alert("No missing or mismatched orders to export! Everything is perfect.");
-      return;
-    }
-
-    const csv = Papa.unparse(combined);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `nexus_financial_audit_${new Date().getTime()}.csv`;
-    link.click();
+    }, 1000);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans p-8 relative">
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-emerald-600/10 to-transparent -z-10 pointer-events-none" />
-      <div className="max-w-6xl mx-auto">
-        
+    <div className="min-h-screen bg-black text-white font-sans p-8 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-900/20 to-transparent -z-10 pointer-events-none" />
+      
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-              <FileSpreadsheet className="text-emerald-400" size={24} />
+            <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+              <Layers className="text-blue-400" size={24} />
             </div>
             <div>
               <h1 className="text-2xl font-bold">Nexus EcomMatch</h1>
-              <p className="text-gray-400 text-sm">Real-Time Financial Reconciliation</p>
+              <p className="text-gray-400 text-sm">Shopify vs Stripe Reconciliation</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 text-emerald-400 text-sm bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
-              <Lock size={14} />
-              <span>100% In-Browser (Zero Data Uploads)</span>
-            </div>
-            <button 
-              onClick={goHome} 
-              className="flex items-center gap-2 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 px-4 py-2 rounded-xl transition-all text-sm font-medium border border-white/10 hover:border-red-500/30"
-            >
-              <ArrowLeft size={16} /> Back to Nexus
-            </button>
-          </div>
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all text-sm border border-white/10">
+            <ArrowLeft size={16} /> Dashboard
+          </button>
         </div>
 
-        {/* Upload Section */}
-        {!results && (
-          <div className="max-w-4xl mx-auto">
+        {!results ? (
+          <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold mb-4">Stop Bleeding Money.</h2>
-              <p className="text-gray-400">Match your Store Orders (Shopify/Woo) against your Payment Gateway (Stripe/PayPal) instantly. We find missing payouts and mismatched amounts.</p>
+              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Find Your Missing Money.</h2>
+              <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                Upload your Shopify Orders CSV and your Stripe Payouts CSV. Our algorithm will match every order to its payout and highlight the <strong className="text-blue-400">Missing Revenue</strong> instantly.
+              </p>
             </div>
 
-            {error && <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 text-red-300 rounded-xl text-center">{error}</div>}
-
             <div className="grid md:grid-cols-2 gap-8 mb-8">
-              {/* Store CSV */}
-              <div className="liquid-glass-strong p-8 rounded-3xl border border-white/5 relative group hover:border-emerald-500/50 transition-all">
-                <h3 className="text-xl font-bold mb-2">1. Store Orders CSV</h3>
-                <p className="text-sm text-gray-400 mb-6">Export from Shopify/WooCommerce</p>
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:bg-white/5 transition-all">
-                  {storeFile ? (
-                    <div className="text-center"><CheckCircle className="text-emerald-400 mx-auto mb-2" /><span className="text-sm">{storeFile.name}</span></div>
-                  ) : (
-                    <div className="text-center text-gray-500"><Upload className="mx-auto mb-2" /><span className="text-sm">Click to upload</span></div>
-                  )}
-                  <input type="file" className="hidden" accept=".csv" onChange={(e) => setStoreFile(e.target.files[0])} />
-                </label>
+              {/* Shopify Upload */}
+              <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8 hover:border-blue-500/30 transition-colors">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="bg-[#95BF47]/20 p-2 rounded-lg text-[#95BF47]">
+                    <FileSpreadsheet size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg">Shopify Export</h3>
+                </div>
+                {!shopifyFile ? (
+                  <div onClick={() => shopifyInputRef.current.click()} className="border-2 border-dashed border-[#95BF47]/30 rounded-2xl p-8 text-center cursor-pointer hover:bg-[#95BF47]/5 transition-all">
+                    <Upload className="text-[#95BF47]/50 mx-auto mb-2" size={32} />
+                    <p className="font-bold text-sm">Upload Shopify CSV</p>
+                    <input type="file" accept=".csv" className="hidden" ref={shopifyInputRef} onChange={handleShopifyUpload} />
+                  </div>
+                ) : (
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                      <p className="font-bold text-sm">{shopifyFile.name}</p>
+                      <p className="text-xs text-gray-400">{shopifyData.length} Orders</p>
+                    </div>
+                    <button onClick={() => setShopifyFile(null)} className="text-gray-500 hover:text-red-400"><Trash2 size={16}/></button>
+                  </div>
+                )}
               </div>
 
-              {/* Gateway CSV */}
-              <div className="liquid-glass-strong p-8 rounded-3xl border border-white/5 relative group hover:border-emerald-500/50 transition-all">
-                <h3 className="text-xl font-bold mb-2">2. Payment Gateway CSV</h3>
-                <p className="text-sm text-gray-400 mb-6">Export from Stripe/PayPal</p>
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:bg-white/5 transition-all">
-                  {gatewayFile ? (
-                    <div className="text-center"><CheckCircle className="text-emerald-400 mx-auto mb-2" /><span className="text-sm">{gatewayFile.name}</span></div>
-                  ) : (
-                    <div className="text-center text-gray-500"><Upload className="mx-auto mb-2" /><span className="text-sm">Click to upload</span></div>
-                  )}
-                  <input type="file" className="hidden" accept=".csv" onChange={(e) => setGatewayFile(e.target.files[0])} />
-                </label>
+              {/* Stripe Upload */}
+              <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8 hover:border-blue-500/30 transition-colors">
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="bg-[#635BFF]/20 p-2 rounded-lg text-[#635BFF]">
+                    <FileSpreadsheet size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg">Stripe Export</h3>
+                </div>
+                {!stripeFile ? (
+                  <div onClick={() => stripeInputRef.current.click()} className="border-2 border-dashed border-[#635BFF]/30 rounded-2xl p-8 text-center cursor-pointer hover:bg-[#635BFF]/5 transition-all">
+                    <Upload className="text-[#635BFF]/50 mx-auto mb-2" size={32} />
+                    <p className="font-bold text-sm">Upload Stripe CSV</p>
+                    <input type="file" accept=".csv" className="hidden" ref={stripeInputRef} onChange={handleStripeUpload} />
+                  </div>
+                ) : (
+                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center">
+                    <div>
+                      <p className="font-bold text-sm">{stripeFile.name}</p>
+                      <p className="text-xs text-gray-400">{stripeData.length} Transactions</p>
+                    </div>
+                    <button onClick={() => setStripeFile(null)} className="text-gray-500 hover:text-red-400"><Trash2 size={16}/></button>
+                  </div>
+                )}
               </div>
             </div>
 
             <button 
               onClick={processReconciliation}
-              disabled={isProcessing}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xl py-5 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50 flex justify-center items-center gap-3"
+              disabled={!shopifyFile || !stripeFile || isProcessing}
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-bold py-4 px-8 rounded-xl shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100 flex justify-center items-center gap-2 text-lg"
             >
-              {isProcessing ? 'Analyzing Data Locally...' : <><ArrowRightLeft /> Run Financial Audit</>}
+              {isProcessing ? 'Reconciling Data...' : 'Run EcomMatch Engine'}
             </button>
           </div>
-        )}
-
-        {/* Results Dashboard */}
-        {results && (
-          <div className="animate-fade-in">
-            <div className="flex justify-between items-end mb-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Audit Complete</h2>
-                <p className="text-gray-400">Analyzed {results.totalAnalyzed} store orders.</p>
-              </div>
-              <button onClick={() => setResults(null)} className="text-sm text-emerald-400 hover:underline">Start New Audit</button>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="liquid-glass-strong p-6 rounded-2xl border-l-4 border-emerald-500">
-                <div className="flex items-center gap-3 mb-2 text-emerald-400"><CheckCircle size={20}/> Perfect Matches</div>
-                <div className="text-3xl font-bold">{results.matched.length}</div>
+        ) : (
+          <div className="animate-fade-in space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="liquid-glass-strong border border-blue-500/30 rounded-3xl p-8 col-span-2 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 blur-[50px] rounded-full"></div>
+                <p className="text-blue-200 text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><DollarSign size={16}/> Total Recoverable Revenue</p>
+                <p className="text-5xl font-black text-blue-500 mb-2">${results.totalRecoverable.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}</p>
+                <p className="text-xs text-blue-200/70">Missing payouts and fee discrepancies found.</p>
               </div>
               
-              <div className="liquid-glass-strong p-6 rounded-2xl border-l-4 border-yellow-500">
-                <div className="flex items-center gap-3 mb-2 text-yellow-400"><AlertTriangle size={20}/> Amount Mismatches</div>
-                <div className="text-3xl font-bold">{results.mismatched.length}</div>
-              </div>
-
-              <div className="liquid-glass-strong p-6 rounded-2xl border-l-4 border-red-500">
-                <div className="flex items-center gap-3 mb-2 text-red-400"><XCircle size={20}/> Missing Payouts</div>
-                <div className="text-3xl font-bold">{results.missing.length}</div>
+              <div className="liquid-glass-strong border border-emerald-500/30 rounded-3xl p-8 flex flex-col justify-center">
+                <p className="text-emerald-200 text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2"><CheckCircle size={16}/> Perfectly Matched</p>
+                <p className="text-4xl font-black text-emerald-500 mb-2">{results.matchedCount}</p>
+                <p className="text-xs text-emerald-200/70">Orders successfully deposited to Stripe.</p>
               </div>
             </div>
 
-            <div className="liquid-glass-strong rounded-3xl overflow-hidden border border-white/5 mb-8">
-              <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
-                <h3 className="font-bold text-lg">Discrepancy Report</h3>
-                <button onClick={downloadResults} className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors">
-                  <Download size={16} /> Export Discrepancies (CSV)
-                </button>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Missing Payouts */}
+              <div className="liquid-glass-strong border border-white/10 rounded-3xl overflow-hidden">
+                <div className="bg-red-500/10 border-b border-red-500/20 p-5 flex items-center gap-3">
+                  <AlertTriangle className="text-red-500" />
+                  <div>
+                    <h3 className="font-bold text-red-100">Missing Payouts</h3>
+                    <p className="text-xs text-red-200/70">Orders in Shopify not found in Stripe.</p>
+                  </div>
+                </div>
+                <div className="p-0 max-h-[300px] overflow-y-auto custom-scrollbar">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-black/50 text-gray-400 text-xs uppercase">
+                      <tr><th className="p-4">Order ID</th><th className="p-4">Amount</th></tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {results.missing.length > 0 ? results.missing.map((m, i) => (
+                        <tr key={i} className="hover:bg-white/5"><td className="p-4 text-gray-300 font-mono">{m.orderId}</td><td className="p-4 text-red-400 font-bold">${m.amount.toFixed(2)}</td></tr>
+                      )) : <tr><td colSpan="2" className="p-8 text-center text-gray-500">No missing payouts!</td></tr>}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead className="bg-black/30 text-xs uppercase text-gray-400">
-                    <tr>
-                      <th className="p-4">Order ID</th>
-                      <th className="p-4">Store Amount</th>
-                      <th className="p-4">Gateway Amount</th>
-                      <th className="p-4">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5 text-sm">
-                    {results.missing.map((item, i) => (
-                      <tr key={`miss-${i}`} className="bg-red-500/5">
-                        <td className="p-4 font-mono">{item.orderId}</td>
-                        <td className="p-4">${item.storeAmount}</td>
-                        <td className="p-4 text-gray-500">-</td>
-                        <td className="p-4 text-red-400">{item.status}</td>
-                      </tr>
-                    ))}
-                    {results.mismatched.map((item, i) => (
-                      <tr key={`mism-${i}`} className="bg-yellow-500/5">
-                        <td className="p-4 font-mono">{item.orderId}</td>
-                        <td className="p-4">${item.storeAmount}</td>
-                        <td className="p-4">${item.gatewayAmount}</td>
-                        <td className="p-4 text-yellow-400">{item.status}</td>
-                      </tr>
-                    ))}
-                    {results.missing.length === 0 && results.mismatched.length === 0 && (
-                      <tr>
-                        <td colSpan="4" className="p-8 text-center text-emerald-400">100% Match! No discrepancies found.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+
+              {/* Amount Mismatches */}
+              <div className="liquid-glass-strong border border-white/10 rounded-3xl overflow-hidden">
+                <div className="bg-orange-500/10 border-b border-orange-500/20 p-5 flex items-center gap-3">
+                  <AlertTriangle className="text-orange-500" />
+                  <div>
+                    <h3 className="font-bold text-orange-100">Fee Discrepancies (>5%)</h3>
+                    <p className="text-xs text-orange-200/70">Payout amount is unusually lower than order amount.</p>
+                  </div>
+                </div>
+                <div className="p-0 max-h-[300px] overflow-y-auto custom-scrollbar">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-black/50 text-gray-400 text-xs uppercase">
+                      <tr><th className="p-4">Order ID</th><th className="p-4">Difference</th></tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {results.mismatches.length > 0 ? results.mismatches.map((m, i) => (
+                        <tr key={i} className="hover:bg-white/5"><td className="p-4 text-gray-300 font-mono">{m.orderId}</td><td className="p-4 text-orange-400 font-bold">-${m.diff.toFixed(2)}</td></tr>
+                      )) : <tr><td colSpan="2" className="p-8 text-center text-gray-500">No extreme discrepancies!</td></tr>}
+                    </tbody>
+                  </table>
+                </div>
               </div>
+            </div>
+            
+            <div className="flex justify-center pt-4 pb-8">
+              <button onClick={() => { setResults(null); }} className="text-gray-400 hover:text-white transition-colors">Start New Audit</button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

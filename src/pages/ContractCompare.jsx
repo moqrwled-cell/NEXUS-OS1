@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Lock, ArrowRightLeft, Shield, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle, FileWarning } from 'lucide-react';
+import { FileText, Lock, ArrowRightLeft, Shield, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle, FileWarning, Upload } from 'lucide-react';
 
 const DANGEROUS_PATTERNS = [
   { term: "automatic renewal", category: "Financial", penalty: 15, advice: "Forces you into another billing cycle. Negotiate manual renewal." },
@@ -79,6 +79,16 @@ export default function ContractCompare() {
     }, 600);
   };
 
+  const handleFileUpload = (e, setter) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setter(event.target.result);
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-sans p-8 relative">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent -z-10 pointer-events-none" />
@@ -116,27 +126,39 @@ export default function ContractCompare() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <div className="liquid-glass-strong p-6 rounded-3xl border border-white/5 flex flex-col hover:border-indigo-500/30 transition-colors">
-                <div className="flex items-center gap-2 mb-4">
-                  <FileText className="text-gray-400" size={20} />
-                  <h3 className="font-bold text-lg">Original Contract</h3>
+              <div className="liquid-glass-strong p-6 rounded-3xl border border-white/5 flex flex-col hover:border-indigo-500/30 transition-colors relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <FileText className="text-gray-400" size={20} />
+                    <h3 className="font-bold text-lg">Original Contract</h3>
+                  </div>
+                  <label className="cursor-pointer bg-white/5 hover:bg-white/10 text-gray-300 text-xs py-1.5 px-3 rounded-lg border border-white/10 flex items-center gap-2 transition-colors">
+                    <Upload size={14} /> Upload .txt
+                    <input type="file" accept=".txt,.md" className="hidden" onChange={(e) => handleFileUpload(e, setOriginalText)} />
+                  </label>
                 </div>
                 <textarea 
                   className="w-full flex-1 min-h-[350px] bg-black/40 border border-white/10 rounded-xl p-4 text-gray-300 focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm leading-relaxed"
-                  placeholder="Paste the original document text here..."
+                  placeholder="Paste the original document text here, or upload a .txt file..."
                   value={originalText}
                   onChange={(e) => setOriginalText(e.target.value)}
                 />
               </div>
 
-              <div className="liquid-glass-strong p-6 rounded-3xl border border-white/5 flex flex-col hover:border-indigo-500/30 transition-colors">
-                <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="text-indigo-400" size={20} />
-                  <h3 className="font-bold text-lg">Revised Contract (To be signed)</h3>
+              <div className="liquid-glass-strong p-6 rounded-3xl border border-white/5 flex flex-col hover:border-indigo-500/30 transition-colors relative">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="text-indigo-400" size={20} />
+                    <h3 className="font-bold text-lg">Revised Contract (To be signed)</h3>
+                  </div>
+                  <label className="cursor-pointer bg-white/5 hover:bg-white/10 text-gray-300 text-xs py-1.5 px-3 rounded-lg border border-white/10 flex items-center gap-2 transition-colors">
+                    <Upload size={14} /> Upload .txt
+                    <input type="file" accept=".txt,.md" className="hidden" onChange={(e) => handleFileUpload(e, setRevisedText)} />
+                  </label>
                 </div>
                 <textarea 
                   className="w-full flex-1 min-h-[350px] bg-black/40 border border-white/10 rounded-xl p-4 text-gray-300 focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm leading-relaxed"
-                  placeholder="Paste the modified document text here to Audit..."
+                  placeholder="Paste the modified document text here to Audit, or upload a .txt file..."
                   value={revisedText}
                   onChange={(e) => setRevisedText(e.target.value)}
                 />

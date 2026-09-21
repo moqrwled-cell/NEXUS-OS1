@@ -127,8 +127,9 @@ export default function LeadScrub() {
   const downloadCleanCSV = () => {
     if (!results || !results.cleanData.length) return;
     
+    // Add BOM (\uFEFF) so Excel opens UTF-8 properly and splits columns
     const csv = Papa.unparse(results.cleanData);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
