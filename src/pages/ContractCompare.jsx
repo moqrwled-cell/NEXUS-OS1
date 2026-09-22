@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Lock, ArrowRightLeft, Shield, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle, FileWarning, Upload } from 'lucide-react';
+import mammoth from 'mammoth';
+import * as pdfjsLib from 'pdfjs-dist';
 
+// Configure the PDF.js worker using a public CDN
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 const DANGEROUS_PATTERNS = [
   { term: "automatic renewal", category: "Financial", penalty: 15, advice: "Forces you into another billing cycle. Negotiate manual renewal." },
   { term: "auto-renew", category: "Financial", penalty: 15, advice: "Forces you into another billing cycle. Negotiate manual renewal." },
@@ -79,14 +83,37 @@ export default function ContractCompare() {
     }, 600);
   };
 
-  const handleFileUpload = (e, setter) => {
+  const handleFileUpload = async (e, setter) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setter(event.target.result);
-    };
-    reader.readAsText(file);
+
+    setIsProcessing(true);
+    try {
+      if (file.name.endsWith('.docx')) {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        setter(result.value);
+      } else if (file.name.endsWith('.pdf')) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(' ');
+          fullText += pageText + '\n';
+        }
+        setter(fullText);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (event) => setter(event.target.result);
+        reader.readAsText(file);
+      }
+    } catch (error) {
+      console.error("Error parsing file:", error);
+      alert("Failed to parse the file. Ensure it is a valid .txt, .docx, or .pdf file.");
+    }
+    setIsProcessing(false);
   };
 
   return (
@@ -133,13 +160,13 @@ export default function ContractCompare() {
                     <h3 className="font-bold text-lg">Original Contract</h3>
                   </div>
                   <label className="cursor-pointer bg-white/5 hover:bg-white/10 text-gray-300 text-xs py-1.5 px-3 rounded-lg border border-white/10 flex items-center gap-2 transition-colors">
-                    <Upload size={14} /> Upload .txt
-                    <input type="file" accept=".txt,.md" className="hidden" onChange={(e) => handleFileUpload(e, setOriginalText)} />
+                    <Upload size={14} /> Upload File
+                    <input type="file" accept=".txt,.md,.docx,.pdf" className="hidden" onChange={(e) => handleFileUpload(e, setOriginalText)} />
                   </label>
                 </div>
                 <textarea 
                   className="w-full flex-1 min-h-[350px] bg-black/40 border border-white/10 rounded-xl p-4 text-gray-300 focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm leading-relaxed"
-                  placeholder="Paste the original document text here, or upload a .txt file..."
+                  placeholder="Paste the original document text here, or upload a .txt, .docx, or .pdf file..."
                   value={originalText}
                   onChange={(e) => setOriginalText(e.target.value)}
                 />
@@ -152,13 +179,13 @@ export default function ContractCompare() {
                     <h3 className="font-bold text-lg">Revised Contract (To be signed)</h3>
                   </div>
                   <label className="cursor-pointer bg-white/5 hover:bg-white/10 text-gray-300 text-xs py-1.5 px-3 rounded-lg border border-white/10 flex items-center gap-2 transition-colors">
-                    <Upload size={14} /> Upload .txt
-                    <input type="file" accept=".txt,.md" className="hidden" onChange={(e) => handleFileUpload(e, setRevisedText)} />
+                    <Upload size={14} /> Upload File
+                    <input type="file" accept=".txt,.md,.docx,.pdf" className="hidden" onChange={(e) => handleFileUpload(e, setRevisedText)} />
                   </label>
                 </div>
                 <textarea 
                   className="w-full flex-1 min-h-[350px] bg-black/40 border border-white/10 rounded-xl p-4 text-gray-300 focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm leading-relaxed"
-                  placeholder="Paste the modified document text here to Audit, or upload a .txt file..."
+                  placeholder="Paste the modified document text here to Audit, or upload a .txt, .docx, or .pdf file..."
                   value={revisedText}
                   onChange={(e) => setRevisedText(e.target.value)}
                 />
