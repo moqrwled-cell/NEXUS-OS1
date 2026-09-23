@@ -39,8 +39,8 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Call the secure Netlify serverless function to validate the key via Whop API
-      const response = await fetch('/.netlify/functions/validate-license', {
+      // Call the secure Vercel serverless function to validate the key via Whop API
+      const response = await fetch('/api/validate-license', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
