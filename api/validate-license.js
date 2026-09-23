@@ -22,8 +22,8 @@ export default async function handler(req, res) {
     }
 
     // Call Whop API to validate the license
-    const whopResponse = await fetch(`https://api.whop.com/api/v2/memberships/${licenseKey}/validate`, {
-      method: 'POST',
+    const whopResponse = await fetch(`https://api.whop.com/api/v2/memberships/${licenseKey}`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${whopApiKey}`,
         'Content-Type': 'application/json'
