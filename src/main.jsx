@@ -7,6 +7,7 @@ import LeadScrub from './pages/LeadScrub.jsx'
 import EcomMatch from './pages/EcomMatch.jsx'
 import ContractCompare from './pages/ContractCompare.jsx'
 import AdSpendAudit from './pages/AdSpendAudit.jsx'
+import Hub from './pages/Hub.jsx'
 import ClientDashboard from './pages/ClientDashboard.jsx'
 import ProductLanding from './pages/ProductLanding.jsx'
 import AuthLogin from './pages/AuthLogin.jsx'
@@ -22,6 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/hub" element={<Hub />} />
           <Route path="/app/leadscrub" element={<LeadScrub />} />
           <Route path="/app/ecommatch" element={<EcomMatch />} />
           <Route path="/app/contractcompare" element={<ContractCompare />} />

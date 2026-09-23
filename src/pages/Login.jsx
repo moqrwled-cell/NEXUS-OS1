@@ -30,7 +30,7 @@ export default function Login() {
       if (redirectPath) {
         navigate(`/app/${redirectPath}`);
       } else {
-        navigate("/");
+        navigate("/hub");
       }
       return;
     }
@@ -59,7 +59,7 @@ export default function Login() {
         if (redirectPath) {
           navigate(`/app/${redirectPath}`);
         } else {
-          navigate("/"); // Go to homepage if no specific tool is requested
+          navigate("/hub"); // Go to command center if no specific tool is requested
         }
       } else {
         setError(data.message || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
