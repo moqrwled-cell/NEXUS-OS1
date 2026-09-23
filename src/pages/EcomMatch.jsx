@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, ArrowLeft, Trash2, CheckCircle, AlertTriangle, FileSpreadsheet, Layers, DollarSign } from 'lucide-react';
 import Papa from 'papaparse';
 
+import { verifyToolAccess } from '../utils/auth';
+
 export default function EcomMatch() {
   const navigate = useNavigate();
   const shopifyInputRef = useRef(null);
@@ -18,8 +20,7 @@ export default function EcomMatch() {
   const [results, setResults] = useState(null);
 
   useEffect(() => {
-    const license = localStorage.getItem('nexus_license');
-    if (!license) navigate('/login');
+    if (!verifyToolAccess('ecommatch')) navigate('/login');
   }, [navigate]);
 
   const handleShopifyUpload = (e) => {

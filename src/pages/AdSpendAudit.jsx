@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, DollarSign, ArrowLeft, Trash2, TrendingDown, Target, FileSpreadsheet, Activity, AlertOctagon, TrendingUp } from 'lucide-react';
 import Papa from 'papaparse';
 
+import { verifyToolAccess } from '../utils/auth';
+
 export default function AdSpendAudit() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -23,8 +25,7 @@ export default function AdSpendAudit() {
   const [results, setResults] = useState(null);
 
   useEffect(() => {
-    const license = localStorage.getItem('nexus_license');
-    if (!license) navigate('/login');
+    if (!verifyToolAccess('adspendaudit')) navigate('/login');
   }, [navigate]);
 
   const handleFileUpload = (e) => {

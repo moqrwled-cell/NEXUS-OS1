@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FileText, Lock, ArrowRightLeft, Shield, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle, FileWarning, Upload } from 'lucide-react';
 import mammoth from 'mammoth';
 import * as pdfjsLib from 'pdfjs-dist';
+import { verifyToolAccess } from '../utils/auth';
 
 // Configure the PDF.js worker using a public CDN
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -30,8 +31,7 @@ export default function ContractCompare() {
   const [compareMode] = useState('words'); 
 
   useEffect(() => {
-    const license = localStorage.getItem('nexus_license');
-    if (!license) navigate('/login');
+    if (!verifyToolAccess('contractcompare')) navigate('/login');
   }, [navigate]);
 
   const processComparison = () => {

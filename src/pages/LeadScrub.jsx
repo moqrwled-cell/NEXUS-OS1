@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, Download, Shield, ShieldAlert, ArrowLeft, Trash2, CheckCircle2, Lock, Filter, FileSpreadsheet, Users } from 'lucide-react';
 import Papa from 'papaparse';
 
+import { verifyToolAccess } from '../utils/auth';
+
 const ROLE_BASED_PREFIXES = ['info', 'sales', 'support', 'admin', 'contact', 'hello', 'marketing', 'press', 'help', 'billing', 'jobs', 'careers'];
 const FREE_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'protonmail.com', 'mail.com', 'zoho.com', 'yandex.com'];
 
@@ -26,8 +28,7 @@ export default function LeadScrub() {
   });
 
   useEffect(() => {
-    const license = localStorage.getItem('nexus_license');
-    if (!license) navigate('/login');
+    if (!verifyToolAccess('leadscrub')) navigate('/login');
   }, [navigate]);
 
   const handleFileUpload = (e) => {

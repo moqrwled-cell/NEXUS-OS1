@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Key, ShieldCheck, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { grantToolAccess } from '../utils/auth';
 
 export default function Login() {
   const [licenseKey, setLicenseKey] = useState("");
@@ -50,13 +51,12 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok && data.valid) {
-        localStorage.setItem("nexus_license", licenseKey);
-        
         // Dynamic Redirect based on URL query params from Whop
         const urlParams = new URLSearchParams(window.location.search);
         const redirectPath = urlParams.get('redirect');
         
         if (redirectPath) {
+          grantToolAccess(licenseKey, redirectPath);
           navigate(`/app/${redirectPath}`);
         } else {
           // Normal customer logged in without a tool link. Redirect to home.
