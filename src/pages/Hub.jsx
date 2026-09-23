@@ -10,7 +10,9 @@ export default function Hub() {
 
   useEffect(() => {
     const license = localStorage.getItem('nexus_license');
-    if (!license) navigate('/login');
+    if (license !== "NEXUS-CEO-2026") {
+      navigate('/login');
+    }
   }, [navigate]);
 
   const handleLogout = () => {

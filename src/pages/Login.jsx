@@ -59,7 +59,8 @@ export default function Login() {
         if (redirectPath) {
           navigate(`/app/${redirectPath}`);
         } else {
-          navigate("/hub"); // Go to command center if no specific tool is requested
+          // Normal customer logged in without a tool link. Redirect to home.
+          navigate("/"); 
         }
       } else {
         setError(data.message || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
