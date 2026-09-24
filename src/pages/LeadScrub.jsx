@@ -172,10 +172,10 @@ export default function LeadScrub() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="flex flex-col gap-8 max-w-6xl mx-auto">
           
           {/* Left Column: Upload & Config */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="grid md:grid-cols-2 gap-8">
             <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <FileSpreadsheet className="text-teal-400" />
@@ -265,7 +265,7 @@ export default function LeadScrub() {
           </div>
 
           {/* Right Column: Results Dashboard */}
-          <div className="lg:col-span-7">
+          <div className="w-full">
             {results ? (
               <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8 h-full animate-fade-in flex flex-col relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 blur-[50px] rounded-full pointer-events-none"></div>

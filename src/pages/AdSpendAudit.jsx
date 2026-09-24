@@ -136,10 +136,10 @@ export default function AdSpendAudit() {
           </button>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="flex flex-col gap-8 max-w-6xl mx-auto">
           
           {/* Left Column: Config */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="grid md:grid-cols-2 gap-8">
             <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8">
               <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <FileSpreadsheet className="text-rose-400" />
@@ -219,7 +219,7 @@ export default function AdSpendAudit() {
           </div>
 
           {/* Right Column: Dashboard */}
-          <div className="lg:col-span-8">
+          <div className="w-full">
             {results ? (
               <div className="space-y-6 animate-fade-in">
                 {/* Financial Summary */}
