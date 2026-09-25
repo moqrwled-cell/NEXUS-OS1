@@ -20,6 +20,7 @@ export default function ProductLanding() {
   
   const product = productsData[productId];
   const [isContactOpen, setIsContactOpen] = React.useState(false);
+  const [activeImage, setActiveImage] = React.useState(1);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -76,7 +77,37 @@ export default function ProductLanding() {
             {t(product.titleKey)}
           </h1>
         </motion.div>
-
+        
+        {/* Product Image Gallery */}
+        <div className="mb-20">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative bg-black/50"
+          >
+            <img 
+              src={`/images/products/${productId}/${activeImage}.jpg`} 
+              alt={`${productId} Screenshot ${activeImage}`}
+              className="w-full h-full object-contain"
+            />
+          </motion.div>
+          <div className="flex justify-center gap-4 mt-6">
+            {[1, 2, 3].map((num) => (
+              <button
+                key={num}
+                onClick={() => setActiveImage(num)}
+                className={`w-24 h-16 rounded-xl overflow-hidden border-2 transition-all ${activeImage === num ? "border-nexus-emerald scale-110 shadow-[0_0_20px_rgba(28,215,129,0.3)]" : "border-white/10 opacity-50 hover:opacity-100"}`}
+              >
+                <img 
+                  src={`/images/products/${productId}/${num}.jpg`} 
+                  alt={`Thumbnail ${num}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
 
 
         {/* Psychological Copywriting Section (PAS Formula) */}
