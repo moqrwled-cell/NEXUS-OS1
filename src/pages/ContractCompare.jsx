@@ -228,7 +228,7 @@ export default function ContractCompare() {
               </div>
 
               {auditResults.risks.length > 0 ? (
-                <div className="grid gap-4 mt-6">
+                <div className="grid xl:grid-cols-2 gap-4 mt-6">
                   {auditResults.risks.map((risk, idx) => (
                     <div key={idx} className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 flex gap-4 items-start">
                       <div className="bg-red-500/20 p-2 rounded-lg text-red-400 shrink-0">
