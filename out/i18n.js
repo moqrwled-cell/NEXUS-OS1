@@ -1,0 +1,81 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+const resources = {
+  en: {
+    translation: {
+      "nav_brand": "NexusOS",
+      "nav_btn": "Get Enterprise License",
+      "hero_status": "LIFETIME DEAL - 2026",
+      "hero_title": "Enterprise B2B<br/>Audit & Revenue<br/>Optimization Suite",
+      "hero_desc": "Protect your MRR, maximize your ROI, and scale your operations with Zero-Cost local-first software. No recurring fees.",
+      "btn_deploy": "View Enterprise Suite",
+      "btn_view": "Watch Demo",
+      "section_modules_title": "The Nexus Suite",
+      "section_modules_desc": "Algorithmic engines built to audit your finances, scrub your data, and protect your legal liabilities.",
+      "prod_leadscrub_title": "Nexus LeadScrub",
+      "prod_leadscrub_price": "$49",
+      "modal_leadscrub_pain": "Your sales team is burning time and hurting your domain reputation by emailing invalid, role-based (info@), or free (gmail) accounts.",
+      "modal_leadscrub_agitate": "Every bounced email destroys your outreach deliverability. Traditional list scrubbers charge you monthly APIs based on volume.",
+      "modal_leadscrub_solve": "LeadScrub is a powerful, locally-hosted algorithm. Instantly purge duplicates, drop high-risk emails, and export a VIP list of B2B decision makers. Zero API costs. Zero data leaks.",
+      "prod_ecommatch_title": "Nexus EcomMatch",
+      "prod_ecommatch_price": "$79",
+      "modal_ecommatch_pain": "Are you 100% sure Stripe deposited every single dollar from your Shopify orders? Most businesses suffer from untracked revenue leakage.",
+      "modal_ecommatch_agitate": "Manual reconciliation takes hours. Missing just 2% of payouts due to sync errors or hidden fee discrepancies destroys your net margin.",
+      "modal_ecommatch_solve": "EcomMatch mathematically cross-references your Shopify CSV against your Stripe CSV. Instantly detect missing payouts, high fee anomalies, and recover your lost MRR.",
+      "prod_contractcompare_title": "Nexus Legal-Audit",
+      "prod_contractcompare_price": "$99",
+      "modal_contractcompare_pain": "Signing B2B contracts is dangerous. Sneaky lawyers hide 'automatic renewals' or 'liquidated damages' in huge walls of text.",
+      "modal_contractcompare_agitate": "Missing a single trap can lock you into perpetual liabilities, costing you hundreds of thousands of dollars in litigation.",
+      "modal_contractcompare_solve": "Upload any contract. Our algorithmic Legal-Audit engine runs a Deep Risk Audit to instantly flag hidden traps, calculate a Safety Score, and run a precise diff comparison.",
+      "prod_adspendaudit_title": "Nexus AdSpend-Audit",
+      "prod_adspendaudit_price": "$69",
+      "modal_adspendaudit_pain": "Your marketing agency is hiding 'Zombie Campaigns' that burn thousands of dollars without generating a single conversion.",
+      "modal_adspendaudit_agitate": "Looking at Meta's confusing dashboard hides the truth. If your Cost Per Acquisition (CPA) is higher than your margin, you are bleeding cash daily.",
+      "modal_adspendaudit_solve": "Upload your Ads export. The AdSpend-Audit engine mathematically calculates your exact wasted spend, exposes high-CPA losers, and gives you a strict Kill/Scale list to instantly maximize ROI."
+    }
+  },
+  ar: {
+    translation: {
+      "nav_brand": "NexusOS",
+      "nav_btn": "\u0627\u062D\u0635\u0644 \u0639\u0644\u0649 \u0627\u0644\u062A\u0631\u062E\u064A\u0635",
+      "hero_status": "\u0646\u0633\u062E\u0629 \u0645\u062F\u0649 \u0627\u0644\u062D\u064A\u0627\u0629 - 2026",
+      "hero_title": "\u062D\u0632\u0645\u0629 \u0623\u062F\u0648\u0627\u062A<br/>\u062A\u062F\u0642\u064A\u0642 \u0627\u0644\u0634\u0631\u0643\u0627\u062A<br/>\u0648\u062A\u0639\u0638\u064A\u0645 \u0627\u0644\u0623\u0631\u0628\u0627\u062D",
+      "hero_desc": "\u0627\u062D\u0645\u0650 \u0623\u0631\u0628\u0627\u062D\u0643 \u0627\u0644\u0634\u0647\u0631\u064A\u0629 (MRR)\u060C \u0648\u0627\u0631\u0641\u0639 \u0627\u0644\u0639\u0627\u0626\u062F \u0639\u0644\u0649 \u0627\u0644\u0627\u0633\u062A\u062B\u0645\u0627\u0631 (ROI). \u0628\u0631\u0645\u062C\u064A\u0627\u062A \u062A\u0639\u0645\u0644 \u0645\u062D\u0644\u064A\u0627\u064B \u0628\u062F\u0648\u0646 \u0627\u0634\u062A\u0631\u0627\u0643\u0627\u062A \u0634\u0647\u0631\u064A\u0629.",
+      "btn_deploy": "\u0627\u0633\u062A\u0639\u0631\u0636 \u0627\u0644\u062D\u0632\u0645\u0629",
+      "btn_view": "\u0634\u0627\u0647\u062F \u0627\u0644\u0639\u0631\u0636",
+      "section_modules_title": "\u0623\u062F\u0648\u0627\u062A Nexus",
+      "section_modules_desc": "\u0645\u062D\u0631\u0643\u0627\u062A \u062E\u0648\u0627\u0631\u0632\u0645\u064A\u0629 \u0635\u064F\u0645\u0645\u062A \u0644\u062A\u062F\u0642\u064A\u0642 \u0623\u0645\u0648\u0627\u0644\u0643\u060C \u062A\u0646\u0638\u064A\u0641 \u0628\u064A\u0627\u0646\u0627\u062A\u0643\u060C \u0648\u062D\u0645\u0627\u064A\u062A\u0643 \u0642\u0627\u0646\u0648\u0646\u064A\u0627\u064B.",
+      "prod_leadscrub_title": "Nexus LeadScrub",
+      "prod_leadscrub_price": "$49",
+      "modal_leadscrub_pain": "\u0641\u0631\u064A\u0642 \u0627\u0644\u0645\u0628\u064A\u0639\u0627\u062A \u064A\u0636\u064A\u0639 \u0648\u0642\u062A\u0647 \u0648\u064A\u062F\u0645\u0631 \u0633\u0645\u0639\u0629 \u0646\u0637\u0627\u0642\u0643 \u0628\u0645\u0631\u0627\u0633\u0644\u0629 \u0625\u064A\u0645\u064A\u0644\u0627\u062A \u0648\u0647\u0645\u064A\u0629 \u0623\u0648 \u0645\u062C\u0627\u0646\u064A\u0629 (gmail) \u0623\u0648 \u0639\u0627\u0645\u0629 (info@).",
+      "modal_leadscrub_agitate": "\u0643\u0644 \u0625\u064A\u0645\u064A\u0644 \u064A\u0631\u062A\u062F \u064A\u062F\u0645\u0631 \u0646\u0633\u0628\u0629 \u0648\u0635\u0648\u0644 \u0631\u0633\u0627\u0626\u0644\u0643. \u0648\u0627\u0644\u0623\u062F\u0648\u0627\u062A \u0627\u0644\u062A\u0642\u0644\u064A\u062F\u064A\u0629 \u0644\u062A\u0646\u0638\u064A\u0641 \u0627\u0644\u0642\u0648\u0627\u0626\u0645 \u062A\u062C\u0628\u0631\u0643 \u0639\u0644\u0649 \u062F\u0641\u0639 \u0627\u0634\u062A\u0631\u0627\u0643\u0627\u062A \u0634\u0647\u0631\u064A\u0629 \u0628\u0627\u0647\u0638\u0629.",
+      "modal_leadscrub_solve": "\u0623\u062F\u0627\u0629 LeadScrub \u0647\u064A \u062E\u0648\u0627\u0631\u0632\u0645\u064A\u0629 \u062A\u0639\u0645\u0644 \u0645\u062D\u0644\u064A\u0627\u064B. \u0628\u0636\u063A\u0637\u0629 \u0632\u0631 \u062A\u0645\u0633\u062D \u0627\u0644\u0625\u064A\u0645\u064A\u0644\u0627\u062A \u0627\u0644\u0645\u0643\u0631\u0631\u0629 \u0648\u0627\u0644\u062E\u0637\u064A\u0631\u0629\u060C \u0648\u062A\u0633\u062A\u062E\u0631\u062C \u0644\u0643 \u0642\u0627\u0626\u0645\u0629 B2B \u0644\u0645\u062F\u0631\u0627\u0621 \u062D\u0642\u064A\u0642\u064A\u064A\u0646. \u0635\u0641\u0631 \u062A\u0643\u0627\u0644\u064A\u0641 \u0627\u0634\u062A\u0631\u0627\u0643.",
+      "prod_ecommatch_title": "Nexus EcomMatch",
+      "prod_ecommatch_price": "$79",
+      "modal_ecommatch_pain": "\u0647\u0644 \u0623\u0646\u062A \u0645\u062A\u0623\u0643\u062F 100% \u0623\u0646 Stripe \u0642\u0627\u0645 \u0628\u0625\u064A\u062F\u0627\u0639 \u0643\u0644 \u062F\u0648\u0644\u0627\u0631 \u0645\u0646 \u0645\u0628\u064A\u0639\u0627\u062A \u0645\u062A\u062C\u0631\u0643 \u0641\u064A Shopify\u061F \u0645\u0639\u0638\u0645 \u0627\u0644\u0634\u0631\u0643\u0627\u062A \u062A\u0639\u0627\u0646\u064A \u0645\u0646 '\u062A\u0633\u0631\u0628 \u0627\u0644\u0625\u064A\u0631\u0627\u062F\u0627\u062A'.",
+      "modal_ecommatch_agitate": "\u0627\u0644\u0645\u0637\u0627\u0628\u0642\u0629 \u0627\u0644\u064A\u062F\u0648\u064A\u0629 \u062A\u0623\u062E\u0630 \u0633\u0627\u0639\u0627\u062A. \u0641\u0642\u062F\u0627\u0646 2% \u0641\u0642\u0637 \u0645\u0646 \u0623\u0645\u0648\u0627\u0644\u0643 \u0628\u0633\u0628\u0628 \u0623\u062E\u0637\u0627\u0621 \u0627\u0644\u0645\u0632\u0627\u0645\u0646\u0629 \u0623\u0648 \u0627\u0644\u0631\u0633\u0648\u0645 \u0627\u0644\u0645\u062E\u0641\u064A\u0629 \u064A\u062F\u0645\u0631 \u0647\u0627\u0645\u0634 \u0631\u0628\u062D\u0643 (MRR).",
+      "modal_ecommatch_solve": "\u062A\u0642\u0648\u0645 \u0627\u0644\u0623\u062F\u0627\u0629 \u0628\u0645\u0637\u0627\u0628\u0642\u0629 \u0645\u0644\u0641 \u0645\u0628\u064A\u0639\u0627\u062A Shopify \u0645\u0639 \u0625\u064A\u062F\u0627\u0639\u0627\u062A Stripe \u0631\u064A\u0627\u0636\u064A\u0627\u064B. \u0648\u062A\u0643\u062A\u0634\u0641 \u0641\u0648\u0631\u0627\u064B \u0627\u0644\u062F\u0641\u0639\u0627\u062A \u0627\u0644\u0645\u0641\u0642\u0648\u062F\u0629 \u0648\u0627\u0644\u0631\u0633\u0648\u0645 \u0627\u0644\u0645\u0628\u0627\u0644\u063A \u0641\u064A\u0647\u0627 \u0644\u062A\u0633\u062A\u0631\u062F \u0623\u0645\u0648\u0627\u0644\u0643 \u0627\u0644\u0636\u0627\u0626\u0639\u0629.",
+      "prod_contractcompare_title": "Nexus Legal-Audit",
+      "prod_contractcompare_price": "$99",
+      "modal_contractcompare_pain": "\u062A\u0648\u0642\u064A\u0639 \u0639\u0642\u0648\u062F \u0627\u0644\u0640 B2B \u062E\u0637\u064A\u0631 \u062C\u062F\u0627\u064B. \u0627\u0644\u0645\u062D\u0627\u0645\u0648\u0646 \u064A\u062E\u0628\u0626\u0648\u0646 \u0641\u062E\u0627\u062E\u0627\u064B \u0645\u062B\u0644 '\u0627\u0644\u062A\u062C\u062F\u064A\u062F \u0627\u0644\u062A\u0644\u0642\u0627\u0626\u064A' \u0623\u0648 '\u0627\u0644\u062A\u0639\u0648\u064A\u0636\u0627\u062A \u0627\u0644\u0642\u0627\u0633\u064A\u0629' \u0641\u064A \u062C\u062F\u0631\u0627\u0646 \u0645\u0646 \u0627\u0644\u0646\u0635\u0648\u0635.",
+      "modal_contractcompare_agitate": "\u062A\u0641\u0648\u064A\u062A \u0641\u062E \u0648\u0627\u062D\u062F \u0642\u062F \u064A\u0648\u0631\u0637\u0643 \u0641\u064A \u0627\u0644\u062A\u0632\u0627\u0645\u0627\u062A \u0623\u0628\u062F\u064A\u0629 \u062A\u0643\u0644\u0641 \u0634\u0631\u0643\u062A\u0643 \u0645\u0626\u0627\u062A \u0627\u0644\u0622\u0644\u0627\u0641 \u0645\u0646 \u0627\u0644\u062F\u0648\u0644\u0627\u0631\u0627\u062A \u0641\u064A \u0627\u0644\u0645\u062D\u0627\u0643\u0645.",
+      "modal_contractcompare_solve": "\u0627\u0631\u0641\u0639 \u0623\u064A \u0639\u0642\u062F. \u0645\u062D\u0631\u0643\u0646\u0627 \u0627\u0644\u062E\u0648\u0627\u0631\u0632\u0645\u064A \u0633\u064A\u0642\u0648\u0645 \u0628\u062A\u062F\u0642\u064A\u0642 \u0642\u0627\u0646\u0648\u0646\u064A \u0639\u0645\u064A\u0642 (Audit) \u0644\u0627\u0643\u062A\u0634\u0627\u0641 \u0627\u0644\u0641\u062E\u0627\u062E \u0641\u0648\u0631\u0627\u064B\u060C \u062D\u0633\u0627\u0628 \u0646\u0633\u0628\u0629 \u0627\u0644\u0623\u0645\u0627\u0646\u060C \u0648\u0645\u0642\u0627\u0631\u0646\u0629 \u0627\u0644\u062A\u0639\u062F\u064A\u0644\u0627\u062A \u0628\u062F\u0642\u0629 \u0645\u062A\u0646\u0627\u0647\u064A\u0629.",
+      "prod_adspendaudit_title": "Nexus AdSpend-Audit",
+      "prod_adspendaudit_price": "$69",
+      "modal_adspendaudit_pain": "\u0648\u0643\u0627\u0644\u0629 \u0627\u0644\u062A\u0633\u0648\u064A\u0642 \u062A\u062E\u0641\u064A \u0639\u0646\u0643 \u062D\u0645\u0644\u0627\u062A '\u0627\u0644\u0632\u0648\u0645\u0628\u064A' \u0627\u0644\u062A\u064A \u062A\u062D\u0631\u0642 \u0622\u0644\u0627\u0641 \u0627\u0644\u062F\u0648\u0644\u0627\u0631\u0627\u062A \u062F\u0648\u0646 \u062C\u0644\u0628 \u0623\u064A \u0645\u0628\u064A\u0639\u0629.",
+      "modal_adspendaudit_agitate": "\u0644\u0648\u062D\u0629 \u062A\u062D\u0643\u0645 \u0641\u064A\u0633\u0628\u0648\u0643 \u0645\u0635\u0645\u0645\u0629 \u0644\u062A\u0634\u062A\u064A\u062A\u0643. \u0625\u0630\u0627 \u0643\u0627\u0646\u062A \u062A\u0643\u0644\u0641\u0629 \u0627\u0644\u0627\u0633\u062A\u062D\u0648\u0627\u0630 (CPA) \u0623\u0639\u0644\u0649 \u0645\u0646 \u0647\u0627\u0645\u0634 \u0631\u0628\u062D\u0643\u060C \u0641\u0623\u0646\u062A \u062A\u0646\u0632\u0641 \u0623\u0645\u0648\u0627\u0644\u0627\u064B \u064A\u0648\u0645\u064A\u0627\u064B.",
+      "modal_adspendaudit_solve": "\u0627\u0631\u0641\u0639 \u062A\u0642\u0631\u064A\u0631 \u0627\u0644\u0625\u0639\u0644\u0627\u0646\u0627\u062A. \u0633\u064A\u0642\u0648\u0645 \u0627\u0644\u0645\u062D\u0631\u0643 \u0628\u062D\u0633\u0627\u0628 '\u0627\u0644\u0623\u0645\u0648\u0627\u0644 \u0627\u0644\u0645\u062D\u062A\u0631\u0642\u0629' \u0628\u062F\u0642\u0629\u060C \u0648\u064A\u0641\u0636\u062D \u0627\u0644\u062D\u0645\u0644\u0627\u062A \u0627\u0644\u062E\u0627\u0633\u0631\u0629\u060C \u0648\u064A\u0639\u0637\u064A\u0643 \u0642\u0627\u0626\u0645\u0629 \u0635\u0627\u0631\u0645\u0629 \u0628\u0627\u0644\u062D\u0645\u0644\u0627\u062A \u0627\u0644\u062A\u064A \u064A\u062C\u0628 \u0625\u064A\u0642\u0627\u0641\u0647\u0627 \u0644\u062A\u0639\u0638\u064A\u0645 \u0627\u0644\u0639\u0627\u0626\u062F (ROI)."
+    }
+  }
+};
+const systemLang = typeof navigator !== "undefined" ? navigator.language.split("-")[0] : "en";
+const defaultLang = Object.keys(resources).includes(systemLang) ? systemLang : "en";
+i18n.use(initReactI18next).init({
+  resources,
+  lng: defaultLang,
+  fallbackLng: "en",
+  interpolation: {
+    escapeValue: false
+  }
+});
+export default i18n;

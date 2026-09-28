@@ -4,6 +4,7 @@ import { Upload, Download, Shield, ShieldAlert, ArrowLeft, Trash2, CheckCircle2,
 import Papa from 'papaparse';
 
 import { verifyToolAccess } from '../utils/auth';
+import PirateTrapModal from '../components/PirateTrapModal';
 
 const ROLE_BASED_PREFIXES = ['info', 'sales', 'support', 'admin', 'contact', 'hello', 'marketing', 'press', 'help', 'billing', 'jobs', 'careers'];
 const FREE_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com', 'icloud.com', 'protonmail.com', 'mail.com', 'zoho.com', 'yandex.com'];
@@ -18,6 +19,8 @@ export default function LeadScrub() {
   const [emailColumn, setEmailColumn] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
+  const [showPirateTrap, setShowPirateTrap] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   // Filter Toggles
   const [filters, setFilters] = useState({
@@ -28,8 +31,13 @@ export default function LeadScrub() {
   });
 
   useEffect(() => {
-    if (!verifyToolAccess('leadscrub')) navigate('/login');
-  }, [navigate]);
+    // If they have a valid token or a free pirate token, let them in
+    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('leadscrub')) {
+      setIsUnlocked(true);
+    } else {
+      setShowPirateTrap(true);
+    }
+  }, []);
 
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
@@ -149,10 +157,11 @@ export default function LeadScrub() {
     <div className="min-h-screen bg-black text-white font-sans p-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-teal-900/20 to-transparent -z-10 pointer-events-none" />
       
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
-          <div className="flex items-center gap-4">
+      {isUnlocked && (
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+            <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-teal-500/30 shadow-[0_0_20px_rgba(20,184,166,0.2)]">
               <Shield className="text-teal-400" size={24} />
             </div>
@@ -330,8 +339,16 @@ export default function LeadScrub() {
             )}
           </div>
         </div>
-
-      </div>
+        </div>
+      )}
+      
+      <PirateTrapModal 
+        isOpen={showPirateTrap} 
+        onSuccess={() => {
+          setShowPirateTrap(false);
+          setIsUnlocked(true);
+        }} 
+      />
     </div>
   );
 }
