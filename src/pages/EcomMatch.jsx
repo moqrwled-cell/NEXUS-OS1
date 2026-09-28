@@ -4,6 +4,7 @@ import { Upload, ArrowLeft, Trash2, CheckCircle, AlertTriangle, FileSpreadsheet,
 import Papa from 'papaparse';
 
 import { verifyToolAccess } from '../utils/auth';
+import PirateTrapModal from '../components/PirateTrapModal';
 
 export default function EcomMatch() {
   const navigate = useNavigate();
@@ -18,10 +19,16 @@ export default function EcomMatch() {
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
+  const [showPirateTrap, setShowPirateTrap] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
-    if (!verifyToolAccess('ecommatch')) navigate('/login');
-  }, [navigate]);
+    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('ecommatch')) {
+      setIsUnlocked(true);
+    } else {
+      setShowPirateTrap(true);
+    }
+  }, []);
 
   const handleShopifyUpload = (e) => {
     const file = e.target.files[0];
@@ -103,9 +110,10 @@ export default function EcomMatch() {
     <div className="min-h-screen bg-black text-white font-sans p-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-blue-900/20 to-transparent -z-10 pointer-events-none" />
       
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+      {isUnlocked && (
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
               <Layers className="text-blue-400" size={24} />
@@ -259,7 +267,16 @@ export default function EcomMatch() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
+
+      <PirateTrapModal 
+        isOpen={showPirateTrap} 
+        onSuccess={() => {
+          setShowPirateTrap(false);
+          setIsUnlocked(true);
+        }} 
+      />
     </div>
   );
 }

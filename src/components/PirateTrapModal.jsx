@@ -13,6 +13,13 @@ export default function PirateTrapModal({ isOpen, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) return;
+
+    // Strict Email Validation Regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address (e.g. name@domain.com)');
+      return;
+    }
     
     setStatus('sending');
     

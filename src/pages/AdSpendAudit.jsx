@@ -4,6 +4,7 @@ import { Upload, DollarSign, ArrowLeft, Trash2, TrendingDown, Target, FileSpread
 import Papa from 'papaparse';
 
 import { verifyToolAccess } from '../utils/auth';
+import PirateTrapModal from '../components/PirateTrapModal';
 
 export default function AdSpendAudit() {
   const navigate = useNavigate();
@@ -23,10 +24,16 @@ export default function AdSpendAudit() {
   const [targetCPA, setTargetCPA] = useState(25);
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(null);
+  const [showPirateTrap, setShowPirateTrap] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
-    if (!verifyToolAccess('adspendaudit')) navigate('/login');
-  }, [navigate]);
+    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('adspendaudit')) {
+      setIsUnlocked(true);
+    } else {
+      setShowPirateTrap(true);
+    }
+  }, []);
 
   const handleFileUpload = (e) => {
     const uploadedFile = e.target.files[0];
@@ -119,9 +126,10 @@ export default function AdSpendAudit() {
     <div className="min-h-screen bg-black text-white font-sans p-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-rose-900/20 to-transparent -z-10 pointer-events-none" />
       
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+      {isUnlocked && (
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-rose-500/30 shadow-[0_0_20px_rgba(244,63,94,0.2)]">
               <Activity className="text-rose-400" size={24} />
@@ -316,8 +324,16 @@ export default function AdSpendAudit() {
             )}
           </div>
         </div>
+        </div>
+      )}
 
-      </div>
+      <PirateTrapModal 
+        isOpen={showPirateTrap} 
+        onSuccess={() => {
+          setShowPirateTrap(false);
+          setIsUnlocked(true);
+        }} 
+      />
     </div>
   );
 }

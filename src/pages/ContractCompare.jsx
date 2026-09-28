@@ -4,6 +4,7 @@ import { FileText, Lock, ArrowRightLeft, Shield, RefreshCcw, ArrowLeft, AlertTri
 import mammoth from 'mammoth';
 import * as pdfjsLib from 'pdfjs-dist';
 import { verifyToolAccess } from '../utils/auth';
+import PirateTrapModal from '../components/PirateTrapModal';
 
 // Configure the PDF.js worker using a public CDN
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -29,10 +30,16 @@ export default function ContractCompare() {
   const [auditResults, setAuditResults] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [compareMode] = useState('words'); 
+  const [showPirateTrap, setShowPirateTrap] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
-    if (!verifyToolAccess('contractcompare')) navigate('/login');
-  }, [navigate]);
+    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('contractcompare')) {
+      setIsUnlocked(true);
+    } else {
+      setShowPirateTrap(true);
+    }
+  }, []);
 
   const processComparison = () => {
     if (!originalText.trim() || !revisedText.trim()) return;
@@ -119,10 +126,11 @@ export default function ContractCompare() {
   return (
     <div className="min-h-screen bg-black text-white font-sans p-8 relative">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent -z-10 pointer-events-none" />
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Header */}
-        <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
+      {isUnlocked && (
+        <div className="max-w-7xl mx-auto">
+          
+          {/* Header */}
+          <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
               <Shield className="text-indigo-400" size={24} />
@@ -296,7 +304,16 @@ export default function ContractCompare() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
+
+      <PirateTrapModal 
+        isOpen={showPirateTrap} 
+        onSuccess={() => {
+          setShowPirateTrap(false);
+          setIsUnlocked(true);
+        }} 
+      />
     </div>
   );
 }
