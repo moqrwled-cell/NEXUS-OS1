@@ -41,33 +41,33 @@ export default function Welcome() {
         
         {/* Header */}
         <div className="text-center mb-8 flex flex-col items-center">
-          <div className="w-20 h-20 rounded-2xl liquid-glass flex items-center justify-center mb-6 border border-nexus-emerald/30 shadow-[0_0_30px_rgba(0,255,157,0.4)] animate-pulse">
+          <div className="w-20 h-20 rounded-2xl liquid-glass flex items-center justify-center mb-6 border border-nexus-emerald/30 shadow-[0_0_30px_rgba(0,255,157,0.4)]">
             <CheckCircle2 size={40} className="text-nexus-emerald" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-nexus-emerald to-white">
-            Welcome to the Elite.
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+            License Verified.
           </h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-lg">
-            Payment successful. You've just unlocked an unfair advantage that your competitors don't have. No monthly fees, no data sharing.
+            Your payment was successful. You now have full lifetime access to the Nexus local-first engine.
           </p>
         </div>
 
-        {/* Marketing & Instructions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-          <div className="bg-white/5 border border-white/10 p-5 rounded-xl hover:border-nexus-emerald/50 transition-colors">
-            <div className="text-nexus-emerald font-black text-2xl mb-2">01</div>
+        {/* Instructions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
+          <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
+            <div className="text-nexus-emerald font-mono text-xl mb-2">01</div>
             <h3 className="font-bold text-white mb-1">Activate Device</h3>
-            <p className="text-sm text-gray-400">Lock this lifetime license to your current machine for maximum security.</p>
+            <p className="text-sm text-gray-400">Click the button below to bind your lifetime license to this specific machine.</p>
           </div>
-          <div className="bg-white/5 border border-white/10 p-5 rounded-xl hover:border-nexus-cyan/50 transition-colors">
-            <div className="text-nexus-cyan font-black text-2xl mb-2">02</div>
-            <h3 className="font-bold text-white mb-1">Upload Local Data</h3>
-            <p className="text-sm text-gray-400">Your data never leaves your browser. 100% private, 100% secure.</p>
+          <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
+            <div className="text-nexus-cyan font-mono text-xl mb-2">02</div>
+            <h3 className="font-bold text-white mb-1">Load Your Data</h3>
+            <p className="text-sm text-gray-400">Upload your CSV files directly into the tool. No database or cloud needed.</p>
           </div>
-          <div className="bg-white/5 border border-white/10 p-5 rounded-xl hover:border-blue-400/50 transition-colors">
-            <div className="text-blue-400 font-black text-2xl mb-2">03</div>
-            <h3 className="font-bold text-white mb-1">Crush Competitors</h3>
-            <p className="text-sm text-gray-400">Generate insights, clean lists, and recover lost cash instantly.</p>
+          <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
+            <div className="text-blue-400 font-mono text-xl mb-2">03</div>
+            <h3 className="font-bold text-white mb-1">Process Locally</h3>
+            <p className="text-sm text-gray-400">Everything runs entirely on your device's memory for 100% data privacy.</p>
           </div>
         </div>
         
