@@ -40,20 +40,35 @@ export default function Welcome() {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-nexus-emerald to-transparent"></div>
         
         {/* Header */}
-        <div className="text-center mb-10 flex flex-col items-center">
-          <div className="w-20 h-20 rounded-2xl liquid-glass flex items-center justify-center mb-6 border border-nexus-emerald/30 shadow-[0_0_30px_rgba(0,255,157,0.2)]">
+        <div className="text-center mb-8 flex flex-col items-center">
+          <div className="w-20 h-20 rounded-2xl liquid-glass flex items-center justify-center mb-6 border border-nexus-emerald/30 shadow-[0_0_30px_rgba(0,255,157,0.4)] animate-pulse">
             <CheckCircle2 size={40} className="text-nexus-emerald" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Payment Successful!</h1>
-          <p className="text-gray-400 text-lg">
-            Welcome to Nexus.OS. Your tools are ready to be deployed.
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-nexus-emerald to-white">
+            Welcome to the Elite.
+          </h1>
+          <p className="text-gray-300 text-lg md:text-xl max-w-lg">
+            Payment successful. You've just unlocked an unfair advantage that your competitors don't have. No monthly fees, no data sharing.
           </p>
         </div>
 
-        {/* Video Placeholder */}
-        <div className="w-full aspect-video bg-black/50 border border-white/10 rounded-xl mb-10 flex flex-col items-center justify-center group cursor-pointer hover:border-nexus-cyan/50 transition-all">
-          <PlayCircle size={60} className="text-gray-500 group-hover:text-nexus-cyan transition-colors mb-4" />
-          <p className="text-gray-400 font-medium">Watch 2-Min Setup Guide</p>
+        {/* Marketing & Instructions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          <div className="bg-white/5 border border-white/10 p-5 rounded-xl hover:border-nexus-emerald/50 transition-colors">
+            <div className="text-nexus-emerald font-black text-2xl mb-2">01</div>
+            <h3 className="font-bold text-white mb-1">Activate Device</h3>
+            <p className="text-sm text-gray-400">Lock this lifetime license to your current machine for maximum security.</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 p-5 rounded-xl hover:border-nexus-cyan/50 transition-colors">
+            <div className="text-nexus-cyan font-black text-2xl mb-2">02</div>
+            <h3 className="font-bold text-white mb-1">Upload Local Data</h3>
+            <p className="text-sm text-gray-400">Your data never leaves your browser. 100% private, 100% secure.</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 p-5 rounded-xl hover:border-blue-400/50 transition-colors">
+            <div className="text-blue-400 font-black text-2xl mb-2">03</div>
+            <h3 className="font-bold text-white mb-1">Crush Competitors</h3>
+            <p className="text-sm text-gray-400">Generate insights, clean lists, and recover lost cash instantly.</p>
+          </div>
         </div>
         
         {/* Activation Section */}
