@@ -136,8 +136,21 @@ export default function LeadScrub() {
   const downloadCleanCSV = () => {
     if (!results || !results.cleanData.length) return;
     
+    // Format phone numbers so Excel doesn't convert them to math/scientific notation
+    const formattedData = results.cleanData.map(row => {
+      const newRow = { ...row };
+      Object.keys(newRow).forEach(key => {
+        const val = String(newRow[key] || '');
+        // If it looks like a phone number (+123, 0123) or a long number, force Excel to read it as text
+        if (key.toLowerCase().includes('phone') || /^[+0]\d{5,15}$/.test(val)) {
+          newRow[key] = `="${val}"`;
+        }
+      });
+      return newRow;
+    });
+
     // Convert to CSV
-    const csv = Papa.unparse(results.cleanData);
+    const csv = Papa.unparse(formattedData);
     
     // Add "sep=," to force Excel to recognize the comma delimiter across all regions
     // Add BOM (\uFEFF) so Excel opens UTF-8 properly
