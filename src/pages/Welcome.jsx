@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, ShieldCheck, Loader2, ArrowRight, Monitor, PlayCircle } from 'lucide-react';
+import { grantToolAccess } from '../utils/auth';
 
 export default function Welcome() {
   const [searchParams] = useSearchParams();
@@ -16,8 +17,8 @@ export default function Welcome() {
     
     // Simulate fingerprint generation and locking process
     setTimeout(() => {
-      // Store the activation securely in localStorage
-      localStorage.setItem('nexus_license', orderId);
+      // Store the activation securely in localStorage using the auth utility
+      grantToolAccess(orderId, redirectTool);
       localStorage.setItem('nexus_device_fingerprint', btoa(navigator.userAgent + Date.now()));
       
       setActivated(true);
