@@ -102,8 +102,8 @@ export default function Welcome() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 text-left">
           <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
             <div className="text-nexus-emerald font-mono text-xl mb-2">01</div>
-            <h3 className="font-bold text-white mb-1">Activate Device</h3>
-            <p className="text-sm text-gray-400">Click the button below to bind your lifetime license to this specific machine.</p>
+            <h3 className="font-bold text-white mb-1">Save & Activate</h3>
+            <p className="text-sm text-gray-400">Click below to bind your license. <strong>Important:</strong> Bookmark this tool (Ctrl+D) or Install it as an App from your browser menu so you never lose access.</p>
           </div>
           <div className="bg-white/5 border border-white/10 p-5 rounded-xl">
             <div className="text-nexus-cyan font-mono text-xl mb-2">02</div>
