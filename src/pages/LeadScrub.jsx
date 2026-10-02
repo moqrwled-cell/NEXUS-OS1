@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Download, Shield, ShieldAlert, ArrowLeft, Trash2, CheckCircle2, Lock, Filter, FileSpreadsheet, Users, Table, Mail, Phone, Globe, Star, HardDriveDownload } from 'lucide-react';
+import { Upload, Download, Shield, ShieldAlert, ArrowLeft, Trash2, CheckCircle2, Lock, Filter, FileSpreadsheet, Users, Table, Mail, Phone, Globe, Star, HardDriveDownload, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Papa from 'papaparse';
 
 import { verifyToolAccess } from '../utils/auth';
@@ -25,24 +25,27 @@ export default function LeadScrub() {
   const [activeTab, setActiveTab] = useState('audit'); // 'audit' or 'data'
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
+  // Pagination & Search States
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 100;
+
   // Filter Toggles
   const [filters, setFilters] = useState({
     removeDuplicates: true,
     removeInvalid: true,
     removeRoleBased: true,
     removeFreeDomains: true,
-    enrichData: true // NEW: Prep Names, Extract Domains, Lead Scoring
+    enrichData: true
   });
 
   useEffect(() => {
-    // If they have a valid token or a free pirate token, let them in
     if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('leadscrub')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);
     }
 
-    // PWA Install Prompt Listener
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -56,6 +59,8 @@ export default function LeadScrub() {
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
       }
+    } else {
+       alert("التطبيق مثبت بالفعل أو أن متصفحك لا يدعم هذه الميزة مؤقتاً.");
     }
   };
 
@@ -73,12 +78,11 @@ export default function LeadScrub() {
           const cols = Object.keys(results.data[0]);
           setColumns(cols);
           
-          // Auto-detect email column
           const detectedEmailCol = cols.find(c => c.toLowerCase().includes('email') || c.toLowerCase().includes('e-mail'));
           if (detectedEmailCol) {
             setEmailColumn(detectedEmailCol);
           } else {
-            setEmailColumn(cols[0]); // Default to first col
+            setEmailColumn(cols[0]); 
           }
           setResults(null);
         }
@@ -108,8 +112,6 @@ export default function LeadScrub() {
       const cleanData = [];
       const seenEmails = new Set();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      // Find possible name column for enrichment
       const nameCol = columns.find(c => c.toLowerCase() === 'name' || c.toLowerCase() === 'full name' || c.toLowerCase() === 'fullname');
 
       data.forEach(row => {
@@ -124,14 +126,12 @@ export default function LeadScrub() {
           [prefix, domain] = email.split('@');
         }
 
-        // 1. Invalid Format
         if (filters.removeInvalid && (!email || !emailRegex.test(email))) {
           stats.invalidFormat++;
           isScrubbed = true;
         }
 
         if (!isScrubbed) {
-          // 2. Duplicates
           if (filters.removeDuplicates && seenEmails.has(email)) {
             stats.duplicates++;
             isScrubbed = true;
@@ -141,13 +141,10 @@ export default function LeadScrub() {
         }
 
         if (!isScrubbed) {
-          // 3. Role-Based
           if (filters.removeRoleBased && ROLE_BASED_PREFIXES.includes(prefix)) {
             stats.roleBased++;
             isScrubbed = true;
           }
-          
-          // 4. Free Domains
           else if (filters.removeFreeDomains && FREE_DOMAINS.includes(domain)) {
             stats.freeDomain++;
             isScrubbed = true;
@@ -158,11 +155,9 @@ export default function LeadScrub() {
           stats.valid++;
           let processedRow = { ...row };
 
-          // ENRICHMENT ENGINE (LeadScrub 2.0)
           if (filters.enrichData) {
-            let score = 1; // Base score for being valid
+            let score = 1; 
 
-            // Name splitting & capitalization
             let hasValidName = false;
             if (nameCol && row[nameCol]) {
               const nameParts = row[nameCol].trim().split(' ');
@@ -176,24 +171,22 @@ export default function LeadScrub() {
               }
             }
 
-            // Domain & Company extraction
             if (domain) {
               processedRow['Website'] = domain;
               const companyRaw = domain.split('.')[0];
               processedRow['Company Name'] = capitalize(companyRaw);
               
               if (!FREE_DOMAINS.includes(domain)) {
-                score += 2; // B2B Corporate domain gets high score
+                score += 2; 
               }
             }
 
-            // Phone check
             const phoneCol = columns.find(c => c.toLowerCase().includes('phone') || c.toLowerCase().includes('mobile'));
             if (phoneCol && row[phoneCol] && row[phoneCol].trim().length > 5) {
               score += 1;
             }
 
-            processedRow['Lead Score'] = Math.min(score, 5); // Max 5 stars
+            processedRow['Lead Score'] = Math.min(score, 5);
           }
 
           cleanData.push(processedRow);
@@ -202,8 +195,10 @@ export default function LeadScrub() {
 
       setResults({ stats, cleanData });
       setIsProcessing(false);
-      setActiveTab('data'); // Switch to data view automatically to show the magic
-    }, 1500); // Artificial delay for UX
+      setActiveTab('data'); 
+      setCurrentPage(1);
+      setSearchTerm('');
+    }, 1500); 
   };
 
   const downloadCleanCSV = () => {
@@ -237,9 +232,8 @@ export default function LeadScrub() {
     setFilters(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Helper to render interactive table cells
   const renderInteractiveCell = (key, value) => {
-    if (!value) return <span className="text-gray-500">-</span>;
+    if (value === null || value === undefined || value === '') return <span className="text-gray-500">-</span>;
     
     const lowerKey = key.toLowerCase();
     
@@ -281,6 +275,32 @@ export default function LeadScrub() {
     return <span>{value}</span>;
   };
 
+  // Compute Filtered and Paginated Data
+  let filteredData = [];
+  let paginatedData = [];
+  let totalPages = 1;
+
+  if (results && results.cleanData) {
+    if (searchTerm.trim() !== '') {
+      const lowerSearch = searchTerm.toLowerCase();
+      filteredData = results.cleanData.filter(row => {
+        return Object.values(row).some(val => String(val).toLowerCase().includes(lowerSearch));
+      });
+    } else {
+      filteredData = results.cleanData;
+    }
+    
+    totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+    
+    // Ensure currentPage is valid after search filters change total pages
+    const validCurrentPage = Math.min(currentPage, totalPages);
+    if (validCurrentPage !== currentPage) {
+      setCurrentPage(validCurrentPage);
+    }
+    
+    paginatedData = filteredData.slice((validCurrentPage - 1) * itemsPerPage, validCurrentPage * itemsPerPage);
+  }
+
   return (
     <div className="min-h-screen bg-black text-white font-sans p-4 md:p-8 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-teal-900/20 to-transparent -z-10 pointer-events-none" />
@@ -308,15 +328,14 @@ export default function LeadScrub() {
               </div>
               
               {/* Desktop Install Button */}
-              {deferredPrompt && (
-                <button 
-                  onClick={handleInstallApp}
-                  className="flex items-center gap-2 bg-white text-black font-bold text-sm px-4 py-2 rounded-full hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] animate-pulse"
-                >
-                  <HardDriveDownload size={16} />
-                  Install App
-                </button>
-              )}
+              <button 
+                onClick={handleInstallApp}
+                className="flex items-center gap-2 bg-white text-black font-bold text-sm px-4 py-2 rounded-full hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-105"
+                title="تثبيت التطبيق على سطح المكتب"
+              >
+                <HardDriveDownload size={16} />
+                Install Desktop App
+              </button>
             </div>
           </div>
 
@@ -415,7 +434,7 @@ export default function LeadScrub() {
                   <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 blur-[80px] rounded-full pointer-events-none"></div>
                   
                   {/* Dashboard Header / Tabs */}
-                  <div className="flex border-b border-white/10">
+                  <div className="flex border-b border-white/10 shrink-0">
                     <button 
                       onClick={() => setActiveTab('audit')}
                       className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors ${activeTab === 'audit' ? 'text-teal-400 border-b-2 border-teal-400 bg-teal-900/10' : 'text-gray-400 hover:bg-white/5'}`}
@@ -472,16 +491,27 @@ export default function LeadScrub() {
                   {/* Tab Content: DATA VIEW */}
                   {activeTab === 'data' && (
                     <div className="flex-1 overflow-hidden flex flex-col relative z-10">
-                      <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/40">
-                        <p className="text-sm text-gray-400">Showing first 100 enriched records.</p>
-                        <span className="text-xs bg-teal-500/20 text-teal-400 px-3 py-1 rounded-full border border-teal-500/30 font-medium flex items-center gap-2">
-                          <CheckCircle2 size={12}/> Ready for Outreach
-                        </span>
+                      
+                      {/* Search Bar */}
+                      <div className="p-4 border-b border-white/5 bg-black/60 flex flex-col md:flex-row justify-between items-center gap-4 shrink-0">
+                        <div className="relative w-full md:w-96">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                          <input 
+                            type="text"
+                            placeholder="Smart Search (Name, Domain, Email...)"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-teal-500 focus:bg-white/10 transition-all"
+                          />
+                        </div>
+                        <div className="text-sm text-gray-400 whitespace-nowrap">
+                          Found <strong className="text-white">{filteredData.length}</strong> records
+                        </div>
                       </div>
                       
                       <div className="flex-1 overflow-auto p-4 custom-scrollbar">
                         <table className="w-full text-left text-sm whitespace-nowrap">
-                          <thead className="sticky top-0 bg-black/90 backdrop-blur-md z-20">
+                          <thead className="sticky top-0 bg-black/90 backdrop-blur-md z-20 shadow-sm">
                             <tr>
                               {results.cleanData.length > 0 && Object.keys(results.cleanData[0]).map(col => (
                                 <th key={col} className="p-3 font-semibold text-teal-500 border-b border-white/10 uppercase text-xs tracking-wider">
@@ -491,7 +521,7 @@ export default function LeadScrub() {
                             </tr>
                           </thead>
                           <tbody>
-                            {results.cleanData.slice(0, 100).map((row, idx) => (
+                            {paginatedData.length > 0 ? paginatedData.map((row, idx) => (
                               <tr key={idx} className="hover:bg-white/5 border-b border-white/5 transition-colors group">
                                 {Object.entries(row).map(([key, val], colIdx) => (
                                   <td key={colIdx} className="p-3 text-gray-300">
@@ -499,15 +529,46 @@ export default function LeadScrub() {
                                   </td>
                                 ))}
                               </tr>
-                            ))}
+                            )) : (
+                              <tr>
+                                <td colSpan={100} className="p-8 text-center text-gray-500">
+                                  No records found matching "{searchTerm}"
+                                </td>
+                              </tr>
+                            )}
                           </tbody>
                         </table>
                       </div>
+
+                      {/* Pagination Controls */}
+                      {totalPages > 1 && (
+                        <div className="p-4 border-t border-white/5 bg-black/60 flex justify-between items-center shrink-0">
+                          <p className="text-xs text-gray-400">
+                            Page <strong className="text-white">{Math.min(currentPage, totalPages)}</strong> of <strong className="text-white">{totalPages}</strong>
+                          </p>
+                          <div className="flex gap-2">
+                            <button 
+                              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                              disabled={currentPage === 1}
+                              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                              <ChevronLeft size={16} />
+                            </button>
+                            <button 
+                              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                              disabled={currentPage === totalPages}
+                              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                              <ChevronRight size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {/* Export Button (Always visible at bottom) */}
-                  <div className="p-6 border-t border-white/10 bg-black/40">
+                  <div className="p-6 border-t border-white/10 bg-black/40 shrink-0">
                     <button 
                       onClick={downloadCleanCSV}
                       className="w-full bg-white text-black font-bold py-4 px-6 rounded-xl hover:bg-gray-200 transition-all flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
