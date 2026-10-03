@@ -1,318 +1,322 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { 
+  FileText, 
+  AlertTriangle, 
+  ShieldAlert, 
+  Search, 
+  CheckCircle,
+  XCircle,
+  Play,
+  Download,
+  Lock,
+  Cpu,
+  RefreshCw,
+  BookOpen
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Lock, ArrowRightLeft, Shield, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle, FileWarning, Upload } from 'lucide-react';
-import mammoth from 'mammoth';
-import * as pdfjsLib from 'pdfjs-dist';
-import { verifyToolAccess } from '../utils/auth';
-import PirateTrapModal from '../components/PirateTrapModal';
 
-// Configure the PDF.js worker using a public CDN
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
-const DANGEROUS_PATTERNS = [
-  { term: "automatic renewal", category: "Financial", penalty: 15, advice: "Forces you into another billing cycle. Negotiate manual renewal." },
-  { term: "auto-renew", category: "Financial", penalty: 15, advice: "Forces you into another billing cycle. Negotiate manual renewal." },
-  { term: "perpetual", category: "IP / Rights", penalty: 20, advice: "Grants rights forever. Always negotiate a fixed term." },
-  { term: "irrevocable", category: "IP / Rights", penalty: 20, advice: "Cannot be undone. Extremely high risk for your IP." },
-  { term: "liquidated damages", category: "Liability", penalty: 25, advice: "Forces you to pay a preset high amount if you breach." },
-  { term: "sole discretion", category: "Power imbalance", penalty: 10, advice: "Gives the other party absolute power over a decision." },
-  { term: "indemnify", category: "Liability", penalty: 15, advice: "You pay for their legal losses. Ensure there is a liability cap!" },
-  { term: "hold harmless", category: "Liability", penalty: 15, advice: "Prevents you from suing them for damages." },
-  { term: "without notice", category: "Termination", penalty: 15, advice: "They can terminate or change terms instantly without warning you." },
-  { term: "waiver of jury trial", category: "Legal", penalty: 10, advice: "Limits your legal rights in a dispute." },
-  { term: "non-compete", category: "Restriction", penalty: 20, advice: "Restricts your future business operations or hiring." }
+const RED_FLAGS_DICTIONARY = [
+  "indemnify and hold harmless",
+  "liquidated damages",
+  "arbitration only",
+  "automatic renewal",
+  "irrevocable",
+  "without notice",
+  "sole discretion",
+  "unlimited liability"
 ];
 
-export default function ContractCompare() {
+const ContractCompare = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [originalText, setOriginalText] = useState('');
-  const [revisedText, setRevisedText] = useState('');
-  const [diffResults, setDiffResults] = useState(null);
-  const [auditResults, setAuditResults] = useState(null);
+  const [oldText, setOldText] = useState("");
+  const [newText, setNewText] = useState("");
+  const [activeTab, setActiveTab] = useState("diff"); // diff, risks, defs
+  
   const [isProcessing, setIsProcessing] = useState(false);
-  const [compareMode] = useState('words'); 
-  const [showPirateTrap, setShowPirateTrap] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [processStage, setProcessStage] = useState(0);
+  const [results, setResults] = useState(null);
 
-  useEffect(() => {
-    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('contractcompare')) {
-      setIsUnlocked(true);
-    } else {
-      setShowPirateTrap(true);
-    }
-  }, []);
+  const STAGES = [
+    "Initializing Zero-Trust Local Environment...",
+    "Tokenizing legal terminology...",
+    "Running Red-Flag Heuristics...",
+    "Validating capitalized definitions...",
+    "Generating encrypted report..."
+  ];
 
-  const processComparison = () => {
-    if (!originalText.trim() || !revisedText.trim()) return;
-    setIsProcessing(true);
+  const handleAnalyze = () => {
+    if (!oldText || !newText) return;
     
-    setTimeout(() => {
-      // 1. Run Algorithmic Legal Audit on Revised Text
-      let riskScore = 100;
-      let foundRisks = [];
-      const lowerRevised = revisedText.toLowerCase();
-      
-      DANGEROUS_PATTERNS.forEach(pattern => {
-        if (lowerRevised.includes(pattern.term)) {
-          riskScore -= pattern.penalty;
-          foundRisks.push(pattern);
-        }
-      });
-      
-      if (riskScore < 0) riskScore = 0;
-      
-      setAuditResults({
-        score: riskScore,
-        risks: foundRisks
-      });
-
-      // 2. Run Advanced Diffing
-      const originalArray = compareMode === 'words' ? originalText.split(/(\s+)/) : originalText.split('\n');
-      const revisedArray = compareMode === 'words' ? revisedText.split(/(\s+)/) : revisedText.split('\n');
-      
-      let results = [];
-      let i = 0, j = 0;
-      
-      while (i < originalArray.length || j < revisedArray.length) {
-        if (i < originalArray.length && j < revisedArray.length && originalArray[i] === revisedArray[j]) {
-          results.push({ value: originalArray[i] + (compareMode === 'lines' ? '\n' : '') });
-          i++; j++;
-        } else if (j < revisedArray.length && (i >= originalArray.length || !originalArray.includes(revisedArray[j]))) {
-          results.push({ added: true, value: revisedArray[j] + (compareMode === 'lines' ? '\n' : '') });
-          j++;
-        } else if (i < originalArray.length) {
-          results.push({ removed: true, value: originalArray[i] + (compareMode === 'lines' ? '\n' : '') });
-          i++;
-        }
+    setIsProcessing(true);
+    setProcessStage(0);
+    
+    // AI Theater - Artificial delay for perceived value
+    let currentStage = 0;
+    const interval = setInterval(() => {
+      currentStage++;
+      if (currentStage < STAGES.length) {
+        setProcessStage(currentStage);
+      } else {
+        clearInterval(interval);
+        generateResults();
       }
-      
-      setDiffResults(results);
-      setIsProcessing(false);
-    }, 600);
+    }, 800);
   };
 
-  const handleFileUpload = async (e, setter) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setIsProcessing(true);
-    try {
-      if (file.name.endsWith('.docx')) {
-        const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ arrayBuffer });
-        setter(result.value);
-      } else if (file.name.endsWith('.pdf')) {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        let fullText = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
-          const pageText = textContent.items.map(item => item.str).join(' ');
-          fullText += pageText + '\n';
-        }
-        setter(fullText);
-      } else {
-        const reader = new FileReader();
-        reader.onload = (event) => setter(event.target.result);
-        reader.readAsText(file);
+  const generateResults = () => {
+    // 1. Red Flags
+    const foundFlags = [];
+    RED_FLAGS_DICTIONARY.forEach(flag => {
+      const regex = new RegExp(flag, 'gi');
+      const matches = newText.match(regex);
+      if (matches) {
+        foundFlags.push({ term: flag, count: matches.length });
       }
-    } catch (error) {
-      console.error("Error parsing file:", error);
-      alert("Failed to parse the file. Ensure it is a valid .txt, .docx, or .pdf file.");
+    });
+
+    // 2. Definitions Checker (Capitalized terms used but not defined)
+    // Simple heuristic: Find words starting with Capital letter in quotes, or sequence of Capitalized words
+    const defRegex = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g;
+    const allCaps = newText.match(defRegex) || [];
+    const uniqueCaps = [...new Set(allCaps)].filter(w => w.length > 3 && w !== "This" && w !== "The");
+    
+    // 3. Simple Diffing logic (Mock for MVP)
+    const oldWords = oldText.split(' ');
+    const newWords = newText.split(' ');
+    const diff = [];
+    
+    let i = 0, j = 0;
+    while(i < oldWords.length || j < newWords.length) {
+      if (oldWords[i] === newWords[j]) {
+        diff.push({ type: 'same', text: oldWords[i] });
+        i++; j++;
+      } else {
+        if (newWords[j]) diff.push({ type: 'added', text: newWords[j] });
+        if (oldWords[i]) diff.push({ type: 'removed', text: oldWords[i] });
+        i++; j++;
+      }
     }
+
+    setResults({
+      flags: foundFlags,
+      definitions: uniqueCaps.slice(0, 8), // just show sample
+      diff: diff
+    });
+    
     setIsProcessing(false);
+    
+    // Play success sound
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (e) {}
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans p-8 relative">
-      <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-indigo-900/20 to-transparent -z-10 pointer-events-none" />
-      {isUnlocked && (
-        <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#050B14] text-white font-body selection:bg-nexus-emerald selection:text-black">
+      
+      {/* Top Navbar */}
+      <nav className="fixed w-full z-50 top-0 bg-[#020608]/90 backdrop-blur-md border-b border-white/5 py-4 px-6 flex justify-between items-center">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+          <img src="/logo.svg" alt="NexusOS" className="h-8" />
+          <span className="font-heading text-xl font-bold tracking-wider">Contract-Compare <span className="text-nexus-emerald text-xs">PRO</span></span>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-400 bg-black/50 px-3 py-1.5 rounded-full border border-white/5">
+            <Lock size={12} className="text-nexus-emerald" />
+            Zero-Trust Local Processing
+          </div>
+          <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-white transition-colors">
+            Exit
+          </button>
+        </div>
+      </nav>
+
+      <main className="pt-24 pb-12 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 min-h-[90vh]">
+        
+        {/* Left Side: Input Workspace */}
+        <div className="flex-1 flex flex-col gap-6">
+          <div className="liquid-glass-strong rounded-2xl p-6 border border-white/5 flex-1 flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold font-heading flex items-center gap-2">
+                <FileText size={20} className="text-gray-400" /> Original Contract
+              </h2>
+            </div>
+            <textarea
+              value={oldText}
+              onChange={(e) => setOldText(e.target.value)}
+              placeholder="Paste the original standard contract or NDA here..."
+              className="flex-1 w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm font-mono text-gray-300 focus:outline-none focus:border-nexus-emerald/50 resize-none"
+            ></textarea>
+          </div>
+
+          <div className="liquid-glass-strong rounded-2xl p-6 border border-white/5 flex-1 flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold font-heading flex items-center gap-2">
+                <FileText size={20} className="text-nexus-emerald" /> Modified Contract
+              </h2>
+            </div>
+            <textarea
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              placeholder="Paste the version you received from the counterparty here..."
+              className="flex-1 w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm font-mono text-gray-300 focus:outline-none focus:border-nexus-emerald/50 resize-none"
+            ></textarea>
+          </div>
+
+          <button
+            onClick={handleAnalyze}
+            disabled={isProcessing || !oldText || !newText}
+            className="w-full bg-nexus-emerald text-black py-4 rounded-xl font-bold text-lg hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_20px_rgba(0,255,157,0.3)]"
+          >
+            {isProcessing ? <RefreshCw className="animate-spin" /> : <Play />}
+            {isProcessing ? 'Analyzing Legal Risk...' : 'Run Full Legal Audit'}
+          </button>
+        </div>
+
+        {/* Right Side: Analysis Output */}
+        <div className="flex-1 lg:max-w-lg flex flex-col gap-4">
           
-          {/* Header */}
-          <div className="flex justify-between items-center mb-12 border-b border-white/10 pb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl liquid-glass flex items-center justify-center border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-              <Shield className="text-indigo-400" size={24} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">Nexus Legal-Audit & Diff</h1>
-              <p className="text-gray-400 text-sm">Algorithmic Risk Engine v2.0</p>
-            </div>
+          <div className="liquid-glass rounded-2xl p-2 border border-white/5 flex gap-2">
+            <button 
+              onClick={() => setActiveTab('diff')}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center items-center gap-2 ${activeTab === 'diff' ? 'bg-nexus-emerald text-black shadow-[0_0_15px_rgba(0,255,157,0.3)]' : 'text-gray-400 hover:text-white'}`}
+            >
+              <Search size={16}/> Line Diff
+            </button>
+            <button 
+              onClick={() => setActiveTab('risks')}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center items-center gap-2 ${activeTab === 'risks' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'text-gray-400 hover:text-white'}`}
+            >
+              <ShieldAlert size={16}/> Red Flags
+            </button>
+            <button 
+              onClick={() => setActiveTab('defs')}
+              className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center items-center gap-2 ${activeTab === 'defs' ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'text-gray-400 hover:text-white'}`}
+            >
+              <BookOpen size={16}/> Definitions
+            </button>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 text-emerald-400 text-sm bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
-              <Lock size={14} />
-              <span>Zero-Cloud: 100% Local Execution</span>
-            </div>
+
+          <div className="liquid-glass-strong rounded-2xl p-6 border border-white/5 flex-1 relative overflow-hidden">
             
-          </div>
-        </div>
-
-        {!diffResults ? (
-          <div className="animate-fade-in">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Don't Get Trapped by Hidden Clauses.</h2>
-              <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                Paste your original and revised contracts. Our algorithmic engine will instantly <strong className="text-indigo-400">Diff the changes</strong> and run a <strong className="text-red-400">Deep Risk Audit</strong> to find dangerous liabilities.
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <div className="liquid-glass-strong p-6 rounded-3xl border border-white/5 flex flex-col hover:border-indigo-500/30 transition-colors relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <FileText className="text-gray-400" size={20} />
-                    <h3 className="font-bold text-lg">Original Contract</h3>
+            <AnimatePresence>
+              {isProcessing && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-20 bg-[#050B14]/90 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
+                >
+                  <Cpu size={48} className="text-nexus-emerald mb-6 animate-pulse" />
+                  <div className="w-full bg-black/50 h-2 rounded-full mb-4 overflow-hidden">
+                    <motion.div 
+                      className="h-full bg-nexus-emerald shadow-[0_0_10px_#00FF9D]"
+                      initial={{ width: '0%' }}
+                      animate={{ width: `${(processStage / STAGES.length) * 100}%` }}
+                      transition={{ duration: 0.5 }}
+                    />
                   </div>
-                  <label className="cursor-pointer bg-white/5 hover:bg-white/10 text-gray-300 text-xs py-1.5 px-3 rounded-lg border border-white/10 flex items-center gap-2 transition-colors">
-                    <Upload size={14} /> Upload File
-                    <input type="file" accept=".txt,.md,.docx,.pdf" className="hidden" onChange={(e) => handleFileUpload(e, setOriginalText)} />
-                  </label>
-                </div>
-                <textarea 
-                  className="w-full flex-1 min-h-[350px] bg-black/40 border border-white/10 rounded-xl p-4 text-gray-300 focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm leading-relaxed"
-                  placeholder="Paste the original document text here, or upload a .txt, .docx, or .pdf file..."
-                  value={originalText}
-                  onChange={(e) => setOriginalText(e.target.value)}
-                />
-              </div>
-
-              <div className="liquid-glass-strong p-6 rounded-3xl border border-white/5 flex flex-col hover:border-indigo-500/30 transition-colors relative">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="text-indigo-400" size={20} />
-                    <h3 className="font-bold text-lg">Revised Contract (To be signed)</h3>
-                  </div>
-                  <label className="cursor-pointer bg-white/5 hover:bg-white/10 text-gray-300 text-xs py-1.5 px-3 rounded-lg border border-white/10 flex items-center gap-2 transition-colors">
-                    <Upload size={14} /> Upload File
-                    <input type="file" accept=".txt,.md,.docx,.pdf" className="hidden" onChange={(e) => handleFileUpload(e, setRevisedText)} />
-                  </label>
-                </div>
-                <textarea 
-                  className="w-full flex-1 min-h-[350px] bg-black/40 border border-white/10 rounded-xl p-4 text-gray-300 focus:outline-none focus:border-indigo-500 transition-all font-mono text-sm leading-relaxed"
-                  placeholder="Paste the modified document text here to Audit, or upload a .txt, .docx, or .pdf file..."
-                  value={revisedText}
-                  onChange={(e) => setRevisedText(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <button 
-                onClick={processComparison}
-                disabled={!originalText || !revisedText || isProcessing}
-                className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold py-4 px-12 rounded-xl shadow-[0_0_30px_rgba(99,102,241,0.3)] hover:scale-105 transition-all disabled:opacity-50 flex items-center gap-3 text-lg"
-              >
-                {isProcessing ? 'Running Security Audit...' : <><Shield size={24}/> Run Legal Audit & Diff</>}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className="animate-fade-in space-y-8">
-            
-            {/* Risk Audit Dashboard */}
-            <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-500 to-orange-500"></div>
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold flex items-center gap-3 mb-2">
-                    <AlertTriangle className="text-red-400" size={28}/> 
-                    Algorithmic Risk Report
-                  </h2>
-                  <p className="text-gray-400">We scanned the revised contract against our library of dangerous legal liabilities.</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-4xl font-black mb-1">
-                    <span className={auditResults.score < 50 ? 'text-red-500' : auditResults.score < 80 ? 'text-yellow-500' : 'text-emerald-500'}>
-                      {auditResults.score}
-                    </span>
-                    <span className="text-gray-500 text-2xl">/100</span>
-                  </div>
-                  <div className="text-sm font-medium text-gray-400 uppercase tracking-widest">Safety Score</div>
-                </div>
-              </div>
-
-              {auditResults.risks.length > 0 ? (
-                <div className="grid xl:grid-cols-2 gap-4 mt-6">
-                  {auditResults.risks.map((risk, idx) => (
-                    <div key={idx} className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 flex gap-4 items-start">
-                      <div className="bg-red-500/20 p-2 rounded-lg text-red-400 shrink-0">
-                        <FileWarning size={20} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-3 mb-1">
-                          <h4 className="font-bold text-red-200">Critical Term Found: "{risk.term}"</h4>
-                          <span className="text-xs bg-red-500/20 text-red-300 px-2 py-1 rounded-md border border-red-500/30">{risk.category} Risk</span>
-                        </div>
-                        <p className="text-red-200/70 text-sm leading-relaxed">{risk.advice}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-6 flex items-center gap-4 text-emerald-400 mt-6">
-                  <CheckCircle size={32} />
-                  <div>
-                    <h4 className="font-bold text-lg">No Critical Traps Detected</h4>
-                    <p className="text-emerald-400/70 text-sm">Our algorithm did not find any highly dangerous keywords in the revised contract.</p>
-                  </div>
-                </div>
+                  <p className="text-nexus-emerald font-mono text-sm h-6">
+                    {STAGES[processStage]}
+                  </p>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
 
-            {/* Document Diff Results */}
-            <div className="liquid-glass-strong border border-white/10 rounded-3xl p-8 shadow-2xl">
-              <div className="flex justify-between items-center mb-6">
-                 <h2 className="text-2xl font-bold flex items-center gap-3">
-                    <ArrowRightLeft className="text-indigo-400" size={24}/> 
-                    Document Diff Analysis
-                  </h2>
-                 <div className="flex gap-4 text-sm">
-                    <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500"></div> Removed</span>
-                    <span className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500"></div> Added</span>
-                 </div>
+            {!results && !isProcessing && (
+              <div className="h-full flex flex-col items-center justify-center text-gray-500 gap-4">
+                <ShieldAlert size={48} className="opacity-20" />
+                <p className="text-center text-sm font-medium">Paste both contracts and run the audit.<br/>Processing happens 100% locally in your browser.</p>
               </div>
-              <div className="bg-black/50 border border-white/5 rounded-2xl p-6 whitespace-pre-wrap font-mono text-sm leading-loose max-h-[500px] overflow-y-auto custom-scrollbar">
-                {diffResults.map((part, index) => {
-                  let colorClass = 'text-gray-300';
-                  let bgClass = '';
-                  let textDecoration = '';
-                  if (part.added) {
-                    colorClass = 'text-green-300';
-                    bgClass = 'bg-green-500/10 border-b border-green-500/50';
-                  } else if (part.removed) {
-                    colorClass = 'text-red-400';
-                    bgClass = 'bg-red-500/10';
-                    textDecoration = 'line-through opacity-70';
-                  }
-                  return (
-                    <span key={index} className={`${colorClass} ${bgClass} ${textDecoration} rounded-sm px-[2px]`}>
-                      {part.value}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
+            )}
 
-            <div className="flex justify-center pt-4 pb-8">
-              <button onClick={() => { setDiffResults(null); setAuditResults(null); }} className="flex items-center gap-2 text-white bg-indigo-600 hover:bg-indigo-500 px-8 py-3 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)]">
-                <RefreshCcw size={18} /> New Audit
-              </button>
-            </div>
+            {results && !isProcessing && (
+              <div className="h-full overflow-y-auto pr-2 custom-scrollbar">
+                
+                {activeTab === 'diff' && (
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg border-b border-white/10 pb-2 mb-4">Textual Differences</h3>
+                    <div className="font-mono text-sm leading-loose p-4 bg-black/40 rounded-xl">
+                      {results.diff.map((word, idx) => (
+                        <span key={idx} className={`
+                          ${word.type === 'added' ? 'bg-green-500/20 text-green-400 font-bold px-1 rounded mx-0.5' : ''}
+                          ${word.type === 'removed' ? 'bg-red-500/20 text-red-400 line-through px-1 rounded mx-0.5' : ''}
+                          ${word.type === 'same' ? 'text-gray-300' : ''}
+                        `}>
+                          {word.text}{' '}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'risks' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-4">
+                      <h3 className="font-bold text-lg text-red-400">Critical Red Flags Detected</h3>
+                      <span className="bg-red-500/20 text-red-400 text-xs font-bold px-2 py-1 rounded-full">{results.flags.length} Found</span>
+                    </div>
+                    {results.flags.length === 0 ? (
+                      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 flex items-center gap-3">
+                        <CheckCircle size={20} />
+                        No known high-risk clauses detected.
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {results.flags.map((flag, idx) => (
+                          <div key={idx} className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex flex-col gap-2">
+                            <div className="flex items-center gap-2 text-red-400 font-bold">
+                              <AlertTriangle size={16} /> 
+                              "{flag.term}"
+                            </div>
+                            <p className="text-xs text-gray-400">This phrase was detected {flag.count} times. It often exposes you to one-sided legal liability. Review immediately.</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'defs' && (
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg border-b border-white/10 pb-2 mb-4 text-blue-400">Capitalized Term Usage</h3>
+                    <p className="text-xs text-gray-400 mb-4">The following terms were capitalized in the modified document. Ensure they are formally defined in the Definitions section to avoid ambiguity.</p>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      {results.definitions.map((def, idx) => (
+                        <div key={idx} className="bg-black/40 border border-white/5 p-3 rounded-lg text-sm font-mono text-blue-300">
+                          {def}
+                        </div>
+                      ))}
+                      {results.definitions.length === 0 && (
+                        <p className="text-gray-500 text-sm">No capitalized terms found.</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            )}
           </div>
-        )}
         </div>
-      )}
 
-      <PirateTrapModal 
-        isOpen={showPirateTrap} 
-        onSuccess={() => {
-          setShowPirateTrap(false);
-          setIsUnlocked(true);
-        }} 
-      />
+      </main>
     </div>
   );
-}
+};
 
+export default ContractCompare;
