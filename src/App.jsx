@@ -199,21 +199,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Social Proof Section (UX Expert Recommendation) */}
-        <section className="border-y border-white/5 bg-black/40 backdrop-blur-md py-8 mt-12 relative z-10">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-6">
-              {isRtl ? 'يثق بنا أكثر من 2000 وكالة تسويق ودروبشيبر' : 'Trusted by 2,000+ Agencies & E-commerce Brands'}
-            </p>
-            <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-              <div className="flex items-center gap-2 text-xl font-bold font-display"><Shield size={24}/> SMMA Scales</div>
-              <div className="flex items-center gap-2 text-xl font-bold font-display"><TrendingDown size={24}/> DropVault</div>
-              <div className="flex items-center gap-2 text-xl font-bold font-display"><Globe size={24}/> Ecom Kings</div>
-              <div className="flex items-center gap-2 text-xl font-bold font-display"><Hexagon size={24}/> Agency Flow</div>
-            </div>
-          </div>
-        </section>
-
         {/* Smart Marketing Separator */}
         <section className="px-6 md:px-12 lg:px-24 mt-12 mb-20 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
