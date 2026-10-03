@@ -181,13 +181,13 @@ export default function App() {
               transition={{ delay: 0.6, duration: 0.8 }}
               className="flex flex-wrap gap-4"
             >
-              <button onClick={scrollToProducts} className="bg-nexus-emerald text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-nexus-mint hover:scale-105 transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.3)]">
+              <button onClick={scrollToProducts} className="bg-nexus-emerald text-black px-10 py-5 rounded-full font-extrabold text-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300 shadow-[0_0_40px_rgba(0,255,157,0.6)] animate-pulse">
                 {t('btn_deploy')}
               </button>
             </motion.div>
           </div>
 
-          <div className="flex-1 w-full relative z-0 flex items-center justify-center min-h-[40vh] lg:min-h-[60vh]">
+          <div className="flex-1 w-full relative z-0 flex items-center justify-center min-h-[40vh] lg:min-h-[60vh] drop-shadow-[0_0_50px_rgba(0,255,157,0.2)]">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -196,6 +196,21 @@ export default function App() {
             >
               <Nexus3DNode />
             </motion.div>
+          </div>
+        </section>
+
+        {/* Social Proof Section (UX Expert Recommendation) */}
+        <section className="border-y border-white/5 bg-black/40 backdrop-blur-md py-8 mt-12 relative z-10">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-6">
+              {isRtl ? 'يثق بنا أكثر من 2000 وكالة تسويق ودروبشيبر' : 'Trusted by 2,000+ Agencies & E-commerce Brands'}
+            </p>
+            <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+              <div className="flex items-center gap-2 text-xl font-bold font-display"><Shield size={24}/> SMMA Scales</div>
+              <div className="flex items-center gap-2 text-xl font-bold font-display"><TrendingDown size={24}/> DropVault</div>
+              <div className="flex items-center gap-2 text-xl font-bold font-display"><Globe size={24}/> Ecom Kings</div>
+              <div className="flex items-center gap-2 text-xl font-bold font-display"><Hexagon size={24}/> Agency Flow</div>
+            </div>
           </div>
         </section>
 
