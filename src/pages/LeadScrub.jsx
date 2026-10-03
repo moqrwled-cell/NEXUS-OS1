@@ -18,6 +18,7 @@ export default function LeadScrub() {
   const [columns, setColumns] = useState([]);
   const [emailColumn, setEmailColumn] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStage, setProcessingStage] = useState('');
   const [results, setResults] = useState(null);
   const [showPirateTrap, setShowPirateTrap] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -95,9 +96,39 @@ export default function LeadScrub() {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
+  const playSuccessSound = () => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
+      oscillator.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1); 
+      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.1);
+    } catch(e) {}
+  };
+
   const processLeads = () => {
     if (!data.length || !emailColumn) return;
     setIsProcessing(true);
+    setProcessingStage('Parsing raw data...');
+
+    // AI Theater Sequence
+    const stages = [
+      { msg: 'Scrubbing invalid & role-based emails...', time: 800 },
+      { msg: 'Running AI Data Enrichment Engine...', time: 1600 },
+      { msg: 'Calculating Lead Scores...', time: 2400 },
+      { msg: 'Finalizing Data...', time: 3200 }
+    ];
+
+    stages.forEach(({msg, time}) => {
+      setTimeout(() => setProcessingStage(msg), time);
+    });
 
     setTimeout(() => {
       let stats = {
@@ -195,10 +226,12 @@ export default function LeadScrub() {
 
       setResults({ stats, cleanData });
       setIsProcessing(false);
+      setProcessingStage('');
       setActiveTab('data'); 
       setCurrentPage(1);
       setSearchTerm('');
-    }, 1500); 
+      playSuccessSound();
+    }, 4000); // Wait for the whole theater sequence
   };
 
   const downloadCleanCSV = () => {
@@ -222,6 +255,33 @@ export default function LeadScrub() {
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
     link.setAttribute("download", `nexus_cleaned_leads_${new Date().getTime()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const downloadCRMExport = () => {
+    if (!results || !results.cleanData.length) return;
+    
+    const crmData = results.cleanData.map(row => {
+      return {
+        firstName: row['First Name'] || '',
+        lastName: row['Last Name'] || '',
+        email: row[emailColumn] || '',
+        companyName: row['Company Name'] || '',
+        phone: row['Phone'] || row['phone'] || row['Mobile'] || '',
+        website: row['Website'] || '',
+        customLeadScore: row['Lead Score'] || ''
+      };
+    });
+
+    const csv = Papa.unparse(crmData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `GHL_Instantly_Import_${new Date().getTime()}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -422,7 +482,12 @@ export default function LeadScrub() {
                   disabled={!file || isProcessing}
                   className="w-full mt-6 bg-gradient-to-r from-teal-600 to-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-[0_0_15px_rgba(20,184,166,0.3)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:hover:scale-100 flex justify-center items-center gap-2"
                 >
-                  {isProcessing ? 'Processing...' : 'Run Processing Engine'}
+                  {isProcessing ? (
+                    <div className="flex items-center gap-2 animate-pulse">
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      {processingStage || 'Processing...'}
+                    </div>
+                  ) : 'Run Processing Engine'}
                 </button>
               </div>
             </div>
@@ -457,14 +522,24 @@ export default function LeadScrub() {
                           <p className="text-gray-400 text-sm font-medium mb-2">Total Uploaded</p>
                           <p className="text-4xl font-bold text-white">{results.stats.total}</p>
                         </div>
-                        <div className="bg-gradient-to-br from-teal-900/40 to-emerald-900/20 border border-teal-500/30 rounded-2xl p-6">
+                        <div className="bg-gradient-to-br from-teal-900/40 to-emerald-900/20 border border-teal-500/30 rounded-2xl p-6 relative overflow-hidden">
                           <p className="text-teal-400 text-sm font-medium mb-2">Pure Prospects Generated</p>
                           <p className="text-4xl font-bold text-teal-400">{results.stats.valid}</p>
+                          <div className="absolute top-2 right-4 text-emerald-400 text-xs font-bold bg-emerald-500/20 px-2 py-1 rounded">
+                            Bounces Prevented: {results.stats.duplicates + results.stats.invalidFormat + results.stats.roleBased + results.stats.freeDomain}
+                          </div>
+                          <div className="mt-2 text-xs text-emerald-400 flex items-center gap-1">
+                            <span>Estimated Savings:</span>
+                            <strong className="text-sm">${((results.stats.duplicates + results.stats.invalidFormat + results.stats.roleBased + results.stats.freeDomain) * 0.05).toFixed(2)}</strong>
+                          </div>
                         </div>
                       </div>
 
                       <div className="bg-black/40 border border-white/5 rounded-2xl p-6 mb-8">
-                        <h3 className="font-bold text-xs text-gray-500 uppercase tracking-widest mb-6">Threats Scrubbed</h3>
+                        <h3 className="font-bold text-xs text-gray-500 uppercase tracking-widest mb-6 flex justify-between">
+                          <span>Threats Scrubbed</span>
+                          <span className="text-emerald-500 font-bold normal-case text-sm tracking-normal">Prevents Domain Burning</span>
+                        </h3>
                         <div className="space-y-6">
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-red-400 flex items-center gap-2"><Trash2 size={16}/> Duplicates Found</span>
@@ -568,12 +643,18 @@ export default function LeadScrub() {
                   )}
 
                   {/* Export Button (Always visible at bottom) */}
-                  <div className="p-6 border-t border-white/10 bg-black/40 shrink-0">
+                  <div className="p-6 border-t border-white/10 bg-black/40 shrink-0 flex flex-col gap-3">
                     <button 
                       onClick={downloadCleanCSV}
                       className="w-full bg-white text-black font-bold py-4 px-6 rounded-xl hover:bg-gray-200 transition-all flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                     >
                       <Download size={20} /> Export Complete Dataset (CSV)
+                    </button>
+                    <button 
+                      onClick={downloadCRMExport}
+                      className="w-full bg-teal-900/40 text-teal-400 border border-teal-500/30 font-bold py-3 px-6 rounded-xl hover:bg-teal-900/60 transition-all flex justify-center items-center gap-2"
+                    >
+                      <Download size={18} /> Export for GoHighLevel / Instantly (Mapped Headers)
                     </button>
                   </div>
 
