@@ -46,6 +46,8 @@ export default function EcomMatch() {
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
       }
+    } else {
+      alert("التطبيق مثبت بالفعل، أو متصفحك لا يدعم التثبيت المباشر (PWA).");
     }
   };
 
