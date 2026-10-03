@@ -23,6 +23,7 @@ export default function AdSpendAudit() {
   
   const [targetCPA, setTargetCPA] = useState(25);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStage, setProcessingStage] = useState('');
   const [results, setResults] = useState(null);
   const [showPirateTrap, setShowPirateTrap] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -64,9 +65,38 @@ export default function AdSpendAudit() {
     });
   };
 
+  const playSuccessSound = () => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.type = 'square';
+      oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); 
+      oscillator.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); 
+      gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+      oscillator.start(audioCtx.currentTime);
+      oscillator.stop(audioCtx.currentTime + 0.15);
+    } catch(e) {}
+  };
+
   const processAudit = () => {
     if (!data.length || !mapping.campaignName || !mapping.spend || !mapping.conversions) return;
     setIsProcessing(true);
+
+    const stages = [
+      { msg: 'Scanning structural campaign matrix...', time: 400 },
+      { msg: 'Cross-referencing Cost Per Acquisition...', time: 1200 },
+      { msg: 'Detecting Zombie Ad Sets...', time: 2000 },
+      { msg: 'Calculating Mathematical Waste...', time: 2800 },
+      { msg: 'Isolating Scalable Winners...', time: 3500 },
+    ];
+
+    stages.forEach(({msg, time}) => {
+      setTimeout(() => setProcessingStage(msg), time);
+    });
 
     setTimeout(() => {
       let totalWasted = 0;
@@ -119,7 +149,9 @@ export default function AdSpendAudit() {
         scalable
       });
       setIsProcessing(false);
-    }, 800);
+      setProcessingStage('');
+      playSuccessSound();
+    }, 4000);
   };
 
   return (
@@ -219,7 +251,12 @@ export default function AdSpendAudit() {
                 disabled={isProcessing}
                 className="w-full mt-8 bg-gradient-to-r from-rose-600 to-red-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-[0_0_20px_rgba(244,63,94,0.3)] hover:scale-105 transition-all flex justify-center items-center gap-2"
               >
-                {isProcessing ? 'Auditing Finances...' : 'Run Financial Audit'}
+                {isProcessing ? (
+                  <div className="flex items-center gap-3">
+                    <Activity size={18} className="animate-pulse" />
+                    {processingStage || 'Auditing Finances...'}
+                  </div>
+                ) : 'Run Financial Audit'}
               </button>
             </div>
           </div>
