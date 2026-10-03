@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, DollarSign, ArrowLeft, Trash2, TrendingDown, Target, FileSpreadsheet, Activity, AlertOctagon, TrendingUp } from 'lucide-react';
+import { Upload, DollarSign, ArrowLeft, Trash2, TrendingDown, Target, FileSpreadsheet, Activity, AlertOctagon, TrendingUp, HardDriveDownload, ShieldCheck } from 'lucide-react';
 import Papa from 'papaparse';
 
 import { verifyToolAccess } from '../utils/auth';
@@ -28,6 +28,22 @@ export default function AdSpendAudit() {
   const [showPirateTrap, setShowPirateTrap] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
 
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') setDeferredPrompt(null);
+    } else {
+      alert("The app is already installed, or your browser doesn't support PWA installation.");
+    }
+  };
   useEffect(() => {
     if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('adspendaudit')) {
       setIsUnlocked(true);
@@ -171,7 +187,20 @@ export default function AdSpendAudit() {
               <p className="text-gray-400 text-sm">Financial Ad Account Analyzer</p>
             </div>
           </div>
-          
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 text-rose-400 text-sm bg-black px-4 py-2 rounded-full border border-rose-500/30">
+              <ShieldCheck size={14} />
+              <span>100% Local Processing</span>
+            </div>
+            
+            <button 
+              onClick={handleInstallApp}
+              className="flex items-center gap-2 bg-rose-500 text-black font-bold text-sm px-4 py-2 rounded-full hover:bg-rose-400 transition-all shadow-[0_0_15px_rgba(244,63,94,0.5)] hover:scale-105"
+            >
+              <HardDriveDownload size={16} />
+              Install Desktop App
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col gap-8 max-w-6xl mx-auto">

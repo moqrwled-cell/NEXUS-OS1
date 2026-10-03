@@ -7,15 +7,16 @@ import {
   ShieldAlert, 
   Search, 
   CheckCircle,
-  XCircle,
   Play,
-  Download,
   Lock,
   Cpu,
   RefreshCw,
-  BookOpen
+  BookOpen,
+  HardDriveDownload,
+  UploadCloud
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import * as mammoth from 'mammoth';
 
 const RED_FLAGS_DICTIONARY = [
   "indemnify and hold harmless",
@@ -33,11 +34,47 @@ const ContractCompare = () => {
   const navigate = useNavigate();
   const [oldText, setOldText] = useState("");
   const [newText, setNewText] = useState("");
-  const [activeTab, setActiveTab] = useState("diff"); // diff, risks, defs
+  const [activeTab, setActiveTab] = useState("diff");
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [processStage, setProcessStage] = useState(0);
   const [results, setResults] = useState(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+       alert("The app is already installed, or your browser doesn't support PWA installation.");
+    }
+  };
+
+  const handleFileUpload = async (e, setTargetText) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.name.endsWith('.txt')) {
+      const text = await file.text();
+      setTargetText(text);
+    } else if (file.name.endsWith('.docx')) {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      setTargetText(result.value);
+    } else {
+      alert("Please upload a .txt or .docx file");
+    }
+  };
 
   const STAGES = [
     "Initializing Zero-Trust Local Environment...",
@@ -53,7 +90,6 @@ const ContractCompare = () => {
     setIsProcessing(true);
     setProcessStage(0);
     
-    // AI Theater - Artificial delay for perceived value
     let currentStage = 0;
     const interval = setInterval(() => {
       currentStage++;
@@ -67,7 +103,6 @@ const ContractCompare = () => {
   };
 
   const generateResults = () => {
-    // 1. Red Flags
     const foundFlags = [];
     RED_FLAGS_DICTIONARY.forEach(flag => {
       const regex = new RegExp(flag, 'gi');
@@ -77,13 +112,10 @@ const ContractCompare = () => {
       }
     });
 
-    // 2. Definitions Checker (Capitalized terms used but not defined)
-    // Simple heuristic: Find words starting with Capital letter in quotes, or sequence of Capitalized words
     const defRegex = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g;
     const allCaps = newText.match(defRegex) || [];
     const uniqueCaps = [...new Set(allCaps)].filter(w => w.length > 3 && w !== "This" && w !== "The");
     
-    // 3. Simple Diffing logic (Mock for MVP)
     const oldWords = oldText.split(' ');
     const newWords = newText.split(' ');
     const diff = [];
@@ -102,13 +134,12 @@ const ContractCompare = () => {
 
     setResults({
       flags: foundFlags,
-      definitions: uniqueCaps.slice(0, 8), // just show sample
+      definitions: uniqueCaps.slice(0, 8),
       diff: diff
     });
     
     setIsProcessing(false);
     
-    // Play success sound
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const osc = ctx.createOscillator();
@@ -135,12 +166,17 @@ const ContractCompare = () => {
           <span className="font-heading text-xl font-bold tracking-wider">Contract-Compare <span className="text-nexus-emerald text-xs">PRO</span></span>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-gray-400 bg-black/50 px-3 py-1.5 rounded-full border border-white/5">
+          <div className="hidden md:flex items-center gap-2 text-xs font-bold text-gray-400 bg-black/50 px-3 py-1.5 rounded-full border border-white/5">
             <Lock size={12} className="text-nexus-emerald" />
-            Zero-Trust Local Processing
+            100% Local Browser Processing
           </div>
-          <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-white transition-colors">
-            Exit
+          
+          <button 
+            onClick={handleInstallApp}
+            className="flex items-center gap-2 bg-white text-black font-bold text-sm px-4 py-2 rounded-full hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-105"
+          >
+            <HardDriveDownload size={16} />
+            Install Desktop App
           </button>
         </div>
       </nav>
@@ -154,11 +190,15 @@ const ContractCompare = () => {
               <h2 className="text-xl font-bold font-heading flex items-center gap-2">
                 <FileText size={20} className="text-gray-400" /> Original Contract
               </h2>
+              <label className="cursor-pointer flex items-center gap-2 text-xs font-bold text-nexus-emerald bg-nexus-emerald/10 px-3 py-1.5 rounded-lg hover:bg-nexus-emerald/20 transition-colors">
+                <UploadCloud size={14} /> Upload .docx/.txt
+                <input type="file" accept=".txt,.docx" className="hidden" onChange={(e) => handleFileUpload(e, setOldText)} />
+              </label>
             </div>
             <textarea
               value={oldText}
               onChange={(e) => setOldText(e.target.value)}
-              placeholder="Paste the original standard contract or NDA here..."
+              placeholder="Paste the original standard contract here, or upload a file..."
               className="flex-1 w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm font-mono text-gray-300 focus:outline-none focus:border-nexus-emerald/50 resize-none"
             ></textarea>
           </div>
@@ -168,11 +208,15 @@ const ContractCompare = () => {
               <h2 className="text-xl font-bold font-heading flex items-center gap-2">
                 <FileText size={20} className="text-nexus-emerald" /> Modified Contract
               </h2>
+              <label className="cursor-pointer flex items-center gap-2 text-xs font-bold text-nexus-emerald bg-nexus-emerald/10 px-3 py-1.5 rounded-lg hover:bg-nexus-emerald/20 transition-colors">
+                <UploadCloud size={14} /> Upload .docx/.txt
+                <input type="file" accept=".txt,.docx" className="hidden" onChange={(e) => handleFileUpload(e, setNewText)} />
+              </label>
             </div>
             <textarea
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
-              placeholder="Paste the version you received from the counterparty here..."
+              placeholder="Paste the modified version here, or upload a file..."
               className="flex-1 w-full bg-black/40 border border-white/10 rounded-xl p-4 text-sm font-mono text-gray-300 focus:outline-none focus:border-nexus-emerald/50 resize-none"
             ></textarea>
           </div>
