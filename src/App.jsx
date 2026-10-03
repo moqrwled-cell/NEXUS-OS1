@@ -1,293 +1,321 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { useTranslation } from 'react-i18next';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Bot, 
+  Shield, 
+  Zap, 
+  Monitor, 
+  TrendingUp, 
+  Globe, 
+  Briefcase, 
+  X, 
   Search, 
   BarChart, 
+  TrendingDown, 
   ArrowRight,
-  Cpu,
-  MessageSquare,
-  Globe,
-  X,
-  Monitor,
-  Wrench,
-  Hexagon
-, Shield, Zap, TrendingDown, Briefcase} from 'lucide-react';
-import Nexus3DNode from './components/Nexus3DNode';
-import ContactModal from './components/ContactModal';
-
-// Language configuration
-const languages = [
-  { code: 'en', name: 'English', fontBody: 'font-body', fontHeading: 'font-heading' },
-  { code: 'ar', name: 'العربية', fontBody: 'font-["Almarai"]', fontHeading: 'font-["Almarai"]', dir: 'rtl' },
-  { code: 'es', name: 'Español', fontBody: 'font-body', fontHeading: 'font-heading' },
-  { code: 'fr', name: 'Français', fontBody: 'font-body', fontHeading: 'font-heading' },
-  { code: 'tr', name: 'Türkçe', fontBody: 'font-body', fontHeading: 'font-heading' },
-  { code: 'ja', name: '日本語', fontBody: 'font-["Noto_Sans_JP"]', fontHeading: 'font-["Noto_Sans_JP"]' },
-  { code: 'zh', name: '中文', fontBody: 'font-["Noto_Sans_SC"]', fontHeading: 'font-["Noto_Sans_SC"]' },
-];
-
-const FadeInWhenVisible = ({ children, delay = 0 }) => {
-  const controls = useAnimation();
-  const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
-
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible');
-    }
-  }, [controls, inView]);
-
-  return (
-    <motion.div
-      ref={ref}
-      animate={controls}
-      initial="hidden"
-      transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
-      variants={{
-        visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
-        hidden: { opacity: 0, y: 20, filter: 'blur(10px)' }
-      }}
-      className="h-full"
-    >
-      {children}
-    </motion.div>
-  );
-};
+  Hexagon 
+} from 'lucide-react';
 
 export default function App() {
-  /* Force Netlify Build Trigger */
-  const { t, i18n } = useTranslation();
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
-  const isRtl = currentLang.dir === 'rtl';
   const navigate = useNavigate();
-
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-
-  // Set direction on body
-  useEffect(() => {
-    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
-  }, [isRtl]);
 
   const scrollToProducts = () => {
     document.getElementById('products-section').scrollIntoView({ behavior: 'smooth' });
   };
 
-      const products = [
-      { id: 'leadscrub', icon: Shield, titleKey: 'prod_leadscrub_title', priceKey: 'prod_leadscrub_price', descKey: 'prod_leadscrub_desc' },
-      { id: 'ecommatch', icon: Zap, titleKey: 'prod_ecommatch_title', priceKey: 'prod_ecommatch_price', descKey: 'prod_ecommatch_desc' },
-      { id: 'contractcompare', icon: Hexagon, titleKey: 'prod_contractcompare_title', priceKey: 'prod_contractcompare_price', descKey: 'prod_contractcompare_desc' },
-      { id: 'adspendaudit', icon: TrendingDown, titleKey: 'prod_adspendaudit_title', priceKey: 'prod_adspendaudit_price', descKey: 'prod_adspendaudit_desc' }
-    ];
+  const handleBuyNow = () => {
+    window.open("https://whop.com", "_blank");
+  };
 
   return (
-    <div className={`bg-nexus-bg min-h-screen text-white overflow-x-hidden selection:bg-nexus-emerald selection:text-black ${currentLang.fontBody} ${isRtl ? 'rtl' : 'ltr'}`}>
+    <div className="min-h-screen bg-black text-zinc-300 font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       
-      {/* Background Gradients */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-nexus-emerald rounded-full mix-blend-screen filter blur-[150px] opacity-20"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-nexus-mint rounded-full mix-blend-screen filter blur-[150px] opacity-10"></div>
-      </div>
-
-      <nav className="fixed w-full z-40 top-0 py-4 px-6 md:px-12 flex justify-between items-center bg-[#020608]/80 backdrop-blur-md border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="NexusOS Logo" className="h-10" />
-          <span className={`${currentLang.fontHeading} text-2xl md:text-3xl tracking-wider text-white font-bold`}>
-            {t('nav_brand')}
-          </span>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <button onClick={() => setIsContactModalOpen(true)} className="hidden md:block text-gray-300 hover:text-white transition-colors text-sm font-semibold uppercase mx-2">
-            {t('nav_contact')}
-          </button>
-          <div className="relative">
-            <button 
-              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-              className="flex items-center gap-2 liquid-glass px-4 py-2 rounded-full text-nexus-mint hover:bg-white/5 transition-colors"
-            >
-              <Globe size={18} />
-              <span className="text-sm font-semibold uppercase">{i18n.language}</span>
+      {/* 1. Sticky Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/60 border-b border-white/5 transition-all">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+              <Shield className="text-emerald-400" size={20} />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
+              Nexus OS
+            </span>
+          </div>
+          <div className="flex items-center gap-6">
+            <button onClick={() => navigate('/login')} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block">
+              Client Login
             </button>
-            
-            <AnimatePresence>
-              {isLangMenuOpen && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute right-0 mt-2 w-32 liquid-glass-strong border border-nexus-emerald/30 rounded-xl overflow-hidden flex flex-col z-50"
-                >
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => {
-                        i18n.changeLanguage(lang.code);
-                        setIsLangMenuOpen(false);
-                      }}
-                      className={`text-left px-4 py-2 text-sm text-gray-300 hover:bg-nexus-emerald/20 hover:text-white transition-colors ${isRtl ? 'text-right' : 'text-left'}`}
-                    >
-                      {lang.name}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <button onClick={handleBuyNow} className="bg-emerald-500 text-black font-bold px-6 py-2.5 rounded-full hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all transform hover:scale-105 text-sm">
+              Get Access
+            </button>
           </div>
-          <button onClick={scrollToProducts} className={`hidden md:block liquid-glass px-6 py-2 rounded-full text-sm font-semibold hover:bg-white/10 transition-colors uppercase tracking-widest text-nexus-mint border border-nexus-mint/30`}>
-            {t('nav_btn')}
-          </button>
         </div>
-      </nav>
+      </header>
 
-      <main className="relative z-10 pt-28 pb-20">
-        <section className="px-6 md:px-12 lg:px-24 flex flex-col lg:flex-row gap-12 items-center">
+      <main>
+        {/* 2. The Hero Section */}
+        <section className="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-4 overflow-hidden pt-20 pb-32">
+          {/* Background Radial Glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-black to-black -z-10"></div>
           
-          <div className="flex-1 w-full z-10">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1 }}
-              className="inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-1.5 mb-6 border border-nexus-emerald/30"
-            >
-              <span className="w-2 h-2 rounded-full bg-nexus-mint animate-pulse"></span>
-              <span className="text-xs font-bold tracking-widest text-nexus-mint uppercase">{t('hero_status')}</span>
-            </motion.div>
-
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className={`${currentLang.fontHeading} text-5xl md:text-7xl lg:text-[6rem] leading-[1.1] mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500`}
-              dangerouslySetInnerHTML={{ __html: t('hero_title') }}
-            />
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-lg md:text-xl text-gray-400 max-w-xl leading-relaxed mb-8"
-            >
-              {t('hero_desc')}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="flex flex-wrap gap-4"
-            >
-              <button onClick={scrollToProducts} className="bg-nexus-emerald text-black px-8 py-4 rounded-full font-bold text-lg hover:bg-nexus-mint hover:scale-105 transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.3)]">
-                {t('btn_deploy')}
-              </button>
-            </motion.div>
-          </div>
-
-          <div className="flex-1 w-full relative z-0 flex items-center justify-center min-h-[40vh] lg:min-h-[60vh]">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 2 }}
-              className="w-full h-full absolute inset-0"
-            >
-              <Nexus3DNode />
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Smart Marketing Separator */}
-        <section className="px-6 md:px-12 lg:px-24 mt-12 mb-20 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="liquid-glass border border-nexus-emerald/20 p-8 rounded-3xl relative overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-nexus-emerald to-transparent"></div>
-              <h2 className={`${currentLang.fontHeading} text-2xl md:text-3xl mb-4 font-bold text-white leading-relaxed`}>
-                {isRtl 
-                  ? 'في هذه اللحظة، هناك شركة تدفع آلاف الدولارات شهرياً لأدوات سحابية تسرب بياناتها وتستنزف أرباحها.' 
-                  : 'Right now, an agency is bleeding thousands of dollars on cloud APIs that secretly leak their data.'}
-              </h2>
-              <p className="text-nexus-emerald text-lg font-medium">
-                {isRtl 
-                  ? 'الإمبراطوريات الكبرى لا تُبنى على البرمجيات المستأجرة.. إما أن تمتلك بنيتك التحتية محلياً، أو تشاهد أرباحك تنهار ببطء.' 
-                  : 'Empires are not built on rented software. Own your infrastructure locally, or watch your profit margins slowly collapse.'}
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Instantly Visible Products Grid */}
-        <section id="products-section" className="px-6 md:px-12 lg:px-24 mt-12 md:mt-20 scroll-mt-32">
-          <motion.div 
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             className="mb-12"
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-col items-center z-10 w-full max-w-5xl mx-auto"
           >
-            <h2 className={`${currentLang.fontHeading} text-4xl md:text-5xl mb-4 bg-emerald-gradient bg-clip-text text-transparent`}>
-              {t('section_modules_title')}
-            </h2>
-            <p className="text-xl text-gray-400">{t('section_modules_desc')}</p>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-sm mb-8 font-medium tracking-wide">
+              <Zap size={14} className="animate-pulse" /> The Ultimate OS for Agency Owners & Dropshippers
+            </div>
+
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tight text-white mb-8 leading-[1.1]">
+              Stop renting your infrastructure.<br className="hidden md:block"/> 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Own the vault.
+              </span>
+            </h1>
+
+            <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+              Nexus OS is the definitive, local-first software suite. Three high-leverage tools. Zero cloud processing. One lifetime price.
+            </p>
+
+            <button onClick={scrollToProducts} className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-lg px-10 py-5 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] transition-all transform hover:scale-105 flex items-center gap-3 group">
+              Claim Lifetime Access - $199
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+            </button>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-            {products.map((prod, idx) => (
-              <FadeInWhenVisible key={prod.id} delay={idx * 0.1}>
-                <div 
-                  onClick={() => navigate(`/product/${prod.id}`)}
-                  className="liquid-glass-strong rounded-3xl p-8 h-full flex flex-col group cursor-pointer border border-white/5 hover:border-nexus-emerald/50 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(0,255,157,0.1)] relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-nexus-emerald/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="flex justify-between items-start mb-6 relative z-10">
-                    <div className="w-14 h-14 rounded-2xl liquid-glass flex items-center justify-center text-nexus-mint group-hover:scale-110 group-hover:text-white transition-all duration-500">
-                      <prod.icon size={28} />
-                    </div>
-                    <div className="bg-black/50 border border-nexus-emerald/30 px-4 py-1.5 rounded-full">
-                      <span className={`${currentLang.fontHeading} text-xl text-nexus-mint font-bold`}>{t(prod.priceKey)}</span>
-                    </div>
-                  </div>
-                  <h3 className={`${currentLang.fontHeading} text-2xl mb-3 text-white group-hover:text-nexus-emerald transition-colors duration-300 relative z-10`}>
-                    {t(prod.titleKey)}
-                  </h3>
-                  <p className="text-gray-400 leading-relaxed flex-1 relative z-10">
-                    {t(prod.descKey)}
-                  </p>
-                  <div className="mt-6 flex items-center text-nexus-mint text-sm font-bold tracking-wide uppercase relative z-10">
-                    <span className={`transition-all duration-300 ${isRtl ? 'group-hover:ml-2' : 'group-hover:mr-2'}`}>{t('btn_view')}</span>
-                    <ArrowRight size={16} className={`transform ${isRtl ? 'rotate-180 mr-2 group-hover:-translate-x-2' : 'ml-2 group-hover:translate-x-2'} transition-transform duration-300`} />
-                  </div>
-                </div>
-              </FadeInWhenVisible>
-            ))}
+          {/* Dashboard Mockup (The Proof) */}
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="mt-20 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden w-full max-w-6xl mx-auto h-[400px] md:h-[600px] bg-black/50 backdrop-blur-md"
+          >
+            <div className="h-12 border-b border-white/5 flex items-center px-4 gap-2 bg-white/[0.02]">
+              <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+              <div className="ml-4 text-xs font-mono text-zinc-600">Nexus_OS_Terminal_v2.1</div>
+            </div>
+            <div className="p-8 grid grid-cols-3 gap-6 h-full opacity-60">
+              <div className="col-span-2 border border-white/5 rounded-xl bg-white/[0.01]"></div>
+              <div className="col-span-1 border border-white/5 rounded-xl bg-white/[0.01]"></div>
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
+          </motion.div>
+        </section>
+
+        {/* 3. Trust Section */}
+        <section className="py-12 border-y border-white/5 bg-white/[0.01] relative z-10">
+          <div className="max-w-7xl mx-auto px-6 text-center">
+            <p className="text-sm font-semibold text-zinc-500 uppercase tracking-widest mb-8">Trusted by 2,000+ top-rated Whop sellers and agency owners</p>
+            <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+              <div className="flex items-center gap-2 text-xl font-bold"><Monitor size={24}/> SMMA Scales</div>
+              <div className="flex items-center gap-2 text-xl font-bold"><TrendingUp size={24}/> DropVault</div>
+              <div className="flex items-center gap-2 text-xl font-bold"><Globe size={24}/> Ecom Kings</div>
+              <div className="flex items-center gap-2 text-xl font-bold"><Briefcase size={24}/> Agency Flow</div>
+            </div>
           </div>
         </section>
 
+        {/* 4. The Problem */}
+        <section className="py-32 bg-black relative z-10">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-white text-center mb-6">
+              The SaaS model is <span className="text-red-500">bleeding you dry.</span>
+            </h2>
+            <p className="text-zinc-400 text-center max-w-3xl mx-auto mb-20 text-lg">
+              Every month, you pay $99/mo to rent tools that eat your margins and silently stockpile your proprietary data. You upload your leads, your ad metrics, and your COGS to third-party servers you don’t control—exposing your winning strategies to their backends.
+            </p>
 
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              <div className="bg-red-950/20 border border-red-500/20 p-10 rounded-3xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-red-500/50"></div>
+                <h3 className="text-red-400 font-bold text-xl mb-8 flex items-center gap-3">
+                  <X size={24} /> The Cloud Trap
+                </h3>
+                <ul className="space-y-6">
+                  <li className="flex justify-between text-zinc-500 line-through"><span>Email Cleaner SaaS</span> <span>$49/mo</span></li>
+                  <li className="flex justify-between text-zinc-500 line-through"><span>Profit Tracker App</span> <span>$79/mo</span></li>
+                  <li className="flex justify-between text-zinc-500 line-through"><span>Ad Spy & Audit Tool</span> <span>$99/mo</span></li>
+                  <li className="flex justify-between text-zinc-500 line-through"><span>Data Privacy Leak Risk</span> <span>Priceless</span></li>
+                </ul>
+                <div className="mt-8 pt-8 border-t border-red-500/10 flex justify-between items-center">
+                  <span className="text-red-400 font-bold">Total Bleed</span>
+                  <span className="text-3xl font-black text-red-500">$227/mo</span>
+                </div>
+              </div>
 
-        <ContactModal 
-          isOpen={isContactModalOpen} 
-          onClose={() => setIsContactModalOpen(false)} 
-          services={products.map(p => t(p.titleKey))}
-        />
-
-        <footer className="border-t border-white/5 py-8 px-6 md:px-12 lg:px-24 mt-20">
-          <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto opacity-60">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <Cpu className="text-nexus-emerald" size={20} />
-              <span className={`${currentLang.fontHeading} text-lg`}>{t('nav_brand')}</span>
+              <div className="backdrop-blur-xl bg-emerald-950/20 border border-emerald-500/30 p-10 rounded-3xl shadow-[0_0_40px_rgba(16,185,129,0.15)] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 blur-[50px] rounded-full"></div>
+                <h3 className="text-emerald-400 font-bold text-xl mb-8 flex items-center gap-3">
+                  <Shield size={24} /> The Nexus Vault
+                </h3>
+                <ul className="space-y-6">
+                  <li className="flex justify-between text-white font-medium"><span>LeadScrub 2.0</span> <span className="text-emerald-400">Included</span></li>
+                  <li className="flex justify-between text-white font-medium"><span>EcomMatch Terminal</span> <span className="text-emerald-400">Included</span></li>
+                  <li className="flex justify-between text-white font-medium"><span>AdSpend-Audit</span> <span className="text-emerald-400">Included</span></li>
+                  <li className="flex justify-between text-white font-medium"><span>100% Local Privacy</span> <span className="text-emerald-400">Secured</span></li>
+                </ul>
+                <div className="mt-8 pt-8 border-t border-emerald-500/20 flex justify-between items-center">
+                  <span className="text-white font-bold">One-Time Lifetime</span>
+                  <span className="text-4xl font-black text-emerald-400">$199</span>
+                </div>
+              </div>
             </div>
-            <button onClick={() => setIsContactModalOpen(true)} className="text-sm hover:text-nexus-mint transition-colors">nexus.os.store@gmail.com</button>
-            <p className="text-sm">© 2026 NexusOS Enterprise.</p>
           </div>
-        </footer>
+        </section>
+
+        {/* 5. The 3 Tools (Bento Box Grid) */}
+        <section id="products-section" className="py-24 bg-zinc-950 relative z-10 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Three surgical tools.<br/>Zero subscriptions.</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <div onClick={() => navigate('/app/leadscrub')} className="md:col-span-2 backdrop-blur-md bg-white/5 border border-white/10 rounded-[2rem] p-10 hover:bg-white/10 hover:border-teal-500/50 transition-all cursor-pointer group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-black border border-teal-500/30 flex items-center justify-center text-teal-400 mb-6 group-hover:scale-110 transition-transform">
+                      <Search size={28} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-4">LeadScrub</h3>
+                    <p className="text-teal-400 font-medium mb-4">Pristine list sanitation, offline.</p>
+                    <p className="text-zinc-400 leading-relaxed max-w-lg">Scrub your B2B email lists securely on your own device. Instantly filter dead leads, bypass honeypots, and export the pristine data perfectly formatted for GoHighLevel or Instantly.</p>
+                  </div>
+                  <div className="mt-8 flex items-center text-teal-400 text-sm font-bold tracking-widest uppercase">
+                    Launch App <ArrowRight size={16} className="ml-2 group-hover:translate-x-2 transition-transform" />
+                  </div>
+                </div>
+              </div>
+
+              <div onClick={() => navigate('/app/adspendaudit')} className="md:col-span-1 backdrop-blur-md bg-white/5 border border-white/10 rounded-[2rem] p-10 hover:bg-white/10 hover:border-rose-500/50 transition-all cursor-pointer group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10 flex flex-col h-full justify-between">
+                  <div>
+                    <div className="w-14 h-14 rounded-2xl bg-black border border-rose-500/30 flex items-center justify-center text-rose-400 mb-6 group-hover:scale-110 transition-transform">
+                      <TrendingDown size={28} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-4">AdSpend-Audit</h3>
+                    <p className="text-rose-400 font-medium mb-4">Surgical campaign optimization.</p>
+                    <p className="text-zinc-400 leading-relaxed">Process raw ad CSVs instantly in-browser. Automatically identify and terminate bleeding "zombie" campaigns.</p>
+                  </div>
+                  <div className="mt-8 flex items-center text-rose-400 text-sm font-bold tracking-widest uppercase">
+                    Launch App <ArrowRight size={16} className="ml-2 group-hover:translate-x-2 transition-transform" />
+                  </div>
+                </div>
+              </div>
+
+              <div onClick={() => navigate('/app/ecommatch')} className="md:col-span-3 backdrop-blur-md bg-white/5 border border-white/10 rounded-[2rem] p-10 hover:bg-white/10 hover:border-blue-500/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col md:flex-row items-center gap-12">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative z-10 flex-1">
+                  <div className="w-14 h-14 rounded-2xl bg-black border border-blue-500/30 flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+                    <BarChart size={28} />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-4">EcomMatch</h3>
+                  <p className="text-blue-400 font-medium mb-4">The Bloomberg Terminal for your margins.</p>
+                  <p className="text-zinc-400 leading-relaxed max-w-2xl">Stop guessing your profit. Cross-reference your Shopify revenue, Meta Ad spend, and AliExpress COGS locally to reveal your absolute true net margin and expose hidden gateway fees.</p>
+                  <div className="mt-8 flex items-center text-blue-400 text-sm font-bold tracking-widest uppercase">
+                    Launch App <ArrowRight size={16} className="ml-2 group-hover:translate-x-2 transition-transform" />
+                  </div>
+                </div>
+                <div className="hidden md:flex flex-1 justify-end opacity-50 group-hover:opacity-100 transition-opacity">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="w-32 h-20 border border-blue-500/30 rounded-xl bg-blue-500/10"></div>
+                    <div className="w-32 h-20 border border-emerald-500/30 rounded-xl bg-emerald-500/10"></div>
+                    <div className="col-span-2 w-full h-32 border border-white/20 rounded-xl bg-white/5"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* 6. Local First Advantage */}
+        <section className="py-32 bg-black relative z-10 border-t border-white/5">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
+            <div className="flex-1">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Zero Loading Screens.<br/>Total Data Ownership.</h2>
+              <p className="text-xl text-zinc-400 leading-relaxed mb-10">
+                Nexus OS flips the paradigm. Our suite runs 100% locally in your browser. No cloud API scraping. No server latency. Just raw, unthrottled performance where your data never leaves your machine.
+              </p>
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400"><Zap size={24}/></div>
+                  <div className="text-lg font-medium text-white">Lightning Fast Parsing (PapaParse)</div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400"><Hexagon size={24}/></div>
+                  <div className="text-lg font-medium text-white">100% Offline Capable (PWA)</div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400"><Shield size={24}/></div>
+                  <div className="text-lg font-medium text-white">Military-Grade Data Privacy</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 flex justify-center relative mt-16 md:mt-0">
+              <div className="absolute inset-0 bg-emerald-500/20 blur-[100px] rounded-full"></div>
+              <Monitor size={300} className="text-white/10 relative z-10" />
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                <Shield className="text-emerald-400 animate-pulse drop-shadow-[0_0_30px_rgba(16,185,129,0.8)]" size={100} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. Final CTA */}
+        <section className="py-40 bg-black relative z-10 flex justify-center px-4 overflow-hidden border-t border-white/5">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-emerald-900/20 via-black to-black -z-10"></div>
+          
+          <div className="backdrop-blur-2xl bg-black/60 border border-emerald-500/50 p-12 md:p-16 rounded-[3rem] max-w-3xl w-full text-center shadow-[0_0_100px_rgba(16,185,129,0.15)] relative z-10">
+            <div className="absolute inset-0 bg-emerald-500/10 blur-[100px] -z-10 rounded-full pointer-events-none"></div>
+            
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-8">Stop Renting Your Tools.<br/>Own Them.</h2>
+            
+            <div className="flex justify-center items-end gap-4 mb-10">
+              <span className="line-through text-zinc-500 text-3xl font-medium">$49/mo</span> 
+              <span className="text-6xl md:text-7xl font-black text-white">$199</span> 
+              <span className="text-emerald-400 text-xl font-bold mb-2 uppercase tracking-widest">Lifetime</span>
+            </div>
+
+            <div className="flex flex-col gap-4 max-w-sm mx-auto mb-12 text-left">
+              <div className="flex items-center gap-3 text-zinc-300"><Shield className="text-emerald-400" size={20}/> All 3 Master Tools Included</div>
+              <div className="flex items-center gap-3 text-zinc-300"><Shield className="text-emerald-400" size={20}/> Local-First Privacy Guarantee</div>
+              <div className="flex items-center gap-3 text-zinc-300"><Shield className="text-emerald-400" size={20}/> Zero Recurring Subscriptions</div>
+              <div className="flex items-center gap-3 text-zinc-300"><Shield className="text-emerald-400" size={20}/> Installable PWA App</div>
+            </div>
+            
+            <button onClick={handleBuyNow} className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xl px-12 py-6 rounded-2xl shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:shadow-[0_0_60px_rgba(16,185,129,0.7)] transition-all transform hover:scale-105">
+              Get Instant Access Now
+            </button>
+            
+            <p className="text-zinc-500 text-sm mt-8 font-medium">
+              14-day money-back guarantee. No questions asked.
+            </p>
+          </div>
+        </section>
+
       </main>
+
+      <footer className="border-t border-white/10 py-12 px-6 bg-black relative z-10 text-center md:text-left">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center opacity-60">
+          <div className="flex items-center gap-3 mb-6 md:mb-0">
+            <Shield className="text-emerald-500" size={24} />
+            <span className="text-xl font-bold text-white">Nexus OS</span>
+          </div>
+          <div className="text-sm font-medium text-zinc-400 space-x-6 flex flex-wrap justify-center gap-4">
+            <button className="hover:text-emerald-400 transition-colors">Terms</button>
+            <button className="hover:text-emerald-400 transition-colors">Privacy</button>
+            <button className="hover:text-emerald-400 transition-colors">Contact: nexus.os.store@gmail.com</button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
