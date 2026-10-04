@@ -102,12 +102,6 @@ const ContractCompare = () => {
 
         <div className="p-4 border-t border-white/5 flex flex-col gap-2">
           <button 
-            onClick={() => navigate('/')}
-            className="w-full text-xs text-gray-400 hover:text-white py-2"
-          >
-            &larr; Back to Nexus OS
-          </button>
-          <button 
             onClick={handleInstallApp}
             className="w-full flex items-center justify-center gap-2 bg-nexus-emerald text-black font-bold text-sm px-4 py-3 rounded-xl hover:bg-white transition-all shadow-[0_0_15px_rgba(0,255,157,0.4)]"
           >
