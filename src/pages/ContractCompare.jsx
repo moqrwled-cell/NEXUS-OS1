@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FileText, AlertTriangle, ShieldAlert, Search, CheckCircle,
   Play, Lock, Cpu, RefreshCw, BookOpen, HardDriveDownload, 
-  FileCheck, Layers, EyeOff, X, ArrowRight, Download
+  FileCheck, Layers, EyeOff, X, ArrowRight, Download, UploadCloud
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 import { PDFDocument, rgb } from 'pdf-lib';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const RED_FLAGS_DICTIONARY = [
   "indemnify and hold harmless",
@@ -20,6 +22,8 @@ const RED_FLAGS_DICTIONARY = [
 ];
 
 const ContractCompare = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact
   
   // -- PWA Install --
@@ -41,29 +45,30 @@ const ContractCompare = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-full md:w-2/3 h-full bg-gradient-to-br from-blue-900/10 to-transparent -z-10 pointer-events-none" />
+    <div className="min-h-screen bg-[#02050A] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
+      {/* Background glow matching the original brand */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-nexus-emerald/20 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-nexus-emerald/10 blur-[150px] rounded-full pointer-events-none" />
 
       {/* Sidebar Dashboard */}
-      <aside className="w-full md:w-72 bg-[#050B14] border-r border-white/10 flex flex-col shrink-0">
-        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+      <aside className="w-full md:w-72 liquid-glass border-r border-white/5 flex flex-col shrink-0 z-10">
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-black border border-blue-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <ShieldAlert className="text-blue-400" size={20} />
+            <div className="w-10 h-10 rounded-xl bg-black border border-nexus-emerald/30 flex items-center justify-center shadow-[0_0_15px_rgba(0,255,157,0.2)]">
+              <ShieldAlert className="text-nexus-emerald" size={20} />
             </div>
             <div>
-              <h1 className="text-lg font-bold font-serif text-blue-100">Legal OS</h1>
-              <p className="text-[10px] text-blue-400 tracking-wider">LOCAL ZERO-TRUST</p>
+              <h1 className="text-lg font-bold font-serif text-white">Legal Assistant</h1>
+              <p className="text-[10px] text-nexus-emerald tracking-wider">CONTRACT COMPARE</p>
             </div>
           </div>
         </div>
 
-        <div className="p-4 flex-1 flex flex-col gap-2">
-          <p className="text-xs text-gray-500 font-bold uppercase mb-2 px-2">Offline Tools</p>
+        <div className="p-4 flex-1 flex flex-col gap-3 mt-4">
           
           <button 
             onClick={() => setActiveTool('analyzer')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTool === 'analyzer' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all ${activeTool === 'analyzer' ? 'bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30 shadow-[0_0_15px_rgba(0,255,157,0.1)]' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
           >
             <Search size={18} />
             <div className="text-left flex-1">
@@ -74,7 +79,7 @@ const ContractCompare = () => {
 
           <button 
             onClick={() => setActiveTool('bates')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTool === 'bates' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all ${activeTool === 'bates' ? 'bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30 shadow-[0_0_15px_rgba(0,255,157,0.1)]' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
           >
             <Layers size={18} />
             <div className="text-left flex-1">
@@ -85,7 +90,7 @@ const ContractCompare = () => {
 
           <button 
             onClick={() => setActiveTool('redact')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTool === 'redact' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-4 rounded-xl transition-all ${activeTool === 'redact' ? 'bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30 shadow-[0_0_15px_rgba(0,255,157,0.1)]' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
           >
             <EyeOff size={18} />
             <div className="text-left flex-1">
@@ -95,22 +100,30 @@ const ContractCompare = () => {
           </button>
         </div>
 
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-white/5 flex flex-col gap-2">
+          <button 
+            onClick={() => navigate('/')}
+            className="w-full text-xs text-gray-400 hover:text-white py-2"
+          >
+            &larr; Back to Nexus OS
+          </button>
           <button 
             onClick={handleInstallApp}
-            className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-bold text-sm px-4 py-3 rounded-xl hover:bg-blue-500 transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+            className="w-full flex items-center justify-center gap-2 bg-nexus-emerald text-black font-bold text-sm px-4 py-3 rounded-xl hover:bg-white transition-all shadow-[0_0_15px_rgba(0,255,157,0.4)]"
           >
             <HardDriveDownload size={16} />
-            Install App
+            Install Desktop App
           </button>
         </div>
       </aside>
 
       {/* Main Workspace */}
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-        {activeTool === 'analyzer' && <AnalyzerTool />}
-        {activeTool === 'bates' && <BatesTool />}
-        {activeTool === 'redact' && <RedactTool />}
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto z-10">
+        <AnimatePresence mode="wait">
+          {activeTool === 'analyzer' && <motion.div key="analyzer" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}} className="h-full"><AnalyzerTool /></motion.div>}
+          {activeTool === 'bates' && <motion.div key="bates" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}} className="h-full"><BatesTool /></motion.div>}
+          {activeTool === 'redact' && <motion.div key="redact" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}} className="h-full"><RedactTool /></motion.div>}
+        </AnimatePresence>
       </main>
     </div>
   );
@@ -205,15 +218,15 @@ const AnalyzerTool = () => {
   return (
     <div className="max-w-6xl mx-auto h-full flex flex-col">
       <h2 className="text-2xl font-bold font-serif mb-2">Contract Analyzer</h2>
-      <p className="text-gray-400 mb-8 text-sm">Compare versions and extract liabilities 100% locally.</p>
+      <p className="text-gray-400 mb-6 text-sm">Compare versions and extract liabilities 100% locally.</p>
       
       <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-[500px]">
         {/* Left: Inputs */}
         <div className="flex-1 flex flex-col gap-4">
           <div className="flex-1 flex flex-col gap-2 relative">
-            <div className="flex justify-between items-center bg-black/60 p-3 border border-white/10 rounded-t-xl">
+            <div className="flex justify-between items-center liquid-glass p-3 rounded-t-xl border-b-0">
               <label className="text-sm font-bold text-gray-300">Original Document</label>
-              <label className="cursor-pointer bg-white/10 hover:bg-white/20 px-3 py-1 rounded text-xs">
+              <label className="cursor-pointer bg-white/5 hover:bg-white/10 px-3 py-1 rounded-lg text-xs transition-colors border border-white/10">
                 Upload (.docx/.txt)
                 <input type="file" accept=".txt,.docx" className="hidden" onChange={(e) => handleFileUpload(e, setOldText)}/>
               </label>
@@ -222,14 +235,14 @@ const AnalyzerTool = () => {
               value={oldText}
               onChange={(e) => setOldText(e.target.value)}
               placeholder="Paste original text here..."
-              className="flex-1 bg-black/40 border border-white/10 rounded-b-xl p-4 text-sm font-mono focus:border-blue-500/50 outline-none resize-none"
+              className="flex-1 bg-black/40 border border-white/5 rounded-b-xl p-4 text-sm font-mono focus:border-nexus-emerald/50 outline-none resize-none"
             />
           </div>
 
           <div className="flex-1 flex flex-col gap-2 relative">
-            <div className="flex justify-between items-center bg-black/60 p-3 border border-white/10 rounded-t-xl">
+            <div className="flex justify-between items-center liquid-glass p-3 rounded-t-xl border-b-0">
               <label className="text-sm font-bold text-gray-300">Modified Document</label>
-              <label className="cursor-pointer bg-white/10 hover:bg-white/20 px-3 py-1 rounded text-xs">
+              <label className="cursor-pointer bg-white/5 hover:bg-white/10 px-3 py-1 rounded-lg text-xs transition-colors border border-white/10">
                 Upload (.docx/.txt)
                 <input type="file" accept=".txt,.docx" className="hidden" onChange={(e) => handleFileUpload(e, setNewText)}/>
               </label>
@@ -238,14 +251,14 @@ const AnalyzerTool = () => {
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
               placeholder="Paste modified text here..."
-              className="flex-1 bg-black/40 border border-white/10 rounded-b-xl p-4 text-sm font-mono focus:border-blue-500/50 outline-none resize-none"
+              className="flex-1 bg-black/40 border border-white/5 rounded-b-xl p-4 text-sm font-mono focus:border-nexus-emerald/50 outline-none resize-none"
             />
           </div>
 
           <button
             onClick={handleAnalyze}
             disabled={isProcessing || !oldText || !newText}
-            className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-500 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full bg-nexus-emerald text-black py-4 rounded-xl font-bold text-lg hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_20px_rgba(0,255,157,0.3)]"
           >
             {isProcessing ? <RefreshCw className="animate-spin" /> : <Play />}
             {isProcessing ? 'Analyzing...' : 'Run Audit'}
@@ -254,28 +267,28 @@ const AnalyzerTool = () => {
 
         {/* Right: Output */}
         <div className="flex-1 flex flex-col gap-4">
-          <div className="bg-white/5 rounded-2xl p-2 border border-white/5 flex gap-2">
-            <button onClick={() => setActiveTab('diff')} className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center gap-2 ${activeTab === 'diff' ? 'bg-blue-500 text-white' : 'text-gray-400 hover:text-white'}`}><Search size={16}/> Diff</button>
-            <button onClick={() => setActiveTab('risks')} className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center gap-2 ${activeTab === 'risks' ? 'bg-red-500 text-white' : 'text-gray-400 hover:text-white'}`}><ShieldAlert size={16}/> Red Flags</button>
-            <button onClick={() => setActiveTab('defs')} className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center gap-2 ${activeTab === 'defs' ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'}`}><BookOpen size={16}/> Terms</button>
+          <div className="liquid-glass rounded-2xl p-2 border border-white/5 flex gap-2">
+            <button onClick={() => setActiveTab('diff')} className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center gap-2 ${activeTab === 'diff' ? 'bg-nexus-emerald text-black shadow-[0_0_15px_rgba(0,255,157,0.3)]' : 'text-gray-400 hover:text-white'}`}><Search size={16}/> Line Diff</button>
+            <button onClick={() => setActiveTab('risks')} className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center gap-2 ${activeTab === 'risks' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'text-gray-400 hover:text-white'}`}><ShieldAlert size={16}/> Red Flags</button>
+            <button onClick={() => setActiveTab('defs')} className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex justify-center gap-2 ${activeTab === 'defs' ? 'bg-blue-500 text-white shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'text-gray-400 hover:text-white'}`}><BookOpen size={16}/> Terms</button>
           </div>
 
-          <div className="bg-black/50 rounded-2xl p-6 border border-white/5 flex-1 relative overflow-hidden">
+          <div className="liquid-glass-strong rounded-2xl p-6 border border-white/5 flex-1 relative overflow-hidden">
             <AnimatePresence>
               {isProcessing && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-20 bg-[#050B14]/90 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center">
-                  <Cpu size={48} className="text-blue-500 mb-6 animate-pulse" />
-                  <div className="w-full bg-white/10 h-2 rounded-full mb-4 overflow-hidden">
-                    <motion.div className="h-full bg-blue-500" initial={{ width: '0%' }} animate={{ width: `${(processStage / STAGES.length) * 100}%` }} transition={{ duration: 0.5 }} />
+                  <Cpu size={48} className="text-nexus-emerald mb-6 animate-pulse" />
+                  <div className="w-full bg-black/50 h-2 rounded-full mb-4 overflow-hidden">
+                    <motion.div className="h-full bg-nexus-emerald shadow-[0_0_10px_#00FF9D]" initial={{ width: '0%' }} animate={{ width: `${(processStage / STAGES.length) * 100}%` }} transition={{ duration: 0.5 }} />
                   </div>
-                  <p className="text-blue-400 font-mono text-sm">{STAGES[processStage]}</p>
+                  <p className="text-nexus-emerald font-mono text-sm">{STAGES[processStage]}</p>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {!results && !isProcessing && (
               <div className="h-full flex flex-col items-center justify-center text-gray-500 gap-4">
-                <FileCheck size={48} className="opacity-20" />
+                <ShieldAlert size={48} className="opacity-20" />
                 <p className="text-center text-sm font-medium">Results will appear here.</p>
               </div>
             )}
@@ -286,15 +299,15 @@ const AnalyzerTool = () => {
                   <div className="font-mono text-sm leading-loose p-4 bg-black/40 rounded-xl">
                     {results.diff.map((word, idx) => (
                       <span key={idx} className={`
-                        ${word.type === 'added' ? 'bg-green-500/20 text-green-400 font-bold px-1 mx-0.5' : ''}
-                        ${word.type === 'removed' ? 'bg-red-500/20 text-red-400 line-through px-1 mx-0.5' : ''}
+                        ${word.type === 'added' ? 'bg-green-500/20 text-green-400 font-bold px-1 mx-0.5 rounded' : ''}
+                        ${word.type === 'removed' ? 'bg-red-500/20 text-red-400 line-through px-1 mx-0.5 rounded' : ''}
                       `}>{word.text}{' '}</span>
                     ))}
                   </div>
                 )}
                 {activeTab === 'risks' && (
                   <div className="space-y-3">
-                    {results.flags.length === 0 ? <p className="text-green-400">No flags detected.</p> : results.flags.map((flag, idx) => (
+                    {results.flags.length === 0 ? <p className="text-nexus-emerald">No flags detected.</p> : results.flags.map((flag, idx) => (
                       <div key={idx} className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400">
                         <div className="font-bold flex items-center gap-2"><AlertTriangle size={16}/> "{flag.term}"</div>
                         <p className="text-xs mt-1 text-gray-400">Found {flag.count} times. Extremely high risk liability.</p>
@@ -305,7 +318,7 @@ const AnalyzerTool = () => {
                 {activeTab === 'defs' && (
                   <div className="grid grid-cols-2 gap-2">
                     {results.definitions.map((def, idx) => (
-                      <div key={idx} className="bg-white/5 border border-white/10 p-2 rounded text-sm text-purple-300 font-mono">{def}</div>
+                      <div key={idx} className="bg-black/40 border border-white/5 p-3 rounded-lg text-sm text-blue-300 font-mono">{def}</div>
                     ))}
                   </div>
                 )}
@@ -382,11 +395,11 @@ const BatesTool = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto flex flex-col h-full">
       <h2 className="text-2xl font-bold font-serif mb-2">Bates Stamping & Binder</h2>
-      <p className="text-gray-400 mb-8 text-sm">Merge multiple PDFs and permanently stamp sequential page numbers (e.g. DEF-001) locally.</p>
+      <p className="text-gray-400 mb-6 text-sm">Merge multiple PDFs and permanently stamp sequential page numbers locally.</p>
       
-      <div className="bg-[#050B14] border border-white/10 rounded-2xl p-6 shadow-2xl">
+      <div className="liquid-glass-strong border border-white/5 rounded-2xl p-8 shadow-2xl flex-1 flex flex-col">
         
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
@@ -395,7 +408,7 @@ const BatesTool = () => {
               type="text" 
               value={prefix} 
               onChange={e => setPrefix(e.target.value)}
-              className="w-full bg-black border border-white/20 rounded-xl p-3 text-white focus:border-blue-500 outline-none"
+              className="w-full bg-black border border-white/10 rounded-xl p-4 text-white focus:border-nexus-emerald/50 outline-none"
               placeholder="e.g. PLTF-"
             />
           </div>
@@ -405,39 +418,41 @@ const BatesTool = () => {
               type="number" 
               value={startNum} 
               onChange={e => setStartNum(Number(e.target.value))}
-              className="w-full bg-black border border-white/20 rounded-xl p-3 text-white focus:border-blue-500 outline-none"
+              className="w-full bg-black border border-white/10 rounded-xl p-4 text-white focus:border-nexus-emerald/50 outline-none"
               min="1"
             />
           </div>
         </div>
 
-        <div className="border-2 border-dashed border-white/20 rounded-xl p-8 mb-6 flex flex-col items-center justify-center bg-black/50 hover:bg-black transition-colors relative">
-          <Layers className="text-blue-500 mb-4" size={40} />
+        <div className="border-2 border-dashed border-white/10 rounded-2xl p-10 mb-6 flex flex-col items-center justify-center bg-black/30 hover:bg-black/50 transition-colors relative">
+          <Layers className="text-nexus-emerald mb-4" size={48} />
           <p className="font-bold mb-2">Upload Evidence PDFs</p>
-          <p className="text-xs text-gray-400 mb-4">Drag & drop or click to browse</p>
+          <p className="text-xs text-gray-400 mb-6">Drag & drop or click to browse</p>
           <input type="file" multiple accept=".pdf" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAddFiles} />
-          <button className="bg-white/10 px-4 py-2 rounded-lg text-sm font-bold">Select Files</button>
+          <button className="bg-white/5 border border-white/10 hover:bg-white/10 px-6 py-2 rounded-xl text-sm font-bold transition-colors">Select Files</button>
         </div>
 
         {files.length > 0 && (
-          <div className="mb-6 max-h-48 overflow-y-auto space-y-2 pr-2">
+          <div className="mb-6 max-h-48 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
             {files.map((f, i) => (
-              <div key={i} className="flex items-center justify-between bg-white/5 p-3 rounded-lg border border-white/5">
+              <div key={i} className="flex items-center justify-between bg-black/40 p-4 rounded-xl border border-white/5">
                 <span className="text-sm truncate mr-4">{i+1}. {f.name}</span>
-                <button onClick={() => removeFile(i)} className="text-red-400 hover:text-red-300 p-1"><X size={16}/></button>
+                <button onClick={() => removeFile(i)} className="text-red-400 hover:text-red-300 p-1 bg-red-500/10 rounded-lg"><X size={16}/></button>
               </div>
             ))}
           </div>
         )}
 
-        <button 
-          onClick={processPdfs}
-          disabled={isProcessing || files.length === 0}
-          className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-500 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-        >
-          {isProcessing ? <RefreshCw className="animate-spin" /> : <Download />}
-          {isProcessing ? 'Merging & Stamping...' : 'Merge & Download Stamped PDF'}
-        </button>
+        <div className="mt-auto">
+          <button 
+            onClick={processPdfs}
+            disabled={isProcessing || files.length === 0}
+            className="w-full bg-nexus-emerald text-black py-4 rounded-xl font-bold text-lg hover:bg-white transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_20px_rgba(0,255,157,0.3)]"
+          >
+            {isProcessing ? <RefreshCw className="animate-spin" /> : <Download />}
+            {isProcessing ? 'Merging & Stamping...' : 'Merge & Download Stamped PDF'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -505,41 +520,42 @@ const RedactTool = () => {
   return (
     <div className="max-w-4xl mx-auto h-full flex flex-col">
       <h2 className="text-2xl font-bold font-serif mb-2">Smart Redact & Scrub</h2>
-      <p className="text-gray-400 mb-8 text-sm">Destructively redact PII (Emails, SSNs) and custom terms locally. Exports clean text without metadata.</p>
+      <p className="text-gray-400 mb-6 text-sm">Destructively redact PII (Emails, SSNs) and custom terms locally. Exports clean text without metadata.</p>
       
-      <div className="bg-[#050B14] border border-white/10 rounded-2xl p-6 shadow-2xl flex-1 flex flex-col">
+      <div className="liquid-glass-strong border border-white/5 rounded-2xl p-8 shadow-2xl flex-1 flex flex-col">
         
-        <div className="flex gap-4 mb-4">
-          <label className="flex-1 border border-white/20 rounded-xl p-4 flex items-center justify-center gap-2 cursor-pointer hover:bg-white/5 transition-colors">
-            <UploadCloud size={20} className="text-blue-400"/>
+        <div className="flex gap-4 mb-6">
+          <label className="flex-1 border-2 border-dashed border-white/10 hover:border-nexus-emerald/50 bg-black/30 rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-black/50 transition-all">
+            <UploadCloud size={32} className="text-nexus-emerald mb-2"/>
             <span className="font-bold text-sm">Upload Document (.docx / .txt)</span>
+            <span className="text-xs text-gray-500">Max size: 50MB (Processed Locally)</span>
             <input type="file" accept=".txt,.docx" className="hidden" onChange={handleFileUpload} />
           </label>
         </div>
 
-        <div className="mb-4">
-          <label className="block text-xs font-bold text-gray-400 mb-2">Custom Word/Name to Redact (Optional)</label>
+        <div className="mb-6">
+          <label className="block text-xs font-bold text-gray-400 mb-2 uppercase">Custom Word/Name to Redact (Optional)</label>
           <input 
             type="text" 
             value={targetWord}
             onChange={e => setTargetWord(e.target.value)}
-            className="w-full bg-black border border-white/20 rounded-xl p-3 text-white focus:border-blue-500 outline-none"
-            placeholder="e.g. John Doe"
+            className="w-full bg-black border border-white/10 rounded-xl p-4 text-white focus:border-nexus-emerald/50 outline-none"
+            placeholder="e.g. John Doe or Acme Corp"
           />
         </div>
 
         <textarea
           value={text}
           onChange={e => setText(e.target.value)}
-          className="flex-1 w-full bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm mb-4 outline-none focus:border-blue-500/50 resize-none"
+          className="flex-1 w-full bg-black/40 border border-white/5 rounded-xl p-6 font-mono text-sm mb-6 outline-none focus:border-nexus-emerald/50 resize-none custom-scrollbar"
           placeholder="Document text will appear here. You can also paste text directly."
         />
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 mt-auto">
           <button 
             onClick={processRedaction}
             disabled={isProcessing || !text}
-            className="flex-1 bg-red-600/20 text-red-400 border border-red-600/30 py-4 rounded-xl font-bold text-sm hover:bg-red-600/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex-1 bg-red-500/10 text-red-400 border border-red-500/20 py-4 rounded-xl font-bold text-sm hover:bg-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isProcessing ? <RefreshCw className="animate-spin" size={18}/> : <EyeOff size={18}/>}
             {isProcessing ? 'Redacting...' : 'Auto-Redact PII & Target Word'}
@@ -548,7 +564,7 @@ const RedactTool = () => {
           <button 
             onClick={downloadCleanFile}
             disabled={!text}
-            className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold text-sm hover:bg-blue-500 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="flex-1 bg-nexus-emerald text-black py-4 rounded-xl font-bold text-sm hover:bg-white transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_15px_rgba(0,255,157,0.3)]"
           >
             <Download size={18}/> Download Clean Text
           </button>
