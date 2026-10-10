@@ -3,7 +3,11 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
 self.addEventListener('fetch', (event) => {
-  // Dummy fetch event to satisfy PWA install requirements
+  // Pass-through to avoid caching stale bundles
   return;
 });

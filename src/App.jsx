@@ -32,7 +32,7 @@ const WHOP_CHECKOUT_FIRM = "https://whop.com/nexus-os-85c8/nexus-contract-compar
 export default function App() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const [lang, setLang] = useState(i18n.language || 'ar');
+  const [lang, setLang] = useState('en');
   const isRtl = lang === 'ar';
 
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);

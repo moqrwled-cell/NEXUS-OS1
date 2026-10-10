@@ -506,14 +506,11 @@ const resources = {
   }
 };
 
-const systemLang = typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'en';
-const defaultLang = Object.keys(resources).includes(systemLang) ? systemLang : 'en';
-
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: defaultLang, // Auto-detect from system
+    lng: "en", // Always default to English
     fallbackLng: "en",
     interpolation: {
       escapeValue: false
