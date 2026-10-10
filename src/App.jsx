@@ -15,7 +15,7 @@ import {
   Monitor,
   Wrench,
   Hexagon
-, Shield, Zap, TrendingDown, Briefcase} from 'lucide-react';
+, Shield, Zap, TrendingDown, Briefcase, CheckCircle2} from 'lucide-react';
 import Nexus3DNode from './components/Nexus3DNode';
 import ContactModal from './components/ContactModal';
 
@@ -221,6 +221,109 @@ export default function App() {
               </p>
             </motion.div>
           </div>
+        </section>
+
+        {/* Flagship Spotlight: Nexus ContractGuard Enterprise 2.0 */}
+        <section className="px-6 md:px-12 lg:px-24 mb-16 relative z-10 max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="liquid-glass-strong rounded-3xl p-8 md:p-12 border-2 border-nexus-emerald/50 shadow-[0_0_60px_rgba(0,255,157,0.15)] relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-96 h-96 bg-nexus-emerald/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex flex-col lg:flex-row gap-8 items-start justify-between relative z-10">
+              <div className="flex-1">
+                <div className="inline-flex items-center gap-2 bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+                  <Shield size={14} className="text-nexus-emerald" />
+                  {isRtl ? 'المنتج الرئيسي الفائز • معزول هوائياً 100%' : 'Flagship B2B Suite • 100% Air-Gapped (ABA Rule 1.6)'}
+                </div>
+                
+                <h2 className={`${currentLang.fontHeading} text-3xl md:text-5xl font-black text-white mb-4 leading-tight`}>
+                  {isRtl 
+                    ? 'Nexus ContractGuard Enterprise 2.0' 
+                    : 'Nexus ContractGuard Enterprise 2.0'}
+                </h2>
+                
+                <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-6 max-w-2xl">
+                  {isRtl 
+                    ? 'شبكة الأمان القانونية المتكاملة قبل التوقيع. تكشف المراجع المكسورة (Section 8.2)، تضارب المبالغ المكتوبة بالأرقام والكلمات، والمصطلحات المعرفة، وبقايا العقود السابقة محلياً بالكامل داخل متصفحك — بدون أن تغادر كلمة واحدة جهازك.' 
+                    : 'The automated pre-signing defense system for attorneys and boutique law firms. Catches broken cross-references, word-to-number financial mismatches, undefined terms, and leftover boilerplate 100% in-browser with zero cloud exposure.'}
+                </p>
+
+                {/* Core Feature Badges */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-w-2xl">
+                  <div className="flex items-center gap-2.5 bg-black/40 border border-white/10 px-3.5 py-2.5 rounded-xl text-xs text-gray-200">
+                    <Hexagon size={16} className="text-nexus-emerald shrink-0" />
+                    <span>{isRtl ? 'كاشف المراجع والملاحق المفقودة (Cross-Refs)' : 'Broken Section & Missing Exhibit Hunter'}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-black/40 border border-white/10 px-3.5 py-2.5 rounded-xl text-xs text-gray-200">
+                    <TrendingDown size={16} className="text-nexus-emerald shrink-0" />
+                    <span>{isRtl ? 'مطابقة المبالغ والتواريخ المتعارضة' : 'Financial Figure-to-Word & Date Discrepancies'}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-black/40 border border-white/10 px-3.5 py-2.5 rounded-xl text-xs text-gray-200">
+                    <Briefcase size={16} className="text-nexus-emerald shrink-0" />
+                    <span>{isRtl ? 'مصفوفة التزامات كل طرف تعاقدي' : 'Contractual Obligations Matrix (Shall/Must)'}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-black/40 border border-white/10 px-3.5 py-2.5 rounded-xl text-xs text-gray-200">
+                    <Zap size={16} className="text-nexus-emerald shrink-0" />
+                    <span>{isRtl ? 'توليد مذكرة العميل التنفيذية بضغطة زر' : '1-Click Executive Client Memorandum (PDF)'}</span>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-wrap gap-4 items-center">
+                  <button
+                    onClick={() => navigate('/app/contractcompare')}
+                    className="bg-nexus-emerald text-black px-8 py-4 rounded-2xl font-black text-base hover:bg-white transition-all shadow-[0_0_30px_rgba(0,255,157,0.4)] flex items-center gap-2"
+                  >
+                    <span>{isRtl ? 'فتح بيئة العمل القانونية والتجربة' : 'Launch ContractGuard Studio'}</span>
+                    <ArrowRight size={18} className={isRtl ? 'rotate-180' : ''} />
+                  </button>
+                  <button
+                    onClick={() => navigate('/product/contractcompare')}
+                    className="liquid-glass border border-white/10 text-white px-6 py-4 rounded-2xl font-bold text-sm hover:bg-white/10 transition-all"
+                  >
+                    {isRtl ? 'تفاصيل الرخصة والتسعير ($199 / $299)' : 'View Licensing & Pricing ($199 / $299)'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Price / ROI Side Card */}
+              <div className="w-full lg:w-72 bg-black/60 border border-nexus-emerald/30 rounded-2xl p-6 flex flex-col justify-between shrink-0">
+                <div>
+                  <span className="text-xs uppercase font-bold text-gray-400 tracking-wider">
+                    {isRtl ? 'ترخيص دائم لمدى الحياة' : 'Lifetime Enterprise License'}
+                  </span>
+                  <div className="text-3xl font-black text-white mt-2 mb-1 flex items-baseline gap-2">
+                    <span className="text-nexus-mint">$199</span>
+                    <span className="text-xs font-normal text-gray-400 line-through">$499</span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 leading-relaxed mb-4">
+                    {isRtl 
+                      ? 'يوفر 6+ ساعات أسبوعياً من عمل المحامي ($1,500/شهر) بدون أي اشتراكات سحابية.' 
+                      : 'Saves 6+ hours/week of paralegal review ($1,500/mo) with zero recurring cloud fees.'}
+                  </p>
+                </div>
+
+                <div className="space-y-2 border-t border-white/10 pt-4 text-xs text-gray-300">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} className="text-nexus-emerald" />
+                    <span>{isRtl ? 'معالجة محلية 100%' : '100% In-Browser Engine'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} className="text-nexus-emerald" />
+                    <span>{isRtl ? 'صفر رسوم اشتراك شهرية' : 'Zero Monthly Subscriptions'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} className="text-nexus-emerald" />
+                    <span>{isRtl ? 'ترقيم قضائي وطمس PII غير محدود' : 'Unlimited Bates & PII Redaction'}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         {/* Instantly Visible Products Grid */}
