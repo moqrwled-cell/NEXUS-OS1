@@ -27,7 +27,7 @@ export default function EcomMatch() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('ecommatch')) {
+    if (verifyToolAccess('ecommatch') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);
@@ -97,22 +97,6 @@ export default function EcomMatch() {
     }
     
     setIsProcessing(true);
-    
-    // AI Theater Sequence
-    const stages = [
-      { msg: 'Air-gapping local workspace...', time: 500 },
-      { msg: 'Ingesting Shopify Revenue Streams...', time: 1200 },
-      { msg: 'Cross-referencing Ad Spends...', time: 2000 },
-      { msg: 'Calculating Supplier COGS...', time: 2800 },
-      { msg: 'Isolating Hidden Fees & Margins...', time: 3600 },
-      { msg: 'Compiling God Mode Terminal...', time: 4200 }
-    ];
-
-    stages.forEach(({msg, time}) => {
-      setTimeout(() => setProcessingStage(msg), time);
-    });
-
-    setTimeout(() => {
       // 1. Calculate Shopify Total Revenue
       let totalRevenue = 0;
       let totalOrders = 0;
@@ -190,7 +174,6 @@ export default function EcomMatch() {
       setIsProcessing(false);
       setProcessingStage('');
       playSuccessSound();
-    }, 4500);
   };
 
   const formatMoney = (amount) => {

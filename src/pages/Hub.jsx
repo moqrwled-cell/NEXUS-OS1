@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Zap, Hexagon, TrendingDown, ArrowRight, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { verifyToolAccess, logout } from '../utils/auth';
 
 export default function Hub() {
   const navigate = useNavigate();
@@ -9,14 +10,14 @@ export default function Hub() {
   const isRtl = i18n.dir() === 'rtl';
 
   useEffect(() => {
-    const license = localStorage.getItem('nexus_license');
-    if (license !== "NEXUS-CEO-2026") {
-      navigate('/login');
+    const hasAccess = verifyToolAccess('all') || localStorage.getItem('nexus_access_token');
+    if (!hasAccess) {
+      navigate('/login?redirect=hub');
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('nexus_license');
+    logout();
     navigate('/');
   };
 

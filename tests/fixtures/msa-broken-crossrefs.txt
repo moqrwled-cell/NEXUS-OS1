@@ -1,0 +1,27 @@
+MASTER SERVICES AGREEMENT WITH CROSS-REFERENCE DEFECTS
+
+SECTION 1. SCOPE OF SERVICES
+1.1 Provider shall perform the services outlined in Exhibit A attached hereto.
+1.2 Provider shall also maintain backup archives pursuant to Exhibit C (Data Backup SLA).
+
+SECTION 2. FEES AND PAYMENTS
+2.1 Client shall pay fees in accordance with Section 8.3 of this Agreement.
+2.2 Expenses shall be reimbursed as described in Schedule 3.
+
+SECTION 3. TERM AND RENEWAL
+3.1 The term of this Agreement shall commence on the Effective Date.
+3.2 Renewal shall be subject to the terms in Clause 14.2 herein.
+
+SECTION 4. REMEDIES AND DEFAULT
+4.1 In the event of default, the non-defaulting party may exercise the remedies set forth in the preceding Section.
+4.2 Liability limits shall apply as defined in Section 8.1.
+
+SECTION 8. INDEMNIFICATION
+8.1 Indemnification Scope. Provider shall indemnify Client for intellectual property claims.
+8.2 Notice of Claim. Client must provide prompt notice of any claim within ten (10) days.
+
+SECTION 14. MISCELLANEOUS
+This Section 14 contains the general boilerplate provisions.
+
+EXHIBIT A - GENERAL SERVICES
+Provider services description.

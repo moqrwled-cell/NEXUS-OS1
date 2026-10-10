@@ -10,56 +10,32 @@ export default function AppContactModal({ isOpen, onClose, isRtl }) {
   });
   const [status, setStatus] = useState('idle'); // idle, sending, success, error
 
-  // User provided Bot Token & Chat ID
-  const BOT_TOKEN = '8804637925:AAHNIy9gLk-ckLJPO-dKLlA_qDyJOFFe1Ro';
-  const CHAT_ID = '1034497360';
-
   const issueOptionsEn = ["Integration Issue (Webhook)", "Billing & Subscription", "Agent Not Replying", "Custom Development", "Other"];
   const issueOptionsAr = ["مشكلة في الربط (Webhook)", "الدفع والاشتراكات", "الوكيل لا يرد", "برمجة خاصة", "أخرى"];
   
   const options = isRtl ? issueOptionsAr : issueOptionsEn;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setStatus('sending');
 
-    const text = `
-🤖 *App Support Request*
-📧 *Email:* ${formData.email}
-⚠️ *Issue:* ${formData.issue || 'Not specified'}
-💬 *Message:* 
-${formData.message}
-    `;
+    // 100% Local Air-Gapped Action: Launch default mail client via mailto
+    const subject = encodeURIComponent(`Nexus App Support: ${formData.issue || 'General Support'}`);
+    const body = encodeURIComponent(`Contact Email: ${formData.email}\nIssue Type: ${formData.issue || 'Not specified'}\n\nDetails:\n${formData.message}`);
+    const mailtoUrl = `mailto:support@nexus-enterprise.local?subject=${subject}&body=${body}`;
 
     try {
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: text,
-          parse_mode: 'Markdown'
-        })
-      });
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ email: '', issue: '', message: '' });
-        setTimeout(() => {
-          onClose();
-          setStatus('idle');
-        }, 3000);
-      } else {
-        setStatus('error');
-        setTimeout(() => setStatus('idle'), 3000);
-      }
-    } catch (error) {
-      console.error('Telegram Error:', error);
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 3000);
+      window.location.href = mailtoUrl;
+    } catch {
+      // Fallback
     }
+
+    setStatus('success');
+    setFormData({ email: '', issue: '', message: '' });
+    setTimeout(() => {
+      onClose();
+      setStatus('idle');
+    }, 2500);
   };
 
   if (!isOpen) return null;

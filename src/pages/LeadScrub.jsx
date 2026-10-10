@@ -41,7 +41,7 @@ export default function LeadScrub() {
   });
 
   useEffect(() => {
-    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('leadscrub')) {
+    if (verifyToolAccess('leadscrub') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);
@@ -116,29 +116,15 @@ export default function LeadScrub() {
   const processLeads = () => {
     if (!data.length || !emailColumn) return;
     setIsProcessing(true);
-    setProcessingStage('Parsing raw data...');
 
-    // AI Theater Sequence
-    const stages = [
-      { msg: 'Scrubbing invalid & role-based emails...', time: 800 },
-      { msg: 'Running AI Data Enrichment Engine...', time: 1600 },
-      { msg: 'Calculating Lead Scores...', time: 2400 },
-      { msg: 'Finalizing Data...', time: 3200 }
-    ];
-
-    stages.forEach(({msg, time}) => {
-      setTimeout(() => setProcessingStage(msg), time);
-    });
-
-    setTimeout(() => {
-      let stats = {
-        total: data.length,
-        valid: 0,
-        duplicates: 0,
-        invalidFormat: 0,
-        roleBased: 0,
-        freeDomain: 0
-      };
+    let stats = {
+      total: data.length,
+      valid: 0,
+      duplicates: 0,
+      invalidFormat: 0,
+      roleBased: 0,
+      freeDomain: 0
+    };
 
       const cleanData = [];
       const seenEmails = new Set();
@@ -224,14 +210,13 @@ export default function LeadScrub() {
         }
       });
 
-      setResults({ stats, cleanData });
-      setIsProcessing(false);
-      setProcessingStage('');
-      setActiveTab('data'); 
-      setCurrentPage(1);
-      setSearchTerm('');
-      playSuccessSound();
-    }, 4000); // Wait for the whole theater sequence
+    setResults({ stats, cleanData });
+    setIsProcessing(false);
+    setProcessingStage('');
+    setActiveTab('data'); 
+    setCurrentPage(1);
+    setSearchTerm('');
+    playSuccessSound();
   };
 
   const downloadCleanCSV = () => {

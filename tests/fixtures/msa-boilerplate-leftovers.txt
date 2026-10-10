@@ -1,0 +1,20 @@
+MASTER SERVICES AGREEMENT
+
+This Agreement is entered into by and between Acme Corporation ("Client") and CloudTech Solutions Inc. ("Provider").
+
+SECTION 1. SCOPE AND SERVICES
+Provider agrees to perform services for [Company Name] located in [Jurisdiction].
+
+SECTION 2. FEES
+Client shall pay the sum of $50,000 to Provider on [Insert Effective Date].
+Payment shall be delivered to bank account: ___.
+
+SECTION 3. INDEMNITY
+Acme Corp shall defend Provider against third party claims.
+In no event shall Acme LLC be held responsible for system downtimes.
+OldVendor Inc. shall retain all intellectual property rights in legacy modules.
+
+SECTION 4. SIGNATURES
+Authorized Signature for <<CLIENT_NAME>>:
+By: [ • ]
+Date: _________

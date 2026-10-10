@@ -15,13 +15,6 @@ export const handler = async function(event, context) {
       };
     }
 
-    // Allow Admin Key for testing/developer access
-    if (licenseKey === 'NEXUS-ADMIN') {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ valid: true, message: 'Admin access granted' }),
-      };
-    }
 
     const whopApiKey = process.env.WHOP_API_KEY;
     if (!whopApiKey) {

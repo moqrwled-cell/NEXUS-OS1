@@ -10,10 +10,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ valid: false, message: 'License key is required' });
     }
 
-    // Allow Admin Key for testing/developer access
-    if (licenseKey === 'NEXUS-CEO-2026') {
-      return res.status(200).json({ valid: true, message: 'Admin access granted' });
-    }
 
     const whopApiKey = process.env.WHOP_API_KEY;
     if (!whopApiKey) {

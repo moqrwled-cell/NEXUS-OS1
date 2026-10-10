@@ -45,7 +45,7 @@ export default function AdSpendAudit() {
     }
   };
   useEffect(() => {
-    if (localStorage.getItem('nexus_license') === 'FREE-PIRATE-ACCOUNT' || verifyToolAccess('adspendaudit')) {
+    if (verifyToolAccess('adspendaudit') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);
@@ -102,24 +102,11 @@ export default function AdSpendAudit() {
     if (!data.length || !mapping.campaignName || !mapping.spend || !mapping.conversions) return;
     setIsProcessing(true);
 
-    const stages = [
-      { msg: 'Scanning structural campaign matrix...', time: 400 },
-      { msg: 'Cross-referencing Cost Per Acquisition...', time: 1200 },
-      { msg: 'Detecting Zombie Ad Sets...', time: 2000 },
-      { msg: 'Calculating Mathematical Waste...', time: 2800 },
-      { msg: 'Isolating Scalable Winners...', time: 3500 },
-    ];
-
-    stages.forEach(({msg, time}) => {
-      setTimeout(() => setProcessingStage(msg), time);
-    });
-
-    setTimeout(() => {
-      let totalWasted = 0;
-      let totalSpend = 0;
-      let zombies = [];
-      let highCpa = [];
-      let scalable = [];
+    let totalWasted = 0;
+    let totalSpend = 0;
+    let zombies = [];
+    let highCpa = [];
+    let scalable = [];
 
       data.forEach(row => {
         const name = row[mapping.campaignName] || 'Unnamed';
@@ -167,7 +154,6 @@ export default function AdSpendAudit() {
       setIsProcessing(false);
       setProcessingStage('');
       playSuccessSound();
-    }, 4000);
   };
 
   return (
@@ -337,6 +323,43 @@ export default function AdSpendAudit() {
                           </tr>
                         )) : (
                           <tr><td colSpan="3" className="p-8 text-center text-gray-500">No zombie campaigns found!</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* High CPA List (Bleeders) */}
+                <div className="liquid-glass-strong border border-white/10 rounded-3xl overflow-hidden">
+                  <div className="bg-amber-500/10 border-b border-amber-500/20 p-5 flex items-center gap-3">
+                    <TrendingDown className="text-amber-500" />
+                    <div>
+                      <h3 className="font-bold text-amber-100">The "High CPA" Bleeders</h3>
+                      <p className="text-xs text-amber-200/70">Campaigns with conversions that exceed Target CPA (${targetCPA}).</p>
+                    </div>
+                  </div>
+                  <div className="p-0 max-h-[250px] overflow-y-auto custom-scrollbar">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-black/50 text-gray-400 text-xs uppercase">
+                        <tr>
+                          <th className="p-4 font-medium">Campaign</th>
+                          <th className="p-4 font-medium">Spent</th>
+                          <th className="p-4 font-medium">Convs</th>
+                          <th className="p-4 font-medium">Actual CPA</th>
+                          <th className="p-4 font-medium">Waste</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {results.highCpa.length > 0 ? results.highCpa.map((c, i) => (
+                          <tr key={i} className="hover:bg-white/5 transition-colors">
+                            <td className="p-4 font-medium text-amber-100 truncate max-w-[200px]">{c.name}</td>
+                            <td className="p-4 text-gray-300">${c.spend.toFixed(2)}</td>
+                            <td className="p-4 text-gray-300">{c.conversions}</td>
+                            <td className="p-4 text-amber-400 font-bold">${c.cpa.toFixed(2)}</td>
+                            <td className="p-4 text-rose-400 font-bold">${c.wasted.toFixed(2)}</td>
+                          </tr>
+                        )) : (
+                          <tr><td colSpan="5" className="p-8 text-center text-gray-500">No campaigns exceeding target CPA!</td></tr>
                         )}
                       </tbody>
                     </table>

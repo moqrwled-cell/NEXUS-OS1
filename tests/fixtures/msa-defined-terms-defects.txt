@@ -1,0 +1,16 @@
+MASTER SERVICES AGREEMENT WITH DEFINED TERMS DEFECTS
+
+SECTION 1. DEFINITIONS
+1.1 "Agreement" means this Master Services Agreement.
+1.2 "Confidential Information" means proprietary documentation and data.
+1.3 "Force Majeure Event" means acts of God, war, riot, fire, explosion, flood, or earthquake.
+1.4 "Subcontractor" means any third-party entity engaged to perform work.
+1.5 "Tax Authority" means any national, federal, state, or municipal taxing body.
+
+SECTION 2. OPERATIVE CLAUSES
+2.1 Provider shall protect all Confidential Information received from Client.
+2.2 Provider shall assign designated Key Personnel to manage the infrastructure.
+2.3 The Parties agree that all Proprietary Software remains the sole property of Provider.
+2.4 Provider shall meet the agreed Service Level Targets on a monthly basis.
+2.5 In the event of a Security Incident, Provider shall immediately alert Client.
+2.6 Provider shall indemnify the Indemnified Parties against any copyright claims.

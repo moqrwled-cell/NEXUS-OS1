@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { KeyRound, ShieldCheck, ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { validateEnterpriseKey, grantToolAccess } from '../utils/auth';
 
 export default function AuthLogin() {
   const { t, i18n } = useTranslation();
@@ -21,48 +22,15 @@ export default function AuthLogin() {
     setError('');
 
     try {
-      // SECRET MASTER PASSWORD FOR THE OWNER (Bypasses all checks)
-      if (licenseKey === 'nexus_master_2026') {
-        localStorage.setItem('nexus_access_token', licenseKey);
-        localStorage.setItem('nexus_whop_verified', 'true');
-        navigate('/app/ai-agent');
+      const validation = validateEnterpriseKey(licenseKey);
+      if (validation.valid) {
+        grantToolAccess(licenseKey, 'all');
+        navigate('/hub');
         return;
       }
-
-      const isDevelopment = import.meta.env.DEV;
-      
-      if (isDevelopment) {
-        // Local simulation to avoid CORS and backend requirement during dev
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Accept any key longer than 5 chars for testing
-        if (licenseKey.length > 5) {
-          localStorage.setItem('nexus_access_token', licenseKey);
-          localStorage.setItem('nexus_whop_verified', 'true');
-          navigate('/app/ai-agent');
-        } else {
-          setError(isRtl ? 'الكود غير صالح أو منتهي الصلاحية' : 'Invalid or expired license key');
-        }
-      } else {
-        // Production: Call the Netlify Serverless Function
-        const response = await fetch('/.netlify/functions/verify-whop', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ licenseKey })
-        });
-        
-        const data = await response.json();
-        
-        if (data.valid) {
-          localStorage.setItem('nexus_access_token', licenseKey);
-          localStorage.setItem('nexus_whop_verified', 'true');
-          navigate('/app/ai-agent');
-        } else {
-          setError(data.error || (isRtl ? 'الكود غير صالح' : 'Invalid license key'));
-        }
-      }
-    } catch (err) {
-      setError(isRtl ? 'حدث خطأ في الاتصال بسيرفرات Whop' : 'Connection error to Whop servers');
+      setError(validation.reason || (isRtl ? 'الكود غير صالح أو منتهي الصلاحية' : 'Invalid or expired license key'));
+    } catch {
+      setError(isRtl ? 'حدث خطأ في التحقق من المفتاح' : 'Error validating license key');
     } finally {
       setIsVerifying(false);
     }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Key, ShieldCheck, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { grantToolAccess } from '../utils/auth';
+import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
 
 export default function Login() {
   const [licenseKey, setLicenseKey] = useState("");
@@ -21,56 +21,28 @@ export default function Login() {
       return;
     }
 
-    // Master Backdoor Key for CEO
-    if (licenseKey.trim() === "NEXUS-CEO-2026") {
-      localStorage.setItem('nexus_license', licenseKey);
-      
+    setIsLoading(true);
+
+    // 100% Local / Air-Gapped License Validation
+    const validation = validateEnterpriseKey(licenseKey);
+    if (validation.valid) {
       const urlParams = new URLSearchParams(window.location.search);
-      const redirectPath = urlParams.get('redirect');
+      const redirectPath = urlParams.get('redirect') || 'contractcompare';
       
-      if (redirectPath) {
-        navigate(`/app/${redirectPath}`);
+      grantToolAccess(licenseKey, redirectPath === 'hub' ? 'all' : redirectPath);
+      setIsLoading(false);
+      
+      if (redirectPath === 'hub') {
+        navigate('/hub');
       } else {
-        navigate("/hub");
+        navigate(`/app/${redirectPath}`);
       }
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // Call the secure Vercel serverless function to validate the key via Whop API
-      const response = await fetch('/api/validate-license', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ licenseKey })
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.valid) {
-        // Dynamic Redirect based on URL query params from Whop
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectPath = urlParams.get('redirect');
-        
-        if (redirectPath) {
-          grantToolAccess(licenseKey, redirectPath);
-          navigate(`/app/${redirectPath}`);
-        } else {
-          // Normal customer logged in without a tool link. Redirect to home.
-          navigate("/"); 
-        }
-      } else {
-        setError(data.message || (isRtl ? "كود التفعيل غير صحيح أو منتهي الصلاحية." : "Invalid or expired license key."));
-      }
-    } catch (err) {
-      console.error(err);
-      setError(isRtl ? "حدث خطأ في الاتصال بالخادم." : "Server connection error.");
-    } finally {
-      setIsLoading(false);
-    }
+    // If key format didn't pass local validation
+    setError(validation.reason || (isRtl ? "كود التفعيل غير صالح. الصيغة المتوقعة: NX-XXXX-XXXX-XXXX" : "Invalid license key format. Expected: NX-XXXX-XXXX-XXXX"));
+    setIsLoading(false);
   };
 
   return (
