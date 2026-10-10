@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { KeyRound, ExternalLink, ArrowRight, Loader2, ShieldCheck, CheckCircle2, Lock, ArrowLeft } from 'lucide-react';
+import { KeyRound, ArrowRight, Loader2, ShieldCheck, CheckCircle2, Lock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
+import { openSeamlessCheckout } from '../utils/checkoutPopup';
 
 export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contractcompare' }) {
   const navigate = useNavigate();
@@ -10,8 +11,6 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
   const [status, setStatus] = useState('idle'); // idle, activating, success
 
   if (!isOpen) return null;
-
-  const WHOP_CHECKOUT_URL = "https://whop.com/nexus-os-85c8/nexus-contract-compare-nda-legal-diff-engine";
 
   // Handle Enterprise License Key Verification
   const handleLicenseSubmit = (e) => {
@@ -111,17 +110,26 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
 
             {/* Whop Purchase CTA */}
             <div className="mt-6 pt-5 border-t border-zinc-800 flex flex-col items-center gap-3">
-              <span className="text-xs text-zinc-400 font-medium">Don't have a lifetime license yet?</span>
-              <a
-                href={WHOP_CHECKOUT_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-zinc-700 hover:border-emerald-500/50 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2 shadow-sm"
+              <span className="text-xs text-zinc-400 font-medium">Don't have an enterprise license yet?</span>
+              <button
+                type="button"
+                onClick={() => {
+                  openSeamlessCheckout({
+                    productId: 'prod_ETdsHhJlU1fMM',
+                    toolName: 'contractcompare',
+                    onSuccess: () => {
+                      setStatus('success');
+                      setTimeout(() => {
+                        onSuccess();
+                      }, 1000);
+                    }
+                  });
+                }}
+                className="w-full py-3.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
               >
-                <Lock size={14} className="text-emerald-400" />
-                <span>Purchase Lifetime License on Whop ($199 Solo / $299 Firm)</span>
-                <ExternalLink size={13} className="text-zinc-400" />
-              </a>
+                <Lock size={14} />
+                <span>Instant Checkout ($199 Solo / $299 Firm) — Apple Pay & Cards</span>
+              </button>
 
               <button
                 type="button"

@@ -12,7 +12,6 @@ import {
   Lock, 
   FileText, 
   AlertTriangle, 
-  ExternalLink,
   ChevronDown,
   Sparkles,
   Scale,
@@ -25,9 +24,7 @@ import {
 } from 'lucide-react';
 import Nexus3DNode from './components/Nexus3DNode';
 import ContactModal from './components/ContactModal';
-
-const WHOP_CHECKOUT_SOLO = "https://whop.com/nexus-os-85c8/nexus-contract-compare-nda-legal-diff-engine";
-const WHOP_CHECKOUT_FIRM = "https://whop.com/nexus-os-85c8/nexus-contract-compare-nda-legal-diff-engine";
+import { openSeamlessCheckout } from './utils/checkoutPopup';
 
 export default function App() {
   const { i18n } = useTranslation();
@@ -693,15 +690,18 @@ export default function App() {
               </div>
 
               <div className="mt-8 pt-6 border-t border-white/10">
-                <a
-                  href={WHOP_CHECKOUT_SOLO}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all text-xs md:text-sm"
+                <button
+                  type="button"
+                  onClick={() => openSeamlessCheckout({
+                    productId: 'prod_ETdsHhJlU1fMM',
+                    toolName: 'contractcompare',
+                    onSuccess: () => navigate('/app/contractcompare')
+                  })}
+                  className="w-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all text-xs md:text-sm cursor-pointer"
                 >
+                  <Lock size={15} className="text-emerald-400" />
                   <span>{isRtl ? 'شراء رخصة المستشار الفردي ($199)' : 'Purchase Solo License ($199)'}</span>
-                  <ExternalLink size={15} />
-                </a>
+                </button>
               </div>
             </div>
 
@@ -761,15 +761,18 @@ export default function App() {
               </div>
 
               <div className="mt-8 pt-6 border-t border-white/10">
-                <a
-                  href={WHOP_CHECKOUT_FIRM}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full bg-nexus-emerald text-black hover:bg-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] text-xs md:text-sm"
+                <button
+                  type="button"
+                  onClick={() => openSeamlessCheckout({
+                    productId: 'prod_ETdsHhJlU1fMM',
+                    toolName: 'contractcompare',
+                    onSuccess: () => navigate('/app/contractcompare')
+                  })}
+                  className="w-full bg-nexus-emerald text-black hover:bg-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] text-xs md:text-sm cursor-pointer"
                 >
+                  <Lock size={15} />
                   <span>{isRtl ? 'شراء رخصة مكاتب المحاماة ($299)' : 'Purchase Law Firm Suite ($299)'}</span>
-                  <ExternalLink size={15} />
-                </a>
+                </button>
               </div>
             </div>
 

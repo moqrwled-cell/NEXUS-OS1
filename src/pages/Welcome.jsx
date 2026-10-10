@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, ShieldCheck, Loader2, ArrowRight, Monitor, PlayCircle } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Loader2, Monitor } from 'lucide-react';
 import { grantToolAccess } from '../utils/auth';
 
 export default function Welcome() {
@@ -15,25 +15,42 @@ export default function Welcome() {
   const handleActivate = () => {
     setIsActivating(true);
     
-    // Simulate fingerprint generation and locking process
     setTimeout(() => {
       // Store the activation securely in localStorage using the auth utility
-      grantToolAccess(orderId, redirectTool);
+      grantToolAccess(orderId, redirectTool === 'hub' ? 'all' : redirectTool);
       localStorage.setItem('nexus_device_fingerprint', btoa(navigator.userAgent + Date.now()));
       
       setActivated(true);
       
-      // Redirect to the tool after success
-      setTimeout(() => {
-        if (redirectTool === 'hub') {
-          navigate('/hub');
-        } else {
-          navigate(`/app/${redirectTool}`);
+      // Notify opener window if opened via Seamless Popup
+      if (window.opener) {
+        try {
+          window.opener.postMessage({ type: 'NEXUS_LICENSE_ACTIVATED', orderId }, '*');
+        } catch {
+          // ignore
         }
-      }, 1500);
-      
-    }, 2000);
+        setTimeout(() => {
+          window.close();
+        }, 1200);
+      } else {
+        // Redirect to the tool after success
+        setTimeout(() => {
+          if (redirectTool === 'hub') {
+            navigate('/hub');
+          } else {
+            navigate(`/app/${redirectTool}`);
+          }
+        }, 1500);
+      }
+    }, 1500);
   };
+
+  useEffect(() => {
+    const isAuto = searchParams.get('auto') === 'true' || searchParams.get('status') === 'success';
+    if (isAuto || (orderId && orderId !== 'UNKNOWN_ORDER')) {
+      handleActivate();
+    }
+  }, []);
 
   const toolContent = {
     leadscrub: {
