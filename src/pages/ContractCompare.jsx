@@ -8,7 +8,7 @@ import {
   FileCode, Database, Sparkles, Filter, Trash2,
   ShieldCheck, Check, RotateCcw, Calendar, DollarSign,
   Bookmark, HelpCircle, ArrowLeft, User, Users, StopCircle, Upload,
-  AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet
+  AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
@@ -104,14 +104,15 @@ Any controversy shall be submitted to mandatory binding arbitration under exclus
 export default function ContractCompare() {
   const navigate = useNavigate();
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history
-  const [showDeviceModal, setShowDeviceModal] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(true);
+  const [showDeviceModal, setShowDeviceModal] = useState(true);
+  const [isUnlocked, setIsUnlocked] = useState(false);
   const [restoredSession, setRestoredSession] = useState(null);
 
   // Check auth
   useEffect(() => {
-    if (verifyToolAccess('contractcompare') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
+    if (verifyToolAccess('contractcompare') || verifyToolAccess('all')) {
       setIsUnlocked(true);
+      setShowDeviceModal(false);
     } else {
       setIsUnlocked(false);
       setShowDeviceModal(true);
@@ -250,32 +251,50 @@ export default function ContractCompare() {
       </aside>
 
       {/* Main Workspace */}
-      <main className="flex-1 p-5 md:p-8 overflow-y-auto z-10 custom-scrollbar">
-        <AnimatePresence mode="wait">
-          {activeTool === 'analyzer' && (
-            <motion.div key="analyzer" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-              <ContractAnalyzerView initialSession={restoredSession} />
-            </motion.div>
-          )}
-          {activeTool === 'redact' && (
-            <motion.div key="redact" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-              <PIIRedactorView />
-            </motion.div>
-          )}
-          {activeTool === 'bates' && (
-            <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-              <BatesStamperView />
-            </motion.div>
-          )}
-          {activeTool === 'history' && (
-            <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-              <AuditVaultView onSelectDiff={(session) => {
-                setRestoredSession(session);
-                setActiveTool('analyzer');
-              }} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <main className="flex-1 p-5 md:p-8 overflow-y-auto z-10 custom-scrollbar flex flex-col justify-center">
+        {!isUnlocked ? (
+          <div className="flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto my-auto">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+              <Lock size={32} />
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Protected Legal Workspace</h2>
+            <p className="text-xs text-zinc-400 leading-relaxed mb-6">
+              ContractGuard runs in a 100% air-gapped environment. An authenticated Whop lifetime license key is required to access the studio.
+            </p>
+            <button
+              onClick={() => setShowDeviceModal(true)}
+              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+            >
+              Enter Whop License Key
+            </button>
+          </div>
+        ) : (
+          <AnimatePresence mode="wait">
+            {activeTool === 'analyzer' && (
+              <motion.div key="analyzer" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                <ContractAnalyzerView initialSession={restoredSession} />
+              </motion.div>
+            )}
+            {activeTool === 'redact' && (
+              <motion.div key="redact" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                <PIIRedactorView />
+              </motion.div>
+            )}
+            {activeTool === 'bates' && (
+              <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                <BatesStamperView />
+              </motion.div>
+            )}
+            {activeTool === 'history' && (
+              <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                <AuditVaultView onSelectDiff={(session) => {
+                  setRestoredSession(session);
+                  setActiveTool('analyzer');
+                }} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </main>
 
       <PirateTrapModal 
