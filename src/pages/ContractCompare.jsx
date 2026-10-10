@@ -7,14 +7,12 @@ import {
   FileCheck, Layers, EyeOff, X, Download,
   FileCode, Database, Sparkles, Filter, Trash2,
   ShieldCheck, Check, RotateCcw, Calendar, DollarSign,
-  Bookmark, HelpCircle, ArrowRight, ArrowLeft, Globe, User, Users, StopCircle, Upload,
+  Bookmark, HelpCircle, ArrowLeft, User, Users, StopCircle, Upload,
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
 // Flagship Engines & Utilities
-import { computeContractDiff } from '../utils/diffEngine';
-import { scanLegalRisks } from '../utils/legalRiskRules';
 import { sanitizeDocumentPII, PII_RULES } from '../utils/piiEngine';
 import { executeBatesStamping } from '../utils/batesStamper';
 import { 
@@ -23,8 +21,8 @@ import {
   saveBatesJob, getAllBatesJobs, clearAllLocalData
 } from '../utils/localDB';
 import { 
-  exportRedlineToHTML, exportAuditReportJSON, exportRedlineSummaryTXT,
-  exportExecutiveClientMemoHTML, exportObligationsCSV, exportObligationsJSON
+  exportRedlineToHTML, exportAuditReportJSON,
+  exportExecutiveClientMemoHTML, exportObligationsCSV
 } from '../utils/exportEngine';
 import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
@@ -105,8 +103,6 @@ Any controversy shall be submitted to mandatory binding arbitration under exclus
 
 export default function ContractCompare() {
   const navigate = useNavigate();
-  const [lang, setLang] = useState('en');
-  const isRtl = lang === 'ar';
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history
   const [showDeviceModal, setShowDeviceModal] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(true);
@@ -137,124 +133,128 @@ export default function ContractCompare() {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') setDeferredPrompt(null);
     } else {
-      alert(isRtl ? "الأداة تعمل محلياً داخل عازل المتصفح. يمكنك إضافتها للمفضلة أو تثبيتها كتطبيق PWA." : "App is running in browser local sandbox. Add to bookmarks or install as PWA if supported.");
+      alert("App is running in browser local sandbox. Add to bookmarks or install as PWA if supported.");
     }
   };
 
   return (
-    <div className={`min-h-screen bg-[#02050A] text-white font-sans flex flex-col md:flex-row relative overflow-hidden ${isRtl ? 'rtl' : 'ltr'}`} dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#030712] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
       {/* Background ambient lighting */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00F0FF]/15 blur-[160px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00F0FF]/10 blur-[160px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#00FF9D]/10 blur-[160px] rounded-full pointer-events-none" />
 
       {/* Sidebar Dashboard */}
-      <aside className={`w-full md:w-80 liquid-glass ${isRtl ? 'border-l' : 'border-r'} border-white/5 flex flex-col shrink-0 z-20`}>
-        {/* Top bar with Back button & Language Toggle */}
-        <div className="px-6 pt-5 pb-3 border-b border-white/5 flex items-center justify-between">
+      <aside className="w-full md:w-72 bg-[#030712] border-r border-zinc-800/80 flex flex-col shrink-0 z-20">
+        {/* Navigation to Hub */}
+        <div className="px-5 py-4 border-b border-zinc-800/60 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-            title={isRtl ? 'الرجوع للصفحة الرئيسية' : 'Back to Home'}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 transition-all cursor-pointer"
+            title="Return to Main Hub"
           >
-            {isRtl ? <ArrowRight size={14} className="text-nexus-emerald" /> : <ArrowLeft size={14} className="text-nexus-emerald" />}
-            <span>{isRtl ? 'الرئيسية' : 'Home'}</span>
+            <ArrowLeft size={14} className="text-emerald-400" />
+            <span>Return to Home</span>
           </button>
-
-          <button
-            onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-nexus-cyan bg-nexus-cyan/10 hover:bg-nexus-cyan/20 border border-nexus-cyan/30 transition-all shadow-[0_0_10px_rgba(0,240,255,0.15)]"
-            title={isRtl ? 'Switch interface to English' : 'تحويل الواجهة إلى العربية'}
-          >
-            <Globe size={13} />
-            <span>{lang === 'ar' ? 'English' : 'العربية'}</span>
-          </button>
+          <span className="text-xs font-mono text-zinc-500 font-medium">v2.4 Pro</span>
         </div>
 
-        {/* Branding header */}
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-black border border-nexus-emerald/40 flex items-center justify-center shadow-[0_0_20px_rgba(0,255,157,0.25)]">
-              <ShieldAlert className="text-nexus-emerald" size={22} />
-            </div>
-            <div>
-              <h1 className="text-base font-bold font-serif text-white tracking-wide">Nexus ContractGuard</h1>
-              <p className="text-[10px] text-nexus-cyan font-mono tracking-wider font-semibold">ENTERPRISE AIR-GAPPED</p>
-            </div>
+        {/* Brand Header */}
+        <div className="p-5 border-b border-zinc-800/60 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-black border border-emerald-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+            <ShieldAlert className="text-emerald-400" size={20} />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-white tracking-wide">ContractGuard</h1>
+            <p className="text-xs text-cyan-400 font-mono tracking-wider font-semibold">AIR-GAPPED LEGAL</p>
           </div>
         </div>
 
         {/* Air-gap security attestation pill */}
-        <div className="mx-4 mt-4 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2 text-xs text-emerald-400">
+        <div className="mx-4 mt-3 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2 text-xs text-emerald-400">
           <ShieldCheck size={16} className="shrink-0" />
-          <span className="text-[11px] font-mono leading-tight">
-            {isRtl ? '100% تدقيق في ذاكرة المتصفح | صفر سيرفر' : '100% In-Memory RAM | 0 Server Telemetry'}
-          </span>
+          <span className="text-xs font-mono leading-tight">100% In-Memory RAM • 0 Cloud Server</span>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="p-4 flex-1 flex flex-col gap-2 mt-2">
+        <div className="p-3.5 flex-1 flex flex-col gap-1.5 mt-2">
           <button 
             onClick={() => setActiveTool('analyzer')}
-            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${activeTool === 'analyzer' ? 'bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 shadow-[0_0_15px_rgba(0,255,157,0.15)] font-bold' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all cursor-pointer ${
+              activeTool === 'analyzer' 
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)] font-bold' 
+                : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+            }`}
           >
-            <Search size={18} />
-            <div className={`${isRtl ? 'text-right' : 'text-left'} flex-1`}>
-              <p className="text-sm font-semibold">{isRtl ? 'تدقيق النزاهة والمخاطر' : 'Integrity & Diff Audit'}</p>
-              <p className="text-[10px] opacity-70">{isRtl ? 'فحص مسودة واحدة أو مقارنة مسودتين' : 'Single Draft or Dual Redline'}</p>
+            <Search size={18} className={activeTool === 'analyzer' ? 'text-emerald-400' : 'text-zinc-500'} />
+            <div className="text-left flex-1">
+              <p className="text-sm font-semibold">Integrity & Diff Audit</p>
+              <p className="text-xs text-zinc-500">Single Review & Dual Redline</p>
             </div>
           </button>
 
           <button 
             onClick={() => setActiveTool('redact')}
-            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${activeTool === 'redact' ? 'bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 shadow-[0_0_15px_rgba(0,255,157,0.15)] font-bold' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all cursor-pointer ${
+              activeTool === 'redact' 
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)] font-bold' 
+                : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+            }`}
           >
-            <EyeOff size={18} />
-            <div className={`${isRtl ? 'text-right' : 'text-left'} flex-1`}>
-              <p className="text-sm font-semibold">{isRtl ? 'طمس البيانات الحساسة (PII)' : 'Smart PII Redactor'}</p>
-              <p className="text-[10px] opacity-70">{isRtl ? 'حجب الهويات، البطاقات، الحسابات البنكية' : 'SSN, CC, IBAN, Custom Scrub'}</p>
+            <EyeOff size={18} className={activeTool === 'redact' ? 'text-emerald-400' : 'text-zinc-500'} />
+            <div className="text-left flex-1">
+              <p className="text-sm font-semibold">Smart PII Redactor</p>
+              <p className="text-xs text-zinc-500">Identity & Financial Scrub</p>
             </div>
           </button>
 
           <button 
             onClick={() => setActiveTool('bates')}
-            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${activeTool === 'bates' ? 'bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 shadow-[0_0_15px_rgba(0,255,157,0.15)] font-bold' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all cursor-pointer ${
+              activeTool === 'bates' 
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)] font-bold' 
+                : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+            }`}
           >
-            <Layers size={18} />
-            <div className={`${isRtl ? 'text-right' : 'text-left'} flex-1`}>
-              <p className="text-sm font-semibold">{isRtl ? 'الترقيم القضائي (Bates)' : 'Bates Stamping Suite'}</p>
-              <p className="text-[10px] opacity-70">{isRtl ? 'ترقيم الأدلة والمستندات للمحاكم' : 'Court Evidence Numbering'}</p>
+            <Layers size={18} className={activeTool === 'bates' ? 'text-emerald-400' : 'text-zinc-500'} />
+            <div className="text-left flex-1">
+              <p className="text-sm font-semibold">Bates Stamping Suite</p>
+              <p className="text-xs text-zinc-500">Court Evidence Numbering</p>
             </div>
           </button>
 
           <button 
             onClick={() => setActiveTool('history')}
-            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${activeTool === 'history' ? 'bg-nexus-emerald/15 text-nexus-emerald border border-nexus-emerald/40 shadow-[0_0_15px_rgba(0,255,157,0.15)] font-bold' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all cursor-pointer ${
+              activeTool === 'history' 
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)] font-bold' 
+                : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+            }`}
           >
-            <Database size={18} />
-            <div className={`${isRtl ? 'text-right' : 'text-left'} flex-1`}>
-              <p className="text-sm font-semibold">{isRtl ? 'سجل الجلسات المحفوظة' : 'Audit Trail & Vault'}</p>
-              <p className="text-[10px] opacity-70">{isRtl ? 'تخزين مشفر محلي IndexedDB' : 'IndexedDB Local Persistence'}</p>
+            <Database size={18} className={activeTool === 'history' ? 'text-emerald-400' : 'text-zinc-500'} />
+            <div className="text-left flex-1">
+              <p className="text-sm font-semibold">Audit Vault & Storage</p>
+              <p className="text-xs text-zinc-500">Encrypted Local Persistence</p>
             </div>
           </button>
         </div>
 
-        <div className="p-4 border-t border-white/5 flex flex-col gap-2">
+        <div className="p-4 border-t border-zinc-800/60 flex flex-col gap-2">
           <button 
             onClick={handleInstallApp}
-            className="w-full flex items-center justify-center gap-2 bg-nexus-emerald text-black font-bold text-xs px-4 py-3 rounded-xl hover:bg-white transition-all shadow-[0_0_15px_rgba(0,255,157,0.3)]"
+            className="w-full flex items-center justify-center gap-2 bg-emerald-400 hover:bg-emerald-300 text-black font-extrabold text-xs px-4 py-2.5 rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer"
           >
             <HardDriveDownload size={15} />
-            {isRtl ? 'تثبيت الأداة أوفلاين (PWA)' : 'Desktop Air-Gap Mode'}
+            Install Offline App (PWA)
           </button>
         </div>
       </aside>
 
       {/* Main Workspace */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto z-10 custom-scrollbar">
+      <main className="flex-1 p-5 md:p-8 overflow-y-auto z-10 custom-scrollbar">
         <AnimatePresence mode="wait">
           {activeTool === 'analyzer' && (
             <motion.div key="analyzer" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-              <ContractAnalyzerView initialSession={restoredSession} lang={lang} isRtl={isRtl} />
+              <ContractAnalyzerView initialSession={restoredSession} />
             </motion.div>
           )}
           {activeTool === 'redact' && (
@@ -293,22 +293,24 @@ export default function ContractCompare() {
 // =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + Web Worker HUD + Multi-Export)
 // =========================================================================
-function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = false }) {
+// =========================================================================
+// 1. CONTRACT ANALYZER VIEW (Dual Modes + In-Memory Proofreader + Multi-Export)
+// =========================================================================
+function ContractAnalyzerView({ initialSession }) {
   // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff)
   const [analysisMode, setAnalysisMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
 
   const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || '');
   const [baselineText, setBaselineText] = useState(initialSession?.originalText || '');
-  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || (isRtl ? 'اتفاقية ترخيص وخدمات برمجية' : 'Software License & Services Agreement'));
+  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || 'Master Services Agreement');
   const [clientParty, setClientParty] = useState('Acme Corporation');
   const [counterparty, setCounterparty] = useState('Globex Systems Inc');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
-  const [showMetadataDrawer, setShowMetadataDrawer] = useState(false);
 
   // File upload status messages
   const [uploadStatus, setUploadStatus] = useState({ target: '', baseline: '' });
 
-  // Web Worker Management Hook
+  // In-Memory Audit Hook with instant cancellation
   const {
     isProcessing,
     progress,
@@ -320,7 +322,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
 
   const [activeHudTab, setActiveHudTab] = useState('crossRefs'); // crossRefs | definedTerms | financialDates | obligations | risks | diff
   const [obligationPartyFilter, setObligationPartyFilter] = useState('all'); // all | Client | Counterparty | Mutual | Third Party
-  const [obligationDutyFilter, setObligationDutyFilter] = useState('all'); // all | affirmative | negative | conditional
+  const [obligationDutyFilter] = useState('all'); // all | affirmative | negative | conditional
   const [riskSeverityFilter, setRiskSeverityFilter] = useState('all'); // all | critical | warning | info
   const [saveStatus, setSaveStatus] = useState('');
 
@@ -342,7 +344,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
   const loadSampleContract = (autoAudit = false) => {
     if (analysisMode === 'single') {
       const sampleText = SAMPLE_SINGLE_DRAFT;
-      const sampleTitle = isRtl ? 'اتفاقية ترخيص برمجيات نموذجية (مسودة تجريبية)' : 'Software License & Services Agreement (Sample Draft)';
+      const sampleTitle = 'Enterprise Software License Agreement (Sample Audit)';
       const client = 'Acme Corporation';
       const counter = 'Globex Systems Inc';
       setText(sampleText);
@@ -362,7 +364,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
     } else {
       const baseText = SAMPLE_ORIGINAL;
       const modText = SAMPLE_MODIFIED;
-      const sampleTitle = isRtl ? 'اتفاقية خدمات عامة (مقارنة مسودتين)' : 'Master Services Agreement (Amended Redline)';
+      const sampleTitle = 'Master Services Agreement (Amended Redline)';
       const client = 'Acme Corporation';
       const counter = 'Vendor Systems Inc';
       setBaselineText(baseText);
@@ -393,19 +395,19 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
       const lowerName = file.name.toLowerCase();
 
       if (lowerName.endsWith('.pdf')) {
-        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Extracting text via local pdfjs-dist...' }));
+        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Extracting text from PDF...' }));
         const pdfResult = await extractTextFromPDF(file, {
           onProgress: (p) => {
             setUploadStatus(prev => ({
               ...prev,
-              [statusKey]: `Extracting PDF: page ${p.currentPage}/${p.totalPages} (${p.percent}%)...`
+              [statusKey]: `Extracting PDF: page ${p.currentPage}/${p.totalPages}...`
             }));
           }
         });
         setTargetText(pdfResult.fullText);
         setUploadStatus(prev => ({
           ...prev,
-          [statusKey]: `Loaded PDF: ${pdfResult.pageCount} pages, ${pdfResult.totalWords} words`
+          [statusKey]: `Loaded PDF (${pdfResult.totalWords} words)`
         }));
       } else if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
@@ -417,7 +419,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
         setTargetText(fileContent);
         setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded text file (${fileContent.split(/\s+/).length} words)` }));
       } else {
-        alert("Supported formats: .pdf, .docx, .txt, .md");
+        alert("Supported file formats: .pdf, .docx, .txt, .md");
         setUploadStatus(prev => ({ ...prev, [statusKey]: '' }));
       }
     } catch (err) {
@@ -436,11 +438,11 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
     const targetCounter = overridePayload?.counterparty || counterparty;
 
     if (!targetText.trim()) {
-      alert(isRtl ? "يرجى كتابة أو لصق نص العقد للبدء بالتدقيق." : "Please provide contract text to audit.");
+      alert("Please paste or upload a contract text to audit.");
       return;
     }
     if (targetMode === 'comparative' && !targetBaseline.trim()) {
-      alert(isRtl ? "يرجى توفير نص العقد الأساسي للمقارنة." : "Please provide the original baseline contract for comparative diff.");
+      alert("Please provide the original baseline contract for comparative diff.");
       return;
     }
 
@@ -461,7 +463,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
       if (auditData) {
         // Auto-save session into local IndexedDB
         await saveDiffSession({
-          title: targetTitle || (isRtl ? 'تدقيق نزاهة العقد' : 'Contract Integrity Audit'),
+          title: targetTitle || 'Contract Integrity Audit',
           originalText: targetMode === 'comparative' ? targetBaseline : targetText,
           modifiedText: targetMode === 'comparative' ? targetText : '',
           stats: auditData.diff?.stats || {
@@ -474,7 +476,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
           overallRiskScore: auditData.overallRiskScore
         });
 
-        setSaveStatus(isRtl ? 'تم حفظ التقرير في الخزينة المحلية (IndexedDB)' : 'Audit saved to Local Vault (IndexedDB)');
+        setSaveStatus('Audit saved to Local Vault (IndexedDB)');
         setTimeout(() => setSaveStatus(''), 4500);
       }
     } catch (err) {
@@ -512,135 +514,118 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
   return (
     <div className="max-w-7xl mx-auto h-full flex flex-col gap-6">
       {/* Top Header & Mode Toggle */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-xl md:text-2xl font-black text-white">
-              {isRtl ? 'استوديو فحص ونزاهة العقود القانونية' : 'Contract Integrity & Risk Proofreader'}
+            <h2 className="text-2xl font-bold tracking-tight text-white">
+              Contract Integrity & Risk Audit
             </h2>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/30">
-              ContractGuard 2.0
+            <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              Air-Gapped RAM
             </span>
           </div>
-          <p className="text-zinc-400 text-xs mt-1">
-            {isRtl 
-              ? 'تدقيق آلي شامل للمراجع والمبالغ والتواريخ والالتزامات محلياً 100% داخل المتصفح (معيار ABA Rule 1.6).' 
-              : 'Pre-signature document integrity audit (Cross-Refs, Defined Terms, Financial & Dates, Obligations) with air-gapped local processing.'
-            }
+          <p className="text-sm text-zinc-400 mt-1">
+            Pre-signature legal proofreading for cross-references, missing exhibits, undefined terms, and financial contradictions.
           </p>
         </div>
 
         {/* Mode Selector and Quick Load */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex bg-black/60 p-1 rounded-xl border border-white/10">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex bg-black/60 p-1 rounded-xl border border-zinc-800">
             <button
               onClick={() => {
                 setAnalysisMode('single');
                 setActiveHudTab('crossRefs');
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${analysisMode === 'single' ? 'bg-nexus-emerald text-black shadow-[0_0_12px_rgba(0,255,157,0.25)]' : 'text-zinc-400 hover:text-white'}`}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                analysisMode === 'single'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               <FileCheck size={14} />
-              {isRtl ? 'مسودة واحدة قبل التوقيع' : 'Single-Draft Audit'}
+              Single Draft Audit
             </button>
             <button
               onClick={() => {
                 setAnalysisMode('comparative');
                 setActiveHudTab('diff');
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${analysisMode === 'comparative' ? 'bg-nexus-cyan text-black shadow-[0_0_12px_rgba(0,240,255,0.25)]' : 'text-zinc-400 hover:text-white'}`}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                analysisMode === 'comparative'
+                  ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               <Search size={14} />
-              {isRtl ? 'مقارنة نسختين وتعديلات' : 'Comparative Redline'}
+              Redline Diff Mode
             </button>
           </div>
 
           <button
             onClick={() => loadSampleContract(true)}
-            className="px-3.5 py-2 bg-nexus-emerald/15 hover:bg-nexus-emerald/25 border border-nexus-emerald/40 rounded-xl text-xs font-bold text-nexus-emerald hover:text-white transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,255,157,0.2)] animate-pulse"
-            title={isRtl ? "تحميل عينة عقد حقيقية بها أخطاء وفحصها فوراً" : "Load realistic contract test fixture with known drafting defects & audit immediately"}
+            className="px-4 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 rounded-xl text-xs font-bold text-emerald-400 hover:text-white transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.15)] cursor-pointer"
+            title="Load realistic contract test fixture with known drafting defects and audit immediately"
           >
-            <Sparkles size={14} className="text-nexus-emerald" />
-            <span>{isRtl ? '🚀 تجربة عقد نموذجي وفحصه فوراً' : '🚀 Load & Auto-Audit Sample'}</span>
+            <Sparkles size={14} className="text-emerald-400" />
+            <span>Load Demo Contract</span>
           </button>
         </div>
       </div>
 
-      {/* Collapsible Document Metadata Drawer */}
-      <div className="rounded-xl border border-white/10 bg-[#060D12] overflow-hidden text-xs">
-        <button
-          onClick={() => setShowMetadataDrawer(!showMetadataDrawer)}
-          className="w-full p-2.5 px-3.5 flex items-center justify-between text-zinc-400 hover:text-white transition-colors"
-        >
-          <span className="font-mono text-[11px] flex items-center gap-2">
-            <span>⚙️</span>
-            <span>{isRtl ? 'بيانات أطراف العقد وعنوان المستند' : 'Contract Title & Parties Metadata'}</span>
-            <span className="text-zinc-500 font-sans">({documentTitle} • {clientParty} vs {counterparty})</span>
-          </span>
-          <span className="text-[10px] text-nexus-cyan font-bold">
-            {showMetadataDrawer ? (isRtl ? 'إخفاء ▲' : 'Collapse ▲') : (isRtl ? 'تعديل ▼' : 'Edit ▼')}
-          </span>
-        </button>
-
-        {showMetadataDrawer && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 border-t border-white/5 bg-black/40">
-            <div>
-              <label className="text-zinc-400 font-mono text-[11px] block mb-1">
-                {isRtl ? 'عنوان العقد / المستند' : 'Contract / Matter Title'}
-              </label>
-              <input
-                type="text"
-                value={documentTitle}
-                onChange={(e) => setDocumentTitle(e.target.value)}
-                placeholder={isRtl ? 'مثال: اتفاقية تقديم خدمات برمجية' : 'e.g. Master Services Agreement'}
-                className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-1.5 text-white font-mono focus:border-nexus-emerald outline-none"
-              />
-            </div>
-            <div>
-              <label className="text-zinc-400 font-mono text-[11px] block mb-1 flex items-center gap-1">
-                <User size={12} className="text-nexus-cyan" /> 
-                {isRtl ? 'الطرف الأول (الموكل / شركتك)' : 'Client Party (Your Entity)'}
-              </label>
-              <input
-                type="text"
-                value={clientParty}
-                onChange={(e) => setClientParty(e.target.value)}
-                placeholder="e.g. Acme Corporation"
-                className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-1.5 text-white font-mono focus:border-nexus-cyan outline-none"
-              />
-            </div>
-            <div>
-              <label className="text-zinc-400 font-mono text-[11px] block mb-1 flex items-center gap-1">
-                <Users size={12} className="text-nexus-emerald" /> 
-                {isRtl ? 'الطرف الثاني (الطرف المقابل)' : 'Counterparty Name'}
-              </label>
-              <input
-                type="text"
-                value={counterparty}
-                onChange={(e) => setCounterparty(e.target.value)}
-                placeholder="e.g. Globex Systems Inc"
-                className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-1.5 text-white font-mono focus:border-nexus-emerald outline-none"
-              />
-            </div>
-          </div>
-        )}
+      {/* Clean Horizontal Matter Metadata Bar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
+        <div>
+          <label className="text-xs font-semibold text-zinc-400 block mb-1">Matter / Agreement Title</label>
+          <input
+            type="text"
+            value={documentTitle}
+            onChange={(e) => setDocumentTitle(e.target.value)}
+            placeholder="e.g. Master Services Agreement"
+            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-colors"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-zinc-400 block mb-1 flex items-center gap-1.5">
+            <User size={13} className="text-cyan-400" /> Client Entity (Your Side)
+          </label>
+          <input
+            type="text"
+            value={clientParty}
+            onChange={(e) => setClientParty(e.target.value)}
+            placeholder="e.g. Acme Corporation"
+            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-cyan-500 outline-none transition-colors"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-zinc-400 block mb-1 flex items-center gap-1.5">
+            <Users size={13} className="text-emerald-400" /> Counterparty Name
+          </label>
+          <input
+            type="text"
+            value={counterparty}
+            onChange={(e) => setCounterparty(e.target.value)}
+            placeholder="e.g. Globex Systems Inc"
+            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-colors"
+          />
+        </div>
       </div>
 
       {/* Input Panes */}
       {analysisMode === 'single' ? (
         /* SINGLE DOCUMENT INTEGRITY AUDIT MODE */
-        <div className="flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden min-h-[340px]">
-          <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-nexus-emerald font-mono flex items-center gap-2">
-              <FileCheck size={15} className="text-nexus-emerald" />
-              CONTRACT DRAFT TO PROOFREAD (Incoming Agreement Prior to Signature)
+        <div className="flex flex-col rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden shadow-xl">
+          <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
+            <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
+              <FileCheck size={15} className="text-emerald-400" />
+              CONTRACT DRAFT TO PROOFREAD (Pre-Signing Review)
             </span>
             <div className="flex items-center gap-2">
               {uploadStatus.target && (
-                <span className="text-[11px] font-mono text-nexus-cyan">{uploadStatus.target}</span>
+                <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
               )}
-              <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1 rounded-lg text-xs font-semibold text-gray-300 transition-colors flex items-center gap-1.5">
-                <Upload size={13} /> Upload (.pdf / .docx / .txt)
+              <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5">
+                <Upload size={13} /> Import File (.pdf / .docx / .txt)
                 <input
                   type="file"
                   accept=".pdf,.docx,.txt,.md"
@@ -653,30 +638,32 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Paste contract text to audit for broken references, missing exhibits, undefined terms, date contradictions, and financial mismatches..."
-            className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[220px]"
+            placeholder="Paste contract text here to audit for broken references, missing exhibits, undefined terms, date contradictions, and financial mismatches..."
+            className="w-full bg-black/40 p-5 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[260px]"
           />
-          <div className="p-2 border-t border-white/5 text-[11px] font-mono text-gray-500 flex justify-between px-4">
-            <span>Air-gapped client RAM processing (ABA Rule 1.6)</span>
-            <span>{text.trim() ? text.trim().split(/\s+/).length : 0} words | {text.split('\n').length} lines</span>
+          <div className="px-5 py-2.5 border-t border-zinc-800/80 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
+            <span>Air-gapped client RAM processing (ABA Model Rule 1.6)</span>
+            <span className="font-semibold text-zinc-300">
+              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words • {text.split('\n').length} lines
+            </span>
           </div>
         </div>
       ) : (
         /* COMPARATIVE REDLINE DIFF MODE (DUAL PANES) */
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[340px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Baseline Contract */}
-          <div className="flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
-            <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-300 font-mono flex items-center gap-2">
-                <FileText size={14} className="text-gray-400" />
-                ORIGINAL CONTRACT (Baseline)
+          <div className="flex flex-col rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden shadow-xl">
+            <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
+                <FileText size={14} className="text-zinc-400" />
+                ORIGINAL BASELINE
               </span>
               <div className="flex items-center gap-2">
                 {uploadStatus.baseline && (
-                  <span className="text-[11px] font-mono text-nexus-cyan">{uploadStatus.baseline}</span>
+                  <span className="text-xs font-mono text-cyan-400">{uploadStatus.baseline}</span>
                 )}
-                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300 transition-colors flex items-center gap-1">
-                  <Upload size={12} /> Upload (.pdf/.docx/.txt)
+                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
+                  <Upload size={12} /> Upload
                   <input
                     type="file"
                     accept=".pdf,.docx,.txt,.md"
@@ -690,26 +677,26 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
               value={baselineText}
               onChange={(e) => setBaselineText(e.target.value)}
               placeholder="Paste original baseline contract..."
-              className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[200px]"
+              className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
-            <div className="p-2 border-t border-white/5 text-[11px] font-mono text-gray-500 text-right pr-4">
-              {baselineText.trim() ? baselineText.trim().split(/\s+/).length : 0} words
+            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
+              {baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString() : 0} words
             </div>
           </div>
 
           {/* Amended Contract */}
-          <div className="flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
-            <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-nexus-cyan font-mono flex items-center gap-2">
-                <FileCheck size={14} className="text-nexus-cyan" />
-                MODIFIED CONTRACT (Amended Draft)
+          <div className="flex flex-col rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden shadow-xl">
+            <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
+              <span className="text-xs font-semibold text-cyan-400 font-mono flex items-center gap-2">
+                <FileCheck size={14} className="text-cyan-400" />
+                AMENDED DRAFT (Redline Target)
               </span>
               <div className="flex items-center gap-2">
                 {uploadStatus.target && (
-                  <span className="text-[11px] font-mono text-nexus-cyan">{uploadStatus.target}</span>
+                  <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
                 )}
-                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300 transition-colors flex items-center gap-1">
-                  <Upload size={12} /> Upload (.pdf/.docx/.txt)
+                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
+                  <Upload size={12} /> Upload
                   <input
                     type="file"
                     accept=".pdf,.docx,.txt,.md"
@@ -723,31 +710,35 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Paste modified or redlined contract text here..."
-              className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[200px]"
+              className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
-            <div className="p-2 border-t border-white/5 text-[11px] font-mono text-gray-500 text-right pr-4">
-              {text.trim() ? text.trim().split(/\s+/).length : 0} words
+            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
+              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words
             </div>
           </div>
         </div>
       )}
 
       {/* Control Bar & Progress */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl liquid-glass border border-white/5">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800">
         <div className="flex items-center gap-4">
           {analysisMode === 'comparative' && (
             <div className="flex items-center gap-2">
-              <label className="text-xs font-semibold text-gray-400">Diff Granularity:</label>
-              <div className="flex bg-black/50 p-1 rounded-xl border border-white/10">
+              <span className="text-xs font-semibold text-zinc-400">Diff Precision:</span>
+              <div className="flex bg-black/60 p-1 rounded-xl border border-zinc-800">
                 <button
                   onClick={() => setDiffGranularity('word')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${diffGranularity === 'word' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+                    diffGranularity === 'word' ? 'bg-emerald-500 text-black' : 'text-zinc-400 hover:text-white'
+                  }`}
                 >
                   Word
                 </button>
                 <button
                   onClick={() => setDiffGranularity('line')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${diffGranularity === 'line' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
+                    diffGranularity === 'line' ? 'bg-emerald-500 text-black' : 'text-zinc-400 hover:text-white'
+                  }`}
                 >
                   Line
                 </button>
@@ -756,14 +747,14 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
           )}
 
           {saveStatus && (
-            <span className="text-[11px] font-mono text-nexus-emerald flex items-center gap-1 animate-fade-in">
-              <Check size={12} /> {saveStatus}
+            <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 animate-fade-in">
+              <Check size={14} /> {saveStatus}
             </span>
           )}
 
           {workerError && (
-            <span className="text-[11px] font-mono text-red-400 flex items-center gap-1">
-              <AlertCircle size={12} /> {workerError}
+            <span className="text-xs font-mono text-red-400 flex items-center gap-1.5">
+              <AlertCircle size={14} /> {workerError}
             </span>
           )}
         </div>
@@ -777,10 +768,10 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
                 e.stopPropagation();
                 cancelAnalysis();
               }}
-              className="px-5 py-3.5 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.4)] cursor-pointer active:scale-95"
+              className="px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.4)] cursor-pointer active:scale-95"
             >
               <StopCircle size={16} />
-              <span>{isRtl ? 'إلغاء الفحص' : 'Cancel Audit'}</span>
+              <span>Cancel Audit</span>
             </button>
           )}
 
@@ -788,17 +779,15 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
             type="button"
             onClick={() => handleExecuteAudit()}
             disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-            className="px-8 py-3.5 bg-gradient-to-r from-nexus-emerald to-nexus-cyan text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_25px_rgba(0,255,157,0.3)] active:scale-[0.98] cursor-pointer"
+            className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
           >
             {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
             <span>
-              {isProcessing 
-                ? (isRtl ? 'جاري الفحص السريع في الذاكرة...' : 'Auditing in Memory...') 
-                : (analysisMode === 'single' 
-                    ? (isRtl ? '⚡ بدء الفحص والتدقيق القانوني الفوري' : '⚡ Run Contract Integrity Audit') 
-                    : (isRtl ? '⚡ تنفيذ مقارنة التعديلات والتدقيق' : '⚡ Execute Redline Diff & Audit')
-                  )
-              }
+              {isProcessing
+                ? 'Auditing in Local Memory...'
+                : analysisMode === 'single'
+                ? 'Run Integrity Audit'
+                : 'Execute Redline Diff & Audit'}
             </span>
           </button>
         </div>
@@ -806,11 +795,11 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
 
       {/* Live In-Memory Progress Bar */}
       {isProcessing && (
-        <div className="p-4 rounded-2xl liquid-glass-strong border border-nexus-cyan/30 animate-pulse">
+        <div className="p-4 rounded-2xl bg-zinc-900 border border-cyan-500/30 animate-pulse">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold text-nexus-cyan flex items-center gap-2">
-              <RefreshCw className="animate-spin text-nexus-cyan" size={14} />
-              {progress?.msg || (isRtl ? 'جاري تدقيق الوثيقة في الذاكرة المحلية...' : 'Auditing contract in memory...')}
+            <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-2">
+              <RefreshCw className="animate-spin text-cyan-400" size={14} />
+              {progress?.msg || 'Auditing contract in local memory...'}
             </span>
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono font-bold text-white">
@@ -822,15 +811,15 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
                   e.preventDefault();
                   cancelAnalysis();
                 }}
-                className="px-2.5 py-1 bg-red-600/80 hover:bg-red-500 text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer"
+                className="px-2.5 py-1 bg-red-600/80 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
               >
-                {isRtl ? 'إلغاء' : 'Cancel'}
+                Cancel
               </button>
             </div>
           </div>
-          <div className="w-full bg-black/60 rounded-full h-2.5 overflow-hidden border border-white/10">
+          <div className="w-full bg-black/60 rounded-full h-2.5 overflow-hidden border border-zinc-800">
             <div
-              className="bg-gradient-to-r from-nexus-emerald to-nexus-cyan h-2.5 rounded-full transition-all duration-150"
+              className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-2.5 rounded-full transition-all duration-150"
               style={{ width: `${progress?.percent || 0}%` }}
             />
           </div>
@@ -841,31 +830,29 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
       {auditResults && (
         <div className="flex flex-col gap-6 animate-fade-in mt-2">
           {/* Executive Risk Score & Metrics Banner */}
-          <div className="p-6 rounded-2xl liquid-glass-strong border border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex items-center gap-5">
-              <div className={`px-5 py-4 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-[0_0_20px_rgba(0,0,0,0.4)]`}>
-                <span className="text-3xl font-black block font-mono">{riskScore}</span>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider block font-sans">
-                  {riskLevel} {isRtl ? 'المخاطر' : 'RISK'}
+          <div className="p-6 rounded-2xl bg-zinc-900/70 border border-zinc-800 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl">
+            <div className="flex items-center gap-6">
+              <div className={`px-6 py-4 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-lg shrink-0`}>
+                <span className="text-4xl font-black block font-mono tracking-tight">{riskScore}</span>
+                <span className="text-xs font-extrabold uppercase tracking-wider block mt-0.5">
+                  {riskLevel} RISK
                 </span>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white font-serif">
-                  {riskScore >= 75 ? (isRtl ? 'تم اكتشاف ثغرات صياغة ومخاطر حرجة' : 'Critical Drafting Defects Detected') :
-                   riskScore >= 45 ? (isRtl ? 'تم رصد شذوذ قانوني عالي الخطورة' : 'High Risk Legal Anomalies Found') :
-                   riskScore >= 20 ? (isRtl ? 'تم تحديد ثغرات صياغة متوسطة' : 'Moderate Drafting Gaps Identified') :
-                   (isRtl ? 'سجل نزاهة العقد ممتاز ونظيف' : 'Clean Document Integrity Profile')}
+                <h3 className="text-xl font-bold text-white font-serif">
+                  {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
+                   riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
+                   riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
+                   'Clean Document Integrity Profile'}
                 </h3>
-                <p className="text-xs text-gray-400 mt-1 max-w-xl leading-relaxed">
-                  {isRtl 
-                    ? `تم تدقيق ${auditResults.meta?.wordCount || 0} كلمة خلال ${auditResults.meta?.processingTimeMs || 0}ms عبر 4 محركات تدقيق قانوني. صفر إرسال خارج الجهاز.`
-                    : `${auditResults.meta?.wordCount || 0} words audited in ${auditResults.meta?.processingTimeMs || 0}ms across 4 legal integrity engines. 0 server transmission.`}
+                <p className="text-sm text-zinc-400 mt-1 max-w-xl leading-relaxed">
+                  {auditResults.meta?.wordCount || 0} words audited in {auditResults.meta?.processingTimeMs || 0}ms across 4 verification engines. 100% in-memory RAM processing.
                 </p>
               </div>
             </div>
 
             {/* Quick Export Actions */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => exportExecutiveClientMemoHTML({
                   contractTitle: documentTitle,
@@ -873,37 +860,37 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
                   counterpartyName: counterparty,
                   auditData: auditResults
                 })}
-                className="px-4 py-2.5 bg-nexus-emerald text-black font-extrabold rounded-xl text-xs hover:bg-white transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(0,255,157,0.3)]"
-                title={isRtl ? "توليد مذكرة رأي قانوني تنفيذية جاهزة للطباعة والـ PDF" : "Generate professional law firm client memorandum with print CSS for 1-click PDF"}
+                className="px-4 py-2.5 bg-emerald-400 hover:bg-emerald-300 text-black font-extrabold rounded-xl text-xs transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                title="Generate executive legal memorandum with print CSS for 1-click PDF"
               >
                 <Download size={14} />
-                {isRtl ? 'تصدير مذكرة الموكل (HTML/PDF)' : 'Export Client Memo (HTML/PDF)'}
+                Client Memo (PDF)
               </button>
 
               <button
                 onClick={() => exportObligationsCSV(auditResults.obligations)}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-1.5"
-                title={isRtl ? "تصدير جدول الالتزامات التعاقدية كملف إكسل CSV" : "Export contractual obligations schedule to CSV spreadsheet"}
+                className="px-4 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer"
+                title="Export contractual obligations schedule to CSV spreadsheet"
               >
-                <FileSpreadsheet size={14} className="text-nexus-cyan" />
-                {isRtl ? 'جدول الالتزامات CSV' : 'Obligations CSV'}
+                <FileSpreadsheet size={14} className="text-cyan-400" />
+                Obligations CSV
               </button>
 
               {auditResults.diff && (
                 <button
                   onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle })}
-                  className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold text-gray-200 transition-all flex items-center gap-1.5"
-                  title={isRtl ? "تصدير مقارنة التعديلات التفاعلية بصيغة HTML" : "Export interactive HTML redline with insertions & deletions"}
+                  className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
+                  title="Export interactive HTML redline with insertions & deletions"
                 >
                   <FileCode size={14} />
-                  {isRtl ? 'مقارنة التعديلات HTML' : 'Redline HTML'}
+                  Redline HTML
                 </button>
               )}
 
               <button
                 onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle })}
-                className="px-2.5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold text-gray-300 transition-all"
-                title={isRtl ? "سجل الامتثال بصيغة JSON" : "Export compliance JSON verification record"}
+                className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-300 transition-all cursor-pointer"
+                title="Export compliance JSON verification record"
               >
                 JSON
               </button>
@@ -911,59 +898,53 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
           </div>
 
           {/* Key Metrics Banner */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div className="p-4 rounded-2xl liquid-glass border border-red-500/20 text-center">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-red-400">
-                {isRtl ? 'المراجع المكسورة' : 'Broken Cross-Refs'}
-              </p>
-              <p className="text-2xl font-black text-red-400 mt-1">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-red-500/20 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-red-400">Broken Citations</p>
+              <p className="text-3xl font-black text-red-400 mt-1 font-mono">
                 {auditResults.crossRefs?.stats?.brokenCount || 0}
               </p>
             </div>
-            <div className="p-4 rounded-2xl liquid-glass border border-amber-500/20 text-center">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-amber-400">
-                {isRtl ? 'الملاحق المفقودة' : 'Missing Exhibits'}
-              </p>
-              <p className="text-2xl font-black text-amber-400 mt-1">
+            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-amber-500/20 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Missing Exhibits</p>
+              <p className="text-3xl font-black text-amber-400 mt-1 font-mono">
                 {auditResults.crossRefs?.stats?.missingExhibitCount || 0}
               </p>
             </div>
-            <div className="p-4 rounded-2xl liquid-glass border border-orange-500/20 text-center">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-orange-400">
-                {isRtl ? 'تضارب المبالغ' : 'Financial Mismatches'}
-              </p>
-              <p className="text-2xl font-black text-orange-400 mt-1">
+            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-orange-500/20 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">Financial Mismatches</p>
+              <p className="text-3xl font-black text-orange-400 mt-1 font-mono">
                 {auditResults.financialDates?.stats?.mismatchCount || 0}
               </p>
             </div>
-            <div className="p-4 rounded-2xl liquid-glass border border-nexus-cyan/20 text-center">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-nexus-cyan">
-                {isRtl ? 'مصطلحات غير معرّفة' : 'Undefined Terms'}
-              </p>
-              <p className="text-2xl font-black text-nexus-cyan mt-1">
+            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-cyan-500/20 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Undefined Terms</p>
+              <p className="text-3xl font-black text-cyan-400 mt-1 font-mono">
                 {auditResults.definedTerms?.stats?.undefinedCount || 0}
               </p>
             </div>
-            <div className="p-4 rounded-2xl liquid-glass border border-nexus-emerald/20 text-center">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-nexus-emerald">
-                {isRtl ? 'الالتزامات' : 'Obligations'}
-              </p>
-              <p className="text-2xl font-black text-nexus-emerald mt-1">
+            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-emerald-500/20 text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Contract Obligations</p>
+              <p className="text-3xl font-black text-emerald-400 mt-1 font-mono">
                 {auditResults.obligations?.stats?.totalObligations || 0}
               </p>
             </div>
           </div>
 
           {/* Complete HUD Sub-Tabs Navigation */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-white/10 custom-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-800 custom-scrollbar">
             <button
               onClick={() => setActiveHudTab('crossRefs')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeHudTab === 'crossRefs' ? 'bg-nexus-emerald text-black shadow-[0_0_15px_rgba(0,255,157,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                activeHudTab === 'crossRefs'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <Bookmark size={14} />
-              <span>{isRtl ? 'المراجع والملاحق (R1)' : 'Cross-References (R1)'}</span>
+              <span>Cross-References (R1)</span>
               {(auditResults.crossRefs?.issues?.length || 0) > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-red-600 text-white font-mono">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-red-600 text-white font-mono font-bold">
                   {auditResults.crossRefs.issues.length}
                 </span>
               )}
@@ -971,12 +952,16 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
 
             <button
               onClick={() => setActiveHudTab('definedTerms')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeHudTab === 'definedTerms' ? 'bg-nexus-emerald text-black shadow-[0_0_15px_rgba(0,255,157,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                activeHudTab === 'definedTerms'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <Tag size={14} />
-              <span>{isRtl ? 'المصطلحات المعرفة (R2)' : 'Defined Terms & Boilerplate (R2)'}</span>
+              <span>Defined Terms & Boilerplate (R2)</span>
               {((auditResults.definedTerms?.stats?.undefinedCount || 0) + (auditResults.definedTerms?.stats?.artifactCount || 0)) > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500 text-black font-mono">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-amber-500 text-black font-mono font-bold">
                   {(auditResults.definedTerms?.stats?.undefinedCount || 0) + (auditResults.definedTerms?.stats?.artifactCount || 0)}
                 </span>
               )}
@@ -984,12 +969,16 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
 
             <button
               onClick={() => setActiveHudTab('financialDates')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeHudTab === 'financialDates' ? 'bg-nexus-emerald text-black shadow-[0_0_15px_rgba(0,255,157,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                activeHudTab === 'financialDates'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <DollarSign size={14} />
-              <span>{isRtl ? 'المبالغ والتواريخ الحساسة (R3)' : 'Financial & Vital Dates (R3)'}</span>
+              <span>Financial & Vital Dates (R3)</span>
               {(auditResults.financialDates?.issues?.length || 0) > 0 && (
-                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-red-600 text-white font-mono">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-red-600 text-white font-mono font-bold">
                   {auditResults.financialDates.issues.length}
                 </span>
               )}
@@ -997,27 +986,39 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
 
             <button
               onClick={() => setActiveHudTab('obligations')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeHudTab === 'obligations' ? 'bg-nexus-emerald text-black shadow-[0_0_15px_rgba(0,255,157,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                activeHudTab === 'obligations'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <CheckSquare size={14} />
-              <span>{isRtl ? `مصفوفة الالتزامات (R4) (${auditResults.obligations?.stats?.totalObligations || 0})` : `Obligations Matrix (R4) (${auditResults.obligations?.stats?.totalObligations || 0})`}</span>
+              <span>Obligations Matrix ({auditResults.obligations?.stats?.totalObligations || 0})</span>
             </button>
 
             <button
               onClick={() => setActiveHudTab('risks')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeHudTab === 'risks' ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                activeHudTab === 'risks'
+                  ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <ShieldAlert size={14} />
-              <span>{isRtl ? `رادار المخاطر (${auditResults.risks?.length || 0})` : `Risk Radar (${auditResults.risks?.length || 0})`}</span>
+              <span>Risk Radar ({auditResults.risks?.length || 0})</span>
             </button>
 
             {auditResults.diff && (
               <button
                 onClick={() => setActiveHudTab('diff')}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeHudTab === 'diff' ? 'bg-nexus-cyan text-black shadow-[0_0_15px_rgba(0,240,255,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'diff'
+                    ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.25)]'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                }`}
               >
                 <Search size={14} />
-                <span>{isRtl ? `مقارنة التعديلات (${auditResults.diff.stats?.similarity}% تطابق)` : `Redline Diff (${auditResults.diff.stats?.similarity}% Sim)`}</span>
+                <span>Redline Diff ({auditResults.diff.stats?.similarity}% Sim)</span>
               </button>
             )}
           </div>
@@ -1638,7 +1639,7 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = fals
 // =========================================================================
 // 2. SMART PII REDACTOR VIEW (Toggleable Rules + Live Counts + Mask Styles)
 // =========================================================================
-function PIIRedactorView({ onOpenHistory }) {
+function PIIRedactorView() {
   const [text, setText] = useState('');
   const [activeRuleIds, setActiveRuleIds] = useState(['ssn', 'creditCard', 'bankAccount', 'email', 'phone', 'ip', 'ein']);
   const [customKeywordInput, setCustomKeywordInput] = useState('');
@@ -1886,7 +1887,7 @@ function PIIRedactorView({ onOpenHistory }) {
 // =========================================================================
 // 3. BATES STAMPING SUITE VIEW (Sequential PDFs + Contrast Pill + Manifest)
 // =========================================================================
-function BatesStamperView({ onOpenHistory }) {
+function BatesStamperView() {
   const [files, setFiles] = useState([]);
   const [prefix, setPrefix] = useState('EX-');
   const [startNum, setStartNum] = useState(1);
