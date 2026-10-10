@@ -887,29 +887,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* ========================================================================= */}
-        {/* 8. LEGACY TOOLS FOOTER DRAWER                                              */}
-        {/* ========================================================================= */}
-        <section className="px-6 md:px-12 lg:px-20 max-w-4xl mx-auto mb-16 text-center">
-          <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-zinc-400">
-            <span className="font-mono uppercase text-[10px] tracking-wider text-zinc-500 block mb-2">
-              {isRtl ? 'الأدوات المتخصصة السابقة' : 'LEGACY SPECIALIZED TOOLS'}
-            </span>
-            <div className="flex flex-wrap justify-center gap-3">
-              <button onClick={() => navigate('/app/leadscrub')} className="hover:text-nexus-emerald transition-colors">
-                Nexus LeadScrub →
-              </button>
-              <span className="text-zinc-600">•</span>
-              <button onClick={() => navigate('/app/ecommatch')} className="hover:text-nexus-emerald transition-colors">
-                Nexus EcomMatch →
-              </button>
-              <span className="text-zinc-600">•</span>
-              <button onClick={() => navigate('/app/adspendaudit')} className="hover:text-nexus-emerald transition-colors">
-                Nexus AdSpendAudit →
-              </button>
-            </div>
-          </div>
-        </section>
+
 
         {/* ========================================================================= */}
         {/* 9. ENTERPRISE FOOTER                                                      */}
