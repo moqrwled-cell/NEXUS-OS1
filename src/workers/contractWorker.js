@@ -89,7 +89,7 @@ export function calculateOverallRiskScore({ crossRefs, definedTerms, financialDa
  * @param {Function} [onProgress] - Callback for staged progress events (stage, percent, msg)
  * @returns {Promise<Object>} Full analysis result data
  */
-export async function executeContractAnalysis(payload = {}, onProgress = () => {}) {
+export async function executeContractAnalysis(payload = {}, onProgress = () => {}, abortSignal = null) {
   const startTime = performance.now();
   const text = typeof payload.text === 'string' ? payload.text : '';
   const baselineText = typeof payload.baselineText === 'string' ? payload.baselineText : '';
@@ -98,16 +98,28 @@ export async function executeContractAnalysis(payload = {}, onProgress = () => {
   const counterparty = payload.counterparty || '';
   const options = payload.options || {};
 
-  const yieldTick = () => new Promise(resolve => setTimeout(resolve, 0));
+  const yieldTick = () => new Promise(resolve => setTimeout(resolve, 10));
+
+  const checkAbort = () => {
+    if (abortSignal && abortSignal.aborted) {
+      const abortErr = new Error('Analysis aborted by user.');
+      abortErr.name = 'AbortError';
+      throw abortErr;
+    }
+  };
+
+  checkAbort();
 
   // Stage 1: Cross-References & Exhibits (20%)
   onProgress('CROSS_REFS', 20, 'Indexing sections & cross-references...');
   await yieldTick();
+  checkAbort();
   const crossRefs = validateCrossReferences(text);
 
   // Stage 2: Defined Terms & Boilerplate (40%)
   onProgress('DEFINED_TERMS', 40, 'Auditing defined terms & boilerplate...');
   await yieldTick();
+  checkAbort();
   const definedTermsOptions = {
     parties: [clientParty, counterparty].filter(Boolean)
   };
@@ -116,23 +128,27 @@ export async function executeContractAnalysis(payload = {}, onProgress = () => {
   // Stage 3: Financial & Vital Dates (60%)
   onProgress('FINANCIAL_DATES', 60, 'Auditing financial figures & dates...');
   await yieldTick();
+  checkAbort();
   const referenceDate = options.referenceDate ? new Date(options.referenceDate) : undefined;
   const financialDates = auditFinancialAndDates(text, referenceDate);
 
   // Stage 4: Obligations Extraction (80%)
   onProgress('OBLIGATIONS', 80, 'Extracting contractual obligations...');
   await yieldTick();
+  checkAbort();
   const obligations = extractObligations(text, clientParty, counterparty);
 
   // Stage 5: Diff & Legal Risks (90%)
   onProgress('DIFF', 90, 'Computing Myers LCS redline diff & scanning risks...');
   await yieldTick();
+  checkAbort();
   const risks = scanLegalRisks(text);
 
   let diff = null;
   if (mode === 'comparative' && baselineText.trim()) {
     diff = computeContractDiff(baselineText, text, options.diffOptions || {});
   }
+  checkAbort();
 
   // Calculate holistic risk score
   const riskAssessment = calculateOverallRiskScore({
@@ -172,9 +188,9 @@ export async function executeContractAnalysis(payload = {}, onProgress = () => {
 }
 
 // ============================================================================
-// Web Worker Environment Listener
+// Dedicated Web Worker Environment Listener (isolated from window)
 // ============================================================================
-if (typeof self !== 'undefined' && typeof self.postMessage === 'function') {
+if (typeof self !== 'undefined' && typeof window === 'undefined' && typeof self.postMessage === 'function') {
   self.onmessage = async (event) => {
     const { id, type, payload } = event.data || {};
 

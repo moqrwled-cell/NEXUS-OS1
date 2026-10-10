@@ -105,7 +105,7 @@ Any controversy shall be submitted to mandatory binding arbitration under exclus
 
 export default function ContractCompare() {
   const navigate = useNavigate();
-  const [lang, setLang] = useState('ar');
+  const [lang, setLang] = useState('en');
   const isRtl = lang === 'ar';
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history
   const [showDeviceModal, setShowDeviceModal] = useState(false);
@@ -293,7 +293,7 @@ export default function ContractCompare() {
 // =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + Web Worker HUD + Multi-Export)
 // =========================================================================
-function ContractAnalyzerView({ initialSession, lang: _lang = 'ar', isRtl = true }) {
+function ContractAnalyzerView({ initialSession, lang: _lang = 'en', isRtl = false }) {
   // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff)
   const [analysisMode, setAnalysisMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
 
@@ -771,17 +771,24 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'ar', isRtl = true
         <div className="flex items-center gap-3">
           {isProcessing && (
             <button
-              onClick={cancelAnalysis}
-              className="px-4 py-3.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded-xl text-xs font-bold hover:bg-red-500/30 transition-all flex items-center gap-1.5"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                cancelAnalysis();
+              }}
+              className="px-5 py-3.5 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.4)] cursor-pointer active:scale-95"
             >
-              <StopCircle size={15} /> {isRtl ? 'إلغاء' : 'Cancel'}
+              <StopCircle size={16} />
+              <span>{isRtl ? 'إلغاء الفحص' : 'Cancel Audit'}</span>
             </button>
           )}
 
           <button
+            type="button"
             onClick={() => handleExecuteAudit()}
             disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-            className="px-8 py-3.5 bg-gradient-to-r from-nexus-emerald to-nexus-cyan text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_25px_rgba(0,255,157,0.3)] active:scale-[0.98]"
+            className="px-8 py-3.5 bg-gradient-to-r from-nexus-emerald to-nexus-cyan text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_25px_rgba(0,255,157,0.3)] active:scale-[0.98] cursor-pointer"
           >
             {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
             <span>
@@ -797,21 +804,33 @@ function ContractAnalyzerView({ initialSession, lang: _lang = 'ar', isRtl = true
         </div>
       </div>
 
-      {/* Live Web Worker Progress Bar */}
+      {/* Live In-Memory Progress Bar */}
       {isProcessing && (
         <div className="p-4 rounded-2xl liquid-glass-strong border border-nexus-cyan/30 animate-pulse">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-mono font-bold text-nexus-cyan flex items-center gap-2">
               <RefreshCw className="animate-spin text-nexus-cyan" size={14} />
-              {progress?.msg || (isRtl ? 'جاري تدقيق الوثيقة في الذاكرة المحلية...' : 'Auditing legal document in background...')}
+              {progress?.msg || (isRtl ? 'جاري تدقيق الوثيقة في الذاكرة المحلية...' : 'Auditing contract in memory...')}
             </span>
-            <span className="text-xs font-mono font-bold text-white">
-              {progress?.percent || 0}%
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono font-bold text-white">
+                {progress?.percent || 0}%
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  cancelAnalysis();
+                }}
+                className="px-2.5 py-1 bg-red-600/80 hover:bg-red-500 text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer"
+              >
+                {isRtl ? 'إلغاء' : 'Cancel'}
+              </button>
+            </div>
           </div>
           <div className="w-full bg-black/60 rounded-full h-2.5 overflow-hidden border border-white/10">
             <div
-              className="bg-gradient-to-r from-nexus-emerald to-nexus-cyan h-2.5 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-nexus-emerald to-nexus-cyan h-2.5 rounded-full transition-all duration-150"
               style={{ width: `${progress?.percent || 0}%` }}
             />
           </div>
