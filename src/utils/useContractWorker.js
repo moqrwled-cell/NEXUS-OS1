@@ -111,7 +111,7 @@ export function useContractWorker(hookOptions = {}) {
 
   /**
    * Dispatches a contract analysis job.
-   * Runs inside the Web Worker thread if available, or seamlessly via direct async fallback.
+   * Runs inside the Web Worker thread if responsive, or seamlessly via direct async fallback.
    * 
    * @param {Object} payload - { text, baselineText, mode, clientParty, counterparty, options }
    * @returns {Promise<Object>}
@@ -123,46 +123,87 @@ export function useContractWorker(hookOptions = {}) {
     setIsProcessing(true);
     setError(null);
     setResult(null);
-    setProgress({ stage: 'INIT', percent: 0, msg: 'Preparing contract audit engine...' });
+    setProgress({ stage: 'INIT', percent: 10, msg: 'Preparing contract audit engine...' });
 
-    // Mode A: Web Worker execution (browser environment)
-    if (workerRef.current) {
-      return new Promise((resolve, reject) => {
-        pendingPromiseRef.current = { resolve, reject };
+    // Direct asynchronous execution helper (yields to event loop for smooth UI rendering)
+    const runDirectExecution = async () => {
+      try {
+        const data = await executeContractAnalysis(payload, (stage, percent, msg) => {
+          if (activeJobIdRef.current === jobId) {
+            const progState = { stage, percent, msg };
+            setProgress(progState);
+            hookOptions.onProgress?.(progState);
+          }
+        });
+
+        if (activeJobIdRef.current === jobId) {
+          setIsProcessing(false);
+          setProgress({ stage: 'COMPLETE', percent: 100, msg: 'Analysis complete.' });
+          setResult(data);
+          return data;
+        }
+        return null;
+      } catch (err) {
+        if (activeJobIdRef.current === jobId) {
+          setIsProcessing(false);
+          const errMsg = err?.message || String(err);
+          setError(errMsg);
+          throw err;
+        }
+        return null;
+      }
+    };
+
+    // If Web Worker is not instantiated, run direct execution immediately
+    if (!workerRef.current) {
+      return runDirectExecution();
+    }
+
+    // If Web Worker IS instantiated, give it a safety race timeout (1200ms)
+    // If worker thread hangs or encounters cross-origin/bundle error, fallback to direct execution seamlessly!
+    return new Promise((resolve, reject) => {
+      let settled = false;
+
+      const timeoutId = setTimeout(() => {
+        if (!settled && activeJobIdRef.current === jobId) {
+          settled = true;
+          console.warn('[ContractGuard] Web Worker did not respond in 1200ms; falling back to direct async execution.');
+          runDirectExecution().then(resolve).catch(reject);
+        }
+      }, 1200);
+
+      pendingPromiseRef.current = {
+        resolve: (data) => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timeoutId);
+            resolve(data);
+          }
+        },
+        reject: (err) => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timeoutId);
+            console.warn('[ContractGuard] Web Worker failed; falling back to direct execution:', err);
+            runDirectExecution().then(resolve).catch(reject);
+          }
+        }
+      };
+
+      try {
         workerRef.current.postMessage({
           id: jobId,
           type: 'ANALYZE_CONTRACT',
           payload
         });
-      });
-    }
-
-    // Mode B: Direct asynchronous execution fallback (Node.js / unsupported worker)
-    try {
-      const data = await executeContractAnalysis(payload, (stage, percent, msg) => {
-        if (activeJobIdRef.current === jobId) {
-          const progState = { stage, percent, msg };
-          setProgress(progState);
-          hookOptions.onProgress?.(progState);
+      } catch (_postErr) {
+        if (!settled) {
+          settled = true;
+          clearTimeout(timeoutId);
+          runDirectExecution().then(resolve).catch(reject);
         }
-      });
-
-      if (activeJobIdRef.current === jobId) {
-        setIsProcessing(false);
-        setProgress({ stage: 'COMPLETE', percent: 100, msg: 'Analysis complete.' });
-        setResult(data);
-        return data;
       }
-      return null;
-    } catch (err) {
-      if (activeJobIdRef.current === jobId) {
-        setIsProcessing(false);
-        const errMsg = err?.message || String(err);
-        setError(errMsg);
-        throw err;
-      }
-      return null;
-    }
+    });
   }, [hookOptions]);
 
   /**
