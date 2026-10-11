@@ -139,13 +139,13 @@ export default function ContractCompare() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white flex flex-col md:flex-row relative overflow-hidden" style={{fontFamily: '"IBM Plex Sans", "Cairo", "Almarai", sans-serif'}}>
+    <div className="min-h-screen bg-[#030712] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00F0FF]/8 blur-[180px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#00FF9D]/8 blur-[180px] rounded-full pointer-events-none" />
 
       {/* Sidebar — Professional Legal Dashboard */}
-      <aside className="w-full md:w-[280px] bg-[#050A0F] border-r border-zinc-800/50 flex flex-col shrink-0 z-20">
+      <aside className="w-full md:w-[280px] bg-[#050A0F] border-r border-zinc-800/60 flex flex-col shrink-0 z-20">
         {/* Top Nav Bar */}
         <div className="px-4 py-3.5 border-b border-zinc-800/50 flex items-center justify-between">
           <button
@@ -165,7 +165,7 @@ export default function ContractCompare() {
               <ShieldAlert className="text-emerald-400" size={18} />
             </div>
             <div>
-              <h1 className="text-sm font-bold text-white tracking-wide" style={{fontFamily: '"IBM Plex Serif", Georgia, serif'}}>ContractGuard</h1>
+              <h1 className="text-sm font-bold text-white tracking-tight">ContractGuard</h1>
               <p className="text-[10px] text-emerald-500/80 font-mono tracking-widest uppercase">Enterprise Legal AI</p>
             </div>
           </div>
@@ -177,109 +177,149 @@ export default function ContractCompare() {
         </div>
 
         {/* Navigation Modules */}
-        <nav className="flex-1 px-3 py-3 flex flex-col gap-0.5 overflow-y-auto custom-scrollbar">
-          <p className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 font-semibold px-2 mb-2">Modules</p>
+        <nav className="flex-1 px-3 py-3 flex flex-col gap-1 overflow-y-auto custom-scrollbar">
+          <p className="text-[9px] uppercase tracking-[0.15em] text-zinc-500 font-semibold px-2 mb-1">Modules</p>
 
-          {/* Analyzer */}
+          {/* Module 1: Analyzer */}
           <button
             onClick={() => setActiveTool('analyzer')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'analyzer'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/20'
-                : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
             <Search size={16} className={activeTool === 'analyzer' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight">Integrity & Diff Audit</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5">Pre-signing review & redline</p>
+              <p className="text-[13px] font-semibold leading-tight truncate">Integrity & Diff Audit</p>
+              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Pre-signing review & redline</p>
             </div>
+            {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'analyzer' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-600 font-bold mb-2">كيف تستخدمها؟</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2"><span className="text-emerald-400 font-bold shrink-0">①</span><span><span className="text-zinc-200 font-semibold">Single Draft —</span><span className="text-zinc-500"> الصق عقدًا واحدًا. تكتشف الأداة المراجع المكسورة، الملاحق المفقودة، التناقضات المالية، والمصطلحات غير المُعرَّفة قبل التوقيع.</span></span></div>
-                <div className="flex gap-2"><span className="text-cyan-400 font-bold shrink-0">②</span><span><span className="text-zinc-200 font-semibold">Redline Diff —</span><span className="text-zinc-500"> قارن النسخة الأصلية بالمُعدَّلة واكتشف كل تغيير بالألوان مع درجة التشابه.</span></span></div>
-                <div className="flex gap-2"><span className="text-amber-400 font-bold shrink-0">③</span><span><span className="text-zinc-200 font-semibold">Run Audit —</span><span className="text-zinc-500"> يُولّد تقرير مخاطر قانوني احترافي قابل للتحميل كـ PDF أو CSV.</span></span></div>
+                <div className="flex gap-2">
+                  <span className="text-emerald-400 font-bold shrink-0">①</span>
+                  <span><span className="text-zinc-200 font-semibold">Single Draft Review — </span><span className="text-zinc-400">Paste unexecuted contract to flag broken cross-references, missing exhibits, undefined terms, and financial discrepancies.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-cyan-400 font-bold shrink-0">②</span>
+                  <span><span className="text-zinc-200 font-semibold">Redline Diff Mode — </span><span className="text-zinc-400">Compare original draft vs counterparty redline with color-coded insertions and deletions.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-amber-400 font-bold shrink-0">③</span>
+                  <span><span className="text-zinc-200 font-semibold">Run Audit Engine — </span><span className="text-zinc-400">Generates comprehensive risk radar and exportable Client Legal Memo (PDF/CSV).</span></span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* PII Redactor */}
+          {/* Module 2: PII Redactor */}
           <button
             onClick={() => setActiveTool('redact')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'redact'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/20'
-                : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
             <EyeOff size={16} className={activeTool === 'redact' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight">Smart PII Redactor</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5">Identity & financial scrub</p>
+              <p className="text-[13px] font-semibold leading-tight truncate">Smart PII Redactor</p>
+              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Identity & financial scrub</p>
             </div>
+            {activeTool === 'redact' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'redact' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-600 font-bold mb-2">كيف تستخدمها؟</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2"><span className="text-emerald-400 font-bold shrink-0">①</span><span><span className="text-zinc-200 font-semibold">Active Rules —</span><span className="text-zinc-500"> حدد أنواع البيانات الحساسة: SSN، بطاقات ائتمان، IBAN، إيميلات، أرقام هواتف.</span></span></div>
-                <div className="flex gap-2"><span className="text-cyan-400 font-bold shrink-0">②</span><span><span className="text-zinc-200 font-semibold">Custom Keywords —</span><span className="text-zinc-500"> أضف أسماء موكلين أو شركات خاصة لحجبها تلقائياً.</span></span></div>
-                <div className="flex gap-2"><span className="text-amber-400 font-bold shrink-0">③</span><span><span className="text-zinc-200 font-semibold">Mask Style —</span><span className="text-zinc-500"> اختر طريقة الحجب: مربع أسود █, وسم [REDACTED], أو نجوم *****.</span></span></div>
+                <div className="flex gap-2">
+                  <span className="text-emerald-400 font-bold shrink-0">①</span>
+                  <span><span className="text-zinc-200 font-semibold">Active Rules — </span><span className="text-zinc-400">Toggle detection filters for SSN, tax IDs, credit cards, banking info, emails, and phone numbers.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-cyan-400 font-bold shrink-0">②</span>
+                  <span><span className="text-zinc-200 font-semibold">Custom Keywords — </span><span className="text-zinc-400">Add proprietary client names, company tags, or project titles for automated scrubbing.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-amber-400 font-bold shrink-0">③</span>
+                  <span><span className="text-zinc-200 font-semibold">Masking Style — </span><span className="text-zinc-400">Choose redaction output: Solid Black Block (█████), Semantic Tag ([REDACTED]), or Asterisks.</span></span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Bates */}
+          {/* Module 3: Bates Stamping */}
           <button
             onClick={() => setActiveTool('bates')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'bates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/20'
-                : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
             <Layers size={16} className={activeTool === 'bates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight">Bates Stamping Suite</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5">Court evidence numbering</p>
+              <p className="text-[13px] font-semibold leading-tight truncate">Bates Stamping Suite</p>
+              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Court evidence numbering</p>
             </div>
+            {activeTool === 'bates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'bates' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-600 font-bold mb-2">كيف تستخدمها؟</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2"><span className="text-emerald-400 font-bold shrink-0">①</span><span><span className="text-zinc-200 font-semibold">ترقيم Bates —</span><span className="text-zinc-500"> معيار المحاكم الأمريكية لترقيم أدلة المحاكمة. كل صفحة تحصل على رقم مثل PLTF-0001.</span></span></div>
-                <div className="flex gap-2"><span className="text-cyan-400 font-bold shrink-0">②</span><span><span className="text-zinc-200 font-semibold">Prefix —</span><span className="text-zinc-500"> PLTF = المدعي · DEF = المدعى عليه · CONF = وثيقة سرية.</span></span></div>
-                <div className="flex gap-2"><span className="text-amber-400 font-bold shrink-0">③</span><span><span className="text-zinc-200 font-semibold">Contrast Pill —</span><span className="text-zinc-500"> خلفية بيضاء تضمن قراءة الرقم حتى على المستندات الداكنة.</span></span></div>
+                <div className="flex gap-2">
+                  <span className="text-emerald-400 font-bold shrink-0">①</span>
+                  <span><span className="text-zinc-200 font-semibold">Bates Standard — </span><span className="text-zinc-400">Official court discovery numbering sequence (e.g. PLTF-0001) applied directly to evidentiary PDFs.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-cyan-400 font-bold shrink-0">②</span>
+                  <span><span className="text-zinc-200 font-semibold">Prefix Attribution — </span><span className="text-zinc-400">Designate party filing: PLTF (Plaintiff), DEF (Defendant), or CONF (Confidential exhibit).</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-amber-400 font-bold shrink-0">③</span>
+                  <span><span className="text-zinc-200 font-semibold">Contrast Backing — </span><span className="text-zinc-400">Renders high-contrast white backing pill to ensure legibility across dark scanned exhibits.</span></span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Audit Vault */}
+          {/* Module 4: Audit Vault */}
           <button
             onClick={() => setActiveTool('history')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'history'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/20'
-                : 'text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
             <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight">Audit Vault</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5">Encrypted local persistence</p>
+              <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
+              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Encrypted local persistence</p>
             </div>
+            {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'history' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-600 font-bold mb-2">كيف تستخدمها؟</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2"><span className="text-emerald-400 font-bold shrink-0">①</span><span><span className="text-zinc-200 font-semibold">Saved Audits —</span><span className="text-zinc-500"> كل فحص يُحفظ تلقائياً في المتصفح. لا سحابة ولا خادم خارجي.</span></span></div>
-                <div className="flex gap-2"><span className="text-cyan-400 font-bold shrink-0">②</span><span><span className="text-zinc-200 font-semibold">Open Session —</span><span className="text-zinc-500"> استرجع أي فحص سابق وأعد تشغيله أو صدّر نتائجه.</span></span></div>
-                <div className="flex gap-2"><span className="text-red-400 font-bold shrink-0">③</span><span><span className="text-zinc-200 font-semibold">Clear Vault —</span><span className="text-zinc-500"> يمسح كل السجلات المحلية نهائياً لحماية سرية الموكل.</span></span></div>
+                <div className="flex gap-2">
+                  <span className="text-emerald-400 font-bold shrink-0">①</span>
+                  <span><span className="text-zinc-200 font-semibold">Local Storage — </span><span className="text-zinc-400">Every audit and redline session is retained in client-side IndexedDB without cloud transmission.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-cyan-400 font-bold shrink-0">②</span>
+                  <span><span className="text-zinc-200 font-semibold">Restore Session — </span><span className="text-zinc-400">Reopen previous contract reviews, re-examine liabilities, or export updated client memos.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-red-400 font-bold shrink-0">③</span>
+                  <span><span className="text-zinc-200 font-semibold">Purge Vault — </span><span className="text-zinc-400">Permanently clears local database records to uphold strict client-attorney confidentiality.</span></span>
+                </div>
               </div>
             </div>
           )}
@@ -304,7 +344,7 @@ export default function ContractCompare() {
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
               <Lock size={32} />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2" style={{fontFamily: '"IBM Plex Serif", Georgia, serif'}}>Protected Legal Workspace</h2>
+            <h2 className="text-xl font-bold text-white mb-2 tracking-tight">Protected Legal Workspace</h2>
             <p className="text-xs text-zinc-400 leading-relaxed mb-6">
               ContractGuard runs in a 100% air-gapped environment. An authenticated license key is required to access the studio.
             </p>
@@ -584,14 +624,14 @@ function ContractAnalyzerView({ initialSession }) {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold tracking-tight text-white" style={{fontFamily: '"IBM Plex Serif", Georgia, serif'}}>
+            <h2 className="text-2xl font-bold tracking-tight text-white">
               Contract Integrity & Risk Audit
             </h2>
             <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
               Air-Gapped RAM
             </span>
           </div>
-          <p className="text-sm text-zinc-400 mt-1" style={{fontFamily: '"IBM Plex Sans", sans-serif'}}>
+          <p className="text-sm text-zinc-400 mt-1">
             Pre-signature legal proofreading for cross-references, missing exhibits, undefined terms, and financial contradictions.
           </p>
         </div>
@@ -897,7 +937,7 @@ function ContractAnalyzerView({ initialSession }) {
                 </span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white font-serif">
+                <h3 className="text-xl font-bold text-white tracking-tight">
                   {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
                    riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
                    riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
@@ -1794,7 +1834,7 @@ function PIIRedactorView() {
   return (
     <div className="max-w-6xl mx-auto h-full flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold font-serif text-white flex items-center gap-3">
+        <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
           <span>Air-Gapped Smart PII Redactor</span>
           <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
             Confidentiality Safe
@@ -2017,7 +2057,7 @@ function BatesStamperView() {
   return (
     <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold font-serif text-white flex items-center gap-3">
+        <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
           <span>Enterprise Bates Stamping & Binder</span>
           <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/30">
             pdf-lib Native
@@ -2238,7 +2278,7 @@ function AuditVaultView({ onSelectDiff }) {
     <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
       <div className="flex items-center justify-between border-b border-white/5 pb-4">
         <div>
-          <h2 className="text-2xl font-bold font-serif text-white flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
             <span>Air-Gapped Audit Vault</span>
             <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30">
               IndexedDB Storage
