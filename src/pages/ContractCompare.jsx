@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { 
   FileText, AlertTriangle, ShieldAlert, Search, CheckCircle2,
   Play, RefreshCw, HardDriveDownload, 
   FileCheck, Layers, EyeOff, X, Download,
-  FileCode, Database, Sparkles, Filter, Trash2,
+  FileCode, Database, Filter, Trash2,
   ShieldCheck, Check, RotateCcw, Calendar, DollarSign,
-  Bookmark, HelpCircle, ArrowLeft, User, Users, StopCircle, Upload,
+  Bookmark, HelpCircle, User, Users, StopCircle, Upload,
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
@@ -29,80 +28,7 @@ import { extractTextFromPDF } from '../utils/pdfExtractor';
 import { verifyToolAccess } from '../utils/auth';
 import PirateTrapModal from '../components/PirateTrapModal';
 
-// Sample Contracts for instant testing
-const SAMPLE_SINGLE_DRAFT = `ENTERPRISE SOFTWARE LICENSE AND SERVICES AGREEMENT
-
-This Agreement is made on March 15, 2026 ("Effective Date"), by and between Acme Corporation ("Client") and Globex Systems Inc. ("Vendor").
-
-1. DEFINITIONS AND INTERPRETATION
-"Agreement" shall mean this Enterprise Software License and Services Agreement.
-"Confidential Information" shall mean all proprietary, non-public technical and commercial data disclosed by either party.
-"Services" shall mean consulting and support services described in Exhibit A.
-"Orphaned Term" shall mean a defined concept with no operative obligations in this contract.
-
-2. LICENSED SERVICES AND COMPENSATION
-2.1 Services. Vendor agrees to provide consulting services as described in Exhibit A and specifications in Exhibit B.
-2.2 Compensation. Client shall pay Vendor a fixed fee of $15,000 (Fifty Thousand Dollars) within thirty (30) days of receiving an invoice.
-2.3 Expenses. Reimbursable expenses must comply with guidelines set forth in Section 9.4.
-2.4 Key Personnel. Vendor must assign qualified Key Personnel to lead implementation.
-
-3. TERM AND TERMINATION
-3.1 Term. This Agreement shall commence on the Effective Date and terminate on December 31, 2024.
-3.2 Termination for Convenience. Either party may terminate upon sixty (60) days prior written notice.
-
-4. CONFIDENTIALITY & DATA SECURITY
-4.1 Duty. Each party agrees to maintain Confidential Information in strict confidence for three (3) years.
-4.2 Exclusions. Vendor shall not disclose any client records to third parties without prior written consent.
-4.3 Notice of Incident. In the event of a security breach, Vendor must notify Client within 24 hours.
-
-5. INTELLECTUAL PROPERTY & REMEDIES
-5.1 Pre-existing IP. Vendor retains pre-existing tools.
-5.2 Work Product. Deliverables created for Client shall belong to Client upon payment.
-5.3 Additional Schedules. Additional maintenance fees are specified in Exhibit D.
-
-6. SIGNATURES & NOTICE
-All notices must be sent to the principal office of [Company Name] located at 100 Enterprise Way.
-Client Tax ID: [Insert Tax ID Here]`;
-
-const SAMPLE_ORIGINAL = `MASTER SERVICES AGREEMENT
-
-1. SERVICES AND COMPENSATION
-Vendor agrees to provide software consulting services to Client. Client shall pay Vendor within 30 days of receiving a valid invoice.
-
-2. TERM AND TERMINATION
-This Agreement shall commence on the Effective Date and continue for a period of one (1) year. Either party may terminate this Agreement upon thirty (30) days prior written notice for convenience.
-
-3. CONFIDENTIALITY
-Each party agrees to maintain in strict confidence all proprietary information disclosed by the other party for a period of three (3) years following termination.
-
-4. LIMITATION OF LIABILITY
-Neither party shall be liable for any indirect, incidental, or consequential damages. Total liability under this Agreement shall not exceed the total fees paid by Client in the preceding twelve (12) months.
-
-5. INTELLECTUAL PROPERTY
-Vendor retains all ownership and intellectual property rights in its pre-existing tools and software. Work product created specifically for Client shall be owned by Client upon full payment.`;
-
-const SAMPLE_MODIFIED = `MASTER SERVICES AGREEMENT (AMENDED DRAFT)
-
-1. SERVICES AND COMPENSATION
-Vendor agrees to provide software consulting services to Client. Client shall pay Vendor within 60 days of receiving a valid invoice. All late fees are subject to interest compounded daily at 5%.
-
-2. TERM AND TERMINATION
-This Agreement shall commence on the Effective Date and shall automatically renew for additional one-year terms without notice unless Client cancels in writing at least 90 days prior to expiration. Client reserves the right to immediate termination without cause at its sole discretion.
-
-3. CONFIDENTIALITY & DATA BREACH
-Vendor shall maintain indefinite confidentiality regarding all client records. In the event of a security incident, Vendor must notify within 24 hours. Unlimited data breach liability applies to Vendor.
-
-4. LIMITATION OF LIABILITY & INDEMNIFICATION
-Vendor agrees to defend, indemnify and hold harmless Client against all claims, demands, and losses at its sole expense, including reasonable attorneys fees. Vendor shall be subject to unlimited liability for any breach. Client disclaims all implied warranties as is, where is.
-
-5. INTELLECTUAL PROPERTY & RESTRICTIONS
-All deliverables shall be considered work made for hire with an irrevocable assignment of all rights, title, and interest to Client. Vendor agrees to a covenant not to compete in Client's industry for two (2) years.
-
-6. DISPUTE RESOLUTION
-Any controversy shall be submitted to mandatory binding arbitration under exclusive jurisdiction of Delaware courts, with waiver of jury trial.`;
-
 export default function ContractCompare() {
-  const navigate = useNavigate();
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history
   const [showDeviceModal, setShowDeviceModal] = useState(true);
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -146,31 +72,23 @@ export default function ContractCompare() {
 
       {/* Sidebar — Professional Legal Dashboard */}
       <aside className="w-full md:w-[280px] bg-[#050A0F] border-r border-zinc-800/60 flex flex-col shrink-0 z-20">
-        {/* Top Nav Bar */}
-        <div className="px-4 py-3.5 border-b border-zinc-800/50 flex items-center justify-between">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-800/80 border border-zinc-800/60 transition-all cursor-pointer"
-          >
-            <ArrowLeft size={13} className="text-emerald-400" />
-            <span>Back to Hub</span>
-          </button>
-          <span className="text-[10px] font-mono text-zinc-600 tracking-wider">v2.4 Pro</span>
-        </div>
-
-        {/* Brand Block */}
-        <div className="px-5 py-4 border-b border-zinc-800/50">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.15)]">
-              <ShieldAlert className="text-emerald-400" size={18} />
+        {/* Brand Header */}
+        <div className="px-5 py-5 border-b border-zinc-800/60">
+          <div className="flex items-center justify-between mb-3.5">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                <ShieldAlert className="text-emerald-400" size={18} />
+              </div>
+              <div>
+                <h1 className="text-sm font-bold text-white tracking-tight">ContractGuard</h1>
+                <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-sm font-bold text-white tracking-tight">ContractGuard</h1>
-              <p className="text-[10px] text-emerald-500/80 font-mono tracking-widest uppercase">Enterprise Legal AI</p>
-            </div>
+            <span className="text-[10px] font-mono text-zinc-500 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
           </div>
+
           {/* Security Badge */}
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-500/8 border border-emerald-500/15 text-[10px] text-emerald-400/80 font-mono">
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-500/8 border border-emerald-500/15 text-[10px] text-emerald-400/90 font-mono">
             <ShieldCheck size={12} className="shrink-0 text-emerald-400" />
             <span>Air-Gapped · RAM-Only · 0 Cloud</span>
           </div>
@@ -447,50 +365,6 @@ function ContractAnalyzerView({ initialSession }) {
       if (initialSession.title) setDocumentTitle(initialSession.title);
     }
   }, [initialSession]);
-
-  const loadSampleContract = (autoAudit = false) => {
-    if (analysisMode === 'single') {
-      const sampleText = SAMPLE_SINGLE_DRAFT;
-      const sampleTitle = 'Enterprise Software License Agreement (Sample Audit)';
-      const client = 'Acme Corporation';
-      const counter = 'Globex Systems Inc';
-      setText(sampleText);
-      setDocumentTitle(sampleTitle);
-      setClientParty(client);
-      setCounterparty(counter);
-      if (autoAudit) {
-        handleExecuteAudit({
-          mode: 'single',
-          text: sampleText,
-          baselineText: '',
-          title: sampleTitle,
-          clientParty: client,
-          counterparty: counter
-        });
-      }
-    } else {
-      const baseText = SAMPLE_ORIGINAL;
-      const modText = SAMPLE_MODIFIED;
-      const sampleTitle = 'Master Services Agreement (Amended Redline)';
-      const client = 'Acme Corporation';
-      const counter = 'Vendor Systems Inc';
-      setBaselineText(baseText);
-      setText(modText);
-      setDocumentTitle(sampleTitle);
-      setClientParty(client);
-      setCounterparty(counter);
-      if (autoAudit) {
-        handleExecuteAudit({
-          mode: 'comparative',
-          text: modText,
-          baselineText: baseText,
-          title: sampleTitle,
-          clientParty: client,
-          counterparty: counter
-        });
-      }
-    }
-  };
 
   const handleFileUpload = async (e, setTargetText, statusKey) => {
     const file = e.target.files[0];
