@@ -332,8 +332,10 @@ function ContractAnalyzerView({ initialSession }) {
   const [counterparty, setCounterparty] = useState('Globex Systems Inc');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
 
-  // File upload status messages
+  // File upload & Drag-and-Drop states
   const [uploadStatus, setUploadStatus] = useState({ target: '', baseline: '' });
+  const [isDraggingTarget, setIsDraggingTarget] = useState(false);
+  const [isDraggingBaseline, setIsDraggingBaseline] = useState(false);
 
   // In-Memory Audit Hook with instant cancellation
   const {
@@ -366,8 +368,8 @@ function ContractAnalyzerView({ initialSession }) {
     }
   }, [initialSession]);
 
-  const handleFileUpload = async (e, setTargetText, statusKey) => {
-    const file = e.target.files[0];
+  // Unified File Processor for both Click-to-Browse and Drag-and-Drop
+  const processDocumentFile = async (file, setTargetText, statusKey) => {
     if (!file) return;
 
     setUploadStatus(prev => ({ ...prev, [statusKey]: `Reading ${file.name}...` }));
@@ -407,6 +409,23 @@ function ContractAnalyzerView({ initialSession }) {
       console.error(err);
       alert("Failed to parse document: " + err.message);
       setUploadStatus(prev => ({ ...prev, [statusKey]: 'Failed to parse file' }));
+    }
+  };
+
+  const handleFileUpload = (e, setTargetText, statusKey) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processDocumentFile(file, setTargetText, statusKey);
+    }
+  };
+
+  const handleFileDrop = (e, setTargetText, statusKey, setDragActive) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (setDragActive) setDragActive(false);
+    const file = e.dataTransfer?.files?.[0];
+    if (file) {
+      processDocumentFile(file, setTargetText, statusKey);
     }
   };
 
@@ -586,11 +605,30 @@ function ContractAnalyzerView({ initialSession }) {
       {/* Input Panes */}
       {analysisMode === 'single' ? (
         /* SINGLE DOCUMENT INTEGRITY AUDIT MODE */
-        <div className="flex flex-col rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden shadow-xl">
+        <div 
+          onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
+          onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
+          onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
+          className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+            isDraggingTarget 
+              ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.3)] ring-2 ring-emerald-400/50' 
+              : 'border-zinc-800'
+          }`}
+        >
+          {isDraggingTarget && (
+            <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+                <Upload size={30} className="animate-bounce" />
+              </div>
+              <p className="text-sm font-bold text-white tracking-wide">Drop Contract Document Here</p>
+              <p className="text-xs text-zinc-400 font-mono">Supports .pdf, .docx, .txt, .md</p>
+            </div>
+          )}
+
           <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
             <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
               <FileCheck size={15} className="text-emerald-400" />
-              CONTRACT DRAFT TO PROOFREAD (Pre-Signing Review)
+              CONTRACT DRAFT TO PROOFREAD (Drag & Drop or Import)
             </span>
             <div className="flex items-center gap-2">
               {uploadStatus.target && (
@@ -610,11 +648,11 @@ function ContractAnalyzerView({ initialSession }) {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Paste contract text here to audit for broken references, missing exhibits, undefined terms, date contradictions, and financial mismatches..."
+            placeholder="Paste contract text here or drag & drop .pdf / .docx / .txt file to audit for broken references, missing exhibits, undefined terms, and financial mismatches..."
             className="w-full bg-black/40 p-5 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[260px]"
           />
           <div className="px-5 py-2.5 border-t border-zinc-800/80 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
-            <span>Air-gapped client RAM processing (ABA Model Rule 1.6)</span>
+            <span>Air-gapped client RAM processing · Drag & Drop enabled</span>
             <span className="font-semibold text-zinc-300">
               {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words • {text.split('\n').length} lines
             </span>
@@ -624,11 +662,28 @@ function ContractAnalyzerView({ initialSession }) {
         /* COMPARATIVE REDLINE DIFF MODE (DUAL PANES) */
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Baseline Contract */}
-          <div className="flex flex-col rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden shadow-xl">
+          <div 
+            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(true); }}
+            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(false); }}
+            onDrop={(e) => handleFileDrop(e, setBaselineText, 'baseline', setIsDraggingBaseline)}
+            className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+              isDraggingBaseline 
+                ? 'border-cyan-400 bg-cyan-500/10 shadow-[0_0_25px_rgba(6,182,212,0.25)] ring-2 ring-cyan-400/50' 
+                : 'border-zinc-800'
+            }`}
+          >
+            {isDraggingBaseline && (
+              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-cyan-400 gap-2 animate-in fade-in">
+                <Upload size={26} className="animate-bounce" />
+                <p className="text-xs font-bold text-white">Drop Baseline Document Here</p>
+                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt</p>
+              </div>
+            )}
+
             <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
               <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
                 <FileText size={14} className="text-zinc-400" />
-                ORIGINAL BASELINE
+                ORIGINAL BASELINE (Drop file here)
               </span>
               <div className="flex items-center gap-2">
                 {uploadStatus.baseline && (
@@ -648,7 +703,7 @@ function ContractAnalyzerView({ initialSession }) {
             <textarea
               value={baselineText}
               onChange={(e) => setBaselineText(e.target.value)}
-              placeholder="Paste original baseline contract..."
+              placeholder="Paste original baseline contract or drop file here..."
               className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
             <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
@@ -657,11 +712,28 @@ function ContractAnalyzerView({ initialSession }) {
           </div>
 
           {/* Amended Contract */}
-          <div className="flex flex-col rounded-2xl bg-zinc-900/50 border border-zinc-800 overflow-hidden shadow-xl">
+          <div 
+            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
+            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
+            onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
+            className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+              isDraggingTarget 
+                ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-2 ring-emerald-400/50' 
+                : 'border-zinc-800'
+            }`}
+          >
+            {isDraggingTarget && (
+              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2 animate-in fade-in">
+                <Upload size={26} className="animate-bounce" />
+                <p className="text-xs font-bold text-white">Drop Amended Document Here</p>
+                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt</p>
+              </div>
+            )}
+
             <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
               <span className="text-xs font-semibold text-cyan-400 font-mono flex items-center gap-2">
                 <FileCheck size={14} className="text-cyan-400" />
-                AMENDED DRAFT (Redline Target)
+                AMENDED DRAFT (Drop file here)
               </span>
               <div className="flex items-center gap-2">
                 {uploadStatus.target && (
@@ -681,7 +753,7 @@ function ContractAnalyzerView({ initialSession }) {
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Paste modified or redlined contract text here..."
+              placeholder="Paste modified or redlined contract text here or drop file..."
               className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
             <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
@@ -1619,6 +1691,7 @@ function PIIRedactorView() {
   const [maskStyle, setMaskStyle] = useState('block'); // 'block' | 'label' | 'asterisk'
   
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [sanitizedResult, setSanitizedResult] = useState(null);
   const [saveStatus, setSaveStatus] = useState('');
 
@@ -1643,19 +1716,19 @@ function PIIRedactorView() {
     setCustomKeywords(customKeywords.filter(k => k !== kw));
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+  const processFile = async (file) => {
     if (!file) return;
 
     try {
-      if (file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+      const lowerName = file.name.toLowerCase();
+      if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
         const txt = await file.text();
         setText(txt);
-      } else if (file.name.endsWith('.docx')) {
+      } else if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.extractRawText({ arrayBuffer });
         setText(result.value);
-      } else if (file.name.toLowerCase().endsWith('.pdf')) {
+      } else if (lowerName.endsWith('.pdf')) {
         const pdfResult = await extractTextFromPDF(file);
         setText(pdfResult.fullText);
       } else {
@@ -1663,6 +1736,23 @@ function PIIRedactorView() {
       }
     } catch (err) {
       alert("Error reading file: " + err.message);
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const file = e.dataTransfer?.files?.[0];
+    if (file) {
+      processFile(file);
     }
   };
 
@@ -1789,9 +1879,27 @@ function PIIRedactorView() {
       {/* Editor & Preview Area */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[360px]">
         {/* Left: Input Text */}
-        <div className="flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
+        <div 
+          onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
+          onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
+          onDrop={handleFileDrop}
+          className={`flex flex-col rounded-2xl liquid-glass-strong border transition-all overflow-hidden relative ${
+            isDragging 
+              ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-2 ring-emerald-400/50' 
+              : 'border-white/5'
+          }`}
+        >
+          {isDragging && (
+            <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+                <Upload size={28} className="animate-bounce" />
+              </div>
+              <p className="text-sm font-bold text-white tracking-wide">Drop Document to Redact Here</p>
+              <p className="text-xs text-zinc-400 font-mono">Supports .docx, .txt, .pdf</p>
+            </div>
+          )}
           <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-300 font-mono">INPUT TEXT (Unredacted)</span>
+            <span className="text-xs font-bold text-gray-300 font-mono">INPUT TEXT (Drag & Drop or Import)</span>
             <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300 transition-colors">
               Upload (.docx/.txt/.pdf)
               <input type="file" accept=".txt,.docx,.md,.pdf" className="hidden" onChange={handleFileUpload} />
@@ -1800,7 +1908,7 @@ function PIIRedactorView() {
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Paste contract or memo text containing confidential information to redact..."
+            placeholder="Paste contract or memo text containing confidential information or drop file here to redact..."
             className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 outline-none resize-none focus:bg-black/60 custom-scrollbar"
           />
         </div>
@@ -1870,12 +1978,23 @@ function BatesStamperView() {
   const [drawPill, setDrawPill] = useState(true);
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [lastBundle, setLastBundle] = useState(null);
 
   const handleAddFiles = (e) => {
     const selected = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.pdf'));
     setFiles(prev => [...prev, ...selected]);
+  };
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+      const selected = Array.from(e.dataTransfer.files).filter(f => f.name.toLowerCase().endsWith('.pdf'));
+      setFiles(prev => [...prev, ...selected]);
+    }
   };
 
   const removeFile = (idx) => {
@@ -2044,9 +2163,20 @@ function BatesStamperView() {
       </div>
 
       {/* Upload Zone */}
-      <div className="border-2 border-dashed border-white/10 hover:border-nexus-emerald/40 rounded-2xl p-8 flex flex-col items-center justify-center bg-black/20 hover:bg-black/40 transition-all relative cursor-pointer">
-        <Layers className="text-nexus-emerald mb-3" size={40} />
-        <p className="font-bold text-sm text-white">Drop Exhibit PDFs Here</p>
+      <div 
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
+        onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
+        onDrop={handleFileDrop}
+        className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all relative cursor-pointer ${
+          isDragging 
+            ? 'border-nexus-emerald bg-nexus-emerald/15 shadow-[0_0_30px_rgba(0,255,157,0.3)] scale-[1.01]' 
+            : 'border-white/10 hover:border-nexus-emerald/40 bg-black/20 hover:bg-black/40'
+        }`}
+      >
+        <Layers className={`mb-3 transition-transform duration-300 ${isDragging ? 'text-nexus-emerald scale-125 animate-bounce' : 'text-nexus-emerald'}`} size={40} />
+        <p className="font-bold text-sm text-white">
+          {isDragging ? 'Release to Add Exhibit PDFs' : 'Drop Exhibit PDFs Here'}
+        </p>
         <p className="text-xs text-gray-500 mb-4">Click to browse multiple documents for sequential stamping</p>
         <input type="file" multiple accept=".pdf" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAddFiles} />
         <span className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-semibold text-gray-300">
