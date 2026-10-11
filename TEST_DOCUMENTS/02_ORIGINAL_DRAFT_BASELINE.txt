@@ -1,0 +1,24 @@
+SOFTWARE DEVELOPMENT AND MASTER SERVICES AGREEMENT
+
+This Agreement is made on January 10, 2026, between Horizon Software LLC ("Developer") and Vantage Capital Partners ("Client").
+
+1. SCOPE OF SERVICES
+Developer agrees to design, build, and deploy the portfolio management web application in accordance with the specifications in Exhibit A. Developer shall deliver all source code upon completion.
+
+2. PAYMENT TERMS
+Client shall pay Developer a total project fee of $80,000 payable in four milestone installments of $20,000 each. Developer shall invoice Client upon completion of each milestone. Invoices shall be paid within thirty (30) days of receipt.
+
+3. INTELLECTUAL PROPERTY
+Upon receipt of full payment, Developer irrevocably assigns to Client all right, title, and interest in and to the custom deliverables, including copyrights, source code, and design documentation. Developer retains ownership of its pre-existing code libraries.
+
+4. WARRANTIES AND DISCLAIMER
+Developer warrants that for ninety (90) days following delivery, the application shall perform substantially in conformance with the specifications. Developer disclaims all other implied warranties.
+
+5. LIMITATION OF LIABILITY
+Neither party shall be liable for indirect, incidental, or consequential damages. In no event shall either party's total aggregate liability under this Agreement exceed the total fees paid by Client to Developer in the preceding twelve (12) months.
+
+6. TERMINATION
+Either party may terminate this Agreement upon thirty (30) days written notice if the other party materially breaches any term and fails to cure such breach within the thirty-day period.
+
+7. GOVERNING LAW
+This Agreement shall be governed by and construed in accordance with the laws of the State of New York.

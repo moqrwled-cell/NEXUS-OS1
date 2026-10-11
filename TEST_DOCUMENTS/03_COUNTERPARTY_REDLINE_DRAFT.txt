@@ -1,0 +1,24 @@
+SOFTWARE DEVELOPMENT AND MASTER SERVICES AGREEMENT (AMENDED DRAFT)
+
+This Agreement is made on January 10, 2026, between Horizon Software LLC ("Developer") and Vantage Capital Partners ("Client").
+
+1. SCOPE OF SERVICES
+Developer agrees to design, build, and deploy the portfolio management web application in accordance with the specifications in Exhibit A. Developer shall deliver all compiled binaries upon completion. Source code remains proprietary to Developer.
+
+2. PAYMENT TERMS & PENALTIES
+Client shall pay Developer a total project fee of $110,000 payable in monthly advance installments of $27,500 each. Invoices shall be paid within fifteen (15) business days of receipt. In the event of any payment delay exceeding five days, Client shall be assessed an automatic 15% late penalty compounded weekly.
+
+3. INTELLECTUAL PROPERTY & RESTRICTIONS
+Developer grants Client a non-exclusive, non-transferable internal license to use the application. Developer exclusively retains all right, title, and ownership of all deliverables, architecture, algorithms, and source code. Client covenants not to develop or solicit competing fintech software for three (3) years.
+
+4. WARRANTIES AND DISCLAIMER
+The software is provided completely AS IS, WHERE IS, WITHOUT WARRANTY OF ANY KIND. Developer expressly disclaims all warranties, express, implied, or statutory, including warranties of merchantability and fitness for a particular purpose.
+
+5. INDEMNIFICATION & UNLIMITED CLIENT LIABILITY
+Client agrees to defend, indemnify, and hold harmless Developer against all third-party claims, losses, damages, and attorney fees arising from the use of the platform. Client shall bear unlimited liability for any operational interruptions. Developer total liability shall not exceed $1,000.
+
+6. TERMINATION
+Developer may terminate this Agreement immediately for convenience without notice or refund. Client may terminate only upon ninety (90) days advance written notice with full payment of the remaining contract balance.
+
+7. GOVERNING LAW & MANDATORY ARBITRATION
+This Agreement shall be governed by the laws of the State of Delaware. Any dispute shall be submitted to mandatory binding arbitration in Dover, Delaware, with waiver of jury trial.

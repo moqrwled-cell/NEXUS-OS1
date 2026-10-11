@@ -1,0 +1,74 @@
+MASTER CLOUD SERVICES AND LICENSING AGREEMENT
+
+This Master Cloud Services and Licensing Agreement (this "Agreement") is entered into as of March 15, 2026 (the "Effective Date"), by and between Apex Global Technologies Inc., a Delaware corporation with its principal place of business at 100 Technology Plaza, Wilmington, DE 19801 ("Provider"), and Meridian Health Solutions Corporation, a California corporation located at 500 Healthcare Way, San Francisco, CA 94107 ("Customer").
+
+RECITALS
+WHEREAS, Provider specializes in high-throughput healthcare analytics infrastructure; and
+WHEREAS, Customer desires to procure enterprise cloud services and consulting under the covenants contained herein.
+
+NOW, THEREFORE, in consideration of the mutual covenants contained herein and other good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the parties agree as follows:
+
+SECTION 1. DEFINITIONS AND INTERPRETATION
+1.1 "Authorized Users" means Customer employees and designated contractors granted access credentials pursuant to Section 3.2.
+1.2 "Confidential Information" means all non-public proprietary information disclosed by either party, whether orally or in tangible form, including trade secrets, source code, and customer data.
+1.3 "Service Level Agreement" means the performance benchmarks and uptime commitments set forth in Exhibit B.
+1.4 "Force Majeure Event" means acts of God, war, riot, embargoes, or government decrees beyond reasonable control.
+1.5 "Legacy Data Repository" means the historical patient archives identified in Schedule 1.
+1.6 "Defunct Concept Term" means an obsolete operational framework previously utilized under prior vendor arrangements.
+
+SECTION 2. SERVICES AND SCOPE OF WORK
+2.1 Subscription Services. Provider shall provision, host, and maintain the cloud analytics platform in accordance with the specifications in Exhibit A.
+2.2 Implementation Milestones. Provider must complete data migration and API onboarding no later than November 15, 2023. Provider shall deploy all necessary technical resources to satisfy this milestone.
+2.3 Professional Consulting. Provider shall deliver sixty (60) hours of dedicated engineering consulting per calendar month.
+2.4 Defective Cross-Reference. Customer may audit the implementation protocol in strict accordance with the auditing procedures set forth in Section 14.8.
+2.5 Missing Exhibit Citation. All data warehouse backup schedules and failover procedures shall be executed as outlined in Exhibit D (Disaster Recovery Protocol).
+
+SECTION 3. FEES, BILLING & FINANCIAL COVENANTS
+3.1 Annual Subscription Retainer. Customer shall pay Provider an annual platform licensing fee of $45,000 (Sixty Thousand Dollars) payable in equal quarterly installments in advance.
+3.2 Implementation Fee Contradiction. Customer shall pay a one-time onboarding and setup fee of $150,000 (One Hundred Twenty-Five Thousand Dollars) upon execution of this Agreement.
+3.3 Invoicing and Taxes. Provider shall submit itemized electronic invoices on the first business day of each month. Customer shall remit payment within thirty (30) days of receipt of invoice.
+3.4 Reimbursable Travel Expenses. Pre-approved travel expenses shall be reimbursed pursuant to the travel policy set forth in Schedule 3.
+3.5 Late Payment Surcharge. Past-due payments shall accrue interest at a rate of 1.5% per month or the highest lawful rate permitted by Delaware law.
+
+SECTION 4. TERM, TERMINATION & NOTICE PERIODS
+4.1 Term. This Agreement shall commence on the Effective Date and shall remain in effect for an initial period of three (3) years (the "Initial Term").
+4.2 Automatic Renewal. This Agreement shall automatically renew for successive one (1) year periods unless either party delivers written notice of non-renewal at least sixty (60) days prior to the expiration of the then-current term.
+4.3 Termination for Convenience. Customer may terminate this Agreement without cause at any time upon providing forty-five (45) days prior written notice to Provider.
+4.4 Unfilled Notice Placeholder. Notice of default or breach must be served in writing and must allow the defaulting party [Insert Notice Period] business days to cure such deficiency.
+4.5 Unfilled Entity Placeholder. Legal notices to Customer shall be delivered to the attention of the General Counsel at [Insert Customer Legal Department Address].
+
+SECTION 5. CONFIDENTIALITY & DATA SECURITY
+5.1 Confidentiality Duty. Each receiving party agrees to protect the Confidential Information of the disclosing party using the same degree of care it uses for its own confidential data, but in no event less than reasonable care.
+5.2 Exclusions. Confidential Information does not include information that: (a) is or becomes publicly known without breach; (b) was known prior to disclosure; or (c) is independently developed without reference to the disclosing party's data.
+5.3 Security Breach Notification. In the event of an unauthorized data security incident or compromise of Protected Health Information, Provider must notify Customer within twenty-four (24) hours of discovering such incident.
+5.4 Prohibitions on Dissemination. Neither party shall disclose the financial terms of this Agreement to any third party without prior written consent.
+5.5 Missing Technical Exhibit. Data encryption standards and zero-trust verification architecture shall strictly comply with Appendix C (Cryptographic Security Standards).
+
+SECTION 6. INTELLECTUAL PROPERTY RIGHTS
+6.1 Provider Platform Ownership. Provider retains all exclusive right, title, and interest in and to the cloud analytics platform, underlying algorithms, and all improvements thereto.
+6.2 Customer Data. Customer exclusively owns all right, title, and interest in and to Customer Data, including all patient records and operational logs.
+6.3 Undefined Term Usage. Provider shall not reverse-engineer or harvest the Intellectual Capital or Proprietary Diagnostic Models of Customer without explicit board authorization.
+6.4 Broken Reference to Nonexistent Clause. IP indemnification disputes shall be resolved pursuant to Clause 9.3(b).
+
+SECTION 7. INDEMNIFICATION, LIABILITY & RESTRICTIONS
+7.1 Provider Indemnity. Provider agrees to defend, indemnify, and hold harmless Customer, its officers, directors, and employees against all third-party claims, liabilities, losses, damages, and reasonable attorneys' fees arising out of infringement of any patent, copyright, or trademark.
+7.2 Unlimited Liability Exposure. Notwithstanding anything to the contrary, Provider shall be subject to unlimited liability for any material breach of data confidentiality or gross negligence.
+7.3 Post-Termination Non-Compete. Customer agrees that during the term of this Agreement and for a period of two (2) years following termination, Customer shall not directly or indirectly engage in, develop, or invest in any competing healthcare analytics platform.
+7.4 Third-Party Escrow Covenant. The Escrow Agent shall release software source code directly to Customer within ten (10) business days following any insolvency filing by Provider.
+
+SECTION 8. DISPUTE RESOLUTION & GOVERNING LAW
+8.1 Delaware Law. This Agreement and all controversies arising out of or related to this transaction shall be governed by the laws of the State of Delaware without giving effect to conflicts of law principles.
+8.2 Mandatory Arbitration & Jury Waiver. Any dispute shall be settled by binding arbitration in Wilmington, Delaware, and each party irrevocably waives any right to a trial by jury.
+8.3 Unfilled Boilerplate Underlines. Designated corporate registration code for Customer is ______________.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the Effective Date.
+
+APEX GLOBAL TECHNOLOGIES INC.
+By: ____________________________________
+Name: Marcus Vance
+Title: Chief Executive Officer
+
+MERIDIAN HEALTH SOLUTIONS LLC
+By: ____________________________________
+Name: Dr. Eleanor Ross
+Title: President & General Counsel
