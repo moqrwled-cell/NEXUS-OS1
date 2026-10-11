@@ -16,11 +16,16 @@ export default {
         'nexus-border': 'rgba(255, 255, 255, 0.08)',
       },
       fontFamily: {
-        heading: ['"Plus Jakarta Sans"', '"Cairo"', '"Almarai"', 'sans-serif'],
-        body: ['"Plus Jakarta Sans"', '"Cairo"', '"Almarai"', 'sans-serif'],
+        // Legal Professional Fonts (IBM Plex — used by Harvey AI, Ironclad, Westlaw)
+        sans: ['"IBM Plex Sans"', '"Cairo"', '"Almarai"', 'sans-serif'],
+        serif: ['"IBM Plex Serif"', 'Georgia', 'serif'],
+        mono: ['"IBM Plex Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        // Legacy aliases kept for other pages
+        heading: ['"IBM Plex Sans"', '"Cairo"', 'sans-serif'],
+        body: ['"IBM Plex Sans"', '"Cairo"', 'sans-serif'],
         cairo: ['"Cairo"', '"Almarai"', 'sans-serif'],
         almarai: ['"Almarai"', '"Cairo"', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        legal: ['"IBM Plex Serif"', 'Georgia', 'serif'],
       },
       backgroundImage: {
         'emerald-gradient': 'linear-gradient(135deg, #00FF9D 0%, #00F0FF 100%)',
