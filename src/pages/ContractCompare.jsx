@@ -327,9 +327,9 @@ function ContractAnalyzerView({ initialSession }) {
 
   const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || '');
   const [baselineText, setBaselineText] = useState(initialSession?.originalText || '');
-  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || 'Master Services Agreement');
-  const [clientParty, setClientParty] = useState('Acme Corporation');
-  const [counterparty, setCounterparty] = useState('Globex Systems Inc');
+  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || '');
+  const [clientParty, setClientParty] = useState('');
+  const [counterparty, setCounterparty] = useState('');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
 
   // File upload & Drag-and-Drop states
@@ -899,9 +899,9 @@ function ContractAnalyzerView({ initialSession }) {
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => exportExecutiveClientMemoHTML({
-                  contractTitle: documentTitle,
-                  clientName: clientParty,
-                  counterpartyName: counterparty,
+                  contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
+                  clientName: clientParty.trim() || 'Client',
+                  counterpartyName: counterparty.trim() || 'Counterparty',
                   auditData: auditResults
                 })}
                 className="px-4 py-2.5 bg-emerald-400 hover:bg-emerald-300 text-black font-extrabold rounded-xl text-xs transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
@@ -922,7 +922,7 @@ function ContractAnalyzerView({ initialSession }) {
 
               {auditResults.diff && (
                 <button
-                  onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle })}
+                  onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' })}
                   className="px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
                   title="Export interactive HTML redline with insertions & deletions"
                 >
@@ -932,7 +932,7 @@ function ContractAnalyzerView({ initialSession }) {
               )}
 
               <button
-                onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle })}
+                onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' })}
                 className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-300 transition-all cursor-pointer"
                 title="Export compliance JSON verification record"
               >
