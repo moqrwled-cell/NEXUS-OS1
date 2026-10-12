@@ -633,7 +633,7 @@ button{font:inherit;color:inherit}
     <div class="pricing-stage" id="pricingStage" data-t="32.8" data-y="30" data-d=".8">
       <div class="pricing-header">
         <div class="logo-badge">
-          <svg><use href="#shield"/></svg>
+          <svg id="endShield"><use href="#shield"/></svg>
           <span>ContractGuard</span>
           <span style="font:500 14px var(--mono);color:var(--em);letter-spacing:.18em;margin-left:6px;border:1px solid rgba(16,185,129,.4);padding:3px 10px;border-radius:6px">AIR-GAPPED STUDIO</span>
         </div>
@@ -743,7 +743,7 @@ button{font:inherit;color:inherit}
             </li>
           </ul>
 
-          <button class="card-cta-btn primary plan-buy-btn" data-tier="firm" id="btnBuyFirm">
+          <button class="card-cta-btn primary plan-buy-btn" data-tier="firm" id="cta">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
             اشتري الآن · خذ وصولك الشامل (Claim Full License)
           </button>
@@ -977,9 +977,9 @@ function scene4(t){
   const u=eio(seg(t,27.1,28.1)), vis=seg(t,27.0,27.2)*(1-seg(t,28.6,28.9)), click=(t>28.1&&t<28.3)?.88:1;
   cur.style.opacity=vis.toFixed(2);
   cur.style.transform='translate('+lerp(1540,1290,u).toFixed(1)+'px,'+lerp(880,692,u).toFixed(1)+'px) scale('+click+')';
-  if(t>34){ const p=.5+.5*Math.sin((t-34)*4); cta.style.boxShadow='0 0 '+(100+60*p).toFixed(0)+'px rgba(16,185,129,'+(.45+.2*p).toFixed(2)+'),0 20px 60px rgba(0,0,0,.5)'; }
-  else cta.style.boxShadow='';
-  endShield.style.filter='drop-shadow(0 0 '+(20+16*Math.sin(t*3)).toFixed(0)+'px rgba(16,185,129,.8))';
+  if(cta && t>34){ const p=.5+.5*Math.sin((t-34)*4); cta.style.boxShadow='0 0 '+(100+60*p).toFixed(0)+'px rgba(16,185,129,'+(.45+.2*p).toFixed(2)+'),0 20px 60px rgba(0,0,0,.5)'; }
+  else if(cta) cta.style.boxShadow='';
+  if(endShield) endShield.style.filter='drop-shadow(0 0 '+(20+16*Math.sin(t*3)).toFixed(0)+'px rgba(16,185,129,.8))';
 }
 function chrome(t){
   const idx=t<7?0:t<15?1:t<26?2:3; setText('sl',slt,LABELS[idx]);
