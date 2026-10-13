@@ -667,8 +667,8 @@ button{font:inherit;color:inherit}
           <p class="card-desc">الحل المثالي للمحامي الفردي والاستشارات القانونية المستقلة لضمان سرية العقود بنسبة 100%.</p>
           
           <div class="card-price-box">
-            <span class="card-price" id="priceSolo">$49</span>
-            <span class="card-price-period" id="periodSolo">/ شهرياً</span>
+            <span class="card-price" id="priceSolo">$199</span>
+            <span class="card-price-period" id="periodSolo">/ للأبد (دفعة واحدة)</span>
           </div>
 
           <ul class="card-features">
@@ -712,8 +712,8 @@ button{font:inherit;color:inherit}
           <p class="card-desc">الترخيص الشامل لمكاتب المحاماة، أقسام الشؤون القانونية بالشركات، والصفقات والنزاعات الكبرى.</p>
           
           <div class="card-price-box">
-            <span class="card-price" id="priceFirm">$149</span>
-            <span class="card-price-period" id="periodFirm">/ شهرياً</span>
+            <span class="card-price" id="priceFirm">$299</span>
+            <span class="card-price-period" id="periodFirm">/ للأبد (حتى 5 مستخدمين)</span>
           </div>
 
           <ul class="card-features">
@@ -1157,17 +1157,17 @@ document.addEventListener('keydown',e=>{
     if (isLifetime) {
       btnMonthly.classList.remove('active');
       btnLifetime.classList.add('active');
-      priceSolo.textContent = '$349';
-      periodSolo.textContent = 'مدى الحياة · دفعة واحدة';
-      priceFirm.textContent = '$899';
-      periodFirm.textContent = 'مدى الحياة · دفعة واحدة (وفّر 40%)';
+      priceSolo.textContent = '$199';
+      periodSolo.textContent = 'مدى الحياة · ترخيص فردي';
+      priceFirm.textContent = '$299';
+      periodFirm.textContent = 'مدى الحياة · 5 مستخدمين للمكتب';
     } else {
       btnLifetime.classList.remove('active');
       btnMonthly.classList.add('active');
-      priceSolo.textContent = '$49';
-      periodSolo.textContent = '/ شهرياً';
-      priceFirm.textContent = '$149';
-      periodFirm.textContent = '/ شهرياً';
+      priceSolo.textContent = '$199';
+      periodSolo.textContent = 'ترخيص دائم للأبد';
+      priceFirm.textContent = '$299';
+      periodFirm.textContent = 'ترخيص شامل 5 مقاعد للأبد';
     }
     if (AC && audioOn) sfx.blip();
   }
@@ -1182,7 +1182,7 @@ document.addEventListener('keydown',e=>{
       e.stopPropagation();
       const tier = btn.dataset.tier === 'solo' ? 'ترخيص المحامي المستقل (Solo Counsel)' : 'ترخيص مكاتب المحاماة (Boutique Firm Studio)';
       const planType = isLifetime ? 'مدى الحياة (Lifetime)' : 'اشتراك شهري (Monthly)';
-      const price = btn.dataset.tier === 'solo' ? (isLifetime ? '$349' : '$49') : (isLifetime ? '$899' : '$149');
+      const price = btn.dataset.tier === 'solo' ? '$199' : '$299 (5 مستخدمين)';
       if (AC && audioOn) sfx.chime(1.5);
       
       alert('🔒 شكراً لاختيارك ContractGuard\n\n' +

@@ -130,12 +130,21 @@ export default function App() {
             </AnimatePresence>
           </div>
 
+          {/* Interactive Demo CTA */}
+          <button 
+            onClick={() => navigate('/demo')}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <Sparkles size={13} className="text-cyan-400" />
+            <span>{isRtl ? 'تجربة الديمو التفاعلي' : 'Live Demo'}</span>
+          </button>
+
           {/* Launch Studio CTA in Nav */}
           <button 
             onClick={() => navigate('/app/contractcompare')}
-            className="bg-nexus-emerald text-black px-4 py-2 rounded-xl text-xs font-black hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center gap-1.5"
+            className="bg-nexus-emerald text-black px-4 py-2 rounded-xl text-xs font-black hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center gap-1.5 cursor-pointer"
           >
-            <span>{isRtl ? 'فتح الاستوديو مجاناً' : 'Launch Studio'}</span>
+            <span>{isRtl ? 'فتح الاستوديو الكامل' : 'Launch Studio'}</span>
             <ArrowRight size={13} className={isRtl ? 'rotate-180' : ''} />
           </button>
         </div>
@@ -206,19 +215,27 @@ export default function App() {
                 className="flex flex-wrap gap-4 items-center mb-10"
               >
                 <button 
-                  onClick={() => navigate('/app/contractcompare')}
-                  className="bg-nexus-emerald text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] flex items-center gap-2.5"
+                  onClick={() => navigate('/demo')}
+                  className="bg-nexus-emerald text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] flex items-center gap-2.5 cursor-pointer"
                 >
-                  <span>{isRtl ? '🚀 فتح بيئة العمل وتجربة عقد نموذجي' : '🚀 Launch Studio & Run Evaluation'}</span>
+                  <Sparkles size={16} />
+                  <span>{isRtl ? '⚡ تجربة الديمو التفاعلي الفوري (79ms Demo)' : '⚡ Try Interactive Live Demo'}</span>
                   <ArrowRight size={16} className={isRtl ? 'rotate-180' : ''} />
                 </button>
                 
                 <button 
-                  onClick={() => scrollToSection('pricing')}
-                  className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2"
+                  onClick={() => navigate('/app/contractcompare')}
+                  className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <Lock size={15} className="text-nexus-emerald" />
-                  <span>{isRtl ? 'شراء رخصة المؤسسات الدائمة ($199)' : 'Get Lifetime License ($199)'}</span>
+                  <span>{isRtl ? 'بيئة العمل الكاملة' : 'Full Studio'}</span>
+                </button>
+
+                <button 
+                  onClick={() => scrollToSection('pricing')}
+                  className="px-6 py-3.5 rounded-xl bg-nexus-cyan/10 hover:bg-nexus-cyan/20 border border-nexus-cyan/30 text-nexus-cyan font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <Lock size={15} />
+                  <span>{isRtl ? 'التراخيص الدائمة ($199 / $299)' : 'Lifetime Licenses ($199 / $299)'}</span>
                 </button>
               </motion.div>
 

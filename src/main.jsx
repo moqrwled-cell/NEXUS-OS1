@@ -12,6 +12,7 @@ import ClientDashboard from './pages/ClientDashboard.jsx'
 import ProductLanding from './pages/ProductLanding.jsx'
 import AuthLogin from './pages/AuthLogin.jsx'
 import Welcome from './pages/Welcome.jsx'
+import ContractGuardDemo from './pages/ContractGuardDemo.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LanguageWrapper from './components/LanguageWrapper.jsx'
 import './i18n'
@@ -23,6 +24,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <LanguageWrapper>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/demo" element={<ContractGuardDemo />} />
+          <Route path="/contractguard-demo" element={<ContractGuardDemo />} />
           <Route path="/login" element={<Login />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/hub" element={<Hub />} />
