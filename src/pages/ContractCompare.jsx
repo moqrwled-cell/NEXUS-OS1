@@ -25,6 +25,7 @@ import {
 } from '../utils/exportEngine';
 import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
+import { isImageFile, recognizeImage } from '../utils/ocrEngine.js';
 import { verifyToolAccess } from '../utils/auth';
 import PirateTrapModal from '../components/PirateTrapModal';
 
@@ -378,19 +379,38 @@ function ContractAnalyzerView({ initialSession }) {
       const lowerName = file.name.toLowerCase();
 
       if (lowerName.endsWith('.pdf')) {
-        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Extracting text from PDF...' }));
+        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Reading PDF document...' }));
         const pdfResult = await extractTextFromPDF(file, {
+          enableOcr: true,
           onProgress: (p) => {
             setUploadStatus(prev => ({
               ...prev,
-              [statusKey]: `Extracting PDF: page ${p.currentPage}/${p.totalPages}...`
+              [statusKey]: p.message || `Parsing PDF: page ${p.currentPage}/${p.totalPages} (${p.percent}%)...`
             }));
           }
         });
         setTargetText(pdfResult.fullText);
+        const hasOcrPages = pdfResult.pages?.some(pg => pg.isOcr);
         setUploadStatus(prev => ({
           ...prev,
-          [statusKey]: `Loaded PDF (${pdfResult.totalWords} words)`
+          [statusKey]: `Loaded PDF (${pdfResult.totalWords} words${hasOcrPages ? ' · In-RAM OCR applied' : ''})`
+        }));
+      } else if (isImageFile(file)) {
+        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Initializing In-RAM OCR Engine...' }));
+        const ocrResult = await recognizeImage(file, {
+          preprocess: true,
+          onProgress: (p) => {
+            setUploadStatus(prev => ({
+              ...prev,
+              [statusKey]: p.userFriendly ? `In-RAM OCR: ${p.userFriendly}` : 'Scanning contract image...'
+            }));
+          }
+        });
+        setTargetText(ocrResult.text);
+        const wordCount = ocrResult.text.trim() ? ocrResult.text.trim().split(/\s+/).length : 0;
+        setUploadStatus(prev => ({
+          ...prev,
+          [statusKey]: `Scanned Image OCR Complete (${wordCount} words · ${ocrResult.confidence.toFixed(1)}% conf · ${ocrResult.durationMs}ms)`
         }));
       } else if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
@@ -402,7 +422,7 @@ function ContractAnalyzerView({ initialSession }) {
         setTargetText(fileContent);
         setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded text file (${fileContent.split(/\s+/).length} words)` }));
       } else {
-        alert("Supported file formats: .pdf, .docx, .txt, .md");
+        alert("Supported file formats: .pdf, .docx, .txt, .md, .png, .jpg, .jpeg, .webp");
         setUploadStatus(prev => ({ ...prev, [statusKey]: '' }));
       }
     } catch (err) {
@@ -621,7 +641,7 @@ function ContractAnalyzerView({ initialSession }) {
                 <Upload size={30} className="animate-bounce" />
               </div>
               <p className="text-sm font-bold text-white tracking-wide">Drop Contract Document Here</p>
-              <p className="text-xs text-zinc-400 font-mono">Supports .pdf, .docx, .txt, .md</p>
+              <p className="text-xs text-zinc-400 font-mono">Supports .pdf, .docx, .txt, .md + Scanned Images (.png, .jpg)</p>
             </div>
           )}
 
@@ -635,10 +655,10 @@ function ContractAnalyzerView({ initialSession }) {
                 <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
               )}
               <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5">
-                <Upload size={13} /> Import File (.pdf / .docx / .txt)
+                <Upload size={13} /> Import (.pdf / .docx / .txt / Scanned Image)
                 <input
                   type="file"
-                  accept=".pdf,.docx,.txt,.md"
+                  accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
                   className="hidden"
                   onChange={(e) => handleFileUpload(e, setText, 'target')}
                 />
@@ -693,7 +713,7 @@ function ContractAnalyzerView({ initialSession }) {
                   <Upload size={12} /> Upload
                   <input
                     type="file"
-                    accept=".pdf,.docx,.txt,.md"
+                    accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
                     className="hidden"
                     onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')}
                   />
@@ -726,7 +746,7 @@ function ContractAnalyzerView({ initialSession }) {
               <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2 animate-in fade-in">
                 <Upload size={26} className="animate-bounce" />
                 <p className="text-xs font-bold text-white">Drop Amended Document Here</p>
-                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt</p>
+                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt, .png, .jpg</p>
               </div>
             )}
 
@@ -743,7 +763,7 @@ function ContractAnalyzerView({ initialSession }) {
                   <Upload size={12} /> Upload
                   <input
                     type="file"
-                    accept=".pdf,.docx,.txt,.md"
+                    accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
                     className="hidden"
                     onChange={(e) => handleFileUpload(e, setText, 'target')}
                   />

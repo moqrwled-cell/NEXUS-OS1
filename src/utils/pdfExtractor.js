@@ -6,6 +6,7 @@
  */
 
 import * as pdfjsLib from 'pdfjs-dist';
+import { recognizeImage } from './ocrEngine.js';
 
 // Configure worker source in browser environments without external network CDNs
 if (typeof window !== 'undefined' && pdfjsLib.GlobalWorkerOptions && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -142,14 +143,66 @@ export async function extractTextFromPDF(pdfSource, options = {}) {
         lastY = item.transform[5];
       }
 
-      const trimmedPageText = pageText.trim();
+      let trimmedPageText = pageText.trim();
+      let isOcrApplied = false;
+
+      // If page has insufficient text (< 25 chars), it is likely a scanned image/exhibit
+      if (trimmedPageText.length < 25 && options.enableOcr !== false) {
+        try {
+          if (typeof options.onProgress === 'function') {
+            options.onProgress({
+              currentPage: pageNum,
+              totalPages: numPages,
+              percent: Math.round(((pageNum - 0.5) / numPages) * 100),
+              isOcr: true,
+              message: `In-RAM OCR: Scanning page ${pageNum}/${numPages}...`
+            });
+          }
+
+          const viewport = page.getViewport({ scale: 1.75 });
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          const ocrResult = await recognizeImage(canvas, {
+            preprocess: true,
+            onProgress: (p) => {
+              if (typeof options.onProgress === 'function' && p.userFriendly) {
+                options.onProgress({
+                  currentPage: pageNum,
+                  totalPages: numPages,
+                  percent: Math.round(((pageNum - 0.5 + (p.progress || 0) * 0.5) / numPages) * 100),
+                  isOcr: true,
+                  message: `In-RAM OCR: Page ${pageNum}/${numPages} (${p.userFriendly})`
+                });
+              }
+            }
+          });
+
+          if (ocrResult?.text) {
+            trimmedPageText = ocrResult.text;
+            isOcrApplied = true;
+          }
+
+          // Immediately release canvas memory to prevent memory leaks / browser freeze
+          canvas.width = 0;
+          canvas.height = 0;
+        } catch (ocrErr) {
+          console.warn(`[ContractGuard OCR] Page ${pageNum} OCR fallback skipped:`, ocrErr);
+        }
+      }
+
       const pageWordCount = trimmedPageText ? trimmedPageText.split(/\s+/).length : 0;
       totalWords += pageWordCount;
 
       pages.push({
         pageNumber: pageNum,
         text: trimmedPageText,
-        wordCount: pageWordCount
+        wordCount: pageWordCount,
+        isOcr: isOcrApplied
       });
 
       if (trimmedPageText) {
@@ -162,7 +215,11 @@ export async function extractTextFromPDF(pdfSource, options = {}) {
         options.onProgress({
           currentPage: pageNum,
           totalPages: numPages,
-          percent
+          percent,
+          isOcr: isOcrApplied,
+          message: isOcrApplied 
+            ? `Page ${pageNum}/${numPages} processed via In-RAM OCR`
+            : `Page ${pageNum}/${numPages} extracted`
         });
       }
     }
