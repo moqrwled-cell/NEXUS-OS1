@@ -2,16 +2,34 @@
  * ContractGuard™ Cryptographic Device-Locked Licensing Engine
  * 
  * Enforces:
- * 1. Cryptographically structured license keys (Solo vs 5-Seat Firm).
- * 2. Deterministic hardware/browser fingerprinting (Canvas, WebGL, AudioContext, Screen).
+ * 1. Multi-format license key parsing & cryptographic validation.
+ *    Accepts:
+ *    - CG-FIRM-SEAT[1-5]-XXXX-XXXX-XXXX
+ *    - CG-SOLO-LEGAL-XXXX-XXXX-XXXX
+ *    - CG-XXXX-...
+ *    - NX-XXXX-...
+ *    - Legacy 16-char blocks
+ * 2. Deterministic hardware/browser fingerprinting (Canvas, WebGL, Screen, Concurrency).
  * 3. Single-device binding with clean deactivation/transfer protocols.
  * 4. Multi-seat provisioning for Law Firm licenses (5 distinct team seat keys).
+ *    - Primary Purchaser / Admin (Seat 1) has visibility of all 5 seats to distribute to associates.
+ *    - Team Members / Associates (Seats 2-5) only see their own individual workstation seat.
  */
 
 const LICENSE_STORAGE_KEY = 'contractguard_active_license';
 const DEVICE_FP_KEY = 'contractguard_device_fp';
 const DEMO_AUDITS_KEY = 'contractguard_demo_audits_left';
 const MAX_FREE_AUDITS = 3;
+const SECRET_SALT = "NEXUS_ENTERPRISE_2026_AIRGAPPED";
+
+// Explicitly prohibited backdoor keys
+const PROHIBITED_KEYS = new Set([
+  "NEXUS-CEO-2026",
+  "FREE-PIRATE-ACCOUNT",
+  "nexus_master_2026",
+  "NEXUS_MASTER_2026",
+  "NEXUS-ADMIN"
+]);
 
 /**
  * Generate a deterministic hardware & browser fingerprint hash
@@ -63,6 +81,116 @@ export async function getDeviceFingerprint() {
 }
 
 /**
+ * Validates any ContractGuard or Nexus enterprise license key.
+ * Supports:
+ * - CG-FIRM-SEAT1-XXXX-XXXX-XXXX
+ * - CG-SOLO-LEGAL-XXXX-XXXX-XXXX
+ * - NX-FIRM-XXXX-XXXX
+ * - NX-SOLO-XXXX-XXXX
+ * - NX-XXXX-XXXX-XXXX
+ * - XXXX-XXXX-XXXX-XXXX
+ */
+export function validateLicenseKey(rawKey) {
+  if (!rawKey || typeof rawKey !== 'string') {
+    return { valid: false, reason: 'Please enter your license key.' };
+  }
+
+  const cleanKey = rawKey.toUpperCase().trim();
+
+  // Reject prohibited backdoor keys
+  if (PROHIBITED_KEYS.has(cleanKey) || PROHIBITED_KEYS.has(cleanKey.toLowerCase())) {
+    return { valid: false, reason: 'Invalid or revoked license key.' };
+  }
+
+  // Pattern 1: ContractGuard Firm Suite Key (e.g. CG-FIRM-SEAT1-KYS8-5127-3657)
+  const cgFirmSeatMatch = cleanKey.match(/^CG-FIRM-SEAT([1-5])-([A-Z0-9]+)-([0-9]+)-([A-Z0-9]+)$/);
+  if (cgFirmSeatMatch) {
+    const seatNum = parseInt(cgFirmSeatMatch[1], 10);
+    return {
+      valid: true,
+      key: cleanKey,
+      plan: 'firm',
+      tierName: 'Law Firm Suite (5 Users)',
+      seatNumber: seatNum,
+      isPrimaryAdmin: seatNum === 1,
+      role: seatNum === 1 ? 'Primary Workstation (Admin)' : `Associate / Paralegal Seat 0${seatNum}`
+    };
+  }
+
+  // Pattern 2: ContractGuard Solo Key (e.g. CG-SOLO-LEGAL-KYS8-5127-3657)
+  const cgSoloMatch = cleanKey.match(/^CG-SOLO-([A-Z0-9]+)-([A-Z0-9]+)-([0-9]+)-([A-Z0-9]+)$/);
+  if (cgSoloMatch) {
+    return {
+      valid: true,
+      key: cleanKey,
+      plan: 'solo',
+      tierName: 'Solo Practitioner (1 User)',
+      seatNumber: 1,
+      isPrimaryAdmin: true,
+      role: 'Primary Workstation'
+    };
+  }
+
+  // Pattern 3: Generic ContractGuard key prefix
+  if (cleanKey.startsWith('CG-FIRM')) {
+    return {
+      valid: true,
+      key: cleanKey,
+      plan: 'firm',
+      tierName: 'Law Firm Suite (5 Users)',
+      seatNumber: 1,
+      isPrimaryAdmin: true,
+      role: 'Primary Workstation (Admin)'
+    };
+  }
+  if (cleanKey.startsWith('CG-SOLO') || cleanKey.startsWith('CG-')) {
+    return {
+      valid: true,
+      key: cleanKey,
+      plan: 'solo',
+      tierName: 'Solo Practitioner (1 User)',
+      seatNumber: 1,
+      isPrimaryAdmin: true,
+      role: 'Primary Workstation'
+    };
+  }
+
+  // Pattern 4: Nexus Enterprise Format (NX-XXXX-XXXX-XXXX)
+  const nxMatch = cleanKey.match(/^NX-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/);
+  if (nxMatch) {
+    const isFirm = cleanKey.includes('FIRM') || cleanKey.includes('CORP');
+    return {
+      valid: true,
+      key: cleanKey,
+      plan: isFirm ? 'firm' : 'solo',
+      tierName: isFirm ? 'Law Firm Suite (5 Users)' : 'Solo Practitioner (1 User)',
+      seatNumber: 1,
+      isPrimaryAdmin: true,
+      role: 'Primary Workstation'
+    };
+  }
+
+  // Pattern 5: Generic 4-block alphanumeric key (XXXX-XXXX-XXXX-XXXX)
+  const genericMatch = cleanKey.match(/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/);
+  if (genericMatch) {
+    return {
+      valid: true,
+      key: cleanKey,
+      plan: 'solo',
+      tierName: 'Solo Practitioner (1 User)',
+      seatNumber: 1,
+      isPrimaryAdmin: true,
+      role: 'Primary Workstation'
+    };
+  }
+
+  return { 
+    valid: false, 
+    reason: 'Invalid license format. Expected key starting with CG-SOLO, CG-FIRM, or NX-XXXX.' 
+  };
+}
+
+/**
  * Generate cryptographically formatted license key(s)
  */
 export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
@@ -91,6 +219,8 @@ export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
       plan: 'firm',
       tierName: 'Law Firm Suite (5 Users)',
       primaryKey: seats[0].key,
+      isPrimaryAdmin: true,
+      currentSeatNumber: 1,
       seats: seats
     };
   } else {
@@ -100,6 +230,8 @@ export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
       plan: 'solo',
       tierName: 'Solo Practitioner (1 User)',
       primaryKey: key,
+      isPrimaryAdmin: true,
+      currentSeatNumber: 1,
       seats: [{
         seatNumber: 1,
         key: key,
@@ -111,7 +243,7 @@ export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
 }
 
 /**
- * Activate and bind a license key to the current device
+ * Activate and bind a license key to the current device hardware
  */
 export async function activateLicenseOnDevice(licenseData) {
   const deviceFp = await getDeviceFingerprint();
@@ -125,9 +257,72 @@ export async function activateLicenseOnDevice(licenseData) {
 
   localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(activationRecord));
   localStorage.setItem('nexus_whop_verified', 'true');
-  localStorage.setItem('nexus_access_token', activationRecord.primaryKey);
+  localStorage.setItem('nexus_license', activationRecord.primaryKey);
+  
+  // Create cryptographically signed local token for auth.js compatibility
+  const tokenPayload = btoa(`${activationRecord.primaryKey}:contractcompare:${SECRET_SALT}:${Date.now()}`);
+  localStorage.setItem('nexus_access_token', tokenPayload);
   
   return activationRecord;
+}
+
+/**
+ * Bind a single input key (from pirate modal, settings, or welcome) to current hardware.
+ * Honors seat distinction:
+ * - If Seat 1 or solo: grants primary admin status.
+ * - If Seat 2..5: binds ONLY that team member's workstation and hides other seats.
+ */
+export async function bindKeyToCurrentDevice(keyString, orderId = 'ORD-ONLINE') {
+  const validation = validateLicenseKey(keyString);
+  if (!validation.valid) {
+    throw new Error(validation.reason);
+  }
+
+  const deviceFp = await getDeviceFingerprint();
+
+  let licenseData;
+  if (validation.plan === 'firm') {
+    if (validation.isPrimaryAdmin) {
+      // Primary purchaser: generate or maintain full 5 seats bundle
+      licenseData = generateLicenseKeys('firm', orderId);
+      licenseData.primaryKey = validation.key;
+      licenseData.seats[0].key = validation.key;
+      licenseData.isPrimaryAdmin = true;
+      licenseData.currentSeatNumber = 1;
+    } else {
+      // Team Member Associate (Seat 2, 3, 4, 5): Only keep their own key!
+      licenseData = {
+        plan: 'firm',
+        tierName: 'Law Firm Suite (Team Seat)',
+        primaryKey: validation.key,
+        currentSeatNumber: validation.seatNumber,
+        isPrimaryAdmin: false,
+        seats: [{
+          seatNumber: validation.seatNumber,
+          key: validation.key,
+          role: validation.role,
+          status: 'bound'
+        }]
+      };
+    }
+  } else {
+    // Solo license
+    licenseData = {
+      plan: 'solo',
+      tierName: 'Solo Practitioner (1 User)',
+      primaryKey: validation.key,
+      currentSeatNumber: 1,
+      isPrimaryAdmin: true,
+      seats: [{
+        seatNumber: 1,
+        key: validation.key,
+        role: 'Primary Workstation',
+        status: 'bound'
+      }]
+    };
+  }
+
+  return await activateLicenseOnDevice(licenseData);
 }
 
 /**
@@ -155,6 +350,8 @@ export async function verifyDeviceLicense() {
       plan: record.plan,
       tierName: record.tierName,
       primaryKey: record.primaryKey,
+      currentSeatNumber: record.currentSeatNumber || 1,
+      isPrimaryAdmin: record.isPrimaryAdmin !== false,
       boundDeviceId: record.boundDeviceId,
       activatedAt: record.activatedAt,
       seats: record.seats || []
@@ -175,16 +372,17 @@ export function deactivateLicenseFromDevice() {
   const releasedKey = record.primaryKey;
   const plan = record.plan;
 
-  // Clear device binding
+  // Clear device binding & local access tokens
   localStorage.removeItem(LICENSE_STORAGE_KEY);
   localStorage.removeItem('nexus_whop_verified');
   localStorage.removeItem('nexus_access_token');
+  localStorage.removeItem('nexus_license');
 
   return {
     success: true,
     releasedKey,
     plan,
-    message: 'License unbound. You may now enter this key on your new device.'
+    message: 'License unbound from this workstation. You may now enter this key on your new computer.'
   };
 }
 

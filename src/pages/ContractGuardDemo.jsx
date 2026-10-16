@@ -73,12 +73,12 @@ export default function ContractGuardDemo() {
   const [analysisMode, setAnalysisMode] = useState('single'); // single | comparative
   const [diffGranularity, setDiffGranularity] = useState('word');
 
-  // Document contents
-  const [contractText, setContractText] = useState(HAZARDOUS_SAMPLE_CONTRACT);
-  const [baselineText, setBaselineText] = useState(HAZARDOUS_BASELINE_CONTRACT);
-  const [documentTitle, setDocumentTitle] = useState('Hazardous M&A Asset Purchase Agreement');
-  const [clientParty, setClientParty] = useState('Acme Holdings LLC');
-  const [counterparty, setCounterparty] = useState('Globex International Corp');
+  // Document contents (Empty buffer initially for user's own draft)
+  const [contractText, setContractText] = useState('');
+  const [baselineText, setBaselineText] = useState('');
+  const [documentTitle, setDocumentTitle] = useState('');
+  const [clientParty, setClientParty] = useState('');
+  const [counterparty, setCounterparty] = useState('');
 
   // Upload & Drag-and-drop state
   const [uploadStatus, setUploadStatus] = useState({ target: '', baseline: '' });
@@ -106,7 +106,7 @@ export default function ContractGuardDemo() {
     cancelAnalysis
   } = useContractWorker();
 
-  // Run audit on initial mount with sample contract & check device license
+  // Check device license on initial mount (do NOT auto-run on empty buffer)
   useEffect(() => {
     async function checkLicense() {
       try {
@@ -119,14 +119,6 @@ export default function ContractGuardDemo() {
       }
     }
     checkLicense();
-
-    handleRunAudit({
-      text: HAZARDOUS_SAMPLE_CONTRACT,
-      mode: 'single',
-      clientParty: 'Acme Holdings LLC',
-      counterparty: 'Globex International Corp',
-      isInitial: true
-    });
   }, []);
 
   // Execute in-memory audit with evaluation pass tracking
@@ -340,7 +332,37 @@ export default function ContractGuardDemo() {
       });
     }
 
-    // Fallback default hazardous findings if parsing a custom empty text
+    // Defined Terms Issues
+    if (auditResults.definedTerms?.issues) {
+      auditResults.definedTerms.issues.forEach(issue => {
+        list.push({
+          id: `term_${issue.id || Math.random()}`,
+          category: 'DEFINED TERMS INTEGRITY',
+          severity: issue.severity || 'medium',
+          clause: issue.clause || 'Defined Terms',
+          title: issue.title || `Undefined Term: "${issue.term || 'Capitalized Entity'}"`,
+          explanation: issue.explanation || issue.description || `The capitalized term "${issue.term || 'Term'}" is used throughout the agreement but is not formally defined.`,
+          remedy: issue.remedy || issue.remediation || 'Add formal definition in Section 1 or define upon first usage.'
+        });
+      });
+    }
+
+    // Template Placeholders / Brackets
+    if (auditResults.boilerplate?.issues) {
+      auditResults.boilerplate.issues.forEach(issue => {
+        list.push({
+          id: `bp_${issue.id || Math.random()}`,
+          category: 'TEMPLATE RESIDUAL / BRACKET',
+          severity: issue.severity || 'high',
+          clause: issue.clause || 'Unfilled Placeholder',
+          title: issue.title || 'Unfilled Placeholder Found [ ... ]',
+          explanation: issue.explanation || issue.description || 'Draft contains unfinished bracketed drafting instructions or blank underscores.',
+          remedy: issue.remedy || issue.remediation || 'Replace template bracket with negotiated commercial provisions.'
+        });
+      });
+    }
+
+    // Fallback default hazardous findings ONLY if parsing the hazardous sample contract without worker result
     if (list.length === 0 && contractText === HAZARDOUS_SAMPLE_CONTRACT) {
       return [
         {
@@ -403,9 +425,9 @@ export default function ContractGuardDemo() {
     return list;
   }, [auditResults, contractText]);
 
-  const riskScore = auditResults?.overallRiskScore?.score ?? 88;
-  const riskLevel = auditResults?.overallRiskScore?.level || 'critical';
-  const processingMs = auditResults?.processingDurationMs ?? 79;
+  const riskScore = auditResults?.overallRiskScore?.score ?? null;
+  const riskLevel = auditResults?.overallRiskScore?.level || null;
+  const processingMs = auditResults?.processingDurationMs ?? null;
 
   return (
     <div className="min-h-screen bg-[#030712] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
@@ -904,20 +926,34 @@ export default function ContractGuardDemo() {
                 <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 flex flex-col justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Execution Speed</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-black text-emerald-400 font-mono">{processingMs}</span>
+                    <span className="text-2xl font-black text-emerald-400 font-mono">
+                      {processingMs !== null ? processingMs : '--'}
+                    </span>
                     <span className="text-xs font-mono text-zinc-500">ms</span>
                   </div>
-                  <span className="text-[10px] text-zinc-500 font-mono">Single pass · 0 network latency</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">
+                    {processingMs !== null ? 'Single pass · 0 network latency' : 'Awaiting document buffer'}
+                  </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-rose-500/30 bg-rose-500/[0.03] flex flex-col justify-between">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-rose-400">Overall Risk Score</span>
+                <div className={`p-3.5 rounded-xl border flex flex-col justify-between transition-colors ${
+                  riskScore !== null && riskScore > 50 
+                    ? 'bg-rose-500/[0.04] border-rose-500/30' 
+                    : 'bg-[#050A0F] border-zinc-800'
+                }`}>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Overall Risk Score</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-black text-rose-400 font-mono">{riskScore}</span>
-                    <span className="text-xs font-mono text-rose-300/80">/ 100</span>
+                    <span className={`text-2xl font-black font-mono ${
+                      riskScore !== null && riskScore > 50 ? 'text-rose-400' : 'text-zinc-300'
+                    }`}>
+                      {riskScore !== null ? riskScore : '--'}
+                    </span>
+                    <span className="text-xs font-mono text-zinc-500">/ 100</span>
                   </div>
-                  <span className="text-[10px] text-rose-400 font-bold font-mono uppercase">
-                    {riskLevel} · 6 Deficiencies Detected
+                  <span className={`text-[10px] font-bold font-mono uppercase ${
+                    riskScore !== null && riskScore > 50 ? 'text-rose-400' : 'text-zinc-500'
+                  }`}>
+                    {auditResults ? `${(riskLevel || 'audited').toUpperCase()} · ${findingsList.length} Deficiencies Found` : 'Awaiting Audit Execution'}
                   </span>
                 </div>
 
@@ -925,19 +961,31 @@ export default function ContractGuardDemo() {
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Cross-Clause References</span>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-2xl font-black text-cyan-400 font-mono">
-                      {auditResults?.crossRefs?.stats?.totalReferencesFound ?? 3}
+                      {auditResults ? (auditResults?.crossRefs?.stats?.totalReferencesFound ?? 0) : '--'}
                     </span>
                     <span className="text-xs font-mono text-zinc-500">targets</span>
                   </div>
-                  <span className="text-[10px] text-amber-400 font-mono">1 Target Severed (§14.2)</span>
+                  <span className="text-[10px] text-zinc-400 font-mono">
+                    {auditResults 
+                      ? `${auditResults?.crossRefs?.issues?.length || 0} Broken Target${auditResults?.crossRefs?.issues?.length === 1 ? '' : 's'}` 
+                      : 'Awaiting Audit'}
+                  </span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 flex flex-col justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Financial Consistency</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-black text-rose-400 font-mono">MISMATCH</span>
+                    <span className={`text-2xl font-black font-mono ${
+                      auditResults && auditResults.financialDates?.issues?.length ? 'text-rose-400' : 'text-emerald-400'
+                    }`}>
+                      {auditResults ? (auditResults.financialDates?.issues?.length ? 'MISMATCH' : 'SYNCHRONIZED') : '--'}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-rose-400 font-mono font-bold">$45,000 Contradiction (§4.1)</span>
+                  <span className="text-[10px] font-mono font-bold text-zinc-400">
+                    {auditResults 
+                      ? `${auditResults.financialDates?.issues?.length || 0} Financial Discrepanc${auditResults.financialDates?.issues?.length === 1 ? 'y' : 'ies'}` 
+                      : 'Awaiting Audit'}
+                  </span>
                 </div>
               </div>
 
@@ -1006,6 +1054,53 @@ export default function ContractGuardDemo() {
                           <span>Unlock Law Firm Suite — $299 (5 Seats)</span>
                         </button>
                       </div>
+                    </div>
+                  )}
+
+                  {/* Empty State Prompt: When user hasn't audited any text yet */}
+                  {!auditResults && !isProcessing && (
+                    <div className="py-12 px-6 text-center flex flex-col items-center justify-center">
+                      <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-3.5 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                        <Zap size={26} />
+                      </div>
+                      <h4 className="text-base font-bold text-white tracking-tight">
+                        Forensic Audit Engine Standing By (In-Memory RAM)
+                      </h4>
+                      <p className="text-xs text-zinc-400 max-w-md mt-1.5 leading-relaxed">
+                        Paste your unexecuted contract draft into the buffer above, upload a document (.docx, .pdf), or load our pre-packaged hazardous contract to test instant in-RAM forensic detection.
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
+                        <button
+                          onClick={handleLoadSample}
+                          className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer shadow-sm"
+                        >
+                          <RefreshCw size={13} className="text-emerald-400" />
+                          <span>Load Sample Hazardous M&A Contract</span>
+                        </button>
+                        <button
+                          onClick={() => handleRunAudit()}
+                          disabled={!contractText.trim()}
+                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-black text-xs font-extrabold transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+                        >
+                          <Play size={13} className="fill-black" />
+                          <span>Run Air-Gapped Audit</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Clean State: Audited and zero defects detected */}
+                  {auditResults && findingsList.length === 0 && (
+                    <div className="py-10 px-6 text-center flex flex-col items-center justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-3 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                        <CheckCircle2 size={24} />
+                      </div>
+                      <h4 className="text-sm font-bold text-white">
+                        Zero Latent Deficiencies Detected
+                      </h4>
+                      <p className="text-xs text-zinc-400 max-w-md mt-1">
+                        All cross-references resolve, financial figures and words are synchronized, and all defined terms are verified.
+                      </p>
                     </div>
                   )}
 
@@ -1087,7 +1182,7 @@ export default function ContractGuardDemo() {
               </div>
 
               {/* ========================================================================= */}
-              {/* LEGAL PROTECTION SHIELD & MALPRACTICE NOTICE (درع الحماية القانونية)      */}
+              {/* LEGAL PROTECTION SHIELD & MALPRACTICE NOTICE                             */}
               {/* ========================================================================= */}
               <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/20 via-zinc-950 to-cyan-950/20 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-2">
                 <div className="flex items-start gap-3">
@@ -1097,18 +1192,14 @@ export default function ContractGuardDemo() {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                        Legal Protection Shield · درع الحماية القانونية والمسؤولية المهنية
+                        Legal Protection Shield · Malpractice & Quality Control Notice
                       </h4>
                       <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
-                        VERIFICATION NOTICE
+                        VERIFICATION MANDATE
                       </span>
                     </div>
                     <p className="text-[11px] text-zinc-300 leading-relaxed max-w-3xl">
-                      <strong>Notice to Legal Counsel / تنبيه تدقيق إلزامي:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics. 
-                      Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
-                    </p>
-                    <p className="text-[10.5px] text-zinc-400 font-arabic leading-relaxed" dir="rtl">
-                      تنبيه مهني واجب: مخرجات التدقيق والتعديلات المقترحة هي أدوات تحليلية مساعدة. يتعين على المحامي أو المستشار القانوني مراجعة وتدقيق الصياغات والبنود بدقة والتأكد من ملاءمتها ومطابقتها للأنظمة السارية قبل الاعتماد النهائي أو التقديم القضائي.
+                      <strong>Mandatory Counsel Verification Notice:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics designed for preliminary analytical support. Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
                     </p>
                   </div>
                 </div>

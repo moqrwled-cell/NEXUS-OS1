@@ -7,7 +7,8 @@ import {
   FileCode, Database, Filter, Trash2,
   ShieldCheck, Check, RotateCcw, Calendar, DollarSign,
   Bookmark, HelpCircle, User, Users, StopCircle, Upload,
-  AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock
+  AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
+  Settings, Key, Laptop, Copy, Mail, LogOut, Info, ExternalLink, Sparkles
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
@@ -27,6 +28,11 @@ import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
 import { isImageFile, recognizeImage } from '../utils/ocrEngine.js';
 import { verifyToolAccess } from '../utils/auth';
+import { 
+  verifyDeviceLicense, 
+  getDeviceFingerprint, 
+  deactivateLicenseFromDevice 
+} from '../utils/licenseManager';
 import PirateTrapModal from '../components/PirateTrapModal';
 
 export default function ContractCompare() {
@@ -45,6 +51,35 @@ export default function ContractCompare() {
       setShowDeviceModal(true);
     }
   }, []);
+
+  // Workstation Hardware & License Settings State
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [licenseData, setLicenseData] = useState(null);
+  const [workstationFp, setWorkstationFp] = useState('');
+
+  const loadDeviceLicenseData = async () => {
+    try {
+      const lic = await verifyDeviceLicense();
+      const fp = await getDeviceFingerprint();
+      setLicenseData(lic);
+      setWorkstationFp(fp);
+    } catch (e) {
+      console.error('Failed to load license details:', e);
+    }
+  };
+
+  useEffect(() => {
+    loadDeviceLicenseData();
+  }, [isUnlocked, showSettingsModal]);
+
+  const handleDeactivate = () => {
+    const res = deactivateLicenseFromDevice();
+    if (res && res.success) {
+      setIsUnlocked(false);
+      setShowSettingsModal(false);
+      setShowDeviceModal(true);
+    }
+  };
 
   // -- PWA Install --
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -244,8 +279,24 @@ export default function ContractCompare() {
           )}
         </nav>
 
+        {/* Workstation & License Settings Button */}
+        <div className="px-3.5 pt-2 pb-1.5 border-t border-zinc-800/60">
+          <button
+            onClick={() => { setShowSettingsModal(true); loadDeviceLicenseData(); }}
+            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm group"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <Settings size={14} className="text-emerald-400 group-hover:rotate-45 transition-transform" />
+              <span className="truncate">Workstation & License</span>
+            </div>
+            <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold shrink-0">
+              {licenseData?.plan === 'firm' ? 'Firm' : 'Solo'}
+            </span>
+          </button>
+        </div>
+
         {/* Bottom: PWA Install */}
-        <div className="px-4 py-3.5 border-t border-zinc-800/50">
+        <div className="px-4 py-3 border-t border-zinc-800/40">
           <button
             onClick={handleInstallApp}
             className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs px-4 py-2.5 rounded-lg transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)] cursor-pointer"
@@ -303,15 +354,371 @@ export default function ContractCompare() {
         )}
       </main>
 
+      {/* Workstation & License Settings Modal */}
+      <AnimatePresence>
+        {showSettingsModal && (
+          <SettingsModal
+            isOpen={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            licenseData={licenseData}
+            workstationFp={workstationFp}
+            onDeactivate={handleDeactivate}
+          />
+        )}
+      </AnimatePresence>
+
       <PirateTrapModal
         isOpen={showDeviceModal || !isUnlocked}
         onSuccess={() => {
           setIsUnlocked(true);
           setShowDeviceModal(false);
+          loadDeviceLicenseData();
         }}
         toolName="contractcompare"
       />
     </div>
+  );
+}
+
+// =========================================================================
+// WORKSTATION & LICENSE SETTINGS MODAL (Hardware ID, Seats, Migration, Support)
+// =========================================================================
+function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactivate }) {
+  const [copiedField, setCopiedField] = useState(null);
+  const [showConfirmDeactivate, setShowConfirmDeactivate] = useState(false);
+
+  if (!isOpen) return null;
+
+  const copyText = (text, fieldId) => {
+    if (!text) return;
+    navigator.clipboard?.writeText(text);
+    setCopiedField(fieldId);
+    setTimeout(() => setCopiedField(null), 3000);
+  };
+
+  const handleDownloadTeamKeys = () => {
+    if (!licenseData?.seats) return;
+    const lines = [
+      '========================================================================',
+      'NEXUS CONTRACTGUARD ENTERPRISE — LAW FIRM SUITE (5 WORKSTATION SEATS)',
+      '========================================================================',
+      '',
+      `Purchased Plan: Law Firm Suite ($299 Perpetual License)`,
+      `Workstation Hardware ID (Purchaser Admin): ${workstationFp || 'DEV-NEXUS-ADMIN'}`,
+      `Date Issued: ${new Date().toLocaleDateString()}`,
+      `Support Email: nexus.os.store@gmail.com`,
+      '',
+      'INSTRUCTIONS FOR YOUR LEGAL TEAM:',
+      '1. Open ContractGuard on each attorney / associate workstation.',
+      '2. Enter the assigned individual seat key below in the activation window.',
+      '3. The key binds directly to that machine with zero cloud SaaS leakage.',
+      '',
+      '------------------------------------------------------------------------',
+      'ALLOCATED SEAT KEYS FOR YOUR LAW FIRM:',
+      '------------------------------------------------------------------------'
+    ];
+
+    licenseData.seats.forEach((seat, idx) => {
+      lines.push(`SEAT 0${seat.seatNumber || idx + 1}: ${seat.key}`);
+      lines.push(`Role: ${seat.role || `Attorney Workstation 0${seat.seatNumber || idx + 1}`}`);
+      lines.push(`Status: ${seat.seatNumber === (licenseData.currentSeatNumber || 1) ? 'Bound to This Workstation' : 'Available for Associate'}`);
+      lines.push('------------------------------------------------------------------------');
+    });
+
+    lines.push('');
+    lines.push('MACHINE MIGRATION PROTOCOL:');
+    lines.push('To transfer a seat to a new computer, open Workstation Settings -> click "Deactivate from this Machine", then enter the key on the new computer.');
+    lines.push('For priority technical support: nexus.os.store@gmail.com');
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `contractguard-firm-seats-${Date.now().toString().slice(-6)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const isFirmAdmin = licenseData?.plan === 'firm' && licenseData?.isPrimaryAdmin !== false;
+  const isFirmAssociate = licenseData?.plan === 'firm' && !isFirmAdmin;
+  const seatKeys = licenseData?.seats || [];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, y: 12 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.95, y: 12 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-2xl bg-[#08121A] border border-emerald-500/30 rounded-2xl p-6 shadow-[0_0_50px_rgba(16,185,129,0.15)] flex flex-col gap-5 my-8 max-h-[90vh] overflow-y-auto custom-scrollbar"
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-zinc-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <Settings size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-white tracking-tight">Workstation & License Settings</h3>
+                <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+                  {licenseData?.plan === 'firm' ? 'Firm Suite' : 'Solo License'}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-0.5 font-mono">
+                Hardware ID Binding · Cryptographic Seat Governance · Migration
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Section 1: Workstation Hardware ID */}
+        <div className="p-4 rounded-xl bg-[#050A0F] border border-zinc-800 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold flex items-center gap-1.5">
+              <Laptop size={12} className="text-emerald-400" />
+              <span>Workstation Hardware ID (Device Fingerprint)</span>
+            </span>
+            <span className="text-[9.5px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+              <ShieldCheck size={11} />
+              <span>Bound & Active</span>
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between bg-black/60 p-2.5 rounded-lg border border-zinc-800 gap-2">
+            <span className="font-mono text-xs text-emerald-400 select-all truncate font-semibold">
+              {workstationFp || 'DEV-HARDWARE-HASH-LOCAL'}
+            </span>
+            <button
+              onClick={() => copyText(workstationFp, 'workstation_fp')}
+              className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 shrink-0 cursor-pointer"
+            >
+              {copiedField === 'workstation_fp' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              <span>{copiedField === 'workstation_fp' ? 'Copied' : 'Copy ID'}</span>
+            </button>
+          </div>
+
+          <p className="text-[11px] text-zinc-400 leading-relaxed">
+            This cryptographic hash uniquely binds ContractGuard to this physical machine's isolated browser environment. All document audits run in local RAM with zero cloud transmission.
+          </p>
+        </div>
+
+        {/* Section 2: Active License & Seat Info */}
+        <div className="p-4 rounded-xl bg-[#050A0F] border border-zinc-800 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold flex items-center gap-1.5">
+              <Key size={12} className="text-cyan-400" />
+              <span>License Details</span>
+            </span>
+            <span className="text-xs font-mono text-cyan-300 font-semibold">
+              {licenseData?.tierName || (licenseData?.plan === 'firm' ? 'Law Firm Suite (5 Seats)' : 'Solo Practitioner (1 User)')}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div className="p-2.5 rounded-lg bg-black/40 border border-zinc-800/80">
+              <span className="text-[10px] font-mono uppercase text-zinc-400">Current Workstation Role</span>
+              <p className="font-semibold text-white mt-0.5">
+                {isFirmAdmin ? 'Primary Purchaser / Managing Partner (Admin)' : isFirmAssociate ? `Associate Workstation (Seat 0${licenseData?.currentSeatNumber || 2})` : 'Primary Attorney Workstation'}
+              </p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-black/40 border border-zinc-800/80">
+              <span className="text-[10px] font-mono uppercase text-zinc-400">Seat Allocation</span>
+              <p className="font-semibold text-white mt-0.5">
+                Seat {licenseData?.currentSeatNumber || 1} of {licenseData?.plan === 'firm' ? '5 Total Seats' : '1 Seat'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between bg-black/60 p-2.5 rounded-lg border border-zinc-800 gap-2">
+            <div className="min-w-0">
+              <span className="text-[9px] font-mono uppercase text-zinc-400 block">Active Workstation License Key</span>
+              <span className="font-mono text-xs text-white select-all truncate font-semibold">
+                {licenseData?.primaryKey || 'CG-ACTIVE-KEY'}
+              </span>
+            </div>
+            <button
+              onClick={() => copyText(licenseData?.primaryKey, 'primary_key')}
+              className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 shrink-0 cursor-pointer"
+            >
+              {copiedField === 'primary_key' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              <span>{copiedField === 'primary_key' ? 'Copied' : 'Copy Key'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Section 3: Law Firm Suite Multi-Seat Provisioning */}
+        {isFirmAdmin && seatKeys.length > 0 && (
+          <div className="p-4 rounded-xl bg-gradient-to-b from-[#050A0F] to-[#08121A] border border-emerald-500/30 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
+                <Users size={13} />
+                <span>Firm Workstation Keys (5 Seats Included)</span>
+              </span>
+              <button
+                onClick={handleDownloadTeamKeys}
+                className="px-2.5 py-1 rounded-md bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Download size={11} />
+                <span>Download Team Keys (.txt)</span>
+              </button>
+            </div>
+
+            <p className="text-[11px] text-zinc-300 leading-snug">
+              As the managing purchaser, distribute each individual seat key to other lawyers or paralegals in your practice. Each key locks to one physical device.
+            </p>
+
+            <div className="space-y-2">
+              {seatKeys.map((seat, idx) => {
+                const isCurrent = seat.seatNumber === (licenseData?.currentSeatNumber || 1);
+                return (
+                  <div
+                    key={seat.key || idx}
+                    className={`p-2.5 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 ${
+                      isCurrent
+                        ? 'bg-emerald-950/20 border-emerald-500/40 text-white'
+                        : 'bg-black/50 border-zinc-800 text-zinc-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
+                        isCurrent ? 'bg-emerald-500 text-black' : 'bg-zinc-800 text-zinc-300'
+                      }`}>
+                        SEAT 0{seat.seatNumber || idx + 1}
+                      </span>
+                      <span className="font-mono text-xs truncate">{seat.key}</span>
+                      {isCurrent && (
+                        <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                          This Workstation
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => copyText(seat.key, `seat_${idx}`)}
+                      className="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-mono flex items-center gap-1 shrink-0 cursor-pointer self-end sm:self-auto"
+                    >
+                      {copiedField === `seat_${idx}` ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                      <span>{copiedField === `seat_${idx}` ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Section 3b: If Associate Member (Hide other keys) */}
+        {isFirmAssociate && (
+          <div className="p-4 rounded-xl bg-[#050A0F] border border-cyan-500/30 space-y-2">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold flex items-center gap-1.5">
+              <User size={13} />
+              <span>Associate Workstation License</span>
+            </span>
+            <p className="text-[11px] text-zinc-300 leading-relaxed">
+              Your workstation is authenticated under an enterprise Law Firm Suite seat allocation. Firm administrative keys and additional seat distribution are restricted to your firm's primary license administrator.
+            </p>
+          </div>
+        )}
+
+        {/* Section 4: License Migration & Deactivation */}
+        <div className="p-4 rounded-xl bg-[#050A0F] border border-amber-500/30 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
+              <RotateCcw size={13} />
+              <span>Transfer License to a New Computer</span>
+            </span>
+            <span className="text-[9.5px] font-mono text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold">
+              Device Migration
+            </span>
+          </div>
+
+          <div className="p-3 rounded-lg bg-black/40 border border-zinc-800 text-[11.5px] text-zinc-300 leading-relaxed space-y-1.5">
+            <p className="font-semibold text-white">How to migrate to another machine:</p>
+            <div className="space-y-1 text-zinc-400 text-xs">
+              <div className="flex items-start gap-2">
+                <span className="text-amber-400 font-bold">1.</span>
+                <span>Click <strong>"Deactivate from this Machine"</strong> below to release the hardware lock.</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-amber-400 font-bold">2.</span>
+                <span>Copy your license key: <code className="text-emerald-400 font-mono select-all">{licenseData?.primaryKey || 'Your Key'}</code></span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-amber-400 font-bold">3.</span>
+                <span>Open ContractGuard on your new workstation, paste your key, and it will immediately bind to your new hardware.</span>
+              </div>
+            </div>
+          </div>
+
+          {!showConfirmDeactivate ? (
+            <button
+              onClick={() => setShowConfirmDeactivate(true)}
+              className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <LogOut size={14} />
+              <span>Deactivate from this Machine (Migrate License)</span>
+            </button>
+          ) : (
+            <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/50 space-y-3">
+              <p className="text-xs text-rose-200 font-semibold">
+                Confirm Machine Deactivation: ContractGuard will release this computer's hardware binding and lock the local studio. You can reactivate anytime on this computer or enter the key on a new computer.
+              </p>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={onDeactivate}
+                  className="flex-1 py-2 px-3 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-colors cursor-pointer"
+                >
+                  Yes, Deactivate Workstation Now
+                </button>
+                <button
+                  onClick={() => setShowConfirmDeactivate(false)}
+                  className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Section 5: Official Support */}
+        <div className="p-3.5 rounded-xl bg-black/40 border border-zinc-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <Mail size={16} className="text-emerald-400 shrink-0" />
+            <div>
+              <p className="font-semibold text-white">Direct Developer & Legal Tech Support</p>
+              <a
+                href="mailto:nexus.os.store@gmail.com"
+                className="text-emerald-400 hover:underline font-mono text-[11px]"
+              >
+                nexus.os.store@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <button
+            onClick={() => copyText('nexus.os.store@gmail.com', 'support_email')}
+            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 cursor-pointer self-end sm:self-auto"
+          >
+            {copiedField === 'support_email' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+            <span>{copiedField === 'support_email' ? 'Copied' : 'Copy Email'}</span>
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -1696,7 +2103,7 @@ function ContractAnalyzerView({ initialSession }) {
           )}
 
           {/* ========================================================================= */}
-          {/* LEGAL PROTECTION SHIELD & MALPRACTICE NOTICE (درع الحماية القانونية)      */}
+          {/* LEGAL PROTECTION SHIELD & MALPRACTICE VERIFICATION NOTICE                 */}
           {/* ========================================================================= */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-zinc-950 to-cyan-950/20 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
             <div className="flex items-start gap-3">
@@ -1706,18 +2113,14 @@ function ContractAnalyzerView({ initialSession }) {
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                    Legal Protection Shield · درع الحماية القانونية والمسؤولية المهنية
+                    Legal Protection Shield · Malpractice & Quality Control Notice
                   </h4>
                   <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
-                    VERIFICATION NOTICE
+                    VERIFICATION MANDATE
                   </span>
                 </div>
                 <p className="text-[11px] text-zinc-300 leading-relaxed max-w-3xl">
-                  <strong>Notice to Legal Counsel / تنبيه تدقيق إلزامي:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics. 
-                  Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
-                </p>
-                <p className="text-[10.5px] text-zinc-400 font-arabic leading-relaxed" dir="rtl">
-                  تنبيه مهني واجب: مخرجات التدقيق والتعديلات المقترحة هي أدوات تحليلية مساعدة. يتعين على المحامي أو المستشار القانوني مراجعة وتدقيق الصياغات والبنود بدقة والتأكد من ملاءمتها ومطابقتها للأنظمة السارية قبل الاعتماد النهائي أو التقديم القضائي.
+                  <strong>Mandatory Counsel Verification Notice:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics designed for preliminary analytical support. Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
                 </p>
               </div>
             </div>

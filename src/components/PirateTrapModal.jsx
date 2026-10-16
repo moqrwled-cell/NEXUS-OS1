@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { KeyRound, ArrowRight, Loader2, ShieldCheck, CheckCircle2, Lock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
+import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 import { openSeamlessCheckout } from '../utils/checkoutPopup';
 
 export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contractcompare' }) {
@@ -12,8 +13,8 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
 
   if (!isOpen) return null;
 
-  // Handle Enterprise License Key Verification
-  const handleLicenseSubmit = (e) => {
+  // Handle Enterprise License Key Verification & Device Binding
+  const handleLicenseSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     if (!licenseKey.trim()) {
@@ -23,19 +24,25 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
 
     const result = validateEnterpriseKey(licenseKey);
     if (!result.valid) {
-      setErrorMessage(result.reason || 'Invalid license key format. Expected: NX-XXXX-XXXX-XXXX');
+      setErrorMessage(result.reason || 'Invalid license format. Expected: CG-SOLO-..., CG-FIRM-..., or NX-XXXX-XXXX-XXXX');
       return;
     }
 
     setStatus('activating');
-    grantToolAccess(result.key, toolName);
+    try {
+      await bindKeyToCurrentDevice(result.key);
+      grantToolAccess(result.key, toolName);
 
-    setTimeout(() => {
-      setStatus('success');
       setTimeout(() => {
-        onSuccess();
-      }, 700);
-    }, 500);
+        setStatus('success');
+        setTimeout(() => {
+          onSuccess();
+        }, 700);
+      }, 500);
+    } catch (err) {
+      setStatus('idle');
+      setErrorMessage(err.message || 'Failed to activate license on this workstation.');
+    }
   };
 
   return (
@@ -88,7 +95,7 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                   required
                   value={licenseKey}
                   onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
-                  placeholder="NX-SOLO-XXXX-XXXX"
+                  placeholder="CG-SOLO-..., CG-FIRM-..., or NX-XXXX"
                   className="w-full pl-11 pr-4 py-3.5 bg-black/70 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-sm uppercase tracking-wider transition-colors placeholder:text-zinc-600"
                 />
               </div>

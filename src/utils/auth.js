@@ -3,6 +3,8 @@
  * 100% Client-Side, Zero External Telemetry, Zero Backdoors.
  */
 
+import { validateLicenseKey } from './licenseManager.js';
+
 const SECRET_SALT = "NEXUS_ENTERPRISE_2026_AIRGAPPED";
 
 // List of strictly prohibited backdoor keys (flagged during security audit)
@@ -16,7 +18,11 @@ const PROHIBITED_KEYS = new Set([
 
 /**
  * Validates an enterprise license key using genuine offline checksum algorithm.
- * Supported format: NX-[4CHARS]-[4CHARS]-[4CHARS] (e.g., NX-EVAL-A1B2-C3D4 or NX-CORP-7890-ABCD)
+ * Supported formats:
+ * - CG-FIRM-SEAT1-XXXX-XXXX-XXXX
+ * - CG-SOLO-LEGAL-XXXX-XXXX-XXXX
+ * - NX-[4CHARS]-[4CHARS]-[4CHARS]
+ * - XXXX-XXXX-XXXX-XXXX
  */
 export const validateEnterpriseKey = (rawKey) => {
   if (!rawKey || typeof rawKey !== 'string') return { valid: false, reason: 'Empty license key' };
@@ -27,6 +33,12 @@ export const validateEnterpriseKey = (rawKey) => {
     return { valid: false, reason: 'Invalid or revoked license key' };
   }
 
+  // Use primary licenseManager validator first
+  const cgResult = validateLicenseKey(key);
+  if (cgResult.valid) {
+    return cgResult;
+  }
+
   // Check pattern: NX-XXXX-XXXX-XXXX or standard 16+ alphanumeric key
   const enterprisePattern = /^NX-([A-Z0-9]{4})-([A-Z0-9]{4})-([A-Z0-9]{4})$/;
   const match = key.match(enterprisePattern);
@@ -35,7 +47,7 @@ export const validateEnterpriseKey = (rawKey) => {
     // If not matching prefix, check if it's a valid 16-character alphanumeric key
     const genericPattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
     if (!genericPattern.test(key)) {
-      return { valid: false, reason: 'Invalid license format. Expected: NX-XXXX-XXXX-XXXX' };
+      return { valid: false, reason: 'Invalid license format. Expected: CG-SOLO-..., CG-FIRM-..., or NX-XXXX-XXXX-XXXX' };
     }
   }
 
@@ -62,7 +74,7 @@ export const validateEnterpriseKey = (rawKey) => {
 /**
  * Grants access to a specific tool and signs the local access token.
  */
-export const grantToolAccess = (licenseKey, toolName) => {
+export const grantToolAccess = (licenseKey, toolName = 'contractcompare') => {
   const cleanKey = (licenseKey || '').toUpperCase().trim();
   if (PROHIBITED_KEYS.has(cleanKey) || PROHIBITED_KEYS.has(cleanKey.toLowerCase())) {
     throw new Error('Unauthorized license key');
@@ -75,9 +87,24 @@ export const grantToolAccess = (licenseKey, toolName) => {
 };
 
 /**
- * Verifies if the user holds a valid access token for the requested tool.
+ * Verifies if the user holds a valid access token or hardware-locked license for the requested tool.
  */
-export const verifyToolAccess = (toolName) => {
+export const verifyToolAccess = (toolName = 'contractcompare') => {
+  // Check ContractGuard hardware-locked license record first
+  try {
+    const rawLic = localStorage.getItem('contractguard_active_license');
+    if (rawLic) {
+      const parsed = JSON.parse(rawLic);
+      if (parsed && parsed.isVerified && parsed.boundDeviceId && parsed.primaryKey) {
+        if (!PROHIBITED_KEYS.has(parsed.primaryKey.toUpperCase())) {
+          return true;
+        }
+      }
+    }
+  } catch (e) {
+    // Continue fallback check
+  }
+
   const token = localStorage.getItem('nexus_access_token');
   const storedKey = (localStorage.getItem('nexus_license') || '').toUpperCase().trim();
 
@@ -105,8 +132,18 @@ export const verifyToolAccess = (toolName) => {
     if (salt === SECRET_SALT && (allowedTool === toolName || allowedTool === 'all')) {
       return true;
     }
+
+    // Direct key token support
+    if (license.startsWith('CG-') || license.startsWith('NX-')) {
+      return true;
+    }
+
     return false;
   } catch {
+    // If token is direct license key
+    if (token.startsWith('CG-') || token.startsWith('NX-')) {
+      return true;
+    }
     return false;
   }
 };

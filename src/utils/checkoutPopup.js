@@ -19,9 +19,21 @@ export const openSeamlessCheckout = (options = {}) => {
   const width = 520;
   const height = 760;
   const left = Math.max(0, Math.floor((window.screen.width - width) / 2));
-  const top = Math.max(0, Math.floor((window.screen.height - height) / 2));
+  const sessionNonce = `whop_sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  const checkoutTicket = {
+    sessionId: sessionNonce,
+    plan,
+    productId,
+    createdAt: Date.now()
+  };
+  
+  // Persist session ticket to verify genuine purchase completion
+  try {
+    sessionStorage.setItem('nexus_pending_checkout', JSON.stringify(checkoutTicket));
+    localStorage.setItem('nexus_pending_checkout', JSON.stringify(checkoutTicket));
+  } catch (e) {}
 
-  const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?plan=${plan}&redirect=${toolName}&status=success`);
+  const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?plan=${plan}&redirect=${toolName}&status=success&session_id=${sessionNonce}`);
   const checkoutUrl = `https://whop.com/checkout/${productId}?return_url=${returnUrl}`;
 
   // Open centered popup window
