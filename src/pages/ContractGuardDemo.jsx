@@ -6,7 +6,7 @@ import {
   FileText, Upload, RefreshCw, Zap, Lock, ArrowRight, CheckCircle2,
   AlertTriangle, AlertCircle, X, Download, HardDriveDownload,
   Users, User, Briefcase, FileCheck, Check, Sparkles, ExternalLink,
-  ChevronRight, Clock, FileCode, FileSpreadsheet, Eye
+  ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play, Volume2, VolumeX
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
@@ -84,6 +84,7 @@ export default function ContractGuardDemo() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [modalReason, setModalReason] = useState('general'); // 'general' | 'export' | 'locked_finding' | 'redact' | 'bates'
   const [selectedPlan, setSelectedPlan] = useState('firm'); // 'solo' | 'firm'
+  const [isFilmModalOpen, setIsFilmModalOpen] = useState(false);
 
   // Dedicated In-Memory Audit Hook
   const {
@@ -552,6 +553,16 @@ export default function ContractGuardDemo() {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsFilmModalOpen(true)}
+              className="px-3 py-1.5 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-emerald-500/30 text-emerald-400 font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.15)] group"
+            >
+              <div className="w-4 h-4 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                <Play size={9} className="ml-0.5 fill-emerald-400" />
+              </div>
+              <span>Watch Launch Film (48s)</span>
+            </button>
+
             <button
               onClick={() => openUpgrade('general')}
               className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.3)]"
@@ -1352,6 +1363,85 @@ export default function ContractGuardDemo() {
                   </span>
                   <span>Instant Whop License Key Issuance</span>
                   <span>30-Day Money-Back Guarantee</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ========================================================================= */}
+      {/* 4. CINEMATIC PRODUCT LAUNCH FILM MODAL (48s Keynote Video)                 */}
+      {/* ========================================================================= */}
+      <AnimatePresence>
+        {isFilmModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/85 backdrop-blur-xl">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsFilmModalOpen(false)}
+              className="absolute inset-0"
+            />
+
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-4xl rounded-2xl md:rounded-3xl border border-white/20 bg-[#03070A] overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.95)] z-10"
+            >
+              {/* Modal Top Chrome */}
+              <div className="px-5 py-3 bg-[#050A0E] border-b border-white/10 flex items-center justify-between text-xs text-zinc-300">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                  <span className="ml-2 font-mono text-[11px] text-zinc-300">
+                    ContractGuard™ Launch Film • 48s Keynote Reveal
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="hidden sm:inline-block font-mono text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                    4K 60FPS • AIR-GAPPED STUDIO
+                  </span>
+                  <button
+                    onClick={() => setIsFilmModalOpen(false)}
+                    className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Video Player */}
+              <div className="relative aspect-video bg-black">
+                <video
+                  src="/videos/contractguard-launch-film.mp4"
+                  poster="/videos/contractguard-poster.jpg"
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Modal Bottom CTA Bar */}
+              <div className="px-6 py-4 bg-[#050A0E] border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs text-zinc-300">
+                  <Sparkles size={14} className="text-emerald-400" />
+                  <span>Catch catastrophic pre-signing liabilities in &lt;100ms with zero cloud risk.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => { setIsFilmModalOpen(false); openUpgrade('general'); }}
+                    className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Get Lifetime Access ($199 / $299)</span>
+                    <ArrowRight size={13} />
+                  </button>
                 </div>
               </div>
             </motion.div>

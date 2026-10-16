@@ -20,10 +20,12 @@ import {
   AlertCircle,
   Download,
   CheckCircle,
-  XCircle
+  XCircle,
+  Play
 } from 'lucide-react';
 import Nexus3DNode from './components/Nexus3DNode';
 import ContactModal from './components/ContactModal';
+import ProductLaunchFilm from './components/ProductLaunchFilm';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
 
 export default function App() {
@@ -76,7 +78,11 @@ export default function App() {
         </div>
         
         {/* Nav Links (Desktop) */}
-        <div className="hidden lg:flex items-center gap-8 text-xs font-semibold text-zinc-400">
+        <div className="hidden lg:flex items-center gap-7 text-xs font-semibold text-zinc-400">
+          <button onClick={() => scrollToSection('launch-film')} className="hover:text-nexus-emerald transition-colors flex items-center gap-1.5 text-zinc-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse"></span>
+            <span>{isRtl ? 'العرض الرسمي (48s)' : 'Launch Film (48s)'}</span>
+          </button>
           <button onClick={() => scrollToSection('studio-preview')} className="hover:text-white transition-colors">
             {isRtl ? 'بيئة العمل الحية' : 'Live Studio'}
           </button>
@@ -222,6 +228,16 @@ export default function App() {
                   <span>{isRtl ? '⚡ تجربة الديمو التفاعلي الفوري (79ms Demo)' : '⚡ Try Interactive Live Demo'}</span>
                   <ArrowRight size={16} className={isRtl ? 'rotate-180' : ''} />
                 </button>
+
+                <button 
+                  onClick={() => scrollToSection('launch-film')}
+                  className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-nexus-emerald/15 to-nexus-cyan/15 hover:from-nexus-emerald/25 hover:to-nexus-cyan/25 border border-nexus-emerald/40 text-white font-black text-sm transition-all flex items-center gap-2.5 cursor-pointer shadow-[0_0_20px_rgba(0,255,157,0.15)] group"
+                >
+                  <div className="w-5 h-5 rounded-full bg-nexus-emerald/20 flex items-center justify-center text-nexus-emerald group-hover:scale-110 transition-transform">
+                    <Play size={11} className="ml-0.5 fill-nexus-emerald" />
+                  </div>
+                  <span>{isRtl ? 'عرض الفيديو الترويجي (48s)' : 'Watch Launch Film (48s)'}</span>
+                </button>
                 
                 <button 
                   onClick={() => navigate('/app/contractcompare')}
@@ -267,7 +283,12 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 2. REAL HIGH-FIDELITY PRODUCT VIEWPORT (Interactive Studio Preview)        */}
+        {/* 2. OFFICIAL PRODUCT LAUNCH FILM (High-Impact Keynote Reveal)              */}
+        {/* ========================================================================= */}
+        <ProductLaunchFilm isRtl={isRtl} />
+
+        {/* ========================================================================= */}
+        {/* 3. REAL HIGH-FIDELITY PRODUCT VIEWPORT (Interactive Studio Preview)        */}
         {/* ========================================================================= */}
         <section id="studio-preview" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-8">
