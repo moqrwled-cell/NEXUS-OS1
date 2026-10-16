@@ -8,7 +8,7 @@ import {
   ShieldCheck, Check, RotateCcw, Calendar, DollarSign,
   Bookmark, HelpCircle, User, Users, StopCircle, Upload,
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
-  Settings, Key, Laptop, Copy, Mail, LogOut, Info, ExternalLink, Sparkles
+  Settings, Key, Laptop, Copy, Mail, LogOut
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
