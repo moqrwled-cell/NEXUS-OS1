@@ -4,19 +4,24 @@
  * the user away from the site, and listens for automated license activation.
  */
 
+import { WHOP_CONFIG } from '../config/whopConfig';
+
 export const openSeamlessCheckout = (options = {}) => {
-  const {
-    onSuccess,
-    productId = 'prod_ETdsHhJlU1fMM',
-    toolName = 'contractcompare'
-  } = options;
+  // Support string argument format: openSeamlessCheckout('firm') or openSeamlessCheckout('solo')
+  const config = typeof options === 'string' ? { plan: options } : options;
+  const plan = config.plan || 'solo';
+  
+  const targetProduct = WHOP_CONFIG[plan] || WHOP_CONFIG.solo;
+  const productId = config.productId || targetProduct.productId;
+  const toolName = config.toolName || 'contractcompare';
+  const onSuccess = config.onSuccess;
 
   const width = 520;
   const height = 760;
   const left = Math.max(0, Math.floor((window.screen.width - width) / 2));
   const top = Math.max(0, Math.floor((window.screen.height - height) / 2));
 
-  const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?redirect=${toolName}&status=success`);
+  const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?plan=${plan}&redirect=${toolName}&status=success`);
   const checkoutUrl = `https://whop.com/checkout/${productId}?return_url=${returnUrl}`;
 
   // Open centered popup window

@@ -12,8 +12,13 @@ import * as mammoth from 'mammoth';
 
 import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
-import { isImageFile, recognizeImage } from '../utils/ocrEngine.js';
 import { openSeamlessCheckout } from '../utils/checkoutPopup';
+import { 
+  getDemoAuditsRemaining, 
+  consumeDemoAudit, 
+  resetDemoAuditsForTesting, 
+  verifyDeviceLicense 
+} from '../utils/licenseManager';
 
 // Pre-packaged Hazardous Legal Contract for instant testing
 const HAZARDOUS_SAMPLE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT
@@ -86,6 +91,11 @@ export default function ContractGuardDemo() {
   const [selectedPlan, setSelectedPlan] = useState('firm'); // 'solo' | 'firm'
   const [isFilmModalOpen, setIsFilmModalOpen] = useState(false);
 
+  // Evaluation passes & Device License state
+  const [auditsLeft, setAuditsLeft] = useState(() => getDemoAuditsRemaining());
+  const [hasActiveLicense, setHasActiveLicense] = useState(false);
+  const [auditToast, setAuditToast] = useState(null);
+
   // Dedicated In-Memory Audit Hook
   const {
     isProcessing,
@@ -96,18 +106,42 @@ export default function ContractGuardDemo() {
     cancelAnalysis
   } = useContractWorker();
 
-  // Run audit on initial mount with sample contract
+  // Run audit on initial mount with sample contract & check device license
   useEffect(() => {
+    async function checkLicense() {
+      try {
+        const lic = await verifyDeviceLicense();
+        if (lic && lic.isValid) {
+          setHasActiveLicense(true);
+        }
+      } catch (e) {
+        console.error('License check error:', e);
+      }
+    }
+    checkLicense();
+
     handleRunAudit({
       text: HAZARDOUS_SAMPLE_CONTRACT,
       mode: 'single',
       clientParty: 'Acme Holdings LLC',
-      counterparty: 'Globex International Corp'
+      counterparty: 'Globex International Corp',
+      isInitial: true
     });
   }, []);
 
-  // Execute in-memory audit
+  // Execute in-memory audit with evaluation pass tracking
   const handleRunAudit = async (override) => {
+    const isInitial = !!override?.isInitial;
+
+    // Check evaluation limit if user has no activated license
+    if (!isInitial && !hasActiveLicense) {
+      const remainingBefore = getDemoAuditsRemaining();
+      if (remainingBefore <= 0) {
+        openUpgrade('locked_finding');
+        return;
+      }
+    }
+
     const targetText = override?.text !== undefined ? override.text : contractText;
     const targetBaseline = override?.baselineText !== undefined ? override.baselineText : baselineText;
     const targetMode = override?.mode || analysisMode;
@@ -120,7 +154,12 @@ export default function ContractGuardDemo() {
     }
 
     try {
-      await runAnalysis({
+      if (!isInitial && !hasActiveLicense) {
+        const updated = consumeDemoAudit();
+        setAuditsLeft(updated);
+      }
+
+      const res = await runAnalysis({
         mode: targetMode,
         text: targetText.trim(),
         baselineText: targetMode === 'comparative' ? targetBaseline.trim() : '',
@@ -130,6 +169,15 @@ export default function ContractGuardDemo() {
           diffOptions: { granularity: diffGranularity }
         }
       });
+
+      if (!isInitial) {
+        const currentRemaining = getDemoAuditsRemaining();
+        setAuditToast({
+          ms: res?.processingDurationMs || 79,
+          remaining: hasActiveLicense ? 'Unlimited' : currentRemaining
+        });
+        setTimeout(() => setAuditToast(null), 8000);
+      }
     } catch (err) {
       console.error("Audit error:", err);
     }
@@ -234,8 +282,9 @@ export default function ContractGuardDemo() {
 
   // Launch Checkout
   const handlePurchase = (planTier) => {
+    const tier = planTier || selectedPlan || 'firm';
     openSeamlessCheckout({
-      productId: 'prod_ETdsHhJlU1fMM',
+      plan: tier,
       toolName: 'contractcompare',
       onSuccess: () => navigate('/app/contractcompare')
     });
@@ -424,7 +473,7 @@ export default function ContractGuardDemo() {
               <div className="space-y-1.5 text-[10.5px] leading-relaxed text-zinc-400">
                 <p><span className="text-emerald-400 font-semibold">1. Unrestricted Sandbox:</span> Test our pre-loaded hazardous contract or paste any client draft.</p>
                 <p><span className="text-cyan-400 font-semibold">2. In-RAM Speed:</span> Executes 5 detection engines locally in &lt;100ms without cloud transmission.</p>
-                <p><span className="text-amber-400 font-semibold">3. Commercial Safeguard:</span> Top 2 critical liabilities unlocked; remaining 4 blurred in evaluation mode.</p>
+                <p><span className="text-amber-400 font-semibold">3. Free Evaluation:</span> 3 full unblurred audits included. Test your matters before unlocking perpetual access.</p>
               </div>
             </div>
           )}
@@ -543,10 +592,21 @@ export default function ContractGuardDemo() {
         {/* Top Floating Evaluation Banner */}
         <div className="mb-4 px-4 py-2.5 rounded-xl bg-[#08121A] border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3 shadow-[0_0_20px_rgba(16,185,129,0.08)]">
           <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-semibold text-zinc-200">
-              Interactive Evaluation Sandbox: Testing real in-RAM engine across 4 detection modules.
-            </span>
+            <span className={`w-2.5 h-2.5 rounded-full ${auditsLeft > 0 || hasActiveLicense ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-zinc-200">
+                {hasActiveLicense ? (
+                  <span className="text-emerald-400 font-mono font-bold">🟢 Licensed Studio Active · Unlimited In-RAM Forensic Audits</span>
+                ) : (
+                  <span>
+                    Evaluation Sandbox: <strong className="text-emerald-400 font-mono">{auditsLeft} of 3 Free Full Audits Remaining</strong>
+                  </span>
+                )}
+              </span>
+              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded">
+                100% Unblurred Forensic Findings
+              </span>
+            </div>
             <span className="hidden lg:inline text-[11px] font-mono text-zinc-400 bg-black/40 px-2 py-0.5 rounded border border-white/5">
               ABA Model Rule 1.6 Compliant
             </span>
@@ -573,6 +633,46 @@ export default function ContractGuardDemo() {
             </button>
           </div>
         </div>
+
+        {/* Value-Anchored Audit Toast Banner */}
+        <AnimatePresence>
+          {auditToast && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-4 p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-zinc-950 to-[#08121A] border border-emerald-500/40 shadow-[0_0_25px_rgba(16,185,129,0.2)] flex flex-wrap items-center justify-between gap-3 text-xs"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                  <CheckCircle2 size={14} />
+                </div>
+                <span className="text-zinc-200">
+                  <strong>Forensic Audit Complete in {auditToast.ms}ms:</strong> All latent liabilities flagged in isolated client-side RAM with zero cloud leakage.
+                </span>
+                <span className="font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 font-bold">
+                  {typeof auditToast.remaining === 'number' ? `${auditToast.remaining} of 3 Free Passes Left` : 'Perpetual Licensed'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openUpgrade('general')}
+                  className="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-[11px] transition-all cursor-pointer shadow-sm flex items-center gap-1"
+                >
+                  <span>Unlock Unlimited Lifetime Access</span>
+                  <ArrowRight size={11} />
+                </button>
+                <button 
+                  onClick={() => setAuditToast(null)}
+                  className="p-1 text-zinc-400 hover:text-white cursor-pointer"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* TOOL VIEWS SWITCHER */}
         <AnimatePresence mode="wait">
@@ -842,10 +942,10 @@ export default function ContractGuardDemo() {
               </div>
 
               {/* ========================================================================= */}
-              {/* FINDINGS LIST: 2 REVEALED + 4 FROSTED GLASS LOCKED (MARKETING LIMITATION) */}
+              {/* FINDINGS LIST: 100% UNBLURRED (3 FREE EVALUATIONS) OR PAYWALL WHEN DEPLETED */}
               {/* ========================================================================= */}
               <div className="rounded-xl bg-[#050A0F] border border-zinc-800 overflow-hidden mt-2">
-                <div className="px-4 py-3 bg-[#08121A] border-b border-zinc-800 flex items-center justify-between">
+                <div className="px-4 py-3 bg-[#08121A] border-b border-zinc-800 flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Search size={15} className="text-emerald-400" />
                     <span className="font-mono text-xs font-bold text-zinc-200">
@@ -854,136 +954,108 @@ export default function ContractGuardDemo() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
-                      2 Unlocked in Demo
-                    </span>
-                    <span className="text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">
-                      4 Locked
-                    </span>
+                    {hasActiveLicense ? (
+                      <span className="text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+                        Perpetual License Active
+                      </span>
+                    ) : auditsLeft > 0 ? (
+                      <span className="text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>{auditsLeft} of 3 Free Full Audits Left (Unblurred)</span>
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+                        <Lock size={10} />
+                        <span>Trial Limit Reached</span>
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="p-4 flex flex-col gap-3">
+                <div className="p-4 flex flex-col gap-3 relative">
                   
-                  {/* FINDING 1: FULLY UNLOCKED (CRITICAL FINANCIAL DISCREPANCY) */}
-                  <div className="p-4 rounded-xl bg-rose-500/[0.07] border border-rose-500/35 relative">
-                    <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40">
-                          CRITICAL · FINANCIAL CONTRADICTION
-                        </span>
-                        <span className="text-xs font-mono text-zinc-400 font-semibold">Clause 4.1</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded">
-                        Full Disclosure
-                      </span>
-                    </div>
-
-                    <h4 className="text-sm font-bold text-white mt-1">
-                      Written Amount Does Not Match Numeric Figure ($250,000 ≠ $205,000)
-                    </h4>
-                    <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed">
-                      Written words designate <strong className="text-rose-400 font-mono">"Two Hundred Fifty Thousand Dollars"</strong> ($250,000), 
-                      whereas the numeric parenthetical denotes <strong className="text-rose-400 font-mono">"($205,000)"</strong>. 
-                      This $45,000 variance creates an immediate post-closing dispute and judicial ambiguity under UCC § 2-201.
-                    </p>
-                    <div className="mt-3 p-2.5 rounded-lg bg-black/40 border border-white/5 text-[11px] font-mono text-emerald-400/90 flex items-center justify-between">
-                      <span>Remediation: Align numeric and word amounts before execution to prevent breach claims.</span>
-                      <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
-                    </div>
-                  </div>
-
-                  {/* FINDING 2: FULLY UNLOCKED (HIGH SEVERITY BROKEN CROSS-REFERENCE) */}
-                  <div className="p-4 rounded-xl bg-amber-500/[0.07] border border-amber-500/35 relative">
-                    <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                          HIGH RISK · BROKEN CROSS-REFERENCE
-                        </span>
-                        <span className="text-xs font-mono text-zinc-400 font-semibold">Clause 2.1 & 9.2</span>
-                      </div>
-                      <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded">
-                        Full Disclosure
-                      </span>
-                    </div>
-
-                    <h4 className="text-sm font-bold text-white mt-1">
-                      Target Section 14.2 Does Not Exist in Document
-                    </h4>
-                    <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed">
-                      Both Clause 2.1 and Clause 9.2 explicitly condition termination upon the procedural mechanisms defined in <strong className="text-amber-400 font-mono">Section 14.2</strong>. 
-                      However, Section 14.2 was deleted during revisions. A party attempting to terminate for cause will be unable to comply with contractual notice protocols.
-                    </p>
-                    <div className="mt-3 p-2.5 rounded-lg bg-black/40 border border-white/5 text-[11px] font-mono text-emerald-400/90 flex items-center justify-between">
-                      <span>Remediation: Re-insert Section 14.2 or retarget to active Section 9 termination mechanisms.</span>
-                      <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
-                    </div>
-                  </div>
-
-                  {/* FINDINGS 3 TO 6: LOCKED BEHIND FROSTED GLASS BLUR (CLEVER MARKETING PAYWALL) */}
-                  <div className="relative rounded-xl border border-zinc-800 bg-[#060D12] overflow-hidden">
-                    
-                    {/* Blurred Background Items */}
-                    <div className="filter blur-[6px] select-none pointer-events-none p-4 opacity-40 space-y-3">
-                      <div className="p-3 bg-zinc-900/60 rounded-lg">
-                        <span className="text-[10px] font-mono text-amber-400">HIGH · MISSING EXHIBIT C</span>
-                        <p className="text-xs font-bold text-white mt-1">Exhibit C Referenced But Not Appended</p>
-                        <p className="text-[11px] text-zinc-400 mt-1">Section 3.1 conditions buyer obligations on Exhibit C disclosure schedules...</p>
-                      </div>
-
-                      <div className="p-3 bg-zinc-900/60 rounded-lg">
-                        <span className="text-[10px] font-mono text-yellow-400">MEDIUM · UNDEFINED CAPITALIZED TERM</span>
-                        <p className="text-xs font-bold text-white mt-1">Undefined Term: "Key Personnel" (§3.2)</p>
-                        <p className="text-[11px] text-zinc-400 mt-1">Capitalized phrase is utilized without statutory definition or schedule mapping...</p>
-                      </div>
-
-                      <div className="p-3 bg-zinc-900/60 rounded-lg">
-                        <span className="text-[10px] font-mono text-rose-400">CRITICAL · NOTICE CONTRADICTION</span>
-                        <p className="text-xs font-bold text-white mt-1">Conflicting Notice Periods: 60 Days vs 10 Days</p>
-                        <p className="text-[11px] text-zinc-400 mt-1">Clause 9.3 mandates sixty (60) days notice while referencing 9.1 specifying ten days...</p>
-                      </div>
-
-                      <div className="p-3 bg-zinc-900/60 rounded-lg">
-                        <span className="text-[10px] font-mono text-rose-400">CRITICAL · SURVIVAL DEFECT</span>
-                        <p className="text-xs font-bold text-white mt-1">Non-Existent Survival Target Section 19.1</p>
-                        <p className="text-[11px] text-zinc-400 mt-1">Indemnification survival covenants cite Section 19.1 which does not exist...</p>
-                      </div>
-                    </div>
-
-                    {/* High-Converting Frosted Glass Gate Overlay */}
-                    <div className="absolute inset-0 bg-[#030712]/75 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-10">
-                      <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
-                        <Lock size={22} />
+                  {/* Frosted Glass Gate Overlay ONLY when user is out of audits and not licensed */}
+                  {(!hasActiveLicense && auditsLeft <= 0) && (
+                    <div className="absolute inset-0 bg-[#030712]/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20 rounded-xl">
+                      <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                        <Lock size={26} />
                       </div>
                       
-                      <h4 className="text-base font-extrabold text-white tracking-tight">
-                        4 Additional Latent Liabilities Redacted in Evaluation Sandbox
+                      <h4 className="text-lg font-extrabold text-white tracking-tight">
+                        3 of 3 Free Forensic Audits Completed
                       </h4>
                       
-                      <p className="text-xs text-zinc-300 max-w-lg mt-1.5 leading-relaxed">
-                        To protect commercial reliance and maintain ABA Model Rule 1.6 integrity, deep clause remediations, 
-                        missing exhibit audits, and unbranded white-label client memos require an active perpetual license.
+                      <p className="text-xs text-zinc-300 max-w-lg mt-2 leading-relaxed">
+                        You have tested ContractGuard's in-RAM forensic detection on real legal drafts. 
+                        To audit unlimited contracts, export court-ready white-label memos (PDF/CSV), and protect client files offline with zero cloud risk, activate your perpetual license.
                       </p>
 
-                      <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
+                      <div className="flex flex-wrap items-center justify-center gap-3 mt-5">
                         <button
                           onClick={() => { setSelectedPlan('solo'); openUpgrade('locked_finding'); }}
-                          className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-1.5"
+                          className="px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-xs font-bold text-white transition-all cursor-pointer flex items-center gap-1.5"
                         >
                           <span>Unlock Solo License ($199)</span>
                         </button>
 
                         <button
                           onClick={() => { setSelectedPlan('firm'); openUpgrade('locked_finding'); }}
-                          className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-black text-xs font-extrabold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer flex items-center gap-2"
+                          className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-black text-xs font-extrabold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer flex items-center gap-2"
                         >
                           <Sparkles size={14} />
                           <span>Unlock Law Firm Suite — $299 (5 Seats)</span>
                         </button>
                       </div>
                     </div>
+                  )}
 
-                  </div>
+                  {/* Dynamic Findings List — 100% Fully Visible During 3 Free Audits */}
+                  {findingsList.map((finding, idx) => {
+                    const isCritical = finding.severity === 'critical';
+                    const isHigh = finding.severity === 'high';
+                    const badgeBg = isCritical 
+                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' 
+                      : isHigh 
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' 
+                      : 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40';
+                    const containerBg = isCritical
+                      ? 'bg-rose-500/[0.07] border-rose-500/35'
+                      : isHigh
+                      ? 'bg-amber-500/[0.07] border-amber-500/35'
+                      : 'bg-zinc-900/60 border-zinc-800';
+
+                    return (
+                      <div key={finding.id || idx} className={`p-4 rounded-xl border relative transition-all ${containerBg}`}>
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`text-[9.5px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${badgeBg}`}>
+                              {finding.severity?.toUpperCase()} · {finding.category}
+                            </span>
+                            {finding.clause && (
+                              <span className="text-xs font-mono text-zinc-400 font-semibold">{finding.clause}</span>
+                            )}
+                          </div>
+                          <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded flex items-center gap-1 shrink-0">
+                            <CheckCircle2 size={11} />
+                            Full Forensic Finding
+                          </span>
+                        </div>
+
+                        <h4 className="text-sm font-bold text-white mt-1">
+                          {finding.title}
+                        </h4>
+                        <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed font-sans">
+                          {finding.explanation}
+                        </p>
+                        {finding.remedy && (
+                          <div className="mt-3 p-2.5 rounded-lg bg-black/40 border border-white/5 text-[11px] font-mono text-emerald-400/90 flex items-center justify-between gap-2">
+                            <span>Remediation: {finding.remedy}</span>
+                            <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
 
                 </div>
 
@@ -1012,6 +1084,40 @@ export default function ContractGuardDemo() {
                   </div>
                 </div>
 
+              </div>
+
+              {/* ========================================================================= */}
+              {/* LEGAL PROTECTION SHIELD & MALPRACTICE NOTICE (درع الحماية القانونية)      */}
+              {/* ========================================================================= */}
+              <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/20 via-zinc-950 to-cyan-950/20 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-2">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                    <ShieldCheck size={20} />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                        Legal Protection Shield · درع الحماية القانونية والمسؤولية المهنية
+                      </h4>
+                      <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+                        VERIFICATION NOTICE
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-300 leading-relaxed max-w-3xl">
+                      <strong>Notice to Legal Counsel / تنبيه تدقيق إلزامي:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics. 
+                      Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
+                    </p>
+                    <p className="text-[10.5px] text-zinc-400 font-arabic leading-relaxed" dir="rtl">
+                      تنبيه مهني واجب: مخرجات التدقيق والتعديلات المقترحة هي أدوات تحليلية مساعدة. يتعين على المحامي أو المستشار القانوني مراجعة وتدقيق الصياغات والبنود بدقة والتأكد من ملاءمتها ومطابقتها للأنظمة السارية قبل الاعتماد النهائي أو التقديم القضائي.
+                    </p>
+                  </div>
+                </div>
+                <div className="shrink-0 self-end md:self-center">
+                  <span className="text-[10px] font-mono text-emerald-400/80 bg-black/40 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <Lock size={11} />
+                    <span>Zero Cloud Liability</span>
+                  </span>
+                </div>
               </div>
 
             </motion.div>

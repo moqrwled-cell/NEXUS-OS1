@@ -731,7 +731,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => openSeamlessCheckout({
-                    productId: 'prod_ETdsHhJlU1fMM',
+                    plan: 'solo',
                     toolName: 'contractcompare',
                     onSuccess: () => navigate('/app/contractcompare')
                   })}
@@ -802,7 +802,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => openSeamlessCheckout({
-                    productId: 'prod_ETdsHhJlU1fMM',
+                    plan: 'firm',
                     toolName: 'contractcompare',
                     onSuccess: () => navigate('/app/contractcompare')
                   })}
@@ -887,20 +887,28 @@ export default function App() {
           <div className="space-y-3">
             {[
               {
-                q: isRtl ? 'هل يمكنني استخدام الأداة بدون أي اتصال بالإنترنت؟' : 'Can I use ContractGuard completely offline?',
-                a: isRtl ? 'نعم بالتأكيد. الأداة مبنية بمعمارية Local-First بالكامل. يمكنك فصل شبكة الإنترنت تماماً وفحص أطول العقود بأمان وسرعة فائقة.' : 'Yes. The entire application runs client-side in your browser. You can audit confidential documents in an air-gapped environment with Wi-Fi disabled.'
+                q: isRtl ? 'كيف تضمن الأداة سرية العقود 100% وتوافقها مع معيار ABA Model Rule 1.6؟' : 'How does ContractGuard guarantee 100% privacy and ABA Model Rule 1.6 compliance?',
+                a: isRtl ? 'الأداة مبنية بمعمارية In-RAM Local-First بالكامل؛ حيث تُعالج النصوص داخل خيوط الذاكرة المؤقتة (Web Worker) في متصفحك دون إرسال بايت واحد إلى أي خادم خارجي أو ذكاء اصطناعي سحابي، مما يحمي السرية المهنية وحصانة المحامي وموكله بشكل مطلق.' : 'The software executes 100% client-side inside non-blocking Web Workers in local browser RAM. Zero bytes are uploaded to external servers or cloud AI models, perfectly preserving attorney-client privilege under ABA Model Rule 1.6.'
               },
               {
-                q: isRtl ? 'ما هي صيغ الملفات المدعومة للتدقيق؟' : 'Which document formats are supported?',
-                a: isRtl ? 'تدعم الأداة ملفات PDF الرقمية، مستندات Word (.docx)، واللصق المباشر للنصوص مع الحفاظ على الترقيم والمواد.' : 'ContractGuard natively parses digital PDF files, Microsoft Word (.docx) files, and raw text paste.'
+                q: isRtl ? 'هل يمكنني فحص مسودات عقودي الحقيقية مجاناً قبل الشراء؟' : 'Can I audit my own active contract drafts for free before purchasing?',
+                a: isRtl ? 'نعم! نمنح كل ممارس قانوني 3 محاولات تدقيق كاملة مجانية (3 Full Evaluation Passes) بدون أي حجب للنتائج. يمكنك لصق أو رفع عقودك الخاصة ومشاهدة كشف التضارب المالي والمراجع المكسورة بنفسك.' : 'Yes. We provide 3 full, unrestricted evaluation passes with zero paywalls. You can upload or paste your real transaction drafts and experience all 5 detection engines before deciding to buy.'
               },
               {
-                q: isRtl ? 'كيف يتم تفعيل الرخصة بعد الدفع على Whop؟' : 'How is the license activated after purchasing via Whop?',
-                a: isRtl ? 'تستلم فوراً مفتاح ترخيص مشفر محلياً بالشكل NX-XXXX-XXXX-XXXX، تدخله في الأداة مرة واحدة ويتم فك القفل لمدى الحياة دون الحاجة لتسجيل دخول.' : 'You instantly receive an offline cryptographic key formatted as NX-XXXX-XXXX-XXXX. Enter it once to permanently unlock the software on your device.'
+                q: isRtl ? 'كيف يعمل قفل الجهاز (Hardware Binding) وهل يمكنني نقل الترخيص لكمبيوتر جديد؟' : 'How does hardware-locked licensing work, and can I transfer my seat to a new computer?',
+                a: isRtl ? 'يرتبط الترخيص ببصمة عتاد جهازك (Hardware Fingerprint) لمنع القرصنة. وإذا اشتريت حاسوباً جديداً، يمكنك بضغطة زر واحدة (Deactivate from this Device) تحرير المفتاح وإعادة تفعيله على جهازك الجديد بكل سهولة.' : 'Each license binds cryptographically to your device hardware fingerprint. If you upgrade laptops or switch workstations, a single click on "Deactivate from this Device" releases the key for immediate activation on your new machine.'
               },
               {
-                q: isRtl ? 'هل توجد فترة تجربة قبل الشراء؟' : 'Is there an evaluation mode to test before buying?',
-                a: isRtl ? 'نعم، تحتوي الأداة على وضع تجربة مدمج (Evaluation Mode) يتيح لك فحص عينات عقود حقيقية وتوليد التقارير لرؤية النتيجة بنفسك.' : 'Yes, ContractGuard includes an interactive evaluation mode that preloads sample commercial agreements and demonstrates the full audit pipeline immediately.'
+                q: isRtl ? 'كيف تعمل رخصة مكاتب المحاماة (Law Firm Suite - 5 مقاعد)؟' : 'How does the Law Firm Suite (5 Users) license distribute across our team?',
+                a: isRtl ? 'تستلم فوراً حزمة تراخيص مشفرة تتضمن 5 مفاتيح مستقلة: مفتاح لمحطتك الرئيسية، و4 مفاتيح يمكنك نسخها أو إرسالها لزملائك المحامين والمساعدين، مع إمكانية تصدير الحزمة بملف نصي منظم.' : 'You instantly receive 5 unique cryptographic seat keys: one activates your primary workstation, and 4 standalone keys can be shared with associates and paralegals via 1-click copy or text bundle export.'
+              },
+              {
+                q: isRtl ? 'ما هي صيغ الملفات المدعومة للتدقيق؟' : 'Which contract formats and document types are supported?',
+                a: isRtl ? 'تدعم الأداة ملفات Microsoft Word (.docx)، ملفات PDF الرقمية، لصق النصوص المباشر، ومسح الصور والمستندات الورقية عبر محرك التعرف الضوئي المحلي (In-RAM OCR).' : 'ContractGuard natively audits Microsoft Word (.docx), digital PDF contracts, raw text paste, and scanned paper agreements via integrated client-side In-RAM OCR.'
+              },
+              {
+                q: isRtl ? 'هل توجد أي رسوم أو اشتراكات شهرية متكررة مستقبلاً؟' : 'Are there any recurring monthly subscriptions or hidden renewal fees?',
+                a: isRtl ? 'لا على الإطلاق. الشراء لمرة واحدة فقط بترخيص دائم مدى الحياة ($199 للمستشار الفردي / $299 لمكاتب المحاماة)، مما يوفر أكثر من 1,800 دولار سنوياً مقارنة باشتراكات البرامج السحابية التقليدية.' : 'Zero recurring fees. You pay a single one-time fee ($199 Solo / $299 Firm) for permanent perpetual access, saving $1,800+ annually over legacy recurring cloud tools.'
               }
             ].map((item, idx) => (
               <div key={idx} className="rounded-xl border border-white/10 bg-[#060D12] overflow-hidden">
@@ -928,19 +936,17 @@ export default function App() {
           </div>
         </section>
 
-
-
         {/* ========================================================================= */}
-        {/* 9. ENTERPRISE FOOTER                                                      */}
+        {/* 9. ENTERPRISE FOOTER WITH LEGAL PROTECTION NOTICE                         */}
         {/* ========================================================================= */}
-        <footer className="border-t border-white/10 py-8 px-6 md:px-12 lg:px-20 text-xs text-zinc-400">
+        <footer className="border-t border-white/10 py-10 px-6 md:px-12 lg:px-20 text-xs text-zinc-400">
           <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
             <div className="flex items-center gap-2">
               <Scale size={16} className="text-nexus-emerald" />
               <span className="font-bold text-white">Nexus ContractGuard Enterprise 2.0</span>
             </div>
             <div>
-              {isRtl ? '© 2026 NexusOS. مرخصة ومحمية بأنظمة التشفير المحلية.' : '© 2026 NexusOS Enterprise. Air-gapped and protected by offline local cryptography.'}
+              {isRtl ? '© 2026 NexusOS Enterprise. مرخصة ومحمية بأنظمة التشفير المحلية.' : '© 2026 NexusOS Enterprise. Air-gapped and protected by offline local cryptography.'}
             </div>
             <button 
               onClick={() => setIsContactModalOpen(true)}
@@ -948,6 +954,16 @@ export default function App() {
             >
               nexus.os.store@gmail.com
             </button>
+          </div>
+
+          {/* Legal Protection Shield / Malpractice Disclaimer Banner */}
+          <div className="mt-8 pt-6 border-t border-white/5 text-[11px] text-zinc-400 leading-relaxed text-center max-w-4xl mx-auto font-mono">
+            <p>
+              <strong className="text-zinc-300">LEGAL NOTICE & DISCLAIMER:</strong> {isRtl 
+                ? 'ContractGuard هو مساعد آلي لتدقيق ومراجعة المستندات، ولا يقدم تمثيلاً قانونياً ولا يُعد بديلاً عن المراجعة القانونية المهنية للمحامي. يتحمل المستخدم المسؤولية المهنية الكاملة عن اعتماد ومراجعة كافة بنود العقود قبل توقيعها رسمياً.'
+                : 'ContractGuard is an automated document proofreading assistant. It does not provide legal representation or substitute professional attorney review. Users retain sole professional responsibility for verifying all contract terms prior to legal execution.'
+              }
+            </p>
           </div>
         </footer>
 

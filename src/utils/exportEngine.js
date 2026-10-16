@@ -847,6 +847,19 @@ export function exportExecutiveClientMemoHTML(...args) {
       </ul>
     </div>
 
+    <!-- Legal Protection Shield & Professional Malpractice Disclaimer -->
+    <div style="margin-top: 24px; padding: 14px 18px; border: 1px solid #10b981; border-radius: 8px; background-color: #f0fdf4; font-size: 11px; line-height: 1.5; color: #065f46;">
+      <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">
+        🛡️ Legal Protection Shield & Malpractice Verification Notice · درع الحماية القانونية
+      </div>
+      <div>
+        <strong>Notice to Legal Counsel / تنبيه قانوني مهني:</strong> This automated memorandum and its proposed remediations are computational decision-support tools. Licensed attorneys must independently review and verify all contract provisions, statutory citations, and figures prior to formal client execution or court filing.
+      </div>
+      <div style="margin-top: 4px; color: #047857; direction: rtl; text-align: right;">
+        تنبيه مهني واجب: مخرجات هذا التقرير هي أدوات تحليلية مساعدة. يتعين على المحامي أو المستشار القانوني مراجعة وتدقيق الصياغات والبنود بدقة والتأكد من ملاءمتها ومطابقتها للأنظمة السارية قبل الاعتماد النهائي أو التقديم القضائي.
+      </div>
+    </div>
+
     <div class="footer-note">
       This memorandum was generated locally by Nexus ContractGuard Enterprise.<br>
       Air-Gapped Processing: 100% In-Memory RAM execution. Zero external API calls. ABA Model Rule 1.6 strictly preserved.

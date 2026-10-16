@@ -1694,6 +1694,40 @@ function ContractAnalyzerView({ initialSession }) {
               )}
             </div>
           )}
+
+          {/* ========================================================================= */}
+          {/* LEGAL PROTECTION SHIELD & MALPRACTICE NOTICE (درع الحماية القانونية)      */}
+          {/* ========================================================================= */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-zinc-950 to-cyan-950/20 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                <ShieldCheck size={20} />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                    Legal Protection Shield · درع الحماية القانونية والمسؤولية المهنية
+                  </h4>
+                  <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+                    VERIFICATION NOTICE
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-300 leading-relaxed max-w-3xl">
+                  <strong>Notice to Legal Counsel / تنبيه تدقيق إلزامي:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics. 
+                  Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
+                </p>
+                <p className="text-[10.5px] text-zinc-400 font-arabic leading-relaxed" dir="rtl">
+                  تنبيه مهني واجب: مخرجات التدقيق والتعديلات المقترحة هي أدوات تحليلية مساعدة. يتعين على المحامي أو المستشار القانوني مراجعة وتدقيق الصياغات والبنود بدقة والتأكد من ملاءمتها ومطابقتها للأنظمة السارية قبل الاعتماد النهائي أو التقديم القضائي.
+                </p>
+              </div>
+            </div>
+            <div className="shrink-0 self-end md:self-center">
+              <span className="text-[10px] font-mono text-emerald-400/80 bg-black/40 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5">
+                <Lock size={11} />
+                <span>Zero Cloud Liability</span>
+              </span>
+            </div>
+          </div>
         </div>
       )}
     </div>

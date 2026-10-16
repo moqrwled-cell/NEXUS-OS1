@@ -209,7 +209,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
         >
           {isRtl 
             ? 'شاهد محركات التدقيق الخماسية المعزولة هوائياً أثناء العمل: فحص محلي 100% داخل المتصفح، كشف فوري لتضارب المبالغ والأرقام، وتوليد مذكرات التدقيق دون أن تغادر كلمة واحدة جهازك.'
-            : 'Experience the zero-cloud, 5-engine audit studio in motion. 100% client-side RAM execution, instant financial mismatch reconciliation, and court-ready memo generation in under 48 seconds.'
+            : 'Experience the zero-cloud, 5-engine audit studio in motion: 100% client-side RAM execution, instant financial mismatch reconciliation, and one-click court-ready executive memo generation with zero bytes leaving your machine.'
           }
         </motion.p>
       </div>
@@ -484,7 +484,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
               </button>
 
               <button
-                onClick={() => openSeamlessCheckout('contractguard-solo', 'en')}
+                onClick={() => openSeamlessCheckout({ plan: 'solo' })}
                 className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] border border-white/15 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Lock size={13} className="text-nexus-cyan" />
