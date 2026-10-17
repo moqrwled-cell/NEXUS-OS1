@@ -1552,14 +1552,28 @@ export default function ContractGuardDemo() {
 
                 </div>
 
-                {/* Footer Security Badges */}
-                <div className="p-3 rounded-xl bg-black/40 border border-zinc-800/80 flex flex-wrap items-center justify-between text-[11px] text-zinc-400 font-mono gap-2">
-                  <span className="flex items-center gap-1.5 text-emerald-400">
-                    <ShieldCheck size={14} />
-                    <span>ABA Model Rule 1.6 Compliant</span>
-                  </span>
-                  <span>Instant Whop License Key Issuance</span>
-                  <span>30-Day Money-Back Guarantee</span>
+                {/* Risk Reversal Guarantee Card */}
+                <div className="p-3.5 rounded-xl bg-emerald-500/[0.04] border border-emerald-500/25 flex flex-col sm:flex-row items-center justify-between text-xs gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                      <ShieldCheck size={16} />
+                    </div>
+                    <div className="text-left">
+                      <div className="font-bold text-white text-[12px] flex items-center gap-2">
+                        <span>The Zero-Risk Forensic Guarantee</span>
+                        <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">14-DAY TRIAL</span>
+                      </div>
+                      <div className="text-[11px] text-zinc-400">
+                        Audit your actual contracts risk-free. 100% money-back refund if you are not completely satisfied.
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px] text-zinc-400 font-mono shrink-0">
+                    <span className="flex items-center gap-1 text-emerald-400">
+                      <ShieldCheck size={13} />
+                      <span>ABA Rule 1.6 Safe</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </motion.div>

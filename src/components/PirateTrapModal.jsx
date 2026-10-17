@@ -122,7 +122,7 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                 type="button"
                 onClick={() => {
                   openSeamlessCheckout({
-                    productId: 'prod_ETdsHhJlU1fMM',
+                    plan: 'solo',
                     toolName: 'contractcompare',
                     onSuccess: () => {
                       setStatus('success');
@@ -137,6 +137,11 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                 <Lock size={14} />
                 <span>Instant Checkout ($199 Solo / $299 Firm) — Apple Pay & Cards</span>
               </button>
+
+              <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-400 font-mono py-1">
+                <ShieldCheck size={13} className="text-emerald-400 shrink-0" />
+                <span>14-Day Zero-Risk Guarantee • 100% Refund If Not Satisfied</span>
+              </div>
 
               <button
                 type="button"
