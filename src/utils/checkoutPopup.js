@@ -35,7 +35,10 @@ export const openSeamlessCheckout = (options = {}) => {
   } catch (e) {}
 
   const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?plan=${plan}&redirect=${toolName}&status=success&session_id=${sessionNonce}`);
-  const checkoutUrl = `https://whop.com/checkout/${productId}?return_url=${returnUrl}`;
+  const targetUrl = targetProduct?.url || `https://whop.com/checkout/${productId}`;
+  const checkoutUrl = targetUrl.includes('?') 
+    ? `${targetUrl}&return_url=${returnUrl}` 
+    : `${targetUrl}?return_url=${returnUrl}`;
 
   // Open centered popup window
   const popup = window.open(

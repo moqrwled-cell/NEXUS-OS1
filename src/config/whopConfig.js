@@ -6,15 +6,17 @@
  */
 export const WHOP_CONFIG = {
   solo: {
-    productId: 'prod_ETdsHhJlU1fMM', // Default / Replace with your real Solo Product ID ($199)
+    productId: 'prod_ETdsHhJlU1fMM',
     name: 'ContractGuard Solo Practitioner (1 User)',
     price: 199,
-    seats: 1
+    seats: 1,
+    url: 'https://whop.com/nexus-os-85c8/nexus-contractguard-solo-practitioner-lifetime-license'
   },
   firm: {
-    productId: 'prod_ETdsHhJlU1fMM', // Replace with your real Law Firm Suite Product ID ($299)
+    productId: 'prod_ETdsHhJlU1fMM',
     name: 'ContractGuard Law Firm Suite (5 Users)',
     price: 299,
-    seats: 5
+    seats: 5,
+    url: 'https://whop.com/nexus-os-85c8/nexus-contractguard-law-firm-suite-5-attorney-seats-bundle'
   }
 };
