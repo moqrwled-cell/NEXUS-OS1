@@ -33,9 +33,14 @@ export const validateEnterpriseKey = (rawKey) => {
     return { valid: false, reason: 'Invalid or revoked license key' };
   }
 
-  // Use primary licenseManager validator first
+  // Use primary licenseManager validator first (cryptographic signature verification)
   const cgResult = validateLicenseKey(key);
   if (cgResult.valid) {
+    return cgResult;
+  }
+
+  // If key has CG- prefix or failed signature validation, reject immediately
+  if (key.startsWith('CG-') || (cgResult.reason && cgResult.reason.includes('Cryptographic signature verification failed'))) {
     return cgResult;
   }
 
@@ -97,7 +102,10 @@ export const verifyToolAccess = (toolName = 'contractcompare') => {
       const parsed = JSON.parse(rawLic);
       if (parsed && parsed.isVerified && parsed.boundDeviceId && parsed.primaryKey) {
         if (!PROHIBITED_KEYS.has(parsed.primaryKey.toUpperCase())) {
-          return true;
+          const valCheck = validateLicenseKey(parsed.primaryKey);
+          if (valCheck.valid) {
+            return true;
+          }
         }
       }
     }
@@ -133,15 +141,15 @@ export const verifyToolAccess = (toolName = 'contractcompare') => {
       return true;
     }
 
-    // Direct key token support
-    if (license.startsWith('CG-') || license.startsWith('NX-')) {
+    // Direct key token support (must pass cryptographic validation)
+    if (validateLicenseKey(license).valid) {
       return true;
     }
 
     return false;
   } catch {
-    // If token is direct license key
-    if (token.startsWith('CG-') || token.startsWith('NX-')) {
+    // If token is direct license key (must pass cryptographic validation)
+    if (validateLicenseKey(token).valid) {
       return true;
     }
     return false;

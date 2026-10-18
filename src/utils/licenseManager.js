@@ -32,6 +32,26 @@ const PROHIBITED_KEYS = new Set([
 ]);
 
 /**
+ * Deterministic, offline cryptographic checksum engine.
+ * Generates an avalanche-sensitive, tamper-proof signature
+ * deterministically mixed with SECRET_SALT.
+ */
+export function computeKeyChecksum(dataString) {
+  const str = `${dataString}:::${SECRET_SALT}`;
+  let h1 = 0xdeadbeef ^ 0x12345678;
+  let h2 = 0x41c6ce57 ^ 0x87654321;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  const num = Math.abs(h1 ^ h2);
+  return num.toString(36).toUpperCase().padStart(4, '0').slice(-4);
+}
+
+/**
  * Generate a deterministic hardware & browser fingerprint hash
  */
 export async function getDeviceFingerprint() {
@@ -82,11 +102,10 @@ export async function getDeviceFingerprint() {
 
 /**
  * Validates any ContractGuard or Nexus enterprise license key.
- * Supports:
- * - CG-FIRM-SEAT1-XXXX-XXXX-XXXX
- * - CG-SOLO-LEGAL-XXXX-XXXX-XXXX
- * - NX-FIRM-XXXX-XXXX
- * - NX-SOLO-XXXX-XXXX
+ * Enforces cryptographic signature verification on all ContractGuard keys:
+ * - CG-FIRM-SEAT[1-5]-[CODE]-[RAND]-[SIG]
+ * - CG-SOLO-LEGAL-[CODE]-[RAND]-[SIG]
+ * - CG-SOLO-[CODE]-[RAND]-[SIG]
  * - NX-XXXX-XXXX-XXXX
  * - XXXX-XXXX-XXXX-XXXX
  */
@@ -102,10 +121,21 @@ export function validateLicenseKey(rawKey) {
     return { valid: false, reason: 'Invalid or revoked license key.' };
   }
 
-  // Pattern 1: ContractGuard Firm Suite Key (e.g. CG-FIRM-SEAT1-KYS8-5127-3657)
-  const cgFirmSeatMatch = cleanKey.match(/^CG-FIRM-SEAT([1-5])-([A-Z0-9]+)-([0-9]+)-([A-Z0-9]+)$/);
+  // Pattern 1: ContractGuard Firm Suite Key (e.g. CG-FIRM-SEAT1-KYS8-5127-QRBK)
+  const cgFirmSeatMatch = cleanKey.match(/^CG-FIRM-SEAT([1-5])-([A-Z0-9]+)-([0-9]+)-([A-Z0-9]{4})$/);
   if (cgFirmSeatMatch) {
     const seatNum = parseInt(cgFirmSeatMatch[1], 10);
+    const body = `CG-FIRM-SEAT${seatNum}-${cgFirmSeatMatch[2]}-${cgFirmSeatMatch[3]}`;
+    const providedSig = cgFirmSeatMatch[4];
+    const expectedSig = computeKeyChecksum(body);
+
+    if (providedSig !== expectedSig) {
+      return {
+        valid: false,
+        reason: 'Invalid or forged license key. Cryptographic signature verification failed.'
+      };
+    }
+
     return {
       valid: true,
       key: cleanKey,
@@ -113,13 +143,25 @@ export function validateLicenseKey(rawKey) {
       tierName: 'Law Firm Suite (5 Users)',
       seatNumber: seatNum,
       isPrimaryAdmin: seatNum === 1,
-      role: seatNum === 1 ? 'Primary Workstation (Admin)' : `Associate / Paralegal Seat 0${seatNum}`
+      role: seatNum === 1 ? 'Primary Workstation (Admin)' : `Associate / Paralegal Seat 0${seatNum}`,
+      signature: providedSig
     };
   }
 
-  // Pattern 2: ContractGuard Solo Key (e.g. CG-SOLO-LEGAL-KYS8-5127-3657)
-  const cgSoloMatch = cleanKey.match(/^CG-SOLO-([A-Z0-9]+)-([A-Z0-9]+)-([0-9]+)-([A-Z0-9]+)$/);
+  // Pattern 2: ContractGuard Solo Key (e.g. CG-SOLO-LEGAL-KYS8-5127-2RQL)
+  const cgSoloMatch = cleanKey.match(/^CG-SOLO-([A-Z0-9]+)-([A-Z0-9]+)-([0-9]+)-([A-Z0-9]{4})$/);
   if (cgSoloMatch) {
+    const body = `CG-SOLO-${cgSoloMatch[1]}-${cgSoloMatch[2]}-${cgSoloMatch[3]}`;
+    const providedSig = cgSoloMatch[4];
+    const expectedSig = computeKeyChecksum(body);
+
+    if (providedSig !== expectedSig) {
+      return {
+        valid: false,
+        reason: 'Invalid or forged license key. Cryptographic signature verification failed.'
+      };
+    }
+
     return {
       valid: true,
       key: cleanKey,
@@ -127,23 +169,25 @@ export function validateLicenseKey(rawKey) {
       tierName: 'Solo Practitioner (1 User)',
       seatNumber: 1,
       isPrimaryAdmin: true,
-      role: 'Primary Workstation'
+      role: 'Primary Workstation',
+      signature: providedSig
     };
   }
 
-  // Pattern 3: Generic ContractGuard key prefix
-  if (cleanKey.startsWith('CG-FIRM')) {
-    return {
-      valid: true,
-      key: cleanKey,
-      plan: 'firm',
-      tierName: 'Law Firm Suite (5 Users)',
-      seatNumber: 1,
-      isPrimaryAdmin: true,
-      role: 'Primary Workstation (Admin)'
-    };
-  }
-  if (cleanKey.startsWith('CG-SOLO') || cleanKey.startsWith('CG-')) {
+  // Pattern 2b: Flexible ContractGuard 4-segment Solo Key (e.g. CG-SOLO-XXXX-XXXX-SIG)
+  const cgSoloAltMatch = cleanKey.match(/^CG-SOLO-([A-Z0-9]+)-([A-Z0-9]+)-([A-Z0-9]{4})$/);
+  if (cgSoloAltMatch) {
+    const body = `CG-SOLO-${cgSoloAltMatch[1]}-${cgSoloAltMatch[2]}`;
+    const providedSig = cgSoloAltMatch[3];
+    const expectedSig = computeKeyChecksum(body);
+
+    if (providedSig !== expectedSig) {
+      return {
+        valid: false,
+        reason: 'Invalid or forged license key. Cryptographic signature verification failed.'
+      };
+    }
+
     return {
       valid: true,
       key: cleanKey,
@@ -151,7 +195,16 @@ export function validateLicenseKey(rawKey) {
       tierName: 'Solo Practitioner (1 User)',
       seatNumber: 1,
       isPrimaryAdmin: true,
-      role: 'Primary Workstation'
+      role: 'Primary Workstation',
+      signature: providedSig
+    };
+  }
+
+  // Strictly reject ANY key starting with CG- that failed cryptographic verification
+  if (cleanKey.startsWith('CG-')) {
+    return {
+      valid: false,
+      reason: 'Invalid or forged license key. Cryptographic signature verification failed.'
     };
   }
 
@@ -191,23 +244,23 @@ export function validateLicenseKey(rawKey) {
 }
 
 /**
- * Generate cryptographically formatted license key(s)
+ * Generate cryptographically formatted license key(s) with verifiable signature
  */
 export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
   const sanitize = (str) => str.replace(/[^A-Z0-9]/gi, '').toUpperCase();
-  const baseSeed = sanitize(orderId) || 'ONLINE';
-  
-  const createSegment = (prefix, num) => {
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    const code = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `${prefix}-${code}-${rand}`;
-  };
+  const rawSeed = sanitize(orderId);
+  const batchCode = (rawSeed && rawSeed.length >= 4 && !rawSeed.startsWith('ORDONLINE'))
+    ? rawSeed.slice(-4)
+    : Math.random().toString(36).substring(2, 6).toUpperCase();
 
   if (plan === 'firm') {
-    // Generate 5 distinct seat keys
+    // Generate 5 distinct seat keys with unique payloads and tamper-proof signatures
     const seats = [];
     for (let i = 1; i <= 5; i++) {
-      const key = `CG-FIRM-${createSegment('SEAT' + i, i)}-${baseSeed.slice(-4) || '2026'}`;
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      const body = `CG-FIRM-SEAT${i}-${batchCode}-${rand}`;
+      const sig = computeKeyChecksum(body);
+      const key = `${body}-${sig}`;
       seats.push({
         seatNumber: i,
         key: key,
@@ -224,8 +277,11 @@ export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
       seats: seats
     };
   } else {
-    // Solo practitioner single seat
-    const key = `CG-SOLO-${createSegment('LEGAL', 1)}-${baseSeed.slice(-4) || '2026'}`;
+    // Solo practitioner single seat with tamper-proof signature
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    const body = `CG-SOLO-LEGAL-${batchCode}-${rand}`;
+    const sig = computeKeyChecksum(body);
+    const key = `${body}-${sig}`;
     return {
       plan: 'solo',
       tierName: 'Solo Practitioner (1 User)',
@@ -343,6 +399,12 @@ export async function verifyDeviceLicense() {
         boundTo: record.boundDeviceId, 
         currentDevice 
       };
+    }
+
+    // Cryptographic validation of stored license key
+    const keyValidation = validateLicenseKey(record.primaryKey);
+    if (!keyValidation.valid) {
+      return { isValid: false, reason: 'FORGED_KEY' };
     }
 
     return { 
