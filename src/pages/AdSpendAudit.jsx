@@ -45,7 +45,7 @@ export default function AdSpendAudit() {
     }
   };
   useEffect(() => {
-    if (verifyToolAccess('adspendaudit') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
+    if (verifyToolAccess('adspendaudit') || verifyToolAccess('all')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);

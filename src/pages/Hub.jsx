@@ -10,7 +10,7 @@ export default function Hub() {
   const isRtl = i18n.dir() === 'rtl';
 
   useEffect(() => {
-    const hasAccess = verifyToolAccess('all') || localStorage.getItem('nexus_access_token');
+    const hasAccess = verifyToolAccess('all') || verifyToolAccess('contractcompare');
     if (!hasAccess) {
       navigate('/login?redirect=hub');
     }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Key, ShieldCheck, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
+import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 
 export default function Login() {
   const [licenseKey, setLicenseKey] = useState("");
@@ -26,6 +27,12 @@ export default function Login() {
     // 100% Local / Air-Gapped License Validation
     const validation = validateEnterpriseKey(licenseKey);
     if (validation.valid) {
+      try {
+        await bindKeyToCurrentDevice(validation.key || licenseKey);
+      } catch (bindErr) {
+        // Fallback for non-hardware bound keys
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       const redirectPath = urlParams.get('redirect') || 'contractcompare';
       

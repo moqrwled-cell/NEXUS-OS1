@@ -41,7 +41,7 @@ export default function LeadScrub() {
   });
 
   useEffect(() => {
-    if (verifyToolAccess('leadscrub') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
+    if (verifyToolAccess('leadscrub') || verifyToolAccess('all')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);

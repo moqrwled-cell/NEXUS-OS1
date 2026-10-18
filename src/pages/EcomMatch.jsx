@@ -27,7 +27,7 @@ export default function EcomMatch() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
-    if (verifyToolAccess('ecommatch') || verifyToolAccess('all') || localStorage.getItem('nexus_access_token')) {
+    if (verifyToolAccess('ecommatch') || verifyToolAccess('all')) {
       setIsUnlocked(true);
     } else {
       setShowPirateTrap(true);

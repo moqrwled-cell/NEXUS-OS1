@@ -4,6 +4,7 @@ import { KeyRound, ShieldCheck, ArrowLeft, Loader2, ExternalLink } from 'lucide-
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { validateEnterpriseKey, grantToolAccess } from '../utils/auth';
+import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 
 export default function AuthLogin() {
   const { t, i18n } = useTranslation();
@@ -24,6 +25,11 @@ export default function AuthLogin() {
     try {
       const validation = validateEnterpriseKey(licenseKey);
       if (validation.valid) {
+        try {
+          await bindKeyToCurrentDevice(validation.key || licenseKey);
+        } catch (bindErr) {
+          // Continue for non-hardware bound keys
+        }
         grantToolAccess(licenseKey, 'all');
         navigate('/hub');
         return;

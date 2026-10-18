@@ -70,17 +70,15 @@ export default function Welcome() {
         if (storedTicketRaw) {
           try {
             const ticket = JSON.parse(storedTicketRaw);
-            // Verify timestamp is within 45 minutes
+            // Verify timestamp is fresh within 45 minutes and sessionId matches exactly
             const isFresh = Date.now() - ticket.createdAt < 45 * 60 * 1000;
-            if (isFresh && (ticket.sessionId === sessionId || !sessionId || ticket.plan === planParam)) {
+            if (isFresh && ticket.sessionId && ticket.sessionId === sessionId) {
               validPurchase = true;
               // Clear ticket so it cannot be reused
               sessionStorage.removeItem('nexus_pending_checkout');
               localStorage.removeItem('nexus_pending_checkout');
             }
           } catch (e) {}
-        } else if (sessionId && sessionId.startsWith('whop_sess_')) {
-          validPurchase = true;
         }
 
         // If no verified purchase session and no active license, BLOCK key generation!
