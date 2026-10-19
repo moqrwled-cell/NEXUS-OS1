@@ -956,17 +956,17 @@ function ContractAnalyzerView({ initialSession }) {
           </p>
         </div>
 
-        {/* Mode Selector only — Load Demo Contract removed */}
+        {/* Mode Selector only — Apple macOS Segmented Pill */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-black/60 p-1 rounded-xl border border-zinc-800">
+          <div className="flex apple-segmented-pill bg-black/60">
             <button
               onClick={() => {
                 setAnalysisMode('single');
                 setActiveHudTab('crossRefs');
               }}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 analysisMode === 'single'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                  ? 'apple-segmented-pill-active'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
@@ -978,9 +978,9 @@ function ContractAnalyzerView({ initialSession }) {
                 setAnalysisMode('comparative');
                 setActiveHudTab('diff');
               }}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 analysisMode === 'comparative'
-                  ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                  ? 'bg-cyan-500/15 border border-cyan-400/35 border-t-white/30 text-cyan-300 shadow-[0_2px_10px_rgba(0,240,255,0.15)]'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >

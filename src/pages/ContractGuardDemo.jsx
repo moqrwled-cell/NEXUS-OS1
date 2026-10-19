@@ -740,13 +740,13 @@ export default function ContractGuardDemo() {
                   </div>
                 </div>
 
-                {/* Single Draft vs Comparative Diff Mode Toggle */}
-                <div className="flex items-center bg-black/60 p-1 rounded-lg border border-zinc-800">
+                {/* Single Draft vs Comparative Diff Mode Toggle (Apple macOS Segmented Pill) */}
+                <div className="flex items-center apple-segmented-pill bg-black/60">
                   <button
                     onClick={() => { setAnalysisMode('single'); }}
-                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                    className={`px-3.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                       analysisMode === 'single'
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                        ? 'apple-segmented-pill-active'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -754,9 +754,9 @@ export default function ContractGuardDemo() {
                   </button>
                   <button
                     onClick={() => { setAnalysisMode('comparative'); }}
-                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                    className={`px-3.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer ${
                       analysisMode === 'comparative'
-                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                        ? 'bg-cyan-500/15 border border-cyan-400/35 border-t-white/30 text-cyan-300 shadow-[0_2px_10px_rgba(0,240,255,0.15)]'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -923,10 +923,10 @@ export default function ContractGuardDemo() {
               {/* RESULTS & AUDIT RADAR HUD */}
               {/* ========================================================================= */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mt-2">
-                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 flex flex-col justify-between">
+                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 border-t-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.25)] flex flex-col justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Execution Speed</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-black text-emerald-400 font-mono">
+                    <span className="text-2xl font-black text-emerald-400 font-mono tabular-nums">
                       {processingMs !== null ? processingMs : '--'}
                     </span>
                     <span className="text-xs font-mono text-zinc-500">ms</span>
@@ -936,14 +936,14 @@ export default function ContractGuardDemo() {
                   </span>
                 </div>
 
-                <div className={`p-3.5 rounded-xl border flex flex-col justify-between transition-colors ${
+                <div className={`p-3.5 rounded-xl border flex flex-col justify-between transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.25)] ${
                   riskScore !== null && riskScore > 50 
-                    ? 'bg-rose-500/[0.04] border-rose-500/30' 
-                    : 'bg-[#050A0F] border-zinc-800'
+                    ? 'bg-rose-500/[0.05] border-rose-500/30 border-t-rose-400/30' 
+                    : 'bg-[#050A0F] border-zinc-800 border-t-white/10'
                 }`}>
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Overall Risk Score</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className={`text-2xl font-black font-mono ${
+                    <span className={`text-2xl font-black font-mono tabular-nums ${
                       riskScore !== null && riskScore > 50 ? 'text-rose-400' : 'text-zinc-300'
                     }`}>
                       {riskScore !== null ? riskScore : '--'}
@@ -957,10 +957,10 @@ export default function ContractGuardDemo() {
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 flex flex-col justify-between">
+                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 border-t-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.25)] flex flex-col justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Cross-Clause References</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-black text-cyan-400 font-mono">
+                    <span className="text-2xl font-black text-cyan-400 font-mono tabular-nums">
                       {auditResults ? (auditResults?.crossRefs?.stats?.totalReferencesFound ?? 0) : '--'}
                     </span>
                     <span className="text-xs font-mono text-zinc-500">targets</span>
@@ -972,10 +972,10 @@ export default function ContractGuardDemo() {
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 flex flex-col justify-between">
+                <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800 border-t-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.25)] flex flex-col justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">Financial Consistency</span>
                   <div className="flex items-baseline gap-1 mt-1">
-                    <span className={`text-2xl font-black font-mono ${
+                    <span className={`text-2xl font-black font-mono tabular-nums ${
                       auditResults && auditResults.financialDates?.issues?.length ? 'text-rose-400' : 'text-emerald-400'
                     }`}>
                       {auditResults ? (auditResults.financialDates?.issues?.length ? 'MISMATCH' : 'SYNCHRONIZED') : '--'}

@@ -61,8 +61,8 @@ export default function App() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-nexus-emerald/10 blur-[140px] rounded-full pointer-events-none"></div>
       </div>
 
-      {/* Modern High-Precision Navigation */}
-      <nav className="fixed w-full z-50 top-0 py-3.5 px-6 md:px-12 flex justify-between items-center bg-[#020608]/85 backdrop-blur-md border-b border-white/[0.08]">
+      {/* Modern High-Precision Navigation (Apple Vibrancy & Materials) */}
+      <nav className="fixed w-full z-50 top-0 py-3.5 px-6 md:px-12 flex justify-between items-center bg-[#020608]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-all">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <div className="w-9 h-9 rounded-xl bg-nexus-emerald/10 border border-nexus-emerald/30 flex items-center justify-center text-nexus-emerald shadow-[0_0_15px_rgba(0,255,157,0.15)]">
             <Scale size={20} />
@@ -181,7 +181,7 @@ export default function App() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.18] mb-6"
+                className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-[-0.03em] apple-display-heading text-white leading-[1.12] mb-6"
               >
                 {isRtl ? (
                   <>
