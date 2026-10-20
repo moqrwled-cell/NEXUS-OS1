@@ -13,6 +13,7 @@ import ProductLanding from './pages/ProductLanding.jsx'
 import AuthLogin from './pages/AuthLogin.jsx'
 import Welcome from './pages/Welcome.jsx'
 import ContractGuardDemo from './pages/ContractGuardDemo.jsx'
+import WarRoom from './pages/WarRoom.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LanguageWrapper from './components/LanguageWrapper.jsx'
 import './i18n'
@@ -26,6 +27,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/demo" element={<ContractGuardDemo />} />
           <Route path="/contractguard-demo" element={<ContractGuardDemo />} />
+          <Route path="/war-room" element={<WarRoom />} />
+          <Route path="/nexus-hq" element={<WarRoom />} />
+          <Route path="/secret-ops" element={<WarRoom />} />
           <Route path="/login" element={<Login />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/hub" element={<Hub />} />
