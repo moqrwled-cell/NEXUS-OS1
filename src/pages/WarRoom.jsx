@@ -41,6 +41,9 @@ export default function WarRoom() {
 
   // 1. Initial Load & URL Key Check
   useEffect(() => {
+    // Force LTR text direction for the War Room interface
+    document.documentElement.dir = 'ltr';
+
     // Check local storage for persistent session
     const savedAuth = localStorage.getItem(STORAGE_AUTH_KEY);
     const searchParams = new URLSearchParams(window.location.search);
@@ -130,37 +133,41 @@ export default function WarRoom() {
     });
   };
 
-  // Generate Email Content
+  // Generate Email Content with Strict Unicode LTR Markers
   const generateEmailData = (lead, type) => {
     const isAttorney = type === 'attorneys';
     const name = isAttorney ? lead.name : (lead.managingPartner || 'Counsel');
     const firmName = isAttorney ? lead.firm : lead.name;
     const email = lead.email;
 
-    const subject = `quick question about ${firmName}'s contract review turnaround`;
-    const body = `Hi ${name},
+    // Unicode Left-to-Right Mark (LRM) guarantees LTR alignment in any email client
+    const LRM = '\u200E';
 
-Noticed your practice handles complex corporate transactions and commercial agreements.
+    const subject = `${LRM}quick question about ${firmName}'s contract review turnaround`;
+    const body = `${LRM}Hi ${name},
 
-Quick question: are your associates still spending 3+ hours manually redlining 40-page agreements, or risking attorney-client privilege uploading client drafts to public cloud AI like ChatGPT?
+${LRM}Noticed your practice handles complex corporate transactions and commercial agreements.
 
-We engineered ContractGuard: an air-gapped forensic contract integrity engine that audits 50-page agreements for hidden financial discrepancies, broken cross-references, and undefined terms in under 200ms—100% locally in computer RAM with zero external cloud telemetry.
+${LRM}Quick question: are your associates still spending 3+ hours manually redlining 40-page agreements, or risking attorney-client privilege uploading client drafts to public cloud AI like ChatGPT?
 
-You can test any real contract draft right now in our live interactive sandbox (zero signup or credit card required):
-👉 https://www.nexus-os.store/demo
+${LRM}We engineered ContractGuard: an air-gapped forensic contract integrity engine that audits 50-page agreements for hidden financial discrepancies, broken cross-references, and undefined terms in under 200ms—100% locally in computer RAM with zero external cloud telemetry.
 
-Curious to hear what your team thinks of the instant risk radar.
+${LRM}You can test any real contract draft right now in our live interactive sandbox (zero signup or credit card required):
+${LRM}👉 https://www.nexus-os.store/demo
 
-Best regards,
-Nexus.OS`;
+${LRM}Curious to hear what your team thinks of the instant risk radar.
+
+${LRM}Best regards,
+${LRM}Nexus.OS`;
 
     return { name, firmName, email, subject, body };
   };
 
-  // 1-Click Gmail Action
+  // 1-Click Gmail Action (Forced English LTR mode)
   const handleOpenGmail = (lead, type) => {
     const { name, email, subject, body } = generateEmailData(lead, type);
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // hl=en forces English interface & default LTR text flow in Gmail
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&hl=en&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
     // Open Gmail Tab
     window.open(gmailUrl, '_blank');
@@ -303,7 +310,7 @@ Nexus.OS`;
   // ----------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#030712] text-white flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      <div dir="ltr" className="min-h-screen bg-[#030712] text-white flex items-center justify-center p-6 relative overflow-hidden font-sans">
         {/* Subtle Background Glows */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
@@ -364,7 +371,7 @@ Nexus.OS`;
   // AUTHENTICATED WAR ROOM INTERFACE
   // ----------------------------------------------------
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
+    <div dir="ltr" className="min-h-screen bg-[#030712] text-slate-100 font-sans selection:bg-emerald-500/30 selection:text-emerald-200">
       
       {/* Toast Notification */}
       {toastMessage && (
