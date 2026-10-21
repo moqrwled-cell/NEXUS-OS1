@@ -5,6 +5,8 @@
  * 100% Client-Side generation with zero server dependencies (ABA Rule 1.6 compliant).
  */
 
+import { enrichAllAuditFindings } from './statutoryCodex.js';
+
 function downloadFile(content, fileName, mimeType) {
   if (typeof document === 'undefined' || typeof window === 'undefined') {
     return;
@@ -410,6 +412,34 @@ export function exportExecutiveClientMemoHTML(...args) {
       </tr>
     `;
   }).join('');
+
+  // Generate Court-Grade Pre-Signing Redline Amendment Schedule (AmLaw 100 Standards)
+  const enrichedAudit = enrichAllAuditFindings(auditData);
+  const redlineScheduleRows = (enrichedAudit.allEnriched || []).length === 0 ? `
+    <tr><td colspan="4" style="text-align: center; color: #059669; padding: 14px; font-weight: 600;">✓ No pre-signing redline amendments required. All operative covenants, references, and definitions verified.</td></tr>
+  ` : (enrichedAudit.allEnriched || []).map((item, idx) => `
+    <tr>
+      <td style="font-weight: 700; color: ${item.severityTier === 'critical_deal_breaker' ? '#dc2626' : '#d97706'}; font-family: monospace;">
+        <div>${escapeHtml(item.clauseRef || item.clause || ('Item #' + (idx + 1)))}</div>
+        <span style="display: inline-block; margin-top: 4px; padding: 2px 6px; font-size: 10px; font-weight: 800; border-radius: 4px; background: ${item.severityTier === 'critical_deal_breaker' ? '#fee2e2' : '#fef3c7'}; color: ${item.severityTier === 'critical_deal_breaker' ? '#991b1b' : '#92400e'}; text-transform: uppercase;">
+          ${escapeHtml(item.legalSeverityLabel || 'DEFECT')}
+        </span>
+      </td>
+      <td style="color: #4b5563; font-style: italic; font-size: 11px;">
+        ${escapeHtml(item.snippet ? `"${item.snippet}"` : (item.details || ''))}
+        ${item.line ? `<div style="font-size: 10px; color: #9ca3af; margin-top: 3px; font-style: normal; font-family: monospace;">Line ${escapeHtml(item.line)}</div>` : ''}
+      </td>
+      <td style="font-size: 11px; line-height: 1.45;">
+        <div style="font-weight: 700; color: #0284c7; margin-bottom: 3px;">⚖️ ${escapeHtml(item.statutoryCitation || '')}</div>
+        <div style="color: #991b1b; font-weight: 600; margin-bottom: 3px;">${escapeHtml(item.malpracticeRisk || '')}</div>
+        ${item.precedent ? `<div style="font-size: 10px; color: #64748b; font-style: italic;">Authority: ${escapeHtml(item.precedent)}</div>` : ''}
+      </td>
+      <td style="background-color: #f0fdf4; border: 1px solid #bbf7d0; font-family: monospace; font-size: 11px; color: #166534; padding: 10px; line-height: 1.45;">
+        ${escapeHtml(item.courtGradeRedline || '')}
+        ${item.actionableAdvice ? `<div style="font-family: sans-serif; font-size: 10px; color: #047857; margin-top: 6px; font-weight: 600;">Counsel Guidance: ${escapeHtml(item.actionableAdvice)}</div>` : ''}
+      </td>
+    </tr>
+  `).join('');
 
   const memoHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -835,8 +865,27 @@ export function exportExecutiveClientMemoHTML(...args) {
       </tbody>
     </table>
 
-    <!-- Section 5: Counsel Recommendations -->
-    <h3 class="section-title">5. Pre-Signature Counsel Recommendations</h3>
+    <!-- Section 5: Pre-Signing Redline Amendment Schedule (Court-Grade Model Language) -->
+    <h3 class="section-title">5. Pre-Signing Redline Amendment Schedule</h3>
+    <p style="font-size: 12px; color: #4b5563; margin: -6px 0 14px 0; font-family: sans-serif;">
+      Mandatory contractual redline amendments derived under UCC § 3-114, Restatement (Second) of Contracts § 206/224, and Delaware Court of Chancery precedents to eliminate litigation vulnerabilities prior to execution.
+    </p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 16%;">Defect / Clause</th>
+          <th style="width: 24%;">Defective Draft Context</th>
+          <th style="width: 25%;">Governing Statute & Malpractice Risk</th>
+          <th style="width: 35%;">AmLaw 100 Court-Grade Replacement Language</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${redlineScheduleRows}
+      </tbody>
+    </table>
+
+    <!-- Section 6: Counsel Recommendations -->
+    <h3 class="section-title">6. Pre-Signature Counsel Recommendations</h3>
     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 18px; font-size: 13px; line-height: 1.6;">
       <ul style="margin: 0; padding-left: 20px;">
         ${brokenRefs.length > 0 ? `<li style="margin-bottom: 6px;"><strong style="color: #dc2626;">Resolve Cross-References:</strong> Re-insert or update clauses corresponding to non-existent cross-references before execution.</li>` : ''}

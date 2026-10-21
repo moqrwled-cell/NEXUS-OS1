@@ -33,6 +33,7 @@ import {
   getDeviceFingerprint, 
   deactivateLicenseFromDevice 
 } from '../utils/licenseManager';
+import { enrichAllAuditFindings } from '../utils/statutoryCodex';
 import PirateTrapModal from '../components/PirateTrapModal';
 
 export default function ContractCompare() {
@@ -755,7 +756,21 @@ function ContractAnalyzerView({ initialSession }) {
     cancelAnalysis
   } = useContractWorker();
 
-  const [activeHudTab, setActiveHudTab] = useState('crossRefs'); // crossRefs | definedTerms | financialDates | obligations | risks | diff
+  const [activeHudTab, setActiveHudTab] = useState('dealBreakers'); // dealBreakers | enforceability | obligations | diff
+  const [copiedRedlineId, setCopiedRedlineId] = useState(null);
+
+  const handleCopyRedline = (id, text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedRedlineId(id);
+    setTimeout(() => setCopiedRedlineId(null), 2500);
+  };
+
+  const enrichedAudit = useMemo(() => {
+    if (!auditResults) return null;
+    return enrichAllAuditFindings(auditResults);
+  }, [auditResults]);
+
   const [obligationPartyFilter, setObligationPartyFilter] = useState('all'); // all | Client | Counterparty | Mutual | Third Party
   const [obligationDutyFilter] = useState('all'); // all | affirmative | negative | conditional
   const [riskSeverityFilter, setRiskSeverityFilter] = useState('all'); // all | critical | warning | info
@@ -962,7 +977,7 @@ function ContractAnalyzerView({ initialSession }) {
             <button
               onClick={() => {
                 setAnalysisMode('single');
-                setActiveHudTab('crossRefs');
+                setActiveHudTab('dealBreakers');
               }}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                 analysisMode === 'single'
@@ -1370,31 +1385,52 @@ function ContractAnalyzerView({ initialSession }) {
 
           {/* Key Metrics Banner */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
-            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-red-500/20 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-red-400">Broken Citations</p>
+            <div 
+              onClick={() => setActiveHudTab('dealBreakers')}
+              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
+                activeHudTab === 'dealBreakers' ? 'border-red-500 bg-red-950/20 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-red-500/20 hover:border-red-500/40'
+              } text-center`}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-red-400">Deal Breakers</p>
               <p className="text-3xl font-black text-red-400 mt-1 font-mono">
-                {auditResults.crossRefs?.stats?.brokenCount || 0}
+                {enrichedAudit?.dealBreakers?.length || 0}
               </p>
             </div>
-            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-amber-500/20 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Missing Exhibits</p>
+            <div 
+              onClick={() => setActiveHudTab('enforceability')}
+              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
+                activeHudTab === 'enforceability' ? 'border-amber-500 bg-amber-950/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-amber-500/20 hover:border-amber-500/40'
+              } text-center`}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Enforceability Hazards</p>
               <p className="text-3xl font-black text-amber-400 mt-1 font-mono">
-                {auditResults.crossRefs?.stats?.missingExhibitCount || 0}
+                {enrichedAudit?.enforceabilityHazards?.length || 0}
               </p>
             </div>
-            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-orange-500/20 text-center">
+            <div 
+              onClick={() => setActiveHudTab('dealBreakers')}
+              className="p-4 rounded-2xl bg-zinc-900/60 border border-orange-500/20 hover:border-orange-500/40 transition-all cursor-pointer text-center"
+            >
               <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">Financial Mismatches</p>
               <p className="text-3xl font-black text-orange-400 mt-1 font-mono">
                 {auditResults.financialDates?.stats?.mismatchCount || 0}
               </p>
             </div>
-            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-cyan-500/20 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Undefined Terms</p>
+            <div 
+              onClick={() => setActiveHudTab('enforceability')}
+              className="p-4 rounded-2xl bg-zinc-900/60 border border-cyan-500/20 hover:border-cyan-500/40 transition-all cursor-pointer text-center"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Broken Citations</p>
               <p className="text-3xl font-black text-cyan-400 mt-1 font-mono">
-                {auditResults.definedTerms?.stats?.undefinedCount || 0}
+                {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
               </p>
             </div>
-            <div className="p-4.5 rounded-2xl bg-zinc-900/60 border border-emerald-500/20 text-center">
+            <div 
+              onClick={() => setActiveHudTab('obligations')}
+              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
+                activeHudTab === 'obligations' ? 'border-emerald-500 bg-emerald-950/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'border-emerald-500/20 hover:border-emerald-500/40'
+              } text-center`}
+            >
               <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Contract Obligations</p>
               <p className="text-3xl font-black text-emerald-400 mt-1 font-mono">
                 {auditResults.obligations?.stats?.totalObligations || 0}
@@ -1405,52 +1441,35 @@ function ContractAnalyzerView({ initialSession }) {
           {/* Complete HUD Sub-Tabs Navigation */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-800 custom-scrollbar">
             <button
-              onClick={() => setActiveHudTab('crossRefs')}
+              onClick={() => setActiveHudTab('dealBreakers')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'crossRefs'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                activeHudTab === 'dealBreakers'
+                  ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.35)]'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Bookmark size={14} />
-              <span>Cross-References (R1)</span>
-              {(auditResults.crossRefs?.issues?.length || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-red-600 text-white font-mono font-bold">
-                  {auditResults.crossRefs.issues.length}
+              <ShieldAlert size={14} />
+              <span>Deal Breakers</span>
+              {(enrichedAudit?.dealBreakers?.length || 0) > 0 && (
+                <span className="px-2 py-0.5 rounded-full text-xs bg-red-950 text-red-200 border border-red-500/50 font-mono font-bold">
+                  {enrichedAudit.dealBreakers.length}
                 </span>
               )}
             </button>
 
             <button
-              onClick={() => setActiveHudTab('definedTerms')}
+              onClick={() => setActiveHudTab('enforceability')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'definedTerms'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                activeHudTab === 'enforceability'
+                  ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.25)]'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Tag size={14} />
-              <span>Defined Terms & Boilerplate (R2)</span>
-              {((auditResults.definedTerms?.stats?.undefinedCount || 0) + (auditResults.definedTerms?.stats?.artifactCount || 0)) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-amber-500 text-black font-mono font-bold">
-                  {(auditResults.definedTerms?.stats?.undefinedCount || 0) + (auditResults.definedTerms?.stats?.artifactCount || 0)}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveHudTab('financialDates')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'financialDates'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <DollarSign size={14} />
-              <span>Financial & Vital Dates (R3)</span>
-              {(auditResults.financialDates?.issues?.length || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-red-600 text-white font-mono font-bold">
-                  {auditResults.financialDates.issues.length}
+              <AlertTriangle size={14} />
+              <span>Enforceability Hazards</span>
+              {(enrichedAudit?.enforceabilityHazards?.length || 0) > 0 && (
+                <span className="px-2 py-0.5 rounded-full text-xs bg-amber-950 text-amber-200 border border-amber-500/50 font-mono font-bold">
+                  {enrichedAudit.enforceabilityHazards.length}
                 </span>
               )}
             </button>
@@ -1468,15 +1487,27 @@ function ContractAnalyzerView({ initialSession }) {
             </button>
 
             <button
-              onClick={() => setActiveHudTab('risks')}
+              onClick={() => setActiveHudTab('crossRefs')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'risks'
-                  ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                activeHudTab === 'crossRefs'
+                  ? 'bg-zinc-700 text-white shadow-md'
                   : 'text-zinc-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <ShieldAlert size={14} />
-              <span>Risk Radar ({auditResults.risks?.length || 0})</span>
+              <Bookmark size={14} />
+              <span>Structure & Citations</span>
+            </button>
+
+            <button
+              onClick={() => setActiveHudTab('definedTerms')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                activeHudTab === 'definedTerms'
+                  ? 'bg-zinc-700 text-white shadow-md'
+                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Tag size={14} />
+              <span>Defined Terms ({auditResults.definedTerms?.stats?.totalDefined || 0})</span>
             </button>
 
             {auditResults.diff && (
@@ -1493,6 +1524,260 @@ function ContractAnalyzerView({ initialSession }) {
               </button>
             )}
           </div>
+
+          {/* TAB: CRITICAL DEAL BREAKERS */}
+          {activeHudTab === 'dealBreakers' && (
+            <div className="flex flex-col gap-5">
+              <div className="p-4 rounded-2xl bg-red-950/20 border border-red-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-red-300 flex items-center gap-2">
+                    <ShieldAlert size={18} className="text-red-400 shrink-0" />
+                    <span>Critical Deal Breakers & Malpractice Liabilities ({enrichedAudit?.dealBreakers?.length || 0})</span>
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Severe drafting defects that threaten transaction enforceability, expose counsel to malpractice liability, or establish unilateral walk-away rights under Delaware & UCC jurisprudence.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                    Mandatory Pre-Signing Redlines
+                  </span>
+                </div>
+              </div>
+
+              {(!enrichedAudit?.dealBreakers || enrichedAudit.dealBreakers.length === 0) ? (
+                <div className="p-8 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl flex flex-col items-center gap-2">
+                  <CheckCircle2 size={24} className="text-emerald-400" />
+                  <span>✓ Zero critical deal-breaker defects detected. All conditions precedent, consideration terms, and party entities are legally sound.</span>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {enrichedAudit.dealBreakers.map((item, idx) => (
+                    <div key={item.id || idx} className="p-5 rounded-2xl bg-zinc-900/80 border border-red-500/35 hover:border-red-500/60 transition-all flex flex-col gap-4">
+                      {/* Card Header */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-red-500 text-white shadow-sm">
+                            {item.legalSeverityLabel || 'CRITICAL DEAL BREAKER'}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
+                            {item.clauseRef || item.clause || `Line ${item.line}`}
+                          </span>
+                          {item.occurrences > 1 && (
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                              Cited {item.occurrences}x across document
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-mono text-red-400/90 font-bold flex items-center gap-1.5">
+                          <AlertTriangle size={14} className="text-red-400" />
+                          <span>Pre-Execution Stop</span>
+                        </span>
+                      </div>
+
+                      {/* Title & Malpractice Risk */}
+                      <div>
+                        <h4 className="text-sm font-bold text-white mb-1.5">{item.title}</h4>
+                        <div className="p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs text-red-200/90 leading-relaxed font-sans flex items-start gap-2.5">
+                          <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-bold text-red-300">Malpractice & Litigation Exposure: </span>
+                            <span>{item.malpracticeRisk}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Statutory Authority */}
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                        <span className="text-zinc-500 font-semibold">Governing Doctrine:</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
+                          ⚖️ {item.statutoryCitation}
+                        </span>
+                        {item.precedent && (
+                          <span className="text-zinc-400 italic">
+                            ({item.precedent})
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Defective Snippet */}
+                      {item.snippet && (
+                        <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
+                          <span className="text-zinc-500 text-[10px] uppercase font-bold block mb-1">Defective Draft Language:</span>
+                          <span className="italic text-zinc-300">"{item.snippet}"</span>
+                          {item.line && <span className="text-zinc-500 ml-2">(Line {item.line})</span>}
+                        </div>
+                      )}
+
+                      {/* Court-Grade Redline Replacement */}
+                      {item.courtGradeRedline && (
+                        <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                              <CheckCircle2 size={14} className="text-emerald-400" />
+                              AmLaw 100 Court-Grade Replacement Language
+                            </span>
+                            <button
+                              onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
+                              className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
+                            >
+                              {copiedRedlineId === (item.id || idx) ? (
+                                <>
+                                  <Check size={13} className="text-black" />
+                                  <span>Copied! ✓</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy size={13} />
+                                  <span>Copy Redline Clause</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                            {item.courtGradeRedline}
+                          </div>
+                          {item.actionableAdvice && (
+                            <p className="text-[11px] text-zinc-400 font-sans italic">
+                              <span className="text-emerald-400/90 font-bold">Counsel Guidance: </span>
+                              {item.actionableAdvice}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: ENFORCEABILITY HAZARDS */}
+          {activeHudTab === 'enforceability' && (
+            <div className="flex flex-col gap-5">
+              <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
+                    <AlertTriangle size={18} className="text-amber-400 shrink-0" />
+                    <span>Enforceability Hazards & Ambiguity Traps ({enrichedAudit?.enforceabilityHazards?.length || 0})</span>
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Citations to nonexistent sections, undefined operative capitalized terms, and procedural voids vulnerable to contra proferentem interpretation.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    Remedial Redlines Available
+                  </span>
+                </div>
+              </div>
+
+              {(!enrichedAudit?.enforceabilityHazards || enrichedAudit.enforceabilityHazards.length === 0) ? (
+                <div className="p-8 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl flex flex-col items-center gap-2">
+                  <CheckCircle2 size={24} className="text-emerald-400" />
+                  <span>✓ All internal cross-references resolve cleanly and all operative capitalized terms are formally defined.</span>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {enrichedAudit.enforceabilityHazards.map((item, idx) => (
+                    <div key={item.id || idx} className="p-5 rounded-2xl bg-zinc-900/80 border border-amber-500/35 hover:border-amber-500/60 transition-all flex flex-col gap-4">
+                      {/* Card Header */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-amber-500 text-black shadow-sm">
+                            {item.legalSeverityLabel || 'ENFORCEABILITY HAZARD'}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
+                            {item.clauseRef || item.clause || `Line ${item.line}`}
+                          </span>
+                          {item.occurrences > 1 && (
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                              Referenced {item.occurrences}x
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-mono text-amber-400 font-bold flex items-center gap-1.5">
+                          <Bookmark size={14} className="text-amber-400" />
+                          <span>Procedural Hazard</span>
+                        </span>
+                      </div>
+
+                      {/* Title & Malpractice Risk */}
+                      <div>
+                        <h4 className="text-sm font-bold text-white mb-1.5">{item.title}</h4>
+                        <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-500/30 text-xs text-amber-200/90 leading-relaxed font-sans flex items-start gap-2.5">
+                          <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                          <div>
+                            <span className="font-bold text-amber-300">Litigation & Interpretation Risk: </span>
+                            <span>{item.malpracticeRisk}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Statutory Authority */}
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                        <span className="text-zinc-500 font-semibold">Governing Rule:</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
+                          ⚖️ {item.statutoryCitation}
+                        </span>
+                        {item.precedent && (
+                          <span className="text-zinc-400 italic">
+                            ({item.precedent})
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Defective Snippet */}
+                      {item.snippet && (
+                        <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
+                          <span className="text-zinc-500 text-[10px] uppercase font-bold block mb-1">Operative Draft Context:</span>
+                          <span className="italic text-zinc-300">"{item.snippet}"</span>
+                          {item.line && <span className="text-zinc-500 ml-2">(Line {item.line})</span>}
+                        </div>
+                      )}
+
+                      {/* Court-Grade Redline Replacement */}
+                      {item.courtGradeRedline && (
+                        <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                              <CheckCircle2 size={14} className="text-emerald-400" />
+                              AmLaw 100 Court-Grade Replacement Language
+                            </span>
+                            <button
+                              onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
+                              className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
+                            >
+                              {copiedRedlineId === (item.id || idx) ? (
+                                <>
+                                  <Check size={13} className="text-black" />
+                                  <span>Copied! ✓</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy size={13} />
+                                  <span>Copy Redline Clause</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                            {item.courtGradeRedline}
+                          </div>
+                          {item.actionableAdvice && (
+                            <p className="text-[11px] text-zinc-400 font-sans italic">
+                              <span className="text-emerald-400/90 font-bold">Counsel Guidance: </span>
+                              {item.actionableAdvice}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* TAB 1: CROSS-REFERENCES & EXHIBITS (R1) */}
           {activeHudTab === 'crossRefs' && (

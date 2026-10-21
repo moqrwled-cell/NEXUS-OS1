@@ -127,7 +127,7 @@ export function validateCrossReferences(text = '') {
     if (!trimmed) return;
     const lineNum = idx + 1;
 
-    // 1. Check Exhibits / Schedules / Appendices
+    // 1. Check Exhibits / Schedules / Appendices (Line Heading & Inline Listings)
     const exhMatch = trimmed.match(RE_EXHIBIT_HEADING);
     if (exhMatch) {
       const type = exhMatch[1].toUpperCase();
@@ -145,6 +145,24 @@ export function validateCrossReferences(text = '') {
       exhibitIndex.set(normRaw, entry);
       headingLines.add(lineNum);
       return;
+    }
+
+    // 1b. Support exhibits listed in schedules or signature exhibits summary
+    const RE_INLINE_EXH = /\b(EXHIBIT|SCHEDULE|APPENDIX|ANNEX|ATTACHMENT)\s+([A-Z0-9]+(?:[\.\-_][A-Z0-9]+)*)(?:\s*[:—–-]\s*([^\n\r(]+?))?(?:\s*\((?:Attached|Incorporated|Appended|enclosed)\)|\s*\[|$)/gi;
+    let inlineExhMatch;
+    while ((inlineExhMatch = RE_INLINE_EXH.exec(trimmed)) !== null) {
+      const type = inlineExhMatch[1].toUpperCase();
+      const rawId = inlineExhMatch[2].trim();
+      const title = (inlineExhMatch[3] || '').trim();
+      const fullId = `${type} ${rawId}`;
+      if (!exhibitIndex.has(fullId)) {
+        const entry = { id: fullId, title, line: lineNum };
+        indexedExhibits.push(entry);
+        exhibitIndex.set(fullId, entry);
+        exhibitIndex.set(`${type.toLowerCase()} ${rawId.toLowerCase()}`, entry);
+        exhibitIndex.set(rawId.toLowerCase(), entry);
+        headingLines.add(lineNum);
+      }
     }
 
     // 2. Check Explicit Section / Article / Clause / §
@@ -224,7 +242,7 @@ export function validateCrossReferences(text = '') {
   // --------------------------------------------------------------------------
   const citationsFound = [];
   const RE_SEC_CIT = /\b(Sections?|Articles?|Clauses?|Paragraphs?|§+|§§?)\s+([0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*(?:\s*(?:,|and|or|through|to)\s*(?!(?:Sections?|Articles?|Clauses?|Paragraphs?|§+)\b)[0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*)*|[IVXLCDM]+(?:\s*(?:,|and|or|through|to)\s*(?!(?:Sections?|Articles?|Clauses?|Paragraphs?|§+)\b)[IVXLCDM]+)*)\b/gi;
-  const RE_EXH_CIT = /\b(Exhibits?|Schedules?|Appendix(?:es)?|Appendices|Annex(?:es)?|Attachments?)\s+([A-Za-z0-9]{1,5}(?:\s*(?:,|and|or|through|to)\s*(?!(?:Exhibits?|Schedules?|Appendix|Annex|Attachment)\b)[A-Za-z0-9]{1,5})*)\b/gi;
+  const RE_EXH_CIT = /\b(Exhibits?|Schedules?|Appendix(?:es)?|Appendices|Annex(?:es)?|Attachments?)\s+([A-Za-z0-9]+(?:[\.\-_][A-Za-z0-9]+)*(?:\s*(?:,|\b(?:and|or|through|to)\b)\s*(?!(?:Exhibits?|Schedules?|Appendix|Annex|Attachment)\b)[A-Za-z0-9]+(?:[\.\-_][A-Za-z0-9]+)*)*)\b/gi;
   const RE_STATUTE = /^\s+of\s+the\s+(?:Internal\s+Revenue\s+Code|Securities(?:\s+Exchange)?\s+Act|Uniform\s+Commercial\s+Code|UCC|Bankruptcy\s+Code|Delaware\s+General\s+Corporation\s+Law|DGCL|Code|Act|Statutes?|Regulations?|Rules?)\b/i;
   const RE_AMBIGUOUS_CIT = /\b(the\s+(?:preceding|following|prior|above|subsequent)\s+(?:Section|Article|Clause|Paragraph))\b/gi;
 
@@ -232,8 +250,9 @@ export function validateCrossReferences(text = '') {
 
   lines.forEach((lineText, idx) => {
     const lineNum = idx + 1;
-    // Skip explicit heading lines to avoid self-citation
-    if (headingLines.has(lineNum)) return;
+    const trimmed = lineText.trim();
+    // Skip explicit heading lines or editorial notes to avoid false citations
+    if (headingLines.has(lineNum) || /^\[Note:/i.test(trimmed) || /^SCHEDULE\s+OF\s+EXHIBITS/i.test(trimmed)) return;
 
     // 1. Scan Ambiguous Citations (e.g. "the preceding Section")
     let ambMatch;
@@ -287,6 +306,10 @@ export function validateCrossReferences(text = '') {
       for (let t of individualTargets) {
         t = t.replace(/^(?:Exhibits?|Schedules?|Appendices|Appendix|Annexes?|Attachments?)\s+/i, '').trim();
         if (!t) continue;
+        // Target must start with alphanumeric character
+        if (!/^[A-Za-z0-9]/i.test(t)) continue;
+        // Exclude common transitional English words that are not exhibit/schedule identifiers
+        if (/^(?:here|hereto|hereof|herein|hereunder|unless|referenced|attached|provided|constitutes|described|specified|such|all|any|each|both|neither|either)\b/i.test(t)) continue;
         citationsFound.push({
           target: t,
           prefix,
@@ -300,10 +323,13 @@ export function validateCrossReferences(text = '') {
   });
 
   // --------------------------------------------------------------------------
-  // PASS 3: RESOLUTION & ISSUE GENERATION
+  // PASS 3: RESOLUTION & ISSUE GENERATION (WITH DEDUPLICATION)
   // --------------------------------------------------------------------------
   let brokenCount = 0;
   let missingExhibitCount = 0;
+
+  const brokenSectionsMap = new Map(); // targetLower -> consolidated issue
+  const missingExhibitsMap = new Map(); // targetLower -> consolidated issue
 
   for (const cit of citationsFound) {
     const lineText = lines[cit.line - 1] || '';
@@ -342,15 +368,22 @@ export function validateCrossReferences(text = '') {
 
       const isResolved = candidateKeys.some(k => sectionIndex.has(k));
       if (!isResolved) {
-        brokenCount++;
-        issues.push({
-          type: 'broken_reference',
-          referenceText: cit.raw,
-          targetName: cit.target,
-          line: cit.line,
-          snippet,
-          severity: 'critical'
-        });
+        if (!brokenSectionsMap.has(lower)) {
+          brokenSectionsMap.set(lower, {
+            type: 'broken_reference',
+            referenceText: cit.raw,
+            targetName: cit.target,
+            line: cit.line,
+            lines: [cit.line],
+            snippet,
+            occurrenceCount: 1,
+            severity: 'critical'
+          });
+        } else {
+          const entry = brokenSectionsMap.get(lower);
+          if (!entry.lines.includes(cit.line)) entry.lines.push(cit.line);
+          entry.occurrenceCount++;
+        }
       }
     } else if (cit.type === 'exhibit') {
       const fullExh = `${cit.prefix.toUpperCase()} ${cit.target.toUpperCase()}`;
@@ -360,18 +393,36 @@ export function validateCrossReferences(text = '') {
                          exhibitIndex.has(cit.target.toLowerCase());
 
       if (!isResolved) {
-        missingExhibitCount++;
-        issues.push({
-          type: 'missing_exhibit',
-          referenceText: cit.raw,
-          targetName: cit.raw,
-          line: cit.line,
-          snippet,
-          severity: 'critical'
-        });
+        const key = `${cit.prefix.toLowerCase()}_${cit.target.toLowerCase()}`;
+        if (!missingExhibitsMap.has(key)) {
+          missingExhibitsMap.set(key, {
+            type: 'missing_exhibit',
+            referenceText: cit.raw,
+            targetName: cit.raw,
+            line: cit.line,
+            lines: [cit.line],
+            snippet,
+            occurrenceCount: 1,
+            severity: 'critical'
+          });
+        } else {
+          const entry = missingExhibitsMap.get(key);
+          if (!entry.lines.includes(cit.line)) entry.lines.push(cit.line);
+          entry.occurrenceCount++;
+        }
       }
     }
   }
+
+  brokenSectionsMap.forEach(item => {
+    brokenCount++;
+    issues.push(item);
+  });
+
+  missingExhibitsMap.forEach(item => {
+    missingExhibitCount++;
+    issues.push(item);
+  });
 
   return {
     indexedSections,

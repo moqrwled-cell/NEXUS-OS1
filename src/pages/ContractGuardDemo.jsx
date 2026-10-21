@@ -6,7 +6,8 @@ import {
   FileText, Upload, RefreshCw, Zap, Lock, ArrowRight, CheckCircle2,
   AlertTriangle, AlertCircle, X, Download, HardDriveDownload,
   Users, User, Briefcase, FileCheck, Check, Sparkles, ExternalLink,
-  ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play, Volume2, VolumeX
+  ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play, Volume2, VolumeX,
+  Copy
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
@@ -24,6 +25,7 @@ import {
   initializeHardenedMeter,
   detectIncognitoMode
 } from '../utils/licenseManager';
+import { enrichFindingWithStatutoryRemedy, enrichAllAuditFindings } from '../utils/statutoryCodex';
 
 // Pre-packaged Hazardous Legal Contract for instant testing
 const HAZARDOUS_SAMPLE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT
@@ -381,148 +383,89 @@ export default function ContractGuardDemo() {
     });
   };
 
-  // Consolidate findings from auditResults
+  const [copiedDemoId, setCopiedDemoId] = useState(null);
+
+  const handleCopyDemoRedline = (id, text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedDemoId(id);
+    setTimeout(() => setCopiedDemoId(null), 2500);
+  };
+
+  const enrichedAudit = useMemo(() => {
+    if (!auditResults) return null;
+    return enrichAllAuditFindings(auditResults);
+  }, [auditResults]);
+
+  // Consolidate findings from auditResults with statutory enrichment
   const findingsList = useMemo(() => {
-    if (!auditResults) return [];
-    const list = [];
-
-    // Financial & Date Issues
-    if (auditResults.financialDates?.issues) {
-      auditResults.financialDates.issues.forEach(issue => {
-        list.push({
-          id: `fin_${issue.id || Math.random()}`,
-          category: 'FINANCIAL CONTRADICTION',
-          severity: issue.severity || 'critical',
-          clause: issue.clause || 'Clause 4.1',
-          title: issue.title || 'Written Amount ≠ Numeric Figure',
-          explanation: issue.explanation || 'Written words state $250,000 while numeric figure indicates ($205,000). A $45,000 discrepancy creating immediate litigation vulnerability.',
-          remedy: 'Reconcile purchase consideration before execution to prevent enforceability challenges under UCC § 2-201.'
-        });
-      });
-    }
-
-    // Cross-reference Issues
-    if (auditResults.crossRefs?.issues) {
-      auditResults.crossRefs.issues.forEach(issue => {
-        list.push({
-          id: `ref_${issue.id || Math.random()}`,
-          category: 'CROSS-REFERENCE FAILURE',
-          severity: issue.severity || 'high',
-          clause: issue.sourceClause || 'Clause 2.1 & 9.2',
-          title: issue.title || `Broken Reference: ${issue.targetRef || 'Section 14.2'} Does Not Exist`,
-          explanation: issue.explanation || 'Agreement references Section 14.2 for termination procedures, but Section 14.2 was removed from the document body.',
-          remedy: 'Restore Section 14.2 termination procedures or re-target to an existing dispute resolution clause.'
-        });
-      });
-    }
-
-    // Legal Risks & Inconsistencies
-    if (auditResults.risks) {
-      auditResults.risks.forEach(risk => {
-        list.push({
-          id: `risk_${risk.id || Math.random()}`,
-          category: risk.category || 'STRUCTURAL DEFECT',
-          severity: risk.severity || 'medium',
-          clause: risk.clause || 'Clause 3.1',
-          title: risk.title || 'Missing Exhibit C (Disclosure Schedules)',
-          explanation: risk.description || 'Agreement incorporates Exhibit C by reference in §3.1, but no Exhibit C is attached or defined in the exhibit index.',
-          remedy: risk.remediation || 'Attach completed disclosure schedules prior to closing signature.'
-        });
-      });
-    }
-
-    // Defined Terms Issues
-    if (auditResults.definedTerms?.issues) {
-      auditResults.definedTerms.issues.forEach(issue => {
-        list.push({
-          id: `term_${issue.id || Math.random()}`,
-          category: 'DEFINED TERMS INTEGRITY',
-          severity: issue.severity || 'medium',
-          clause: issue.clause || 'Defined Terms',
-          title: issue.title || `Undefined Term: "${issue.term || 'Capitalized Entity'}"`,
-          explanation: issue.explanation || issue.description || `The capitalized term "${issue.term || 'Term'}" is used throughout the agreement but is not formally defined.`,
-          remedy: issue.remedy || issue.remediation || 'Add formal definition in Section 1 or define upon first usage.'
-        });
-      });
-    }
-
-    // Template Placeholders / Brackets
-    if (auditResults.boilerplate?.issues) {
-      auditResults.boilerplate.issues.forEach(issue => {
-        list.push({
-          id: `bp_${issue.id || Math.random()}`,
-          category: 'TEMPLATE RESIDUAL / BRACKET',
-          severity: issue.severity || 'high',
-          clause: issue.clause || 'Unfilled Placeholder',
-          title: issue.title || 'Unfilled Placeholder Found [ ... ]',
-          explanation: issue.explanation || issue.description || 'Draft contains unfinished bracketed drafting instructions or blank underscores.',
-          remedy: issue.remedy || issue.remediation || 'Replace template bracket with negotiated commercial provisions.'
-        });
-      });
+    if (enrichedAudit && enrichedAudit.allEnriched?.length > 0) {
+      return enrichedAudit.allEnriched.map((f, i) => ({
+        id: f.id || `enriched_${i}`,
+        category: f.category || 'CONTRACT INTEGRITY',
+        severity: f.severityTier === 'critical_deal_breaker' ? 'critical' : 'high',
+        clause: f.clauseRef || f.clause || `Line ${f.line}`,
+        title: f.title,
+        explanation: f.details || f.explanation || f.snippet || '',
+        snippet: f.snippet || '',
+        malpracticeRisk: f.malpracticeRisk,
+        statutoryCitation: f.statutoryCitation,
+        precedent: f.precedent,
+        courtGradeRedline: f.courtGradeRedline,
+        remedy: f.actionableAdvice || f.courtGradeRedline
+      }));
     }
 
     // Fallback default hazardous findings ONLY if parsing the hazardous sample contract without worker result
-    if (list.length === 0 && contractText === HAZARDOUS_SAMPLE_CONTRACT) {
+    if (contractText === HAZARDOUS_SAMPLE_CONTRACT) {
       return [
-        {
+        enrichFindingWithStatutoryRemedy({
           id: 'def_1',
           category: 'FINANCIAL CONTRADICTION',
           severity: 'critical',
           clause: 'Clause 4.1',
+          writtenWords: 'Two Hundred Fifty Thousand Dollars',
+          numericStr: '$205,000',
+          correctedNum: '$250,000',
           title: 'Written Words Do Not Match Numeric Figure',
-          explanation: 'Written amount specifies "Two Hundred Fifty Thousand Dollars" ($250,000), but numeric figure specifies "($205,000)". Net dispute exposure: $45,000.',
-          remedy: 'Specify explicit governing priority or align numbers prior to client execution.'
-        },
-        {
+          snippet: 'Buyer shall pay Seller the total purchase price of Two Hundred Fifty Thousand Dollars ($205,000)...',
+          line: 44
+        }),
+        enrichFindingWithStatutoryRemedy({
           id: 'def_2',
           category: 'CROSS-REFERENCE FAILURE',
+          targetName: 'Section 14.2',
           severity: 'high',
           clause: 'Clause 2.1 & Clause 9.2',
           title: 'Broken Target: Section 14.2 Does Not Exist',
-          explanation: 'Agreement conditions termination on procedures in Section 14.2. Section 14 was omitted from the executed draft, leaving termination mechanics legally undefined.',
-          remedy: 'Re-insert Section 14.2 or update reference to existing termination framework.'
-        },
-        {
+          snippet: '...unless terminated earlier in accordance with Section 14.2.',
+          line: 37
+        }),
+        enrichFindingWithStatutoryRemedy({
           id: 'def_3',
           category: 'MISSING EXHIBIT SCHEDULE',
-          severity: 'high',
+          targetName: 'Exhibit C',
+          severity: 'critical',
           clause: 'Clause 3.1',
           title: 'Missing Exhibit C (Disclosure Schedules)',
-          explanation: 'Buyer closing conditions mandate delivery of Exhibit C disclosure schedules, but Exhibit C is missing from document schedules.',
-          remedy: 'Verify counterparty disclosures and attach Exhibit C before closing.'
-        },
-        {
+          snippet: '...all disclosure schedules set forth in Exhibit C, which are incorporated herein by reference.',
+          line: 40
+        }),
+        enrichFindingWithStatutoryRemedy({
           id: 'def_4',
           category: 'UNDEFINED CAPITALIZED TERM',
+          term: 'Key Personnel',
           severity: 'medium',
           clause: 'Clause 3.2',
           title: 'Undefined Term: "Key Personnel"',
-          explanation: 'Clause 3.2 binds Seller to utilize "Key Personnel" as designated in Schedule 1, but "Key Personnel" is not defined in Section 1 or Schedule 1.',
-          remedy: 'Define scope, qualifications, and replacement criteria for Key Personnel.'
-        },
-        {
-          id: 'def_5',
-          category: 'TIMELINE CONTRADICTION',
-          severity: 'high',
-          clause: 'Clause 9.3 vs Clause 9.1',
-          title: 'Contradictory Notice Periods (60 Days vs 10 Days)',
-          explanation: 'Clause 9.3 mandates sixty (60) days notice, while referencing Section 9.1 which specifies ten (10) days, creating direct breach ambiguity.',
-          remedy: 'Harmonize cure and notice periods across all sub-clauses.'
-        },
-        {
-          id: 'def_6',
-          category: 'SURVIVAL CLAUSE DEFECT',
-          severity: 'critical',
-          clause: 'Clause 11.4',
-          title: 'Invalid Survival Target (Section 19.1 Missing)',
-          explanation: 'Survival clause cites Section 19.1 for indemnification survival, but the contract terminates at Section 11, voiding indemnification protection.',
-          remedy: 'Correct citation to point to the valid indemnification section.'
-        }
+          snippet: 'Seller shall furnish key managerial services utilizing Key Personnel as designated in Schedule 1.',
+          line: 41
+        })
       ];
     }
 
-    return list;
-  }, [auditResults, contractText]);
+    return [];
+  }, [enrichedAudit, auditResults, contractText]);
 
   const riskScore = auditResults?.overallRiskScore?.score ?? null;
   const riskLevel = auditResults?.overallRiskScore?.level || null;
@@ -1338,10 +1281,80 @@ export default function ContractGuardDemo() {
                         <h4 className="text-sm font-bold text-white mt-1">
                           {finding.title}
                         </h4>
-                        <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed font-sans">
-                          {finding.explanation}
-                        </p>
-                        {finding.remedy && (
+                        
+                        {finding.explanation && (
+                          <p className="text-xs text-zinc-300 mt-1.5 leading-relaxed font-sans">
+                            {finding.explanation}
+                          </p>
+                        )}
+
+                        {/* Malpractice Exposure */}
+                        {finding.malpracticeRisk && (
+                          <div className="mt-2.5 p-2.5 rounded-lg bg-red-950/30 border border-red-500/30 text-xs text-red-200/90 leading-relaxed font-sans flex items-start gap-2">
+                            <AlertCircle size={14} className="text-red-400 shrink-0 mt-0.5" />
+                            <div>
+                              <span className="font-bold text-red-300">Litigation & Malpractice Risk: </span>
+                              <span>{finding.malpracticeRisk}</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Statutory Authority */}
+                        {finding.statutoryCitation && (
+                          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-mono">
+                            <span className="text-zinc-500 font-semibold text-[11px]">Governing Doctrine:</span>
+                            <span className="px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[11px] font-bold">
+                              ⚖️ {finding.statutoryCitation}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Court-Grade Redline Replacement */}
+                        {finding.courtGradeRedline ? (
+                          !hasActiveLicense && idx >= 3 ? (
+                            <div className="mt-3 p-3 rounded-xl bg-amber-500/[0.08] border border-amber-500/25 flex flex-wrap items-center justify-between gap-3 text-xs">
+                              <div className="flex items-center gap-2 text-amber-300">
+                                <Lock size={13} className="shrink-0 text-amber-400" />
+                                <span>AmLaw 100 Court-Grade Redline & UCC analysis gated in preview.</span>
+                              </div>
+                              <button
+                                onClick={() => openUpgrade('locked_finding')}
+                                className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-[11px] transition-all shrink-0 cursor-pointer flex items-center gap-1"
+                              >
+                                <span>Unlock Full Remediation</span>
+                                <ArrowRight size={11} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="mt-3 p-3 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="text-[11px] font-bold text-emerald-400 flex items-center gap-1">
+                                  <CheckCircle2 size={13} className="text-emerald-400" />
+                                  AmLaw 100 Court-Grade Replacement Language
+                                </span>
+                                <button
+                                  onClick={() => handleCopyDemoRedline(finding.id || idx, finding.courtGradeRedline)}
+                                  className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1 cursor-pointer shadow-sm shrink-0"
+                                >
+                                  {copiedDemoId === (finding.id || idx) ? (
+                                    <>
+                                      <Check size={12} className="text-black" />
+                                      <span>Copied! ✓</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Copy size={12} />
+                                      <span>Copy Redline</span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                              <div className="p-2.5 bg-black/70 rounded text-[11px] font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                                {finding.courtGradeRedline}
+                              </div>
+                            </div>
+                          )
+                        ) : finding.remedy ? (
                           !hasActiveLicense && idx >= 3 ? (
                             <div className="mt-3 p-3 rounded-xl bg-amber-500/[0.08] border border-amber-500/25 flex flex-wrap items-center justify-between gap-3 text-xs">
                               <div className="flex items-center gap-2 text-amber-300">
@@ -1362,7 +1375,7 @@ export default function ContractGuardDemo() {
                               <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
                             </div>
                           )
-                        )}
+                        ) : null}
                       </div>
                     );
                   })}

@@ -20,16 +20,44 @@ const LEGAL_STOPWORDS = new Set([
   'United States', 'America', 'U.S.', 'USA', 'UK', 'United Kingdom',
   'England', 'Wales', 'European Union', 'EU', 'Canada', 'State', 'Commonwealth',
   'County', 'City', 'Court',
-  // Contract Structure & Headings
+  // Courts, Judicial & Arbitral Forums
+  'Delaware Court of Chancery', 'Court of Chancery', 'Chancery', 'Delaware Court',
+  'District Court', 'Supreme Court', 'United States District Court', 'Tribunal',
+  'American Arbitration Association', 'AAA', 'JAMS',
+  // Contract Structure, Headings & Common Documents
   'Agreement', 'Contract', 'Section', 'Sections', 'Article', 'Articles',
   'Clause', 'Clauses', 'Paragraph', 'Paragraphs', 'Exhibit', 'Exhibits',
   'Schedule', 'Schedules', 'Appendix', 'Appendices', 'Annex', 'Annexes',
   'Attachment', 'Attachments', 'Recital', 'Recitals', 'Preamble',
-  'Table', 'Part', 'Signature', 'Signatures',
-  // Universal Legal Roles & Parties
+  'Table', 'Part', 'Signature', 'Signatures', 'Bill of Sale', 'General Bill of Sale',
+  'General Bill', 'Sale', 'Conveyance Instrument', 'Assignment', 'Assumption',
+  'Assumed Contracts', 'Standard Operating Definitions', 'Disclosure Schedules',
+  'Schedule of Exhibits', 'Asset Purchase', 'Reorganization Agreement',
+  'Purchase Price Consideration', 'Condition Precedent', 'Pre-Closing Covenants',
+  'Execution in Counterparts', 'Conduct of Business', 'Ordinary Course of Business',
+  'Ordinary Course', 'General Provisions', 'Attached', 'Note', 'Intellectual Property Disclosure Schedules',
+  'Date', 'Dates', 'Instructions', 'Instruction', 'Account', 'Accounts', 'Agent', 'Agents',
+  'Number', 'Numbers', 'Disclosure', 'Disclosures',
+  // Universal Legal Roles, Parties & Standard Definitions
   'Party', 'Parties', 'Client', 'Provider', 'Vendor', 'Customer', 'Supplier',
   'Consultant', 'Contractor', 'Company', 'Disclosing Party', 'Receiving Party',
   'Licensor', 'Licensee', 'Buyer', 'Seller', 'Employer', 'Employee',
+  'Business', 'Closing', 'Effective Date', 'Closing Date', 'Outside Date',
+  'Outside Termination Date', 'Purchase Price', 'Acquired Assets', 'Excluded Liabilities',
+  'Liens', 'Lien',
+  // Financial, Banking & Wire Transfer Descriptors
+  'Chase', 'Chase Bank', 'JPMorgan', 'JPMorgan Chase', 'JPMorgan Chase Bank',
+  'Citibank', 'Wells Fargo', 'Bank of America', 'Bank', 'Trust', 'Trustee',
+  'Escrow', 'Escrow Agent', 'Escrow Account', 'Escrow Holdback', 'Escrow Trust',
+  'Escrow Officer', 'Escrow Officer Tax', 'Beneficiary', 'Routing', 'Routing Number',
+  'Account Number', 'Wire Instructions', 'Wire', 'Wire Authorization',
+  'Direct Wire Authorization', 'Direct Wire Authorization Phone', 'Tax', 'Tax ID',
+  'EIN', 'Social Security', 'Managing Partner Social Security', 'Phone', 'Email',
+  // Corporate Officers, Titles & Degrees
+  'Chief Executive Officer', 'Chief Technology Officer', 'Chief Financial Officer',
+  'Managing Director', 'Managing Partner', 'Director', 'President', 'Vice President',
+  'Treasurer', 'Secretary', 'Partner', 'Officer', 'Esq', 'Esq.', 'Ph.D.', 'Ph', 'M.D.',
+  'J.D.', 'B.A.', 'B.S.', 'Marcus Vance', 'Sarah Jenkins', 'Vance',
   // Classical Legal Latin & Transitional Phrasing
   'Whereas', 'Witnesseth', 'Therefore', 'Hereof', 'Herein', 'Hereunder',
   'Hereto', 'Thereof', 'Therein', 'Thereto', 'Wherefore', 'Notwithstanding',
@@ -157,6 +185,16 @@ export function auditDefinedTerms(text = '', options = {}) {
     }
   });
 
+  // Auto-extract corporate entities from text into userParties to prevent flagging them as undefined terms
+  const RE_PREAMBLE_ENTITIES = /\b([A-Z][A-Za-z0-9&',.-]+(?:\s+[A-Z][A-Za-z0-9&',.-]+){0,4})\s+(LLC|L\.L\.C\.|Inc\.?|Incorporated|Corp\.?|Corporation|Ltd\.?|Limited|LLP|L\.L\.P\.)\b/g;
+  let entMatch;
+  while ((entMatch = RE_PREAMBLE_ENTITIES.exec(text)) !== null) {
+    const full = entMatch[0].trim().toLowerCase();
+    const stem = entMatch[1].trim().toLowerCase();
+    userParties.add(full);
+    userParties.add(stem);
+  }
+
   // --------------------------------------------------------------------------
   // PIPELINE 1: EXTRACT DEFINITIONS
   // --------------------------------------------------------------------------
@@ -240,10 +278,30 @@ export function auditDefinedTerms(text = '', options = {}) {
   const candidateOccurrences = new Map(); // term -> { count, firstLine, snippet }
   const RE_CAPITALIZED = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g;
 
+  let inSignatureBlock = false;
+  let inExhibitsSchedule = false;
+
   lines.forEach((lineText, idx) => {
     const lineNum = idx + 1;
     const trimmed = lineText.trim();
     if (!trimmed) return;
+
+    // Track signature blocks and exhibit lists to skip noise
+    if (/IN\s+WITNESS\s+WHEREOF/i.test(trimmed)) inSignatureBlock = true;
+    if (/SCHEDULE\s+OF\s+EXHIBITS/i.test(trimmed)) inExhibitsSchedule = true;
+
+    if (inSignatureBlock || inExhibitsSchedule) {
+      if (/^ARTICLE\s+[IVXLCDM0-9]+/i.test(trimmed)) {
+        inSignatureBlock = false;
+        inExhibitsSchedule = false;
+      } else {
+        return; // Skip signature blocks and exhibit listings from undefined terms scan
+      }
+    }
+
+    // Skip signatory lines and exhibit notes
+    if (/^(By|Name|Title|BUYER|SELLER)\s*:\s*/i.test(trimmed)) return;
+    if (/\(Attached\)|\[Note:/i.test(trimmed)) return;
 
     // Layer 5: Skip all-caps headings and short uppercase lines
     if (trimmed.length < 120 && trimmed === trimmed.toUpperCase()) return;
@@ -256,6 +314,10 @@ export function auditDefinedTerms(text = '', options = {}) {
     while ((m = RE_CAPITALIZED.exec(lineText)) !== null) {
       // Skip if token is part of subsection heading title
       if (headingEndIndex !== -1 && m.index < headingEndIndex) continue;
+
+      // Skip if preceded by standard labels or cross-ref prefixes
+      const precedingText = lineText.substring(0, m.index).trim();
+      if (/(?:Exhibits?|Schedules?|Appendices?|Sections?|Articles?|Clauses?|Account|Routing|Wire|Escrow|Beneficiary|Bank|Tax|EIN|Phone|Mobile|Email|State\s+of|County\s+of)\s*[:—–-]?\s*$/i.test(precedingText)) continue;
 
       let phrase = m[0].trim();
 
