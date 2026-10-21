@@ -21,7 +21,8 @@ import {
   consumeDemoAudit, 
   resetDemoAuditsForTesting, 
   verifyDeviceLicense,
-  initializeHardenedMeter
+  initializeHardenedMeter,
+  detectIncognitoMode
 } from '../utils/licenseManager';
 
 // Pre-packaged Hazardous Legal Contract for instant testing
@@ -98,6 +99,7 @@ export default function ContractGuardDemo() {
   // Evaluation passes & Device License state
   const [auditsLeft, setAuditsLeft] = useState(() => getDemoAuditsRemaining());
   const [hasActiveLicense, setHasActiveLicense] = useState(false);
+  const [isIncognito, setIsIncognito] = useState(false);
   const [auditToast, setAuditToast] = useState(null);
 
   // Interactive Smart PII Redactor Demo State
@@ -144,6 +146,16 @@ export default function ContractGuardDemo() {
         page.drawText('This sample discovery exhibit was stamped client-side in RAM with Nexus ContractGuard.', { x: 50, y: 630, size: 10, font });
         page.drawText('Notice the high-contrast white backing pill ensuring 100% legibility on court filings.', { x: 50, y: 610, size: 10, font });
         
+        if (!hasActiveLicense) {
+          page.drawText('*** EVALUATION COPY — NOT FOR OFFICIAL COURT FILING — ACTIVATE LICENSE AT NEXUS-OS.STORE ***', {
+            x: 50,
+            y: 40,
+            size: 8,
+            font: fontBold,
+            color: rgb(0.85, 0.2, 0.2)
+          });
+        }
+
         pdfBytes = await sampleDoc.save();
       }
 
@@ -193,6 +205,14 @@ export default function ContractGuardDemo() {
         // Deep multi-store audit count recovery (anti-tamper)
         const hardenedCount = await initializeHardenedMeter();
         setAuditsLeft(hardenedCount);
+
+        // Detect Incognito / Ephemeral sandbox
+        const incognito = await detectIncognitoMode();
+        if (incognito) {
+          setIsIncognito(true);
+          // In incognito, enforce 1 single trial pass max
+          setAuditsLeft((prev) => Math.min(prev, 1));
+        }
       } catch (e) {
         console.error('License/Meter check error:', e);
       }
@@ -226,7 +246,7 @@ export default function ContractGuardDemo() {
 
     try {
       if (!isInitial && !hasActiveLicense) {
-        const updated = consumeDemoAudit();
+        const updated = isIncognito ? 0 : consumeDemoAudit();
         setAuditsLeft(updated);
       }
 
@@ -734,6 +754,24 @@ export default function ContractGuardDemo() {
             </button>
           </div>
         </div>
+
+        {/* Ephemeral Sandbox / Incognito Mode Warning Banner */}
+        {isIncognito && (
+          <div className="mb-4 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-wrap items-center justify-between gap-3 text-xs text-amber-200">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold flex items-center gap-1.5 text-amber-400">
+                🔒 Ephemeral Sandbox (Private Browsing Detected):
+              </span>
+              <span>1 trial audit allocated. RAM state is volatile and clears upon window closure. Remediation for finding #4+ and official exports remain gated.</span>
+            </div>
+            <button
+              onClick={() => openUpgrade('general')}
+              className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-[11px] font-bold cursor-pointer shrink-0 transition-colors"
+            >
+              Unlock Full License ($199)
+            </button>
+          </div>
+        )}
 
         {/* Value-Anchored Audit Toast Banner */}
         <AnimatePresence>

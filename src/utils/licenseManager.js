@@ -621,6 +621,47 @@ export async function initializeHardenedMeter() {
   }
 }
 
+/**
+ * Detects Private Browsing / Incognito mode across modern browsers:
+ * - Chromium: Storage quota cap (ephemeral RAM allocation < 2GB)
+ * - Firefox: Disabled serviceWorker in private windows
+ * - Safari: Storage & IndexedDB sandbox restrictions
+ */
+export async function detectIncognitoMode() {
+  if (typeof window === 'undefined') return false;
+
+  try {
+    // 1. Firefox Private Browsing detection
+    if (!('serviceWorker' in navigator) && /Firefox/i.test(navigator.userAgent)) {
+      return true;
+    }
+
+    // 2. Chromium Incognito quota detection
+    if (navigator.storage && navigator.storage.estimate) {
+      const { quota } = await navigator.storage.estimate();
+      // On desktop Chromium, standard disk quota is usually tens of GBs (> 10GB).
+      // Incognito mode allocates a capped memory pool (<= 2GB or < 120MB).
+      if (quota && quota < 2147483648) {
+        return true;
+      }
+    }
+
+    // 3. Safari WebKit Private Browsing check
+    const isSafari = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    if (isSafari) {
+      try {
+        if (!window.indexedDB) return true;
+      } catch {
+        return true;
+      }
+    }
+  } catch (e) {
+    // Safe fallback
+  }
+
+  return false;
+}
+
 export function resetDemoAuditsForTesting() {
   const fp = localStorage.getItem(DEVICE_FP_KEY);
   syncAllStores(MAX_FREE_AUDITS, fp);
