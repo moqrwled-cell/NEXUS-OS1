@@ -13,6 +13,9 @@ import * as mammoth from 'mammoth';
 import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
 import { openSeamlessCheckout } from '../utils/checkoutPopup';
+import { sanitizeDocumentPII } from '../utils/piiEngine';
+import { executeBatesStamping } from '../utils/batesStamper';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { 
   getDemoAuditsRemaining, 
   consumeDemoAudit, 
@@ -95,6 +98,71 @@ export default function ContractGuardDemo() {
   const [auditsLeft, setAuditsLeft] = useState(() => getDemoAuditsRemaining());
   const [hasActiveLicense, setHasActiveLicense] = useState(false);
   const [auditToast, setAuditToast] = useState(null);
+
+  // Interactive Smart PII Redactor Demo State
+  const [redactInputText, setRedactInputText] = useState(
+    'Wire settlement of $1,450,000 to escrow account of Johnathan Vance at J.P. Morgan Chase (Account No: 4421-8890-1234, Routing No: 021000021). Tax ID (EIN): 12-3456789. Client Social Security: 000-45-6789. Confidential primary contact: jvance@vancelawfirm.com, mobile: +1 (212) 555-0198. Do not disclose merger terms.'
+  );
+  const [redactResult, setRedactResult] = useState(null);
+  const [isRedacting, setIsRedacting] = useState(false);
+
+  const handleRunRedaction = () => {
+    if (!redactInputText.trim()) return;
+    setIsRedacting(true);
+    setTimeout(() => {
+      const res = sanitizeDocumentPII(redactInputText, ['ssn', 'creditCard', 'bankAccount', 'email', 'phone', 'ip', 'ein'], [], 'block');
+      setRedactResult(res);
+      setIsRedacting(false);
+    }, 250);
+  };
+
+  // Interactive Bates Stamping Demo State
+  const [batesPrefix, setBatesPrefix] = useState('PLTF-');
+  const [batesStartNum, setBatesStartNum] = useState('000001');
+  const [batesPosition, setBatesPosition] = useState('bottom-right');
+  const [batesColor, setBatesColor] = useState('black');
+  const [isGeneratingBates, setIsGeneratingBates] = useState(false);
+
+  const handleDownloadSampleBates = async () => {
+    setIsGeneratingBates(true);
+    try {
+      const sampleDoc = await PDFDocument.create();
+      const page = sampleDoc.addPage([612, 792]);
+      const font = await sampleDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await sampleDoc.embedFont(StandardFonts.HelveticaBold);
+      
+      page.drawText('UNITED STATES DISTRICT COURT', { x: 50, y: 740, size: 12, font: fontBold });
+      page.drawText('SOUTHERN DISTRICT OF NEW YORK', { x: 50, y: 722, size: 10, font });
+      page.drawText('CIVIL ACTION NO. 26-CV-04891', { x: 50, y: 704, size: 10, font });
+      page.drawText('EXHIBIT A: MASTER TRANSACTION AGREEMENT', { x: 50, y: 660, size: 11, font: fontBold });
+      page.drawText('This sample discovery exhibit was stamped client-side in RAM with Nexus ContractGuard.', { x: 50, y: 630, size: 10, font });
+      page.drawText('Notice the high-contrast white backing pill ensuring 100% legibility on court filings.', { x: 50, y: 610, size: 10, font });
+      
+      const pdfBytes = await sampleDoc.save();
+      const result = await executeBatesStamping([pdfBytes], {
+        prefix: batesPrefix || 'EX-',
+        startNumber: parseInt(batesStartNum, 10) || 1,
+        position: batesPosition,
+        color: batesColor
+      });
+      result.download(`Sample_${batesPrefix || 'EX-'}${batesStartNum || '0001'}.pdf`);
+    } catch (e) {
+      console.error('Failed to generate sample Bates PDF', e);
+      alert('Error generating Bates sample: ' + e.message);
+    } finally {
+      setIsGeneratingBates(false);
+    }
+  };
+
+  // Local Vault Purge State
+  const [vaultPurged, setVaultPurged] = useState(false);
+  const handlePurgeVault = () => {
+    setContractText('');
+    setBaselineText('');
+    setRedactResult(null);
+    setVaultPurged(true);
+    setTimeout(() => setVaultPurged(false), 3000);
+  };
 
   // Dedicated In-Memory Audit Hook
   const {
@@ -1143,10 +1211,26 @@ export default function ContractGuardDemo() {
                           {finding.explanation}
                         </p>
                         {finding.remedy && (
-                          <div className="mt-3 p-2.5 rounded-lg bg-black/40 border border-white/5 text-[11px] font-mono text-emerald-400/90 flex items-center justify-between gap-2">
-                            <span>Remediation: {finding.remedy}</span>
-                            <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
-                          </div>
+                          !hasActiveLicense && idx >= 3 ? (
+                            <div className="mt-3 p-3 rounded-xl bg-amber-500/[0.08] border border-amber-500/25 flex flex-wrap items-center justify-between gap-3 text-xs">
+                              <div className="flex items-center gap-2 text-amber-300">
+                                <Lock size={13} className="shrink-0 text-amber-400" />
+                                <span>Actionable statutory remediation clause & UCC priority analysis gated in preview.</span>
+                              </div>
+                              <button
+                                onClick={() => openUpgrade('locked_finding')}
+                                className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-[11px] transition-all shrink-0 cursor-pointer flex items-center gap-1"
+                              >
+                                <span>Unlock Full Remediation</span>
+                                <ArrowRight size={11} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="mt-3 p-2.5 rounded-lg bg-black/40 border border-white/5 text-[11px] font-mono text-emerald-400/90 flex items-center justify-between gap-2">
+                              <span>Remediation: {finding.remedy}</span>
+                              <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+                            </div>
+                          )
                         )}
                       </div>
                     );
@@ -1214,66 +1298,146 @@ export default function ContractGuardDemo() {
             </motion.div>
           )}
 
-          {/* VIEW 2: SMART PII REDACTOR PREVIEW */}
+          {/* VIEW 2: SMART PII REDACTOR (INTERACTIVE DEMO SANDBOX) */}
           {activeTool === 'redact' && (
             <motion.div key="redact" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
               <div className="p-6 rounded-2xl bg-[#050A0F] border border-cyan-500/30 shadow-[0_0_30px_rgba(0,240,255,0.06)]">
-                <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-800">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
                       <EyeOff size={20} />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-white">Smart PII & Bank Identity Redactor</h2>
-                      <p className="text-xs text-zinc-400">Automated discovery and deterministic scrubbing of privileged information in client-side RAM.</p>
+                      <h2 className="text-base font-bold text-white">Smart PII & Bank Identity Redactor (Interactive Sandbox)</h2>
+                      <p className="text-xs text-zinc-400">Automated discovery and deterministic scrubbing of privileged data in client-side RAM (ABA Rule 1.6).</p>
                     </div>
                   </div>
-                  <span className="text-xs font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-full font-bold">
-                    PREVIEW MODULE
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
-                    <h3 className="text-xs font-mono uppercase text-zinc-400 font-bold mb-2">Unredacted Source Text (Sample)</h3>
-                    <p className="text-xs font-mono text-zinc-300 leading-relaxed bg-zinc-950/80 p-3 rounded border border-zinc-800/60">
-                      Wire $450,000 to John Doe at Wells Fargo (Account: <span className="text-rose-400 bg-rose-500/20 px-1 rounded">1234-5678-9012</span>, 
-                      Routing: <span className="text-rose-400 bg-rose-500/20 px-1 rounded">021000021</span>). SSN: <span className="text-rose-400 bg-rose-500/20 px-1 rounded">000-12-3456</span>. 
-                      Direct contact: jdoe@corporation.com.
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-black/50 border border-emerald-500/30">
-                    <h3 className="text-xs font-mono uppercase text-emerald-400 font-bold mb-2">Automated Air-Gapped Scrub Output</h3>
-                    <p className="text-xs font-mono text-emerald-300 leading-relaxed bg-zinc-950/80 p-3 rounded border border-emerald-500/30">
-                      Wire $450,000 to John Doe at Wells Fargo (Account: <span className="bg-emerald-500/30 text-emerald-200 px-1 rounded font-bold">[BANK_ACC_REDACTED]</span>, 
-                      Routing: <span className="bg-emerald-500/30 text-emerald-200 px-1 rounded font-bold">[ROUTING_REDACTED]</span>). SSN: <span className="bg-emerald-500/30 text-emerald-200 px-1 rounded font-bold">█████████</span>. 
-                      Direct contact: [EMAIL_REDACTED].
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 rounded-full font-bold">
+                      IN-RAM SANDBOX
+                    </span>
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
+                  {/* Left: Input Textarea */}
+                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xs font-mono uppercase text-zinc-400 font-bold">Unredacted Source Draft (Sample)</h3>
+                        <span className="text-[10px] font-mono text-zinc-500">
+                          {redactInputText.trim().split(/\s+/).filter(Boolean).length} words
+                        </span>
+                      </div>
+                      <textarea
+                        value={redactInputText}
+                        onChange={(e) => setRedactInputText(e.target.value)}
+                        className="w-full bg-zinc-950/80 p-3.5 rounded-xl border border-zinc-800/80 text-xs font-mono leading-relaxed text-zinc-200 outline-none resize-none min-h-[220px] focus:border-cyan-500/40"
+                        placeholder="Paste draft with SSNs, emails, wire routing, bank accounts..."
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-zinc-800/60">
+                      <button
+                        onClick={() => setRedactInputText('Wire settlement of $1,450,000 to escrow account of Johnathan Vance at J.P. Morgan Chase (Account No: 4421-8890-1234, Routing No: 021000021). Tax ID (EIN): 12-3456789. Client Social Security: 000-45-6789. Confidential primary contact: jvance@vancelawfirm.com, mobile: +1 (212) 555-0198. Do not disclose merger terms.')}
+                        className="text-[11px] font-mono text-zinc-400 hover:text-cyan-400 transition-colors"
+                      >
+                        Reset Sample
+                      </button>
+
+                      <button
+                        onClick={handleRunRedaction}
+                        disabled={isRedacting || !redactInputText.trim()}
+                        className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-90 text-black font-extrabold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(0,240,255,0.25)] disabled:opacity-40"
+                      >
+                        {isRedacting ? (
+                          <RefreshCw size={13} className="animate-spin" />
+                        ) : (
+                          <Zap size={13} className="fill-black" />
+                        )}
+                        <span>Scrub Privileged Data In-RAM</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right: Sanitized Output */}
+                  <div className="p-4 rounded-xl bg-black/50 border border-emerald-500/30 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-xs font-mono uppercase text-emerald-400 font-bold flex items-center gap-1.5">
+                          <CheckCircle2 size={13} />
+                          <span>Sanitized Judicial Output</span>
+                        </h3>
+                        {redactResult && (
+                          <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">
+                            {redactResult.totalRedactions} Entities Masked
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="w-full bg-zinc-950/80 p-3.5 rounded-xl border border-emerald-500/30 text-xs font-mono leading-relaxed text-emerald-300 min-h-[220px] whitespace-pre-wrap select-all">
+                        {redactResult ? redactResult.sanitizedText : (
+                          <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 py-12">
+                            <EyeOff size={24} className="mb-2 text-zinc-600" />
+                            <span>Click "Scrub Privileged Data In-RAM" to execute client-side masking.</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {redactResult && (
+                      <div className="mt-4 pt-3 border-t border-zinc-800/60 flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap gap-1.5 text-[10px] font-mono">
+                          {redactResult.detectedEntities.map((ent) => (
+                            <span key={ent.id} className="bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded">
+                              {ent.label}: {ent.count}
+                            </span>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(redactResult.sanitizedText);
+                            setAuditToast({ ms: 8, remaining: 'Copied' });
+                            setTimeout(() => setAuditToast(null), 3000);
+                          }}
+                          className="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                        >
+                          <Copy size={12} />
+                          <span>Copy Sanitized Text</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Non-intrusive value hook banner */}
                 <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-cyan-950/30 to-emerald-950/30 border border-cyan-500/30 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Unlock High-Throughput Redaction Suite</h4>
-                    <p className="text-xs text-zinc-300 mt-0.5">Scrub 500+ page discovery bundles and depositions locally without uploading sensitive files.</p>
+                  <div className="space-y-0.5">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                      <span>Air-Gapped Discovery & Deposition Scrubbing</span>
+                      <span className="text-[9px] font-mono bg-cyan-500/15 text-cyan-300 px-1.5 py-0.2 rounded font-bold uppercase">Enterprise</span>
+                    </h4>
+                    <p className="text-xs text-zinc-300">
+                      Sandbox limited to 500-word excerpt. Bulk scrub 500+ page discovery bundles and deposition PDFs locally without cloud transmission.
+                    </p>
                   </div>
                   <button
                     onClick={() => { setSelectedPlan('firm'); openUpgrade('redact'); }}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer flex items-center gap-1.5 shrink-0"
                   >
-                    Unlock Law Firm Suite ($299)
+                    <span>Unlock Law Firm Suite ($299)</span>
+                    <ArrowRight size={13} />
                   </button>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* VIEW 3: COURT BATES STAMPER PREVIEW */}
+          {/* VIEW 3: COURT BATES STAMPER (INTERACTIVE SIMULATOR) */}
           {activeTool === 'bates' && (
             <motion.div key="bates" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
               <div className="p-6 rounded-2xl bg-[#050A0F] border border-amber-500/30 shadow-[0_0_30px_rgba(245,158,11,0.06)]">
-                <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-800">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
                       <Layers size={20} />
@@ -1284,87 +1448,204 @@ export default function ContractGuardDemo() {
                     </div>
                   </div>
                   <span className="text-xs font-mono bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-full font-bold">
-                    FIRM LICENSE EXCLUSIVE
+                    LIVE SIMULATOR
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5">
-                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800 text-center">
-                    <span className="text-[10px] font-mono uppercase text-zinc-400">Standard Sequential Prefix</span>
-                    <div className="text-xl font-bold font-mono text-amber-400 mt-2">PLTF-000001</div>
-                    <p className="text-[11px] text-zinc-500 mt-1">Plaintiff Trial Production</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
+                  {/* Controls Column */}
+                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800 space-y-4">
+                    <h3 className="text-xs font-mono uppercase text-zinc-400 font-bold">Stamping Parameters</h3>
+                    
+                    <div>
+                      <label className="text-[11px] font-mono text-zinc-300 block mb-1">Prefix Designation:</label>
+                      <input
+                        type="text"
+                        value={batesPrefix}
+                        onChange={(e) => setBatesPrefix(e.target.value)}
+                        placeholder="e.g. PLTF-, DEF-, CONF-"
+                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs font-mono text-amber-400 focus:border-amber-400 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-mono text-zinc-300 block mb-1">Starting Sequence Number:</label>
+                      <input
+                        type="text"
+                        value={batesStartNum}
+                        onChange={(e) => setBatesStartNum(e.target.value)}
+                        placeholder="000001"
+                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs font-mono text-zinc-200 focus:border-amber-400 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-mono text-zinc-300 block mb-1">Stamp Placement:</label>
+                      <select
+                        value={batesPosition}
+                        onChange={(e) => setBatesPosition(e.target.value)}
+                        className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1.5 text-xs text-zinc-200 focus:border-amber-400 outline-none cursor-pointer"
+                      >
+                        <option value="bottom-right">Bottom Right (Judicial Standard)</option>
+                        <option value="bottom-center">Bottom Center</option>
+                        <option value="top-right">Top Right (Docket Style)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-mono text-zinc-300 block mb-1">Font Color:</label>
+                      <div className="flex gap-2">
+                        {['black', 'navy', 'red'].map((col) => (
+                          <button
+                            key={col}
+                            onClick={() => setBatesColor(col)}
+                            className={`px-3 py-1 rounded text-xs capitalize font-mono border cursor-pointer ${
+                              batesColor === col 
+                                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold' 
+                                : 'bg-zinc-900 text-zinc-400 border-zinc-800'
+                            }`}
+                          >
+                            {col}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-zinc-800">
+                      <button
+                        onClick={handleDownloadSampleBates}
+                        disabled={isGeneratingBates}
+                        className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-emerald-500 hover:opacity-90 text-black font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40"
+                      >
+                        {isGeneratingBates ? (
+                          <RefreshCw size={13} className="animate-spin" />
+                        ) : (
+                          <Download size={13} />
+                        )}
+                        <span>Download 1-Page Stamped Sample</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800 text-center">
-                    <span className="text-[10px] font-mono uppercase text-zinc-400">Defense Discovery Prefix</span>
-                    <div className="text-xl font-bold font-mono text-cyan-400 mt-2">DEF-000452</div>
-                    <p className="text-[11px] text-zinc-500 mt-1">Responsive Production</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800 text-center">
-                    <span className="text-[10px] font-mono uppercase text-zinc-400">Protective Order Designation</span>
-                    <div className="text-xl font-bold font-mono text-purple-400 mt-2">CONF-008910</div>
-                    <p className="text-[11px] text-zinc-500 mt-1">Attorney Eyes Only</p>
+
+                  {/* Right 2 Columns: Simulated Legal Document Canvas */}
+                  <div className="lg:col-span-2 p-6 rounded-xl bg-[#03060a] border border-zinc-800 relative min-h-[340px] flex flex-col justify-between overflow-hidden shadow-inner">
+                    {/* Simulated Legal Document Header */}
+                    <div className="space-y-1.5 text-center border-b border-zinc-800/80 pb-4">
+                      <p className="text-[11px] font-serif tracking-widest text-zinc-400 font-bold uppercase">
+                        IN THE UNITED STATES DISTRICT COURT
+                      </p>
+                      <p className="text-[10px] font-serif text-zinc-500">SOUTHERN DISTRICT OF NEW YORK</p>
+                      <p className="text-[10px] font-mono text-zinc-500">CIVIL DOCKET NO. 26-CV-04891 (RA)</p>
+                    </div>
+
+                    {/* Simulated Body Content */}
+                    <div className="space-y-2 py-6 text-zinc-400 font-serif text-xs leading-relaxed max-w-lg mx-auto">
+                      <p className="font-bold text-center text-zinc-200">EXHIBIT A: MASTER ACQUISITION AGREEMENT</p>
+                      <p className="indent-6 text-justify text-[11px] text-zinc-400">
+                        Plaintiff hereby submits Exhibit A in support of the preliminary injunction motion. Pursuant to Local Civil Rule 5.1, all confidential trade secrets and proprietary code matrices have been preserved in compliance with the protective order.
+                      </p>
+                    </div>
+
+                    {/* Live Dynamic Bates Stamp Badge Pill */}
+                    <div className={`flex ${
+                      batesPosition === 'bottom-right' ? 'justify-end' :
+                      batesPosition === 'bottom-center' ? 'justify-center' : 'justify-end'
+                    }`}>
+                      <div className="bg-white text-black font-mono font-bold text-xs px-2.5 py-0.5 rounded shadow-lg border border-black/20 tracking-wider">
+                        {batesPrefix || 'EX-'}{batesStartNum || '000001'}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
+                {/* Non-intrusive value hook banner */}
                 <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-amber-950/30 to-emerald-950/30 border border-amber-500/30 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <h4 className="text-sm font-bold text-white">Included Exclusively in Law Firm Suite ($299)</h4>
-                    <p className="text-xs text-zinc-300 mt-0.5">High-contrast white backing pill, zero compression artifacts, up to 5 user license keys.</p>
+                  <div className="space-y-0.5">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                      <span>Sequential Bates Numbering Across Thousands of Pages</span>
+                      <span className="text-[9px] font-mono bg-amber-500/15 text-amber-300 px-1.5 py-0.2 rounded font-bold uppercase">Firm Exclusive</span>
+                    </h4>
+                    <p className="text-xs text-zinc-300">
+                      Single-page simulator active. Multi-file binder batch stamping, high-contrast backing pills, and custom protective order sequences included in Law Firm Suite.
+                    </p>
                   </div>
                   <button
                     onClick={() => { setSelectedPlan('firm'); openUpgrade('bates'); }}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-emerald-500 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-emerald-500 hover:opacity-90 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(245,158,11,0.3)] cursor-pointer flex items-center gap-1.5 shrink-0"
                   >
-                    Unlock Law Firm Suite ($299)
+                    <span>Unlock Law Firm Suite ($299)</span>
+                    <ArrowRight size={13} />
                   </button>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* VIEW 4: AUDIT VAULT PREVIEW */}
+          {/* VIEW 4: LOCAL AUDIT VAULT & PWA (INTERACTIVE TELEMETRY) */}
           {activeTool === 'history' && (
             <motion.div key="history" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
               <div className="p-6 rounded-2xl bg-[#050A0F] border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.06)]">
-                <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-zinc-800">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
                       <Database size={20} />
                     </div>
                     <div>
-                      <h2 className="text-base font-bold text-white">Local Audit Vault (Zero Cloud Telemetry)</h2>
-                      <p className="text-xs text-zinc-400">All audit histories and redline diffs are retained locally in browser IndexedDB with zero server persistence.</p>
+                      <h2 className="text-base font-bold text-white">Local Audit Vault & Telemetry Inspector</h2>
+                      <p className="text-xs text-zinc-400">All audit histories and redline diffs are retained strictly in client browser memory with zero cloud transmission.</p>
                     </div>
                   </div>
                   <span className="text-xs font-mono bg-purple-500/15 text-purple-300 border border-purple-500/30 px-2.5 py-1 rounded-full font-bold">
-                    PWA STORAGE ARCHITECTURE
+                    AIR-GAP TELEMETRY
                   </span>
                 </div>
 
-                <div className="p-5 rounded-xl bg-black/40 border border-zinc-800 mt-5 space-y-3">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-xs font-bold text-white">Offline Progressive Web App (PWA)</h4>
-                      <p className="text-xs text-zinc-400">Install ContractGuard on macOS, Windows, or Linux. Launches as a standalone native app that operates without internet.</p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
+                    <span className="text-[10px] font-mono uppercase text-zinc-400">RAM Allocated</span>
+                    <div className="text-xl font-bold font-mono text-emerald-400 mt-1">~4.8 MB</div>
+                    <p className="text-[11px] text-zinc-500 mt-1">In-Memory Heap Space</p>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-xs font-bold text-white">One-Click Cryptographic Purge</h4>
-                      <p className="text-xs text-zinc-400">Wipe all audit sessions, extracted text, and cache instantly to comply with attorney-client matter closure protocols.</p>
-                    </div>
+                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
+                    <span className="text-[10px] font-mono uppercase text-zinc-400">Cloud Data Transmitted</span>
+                    <div className="text-xl font-bold font-mono text-cyan-400 mt-1">0.00 KB</div>
+                    <p className="text-[11px] text-zinc-500 mt-1">Zero External Telemetry</p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
+                    <span className="text-[10px] font-mono uppercase text-zinc-400">ABA Rule 1.6 Status</span>
+                    <div className="text-xl font-bold font-mono text-purple-400 mt-1">100% Compliant</div>
+                    <p className="text-[11px] text-zinc-500 mt-1">Strict Confidentiality Guard</p>
                   </div>
                 </div>
 
-                <div className="mt-5 flex items-center justify-end">
+                <div className="p-4 rounded-xl bg-black/40 border border-zinc-800 mt-5 flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h4 className="text-xs font-bold text-white">Cryptographic In-Memory Session Purge</h4>
+                    <p className="text-xs text-zinc-400 mt-0.5">Wipe all extracted text, active buffers, and temporary cache upon closing matter review.</p>
+                  </div>
+                  <button
+                    onClick={handlePurgeVault}
+                    className="px-4 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                  >
+                    <RefreshCw size={12} />
+                    <span>{vaultPurged ? '✓ Memory Purged' : 'Purge Active RAM Session'}</span>
+                  </button>
+                </div>
+
+                {/* Non-intrusive value hook banner */}
+                <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-purple-950/30 to-emerald-950/30 border border-purple-500/30 flex flex-wrap items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <h4 className="text-sm font-bold text-white">Multi-Workstation Offline PWA Deployments</h4>
+                    <p className="text-xs text-zinc-300">Install ContractGuard as a standalone desktop app on macOS, Windows, and Linux across your entire firm.</p>
+                  </div>
                   <button
                     onClick={() => { setSelectedPlan('solo'); openUpgrade('general'); }}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer flex items-center gap-1.5 shrink-0"
                   >
-                    Get Lifetime Offline License ($199 Solo / $299 Firm)
+                    <span>Get Lifetime Offline License ($199 / $299)</span>
+                    <ArrowRight size={13} />
                   </button>
                 </div>
               </div>
