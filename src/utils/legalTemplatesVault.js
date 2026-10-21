@@ -9,7 +9,8 @@ export const TEMPLATE_CATEGORIES = [
   { id: 'real_estate', label: 'Real Estate & Land', labelAr: 'العقارات والأراضي' },
   { id: 'corporate', label: 'Corporate & M&A', labelAr: 'الشركات والاستحواذ' },
   { id: 'services', label: 'Commercial & Tech', labelAr: 'الخدمات والتكنولوجيا' },
-  { id: 'finance', label: 'Lending & Finance', labelAr: 'التمويل والقروض' }
+  { id: 'finance', label: 'Lending & Finance', labelAr: 'التمويل والقروض' },
+  { id: 'dispute', label: 'Litigation & Settlement', labelAr: 'فض النزاعات والتسويات' }
 ];
 
 export const LEGAL_TEMPLATES = [
@@ -403,6 +404,225 @@ This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}
 
 COMPANY: {{COMPANY_NAME}}           CONTRACTOR: {{CONTRACTOR_NAME}}
 By: ___________________________    By: ___________________________`
+  },
+
+  // 9. COMMERCIAL REAL ESTATE LETTER OF INTENT (LOI)
+  {
+    id: 'commercial_real_estate_loi',
+    category: 'real_estate',
+    title: 'Commercial Real Estate Letter of Intent (LOI)',
+    titleAr: 'خطاب نوايا لشراء عقار تجاري (CRE Letter of Intent)',
+    jurisdiction: 'United States Real Estate Practice (Universal Form)',
+    summary: 'Standard non-binding commercial acquisition term sheet outlining purchase price, earnest money escrow, physical diligence milestones, closing timelines, and binding exclusivity (no-shop) covenants.',
+    variables: [
+      { key: 'PROSPECTIVE_BUYER', label: 'Prospective Buyer Name', defaultVal: 'Vanguard Commercial Acquisitions LLC', type: 'text' },
+      { key: 'PROSPECTIVE_SELLER', label: 'Property Owner / Seller Name', defaultVal: 'Crestline Development Partners LP', type: 'text' },
+      { key: 'PROPERTY_DESCRIPTION', label: 'Property Address & Parcel Description', defaultVal: '500 North Michigan Avenue, Suite 1200, Chicago, IL (Cook County PIN: 17-10-200-015)', type: 'text' },
+      { key: 'OFFER_PRICE_WORDS', label: 'Offered Price (Words)', defaultVal: 'Twelve Million Five Hundred Thousand Dollars', type: 'text' },
+      { key: 'OFFER_PRICE_NUM', label: 'Offered Price ($ Numerical)', defaultVal: '$12,500,000', type: 'text' },
+      { key: 'INITIAL_DEPOSIT', label: 'Initial Earnest Deposit ($)', defaultVal: '$250,000', type: 'text' },
+      { key: 'INSPECTION_PERIOD_DAYS', label: 'Feasibility & Inspection Period (Days)', defaultVal: '30', type: 'text' },
+      { key: 'CLOSING_PERIOD_DAYS', label: 'Closing Period Post-Diligence (Days)', defaultVal: '30', type: 'text' },
+      { key: 'EXCLUSIVITY_DAYS', label: 'Exclusivity / No-Shop Period (Days)', defaultVal: '45', type: 'text' },
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Illinois', type: 'text' }
+    ],
+    templateBody: `NON-BINDING LETTER OF INTENT FOR COMMERCIAL REAL ESTATE ACQUISITION
+
+Date: {{EFFECTIVE_DATE}}
+
+TO: {{PROSPECTIVE_SELLER}} ("Seller")
+FROM: {{PROSPECTIVE_BUYER}} ("Buyer")
+RE: Letter of Intent to Acquire {{PROPERTY_DESCRIPTION}} (the "Property")
+
+Dear Seller:
+
+This Letter of Intent ("LOI") sets forth the preliminary terms and economic framework under which Buyer proposes to acquire fee simple title to the Property from Seller.
+
+1. PURCHASE PRICE
+The total purchase consideration for the Property shall be {{OFFER_PRICE_WORDS}} ({{OFFER_PRICE_NUM}}), payable in cash at Closing via wire transfer.
+
+2. EARNEST MONEY DEPOSIT
+Within three (3) business days following full execution of a definitive Purchase and Sale Agreement ("PSA"), Buyer shall deliver into escrow with an agreed national title company an earnest deposit of {{INITIAL_DEPOSIT}} (the "Deposit"). The Deposit shall be fully refundable during the Inspection Period and credited toward the Purchase Price at Closing.
+
+3. DUE DILIGENCE & INSPECTION
+Buyer shall have {{INSPECTION_PERIOD_DAYS}} calendar days following delivery of all Seller property diligence files to complete physical, environmental, zoning, and financial feasibility audits. Buyer shall have the unconditioned right to terminate the PSA for any reason prior to expiration of the Inspection Period and receive an immediate return of the Deposit.
+
+4. CLOSING TIMELINE
+The Closing shall occur within {{CLOSING_PERIOD_DAYS}} calendar days following the expiration of the Inspection Period.
+
+5. NON-BINDING NATURE & BINDING EXCLUSIVITY
+With the exception of this Section 5 and Section 6, this LOI is an expression of mutual intent only and does not constitute a binding legal contract. Neither party shall be bound unless and until a definitive PSA is mutually executed and delivered.
+
+BINDING COVENANTS:
+In consideration of Buyer expending legal and engineering costs to evaluate the Property, Seller agrees that for a period of {{EXCLUSIVITY_DAYS}} calendar days from the date of this LOI (the "Exclusivity Period"), Seller and its brokers, agents, and representatives shall not solicit, negotiate, or enter into any letters of intent, contracts, or discussions regarding the sale, financing, or transfer of the Property with any third party.
+
+6. GOVERNING LAW
+The binding portions of this LOI shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+
+AGREED AND ACCEPTED:
+
+PROSPECTIVE BUYER:                     PROSPECTIVE SELLER:
+{{PROSPECTIVE_BUYER}}                  {{PROSPECTIVE_SELLER}}
+
+By: ___________________________        By: ___________________________
+Title: Authorized Signatory            Title: Authorized Signatory`
+  },
+
+  // 10. LLC OPERATING AGREEMENT (MANAGER-MANAGED)
+  {
+    id: 'llc_operating_agreement',
+    category: 'corporate',
+    title: 'LLC Operating Agreement (Manager-Managed)',
+    titleAr: 'عقد تأسيس وتشغيل شركة ذات مسؤولية محدودة (LLC Operating Agreement)',
+    jurisdiction: 'Delaware / US State LLC Acts',
+    summary: 'Comprehensive institutional LLC Operating Agreement featuring capital account maintenance under IRC § 704(b), fiduciary duty safe harbors, transfer restrictions (Right of First Refusal), and drag-along/tag-along mechanics.',
+    variables: [
+      { key: 'COMPANY_NAME', label: 'Company Legal Name LLC', defaultVal: 'Apex Strategic Holdings LLC', type: 'text' },
+      { key: 'STATE_OF_FORMATION', label: 'State of Formation', defaultVal: 'Delaware', type: 'text' },
+      { key: 'PRINCIPAL_OFFICE', label: 'Principal Business Address', defaultVal: '1209 Orange Street, Wilmington, DE 19801', type: 'text' },
+      { key: 'MANAGER_NAME', label: 'Initial Manager Full Name', defaultVal: 'Alexander Sterling', type: 'text' },
+      { key: 'INITIAL_CAPITAL_CONTRIBUTION', label: 'Initial Capital Contribution ($)', defaultVal: '$500,000', type: 'text' },
+      { key: 'INITIAL_MEMBERS', label: 'Founding Members List', defaultVal: 'Sterling Ventures Inc. (60%) and Horizon Capital Partners LLC (40%)', type: 'text' }
+    ],
+    templateBody: `LIMITED LIABILITY COMPANY OPERATING AGREEMENT
+OF {{COMPANY_NAME}}
+
+THIS LIMITED LIABILITY COMPANY AGREEMENT (this "Agreement") of {{COMPANY_NAME}} (the "Company") is entered into as of {{EFFECTIVE_DATE}}, by and among the Members identified on Schedule A hereto (the "Members") and {{MANAGER_NAME}} as Manager.
+
+ARTICLE I — FORMATION & PURPOSE
+1.1 Formation. The Company was formed as a limited liability company pursuant to the provisions of the {{STATE_OF_FORMATION}} Limited Liability Company Act (the "Act").
+1.2 Principal Office. The principal executive office of the Company shall be located at {{PRINCIPAL_OFFICE}}, or at such other place as the Manager may designate.
+1.3 Business Purpose. The purpose of the Company is to engage in any lawful act or business for which limited liability companies may be organized under the Act.
+
+ARTICLE II — CAPITAL CONTRIBUTIONS & CAPITAL ACCOUNTS
+2.1 Initial Contributions. Concurrently with the execution of this Agreement, the Members have contributed cash or property in the aggregate amount of {{INITIAL_CAPITAL_CONTRIBUTION}}, as set forth on Schedule A.
+2.2 Capital Accounts. A separate Capital Account shall be maintained for each Member in accordance with Section 704(b) of the Internal Revenue Code of 1986, as amended (the "Code"), and Treasury Regulation § 1.704-1(b)(2)(iv).
+2.3 No Additional Mandatory Calls. No Member shall be required to make any additional capital contributions without such Member's express written consent.
+
+ARTICLE III — ALLOCATIONS & DISTRIBUTIONS
+3.1 Profit and Loss Allocations. Net profits and net losses of the Company shall be allocated among the Members pro rata in accordance with their respective Membership Percentages.
+3.2 Tax Distributions. To the extent cash is legally available, the Manager shall cause the Company to make quarterly cash distributions to each Member sufficient to satisfy estimated federal and state income tax liabilities attributable to taxable income allocated to such Member.
+
+ARTICLE IV — MANAGEMENT & POWERS
+4.1 Manager Authority. The management, control, and governance of the Company shall be vested exclusively in {{MANAGER_NAME}} (the "Manager"). The Manager shall have all requisite power and authority to act on behalf of the Company in the ordinary course of business.
+4.2 Major Decisions. Notwithstanding Section 4.1, the Manager shall not take any of the following actions without the prior approval of Members holding at least seventy-five percent (75%) of the Membership Interests: (a) merge, consolidate, or sell all or substantially all assets of the Company; (b) file a voluntary petition in bankruptcy; or (c) incur aggregate debt obligations exceeding Two Hundred Fifty Thousand Dollars ($250,000).
+
+ARTICLE V — TRANSFER RESTRICTIONS & RIGHT OF FIRST REFUSAL
+5.1 General Prohibition. No Member may sell, assign, pledge, or transfer any Membership Interest without the unanimous written consent of the Manager, except as expressly permitted herein.
+5.2 Right of First Refusal (ROFR). If a Member receives a bona fide third-party offer to purchase its Interest, such Member shall provide prompt written notice to the Company and other Members. The Company shall have the right to purchase such Interest upon the same terms and conditions within thirty (30) days.
+
+ARTICLE VI — DISSOLUTION & LIQUIDATION
+The Company shall dissolve only upon: (a) unanimous written election of the Members; (b) entry of a judicial decree of dissolution; or (c) sale of all Company assets.
+
+IN WITNESS WHEREOF, the undersigned have executed this Operating Agreement as of the Effective Date.
+
+MANAGER:                               MEMBERS:
+{{MANAGER_NAME}}                       {{INITIAL_MEMBERS}}
+By: ___________________________        By: ___________________________`
+  },
+
+  // 11. EXECUTIVE EMPLOYMENT & CONFIDENTIALITY AGREEMENT
+  {
+    id: 'executive_employment_agreement',
+    category: 'services',
+    title: 'Executive Employment & Severance Agreement',
+    titleAr: 'عقد توظيف تنفيذي ومكافأة نهاية الخدمة (Executive Employment Agreement)',
+    jurisdiction: 'United States Corporate Employment Jurisprudence',
+    summary: 'Executive-level employment agreement incorporating base compensation, performance bonuses, termination definitions (Cause vs Without Cause), severance salary continuation, and Section 409A deferred compensation compliance.',
+    variables: [
+      { key: 'EMPLOYER_NAME', label: 'Company / Employer Name', defaultVal: 'Nexus Cybernetics Technologies Corp.', type: 'text' },
+      { key: 'EXECUTIVE_NAME', label: 'Executive Full Legal Name', defaultVal: 'Victoria Sterling, J.D.', type: 'text' },
+      { key: 'EXECUTIVE_TITLE', label: 'Executive Position / Title', defaultVal: 'Chief Legal Officer & General Counsel', type: 'text' },
+      { key: 'BASE_SALARY', label: 'Annual Base Salary ($)', defaultVal: '$375,000', type: 'text' },
+      { key: 'ANNUAL_BONUS_PERCENT', label: 'Target Incentive Bonus (%)', defaultVal: '40%', type: 'text' },
+      { key: 'SEVERANCE_MONTHS', label: 'Severance Continuation (Months)', defaultVal: '12', type: 'text' },
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'New York', type: 'text' }
+    ],
+    templateBody: `EXECUTIVE EMPLOYMENT AGREEMENT
+
+THIS EXECUTIVE EMPLOYMENT AGREEMENT (this "Agreement") is entered into as of {{EFFECTIVE_DATE}}, by and between {{EMPLOYER_NAME}} (the "Company") and {{EXECUTIVE_NAME}} ("Executive").
+
+1. POSITION AND DUTIES
+Executive shall serve as {{EXECUTIVE_TITLE}} of the Company, reporting directly to the Chief Executive Officer and Board of Directors. Executive shall perform all duties commensurate with such position and devote substantially all business time, attention, and energies to the Company's business.
+
+2. COMPENSATION AND BENEFITS
+(a) Base Salary. The Company shall pay Executive an annual base salary of {{BASE_SALARY}}, payable in accordance with the Company's regular payroll practices. The Base Salary shall be reviewed annually for potential increase.
+(b) Annual Incentive Bonus. Executive shall be eligible to earn an annual target cash bonus equal to {{ANNUAL_BONUS_PERCENT}} of Base Salary, conditioned upon achievement of corporate and personal performance metrics established by the Board.
+(c) Benefits. Executive shall be entitled to participate in all group health, disability, life insurance, and 401(k) retirement benefit plans maintained for senior officers.
+
+3. TERMINATION OF EMPLOYMENT
+(a) At-Will. Employment is at-will and may be terminated by either party at any time, with or without Cause, subject to the severance terms herein.
+(b) Termination for Cause. If Company terminates Executive's employment for Cause (defined as felony conviction, gross insubordination, material breach of fiduciary duty, or willful fraud), Company shall have no further obligation to pay compensation or benefits beyond accrued Base Salary through the termination date.
+(c) Involuntary Termination Without Cause. If Company terminates Executive without Cause, Executive shall receive, subject to execution of an unrevoked general release of claims: (i) continuation of Base Salary for {{SEVERANCE_MONTHS}} months; (ii) pro-rated annual bonus for the year of termination; and (iii) Company-subsidized COBRA premiums for up to twelve (12) months.
+
+4. RESTRICTIVE COVENANTS
+(a) Confidentiality. Executive shall hold all proprietary formulas, customer lists, software algorithms, and trade secrets of Company in strict confidence during and following employment.
+(b) Non-Solicitation. For twelve (12) months following termination, Executive shall not solicit or hire any active employee or solicit any customer of Company to divert business away from Company.
+
+5. CODE SECTION 409A COMPLIANCE
+This Agreement is intended to comply with, or be exempt from, Internal Revenue Code § 409A. Any severance payments due upon termination shall commence only upon Executive's "separation from service" within the meaning of § 409A.
+
+6. GOVERNING LAW
+This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+
+COMPANY: {{EMPLOYER_NAME}}           EXECUTIVE: {{EXECUTIVE_NAME}}
+By: ___________________________       _______________________________
+Title: Authorized Signatory           {{EXECUTIVE_NAME}}`
+  },
+
+  // 12. SETTLEMENT AND MUTUAL GENERAL RELEASE AGREEMENT
+  {
+    id: 'settlement_and_release_agreement',
+    category: 'dispute',
+    title: 'Settlement and Mutual General Release Agreement',
+    titleAr: 'اتفاقية تسوية وإبراء ذمة عام ومتبادل (Settlement & General Release)',
+    jurisdiction: 'United States Civil Litigation Practice (All 50 States)',
+    summary: 'Universal settlement and release of legal claims containing complete mutual covenants, dismissal with prejudice, California Civil Code § 1542 waiver of unknown claims, non-disparagement, and confidentiality.',
+    variables: [
+      { key: 'FIRST_PARTY', label: 'Claimant / First Party Legal Name', defaultVal: 'Vanguard Dynamics Software Inc.', type: 'text' },
+      { key: 'SECOND_PARTY', label: 'Respondent / Second Party Legal Name', defaultVal: 'Quantum Analytics Partners LLC', type: 'text' },
+      { key: 'DISPUTE_SUMMARY', label: 'Summary of Disputed Matter / Lawsuit', defaultVal: 'alleged breach of master license agreement and service level credits under Docket No. 24-CV-8812', type: 'text' },
+      { key: 'SETTLEMENT_AMOUNT_WORDS', label: 'Settlement Payment (Words)', defaultVal: 'One Hundred Seventy-Five Thousand Dollars', type: 'text' },
+      { key: 'SETTLEMENT_AMOUNT_NUM', label: 'Settlement Payment ($ Numerical)', defaultVal: '$175,000', type: 'text' },
+      { key: 'PAYMENT_DEADLINE_DAYS', label: 'Payment Deadline (Business Days)', defaultVal: '10', type: 'text' },
+      { key: 'COURT_JURISDICTION', label: 'Court / Action Venue', defaultVal: 'United States District Court for the Southern District of New York', type: 'text' },
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'New York', type: 'text' }
+    ],
+    templateBody: `SETTLEMENT AND MUTUAL GENERAL RELEASE AGREEMENT
+
+THIS SETTLEMENT AND MUTUAL GENERAL RELEASE AGREEMENT (this "Agreement") is entered into as of {{EFFECTIVE_DATE}} (the "Effective Date"), by and between {{FIRST_PARTY}} ("First Party") and {{SECOND_PARTY}} ("Second Party").
+
+RECITALS:
+WHEREAS, a dispute arose between the Parties concerning {{DISPUTE_SUMMARY}} (the "Dispute"); and
+WHEREAS, the Parties desire to fully, finally, and amicably compromise, resolve, and settle all disputes, controversies, and claims existing between them, without any admission of liability or wrongdoing.
+
+NOW, THEREFORE, in consideration of the mutual covenants contained herein, the Parties agree:
+
+1. SETTLEMENT CONSIDERATION
+Within {{PAYMENT_DEADLINE_DAYS}} business days following the Effective Date, {{SECOND_PARTY}} shall pay to {{FIRST_PARTY}} the sum of {{SETTLEMENT_AMOUNT_WORDS}} ({{SETTLEMENT_AMOUNT_NUM}}) by wire transfer of immediately available federal funds to an account designated in writing by {{FIRST_PARTY}}.
+
+2. DISMISSAL OF PENDING PROCEEDINGS
+Within two (2) business days following receipt and clearance of the settlement payment, the Parties shall execute and file a Stipulation of Dismissal with Prejudice of all claims pending before the {{COURT_JURISDICTION}}, with each party bearing its own attorneys' fees and court costs.
+
+3. MUTUAL GENERAL RELEASE
+In consideration of the undertakings herein, each Party, on behalf of itself and its affiliates, officers, directors, and successors, hereby completely releases and forever discharges the other Party from any and all claims, demands, liabilities, suits, damages, and causes of action of any kind, whether known or unknown, suspected or unsuspected, arising out of or related to the Dispute or occurrences prior to the Effective Date.
+
+4. EXPRESS WAIVER OF UNKNOWN CLAIMS (CALIFORNIA CIVIL CODE § 1542)
+The Parties expressly waive and relinquish all rights and benefits afforded by Section 1542 of the California Civil Code (and any analogous federal or state statute), which provides:
+"A GENERAL RELEASE DOES NOT EXTEND TO CLAIMS THAT THE CREDITOR OR RELEASING PARTY DOES NOT KNOW OR SUSPECT TO EXIST IN HIS OR HER FAVOR AT THE TIME OF EXECUTING THE RELEASE AND THAT, IF KNOWN BY HIM OR HER, WOULD HAVE MATERIALLY AFFECTED HIS OR HER SETTLEMENT WITH THE DEBTOR OR RELEASED PARTY."
+
+5. NO ADMISSION OF FAULT
+This Agreement is the compromise of a disputed claim and shall not be treated or construed as an admission of fault, liability, or violation of law by either Party.
+
+6. CONFIDENTIALITY & NON-DISPARAGEMENT
+The Parties agree that the financial terms of this settlement shall remain strictly confidential. Each Party covenants not to make, publish, or communicate to any person or entity any defamatory or disparaging remarks regarding the other Party.
+
+7. GOVERNING LAW & JURISDICTION
+This Agreement shall be construed and governed in accordance with the laws of the State of {{GOVERNING_STATE}}.
+
+FIRST PARTY: {{FIRST_PARTY}}           SECOND PARTY: {{SECOND_PARTY}}
+By: ___________________________        By: ___________________________
+Title: Authorized Representative       Title: Authorized Representative`
   }
 ];
 

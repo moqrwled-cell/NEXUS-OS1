@@ -63,6 +63,8 @@ export default function LegalTemplatesView({ onSendToAudit }) {
     try {
       await downloadRedactedPDF(compiledText, {
         title: selectedTemplate.title,
+        jurisdiction: selectedTemplate.jurisdiction || 'United States Commercial Law',
+        isDraft: true,
         totalRedactions: 0,
         date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
       });

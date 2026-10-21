@@ -75,6 +75,14 @@ import { computeContractDiff } from '../src/utils/diffEngine.js';
 import { sanitizeDocumentPII } from '../src/utils/piiEngine.js';
 import { scanLegalRisks } from '../src/utils/legalRiskRules.js';
 import { validateEnterpriseKey } from '../src/utils/auth.js';
+import { 
+  LEGAL_TEMPLATES, 
+  TEMPLATE_CATEGORIES, 
+  compileTemplateText 
+} from '../src/utils/legalTemplatesVault.js';
+import { 
+  generateRedactedPDFBytes 
+} from '../src/utils/redactedPdfGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -164,6 +172,9 @@ https.request = function (...args) {
     'src/utils/piiEngine.js',
     'src/utils/batesStamper.js',
     'src/utils/legalRiskRules.js',
+    'src/utils/redactedPdfGenerator.js',
+    'src/utils/legalTemplatesVault.js',
+    'src/components/LegalTemplatesView.jsx',
     'src/workers/contractWorker.js',
     'src/pages/ContractCompare.jsx'
   ];
@@ -1144,6 +1155,79 @@ suiteBanner('TIER 5', 'Adversarial Stress Hardening (10k+ Words <2,000ms & Fuzzi
   });
   assert(!fuzzedMemo.includes('<script>alert'), 'T5.10: Fuzzing: Output HTML properly escapes hostile script tags in Client Memo');
 }
+
+// ============================================================================
+// [TIER 6] Legal Templates Vault & Court-Grade In-Memory PDF Engine
+// ============================================================================
+suiteBanner('TIER 6', 'AmLaw 100 Legal Templates Vault & Redacted PDF Engine');
+
+assert(Array.isArray(LEGAL_TEMPLATES) && LEGAL_TEMPLATES.length >= 12, `T6.1: Legal Templates Vault contains at least 12 AmLaw 100 master templates (actual: ${LEGAL_TEMPLATES?.length})`);
+
+const expectedCategories = ['real_estate', 'corporate', 'services', 'finance', 'dispute'];
+const allCategoriesPresent = expectedCategories.every(catId => 
+  LEGAL_TEMPLATES.some(t => t.category === catId)
+);
+assert(allCategoriesPresent, 'T6.2: Templates cover all core institutional categories: Real Estate, Corporate, Services, Finance, Litigation');
+
+// Test Commercial Land PSA compilation
+const landTemplate = LEGAL_TEMPLATES.find(t => t.id === 'commercial_land_psa');
+assert(landTemplate !== undefined, 'T6.3: Commercial Land Purchase and Sale Agreement template is registered');
+
+const compiledLandPSA = compileTemplateText(landTemplate, {
+  SELLER_NAME: 'Acme Land Trust LLC',
+  BUYER_NAME: 'Evergreen Real Estate Holdings Inc.',
+  PURCHASE_PRICE_NUM: '$4,800,000',
+  PARCEL_ID: 'APN-999-777-111'
+});
+assert(compiledLandPSA.includes('Acme Land Trust LLC'), 'T6.4: Land PSA compilation injects custom seller name');
+assert(compiledLandPSA.includes('Evergreen Real Estate Holdings Inc.'), 'T6.5: Land PSA compilation injects custom buyer name');
+assert(compiledLandPSA.includes('$4,800,000'), 'T6.6: Land PSA compilation injects numerical purchase price');
+assert(compiledLandPSA.includes('APN-999-777-111'), 'T6.7: Land PSA compilation injects tax parcel APN number');
+
+// Test Settlement & Release Agreement compilation
+const settlementTemplate = LEGAL_TEMPLATES.find(t => t.id === 'settlement_and_release_agreement');
+assert(settlementTemplate !== undefined, 'T6.8: Settlement and Mutual General Release template is registered');
+
+const compiledSettlement = compileTemplateText(settlementTemplate, {
+  FIRST_PARTY: 'Innovatech Corp',
+  SECOND_PARTY: 'Global Solutions LLC',
+  SETTLEMENT_AMOUNT_NUM: '$350,000'
+});
+assert(compiledSettlement.includes('CALIFORNIA CIVIL CODE § 1542'), 'T6.9: Settlement agreement incorporates statutory unknown claims waiver (Cal. Civ. Code § 1542)');
+assert(compiledSettlement.includes('Innovatech Corp') && compiledSettlement.includes('Global Solutions LLC'), 'T6.10: Settlement agreement compiles party names correctly');
+
+// Test Court-Grade PDF In-Memory Byte Generation (Draft Mode)
+let draftPdfBytes = null;
+let draftPdfError = null;
+try {
+  draftPdfBytes = await generateRedactedPDFBytes(compiledLandPSA, {
+    title: 'Commercial Land PSA - Acme vs Evergreen',
+    isDraft: true,
+    jurisdiction: 'State of Ohio'
+  });
+} catch (err) {
+  draftPdfError = err.message;
+}
+assert(draftPdfBytes !== null && draftPdfBytes.length > 1000, `T6.11: generateRedactedPDFBytes generates valid non-empty byte buffer in draft mode ${draftPdfError ? '(' + draftPdfError + ')' : ''}`);
+
+// Verify PDF header magic bytes "%PDF-"
+const pdfHeader = draftPdfBytes ? Buffer.from(draftPdfBytes.slice(0, 5)).toString('utf-8') : '';
+assert(pdfHeader.startsWith('%PDF-'), 'T6.12: In-memory generated draft PDF starts with valid standard PDF magic header (%PDF-)');
+
+// Test Redacted PDF In-Memory Byte Generation (PII Redaction Mode)
+let redactedPdfBytes = null;
+try {
+  redactedPdfBytes = await generateRedactedPDFBytes('CONFIDENTIAL SETTLEMENT: [REDACTED: US SSN] paid to [REDACTED: PERSON].', {
+    title: 'Sanitized Settlement Record',
+    totalRedactions: 2,
+    isDraft: false
+  });
+} catch (err) {
+  // handled
+}
+assert(redactedPdfBytes !== null && redactedPdfBytes.length > 500, 'T6.13: generateRedactedPDFBytes generates certified court-grade PDF in PII sanitization mode');
+const redactedPdfHeader = redactedPdfBytes ? Buffer.from(redactedPdfBytes.slice(0, 5)).toString('utf-8') : '';
+assert(redactedPdfHeader.startsWith('%PDF-'), 'T6.14: In-memory generated redacted PDF starts with valid standard PDF magic header (%PDF-)');
 
 // ============================================================================
 // FINAL RUNTIME AIR-GAP AUDIT ASSERTION

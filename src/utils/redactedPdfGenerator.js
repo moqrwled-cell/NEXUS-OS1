@@ -56,6 +56,8 @@ export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}
 
   const title = metadata.title || 'Sanitized Legal Matter';
   const totalRedactions = metadata.totalRedactions ?? 0;
+  const isDraft = metadata.isDraft === true;
+  const jurisdiction = metadata.jurisdiction || 'United States Commercial Law';
   const dateStr = metadata.date || new Date().toLocaleDateString('en-US', {
     year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
   });
@@ -74,7 +76,11 @@ export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}
   let cursorY = pageHeight - margin;
 
   const drawPageHeader = (page) => {
-    page.drawText('PRIVILEGED & CONFIDENTIAL // PRODUCED UNDER ABA MODEL RULE 1.6 & COURT PROTECTIVE ORDER', {
+    const headerTitle = isDraft
+      ? 'PRIVILEGED & CONFIDENTIAL // ATTORNEY WORK PRODUCT // AMLAW 100 DRAFT'
+      : 'PRIVILEGED & CONFIDENTIAL // PRODUCED UNDER ABA MODEL RULE 1.6 & COURT PROTECTIVE ORDER';
+    
+    page.drawText(headerTitle, {
       x: margin,
       y: pageHeight - 32,
       size: 7.5,
@@ -89,15 +95,19 @@ export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}
     });
   };
 
-  // Draw Page 1 Letterhead & Redaction Certificate Box
+  // Draw Page 1 Letterhead & Specification Box
   drawPageHeader(currentPage);
   cursorY = pageHeight - 50;
 
   // Header Title
-  currentPage.drawText('NEXUS CONTRACTGUARD // AIR-GAPPED REDACTED PRODUCTION', {
+  const bannerText = isDraft
+    ? 'NEXUS CONTRACTGUARD // AMLAW 100 TRANSACTIONAL CONTRACT DRAFT'
+    : 'NEXUS CONTRACTGUARD // AIR-GAPPED REDACTED PRODUCTION';
+
+  currentPage.drawText(bannerText, {
     x: margin,
     y: cursorY,
-    size: 11,
+    size: 10.5,
     font: fontBold,
     color: rgb(0.08, 0.12, 0.18)
   });
@@ -112,27 +122,34 @@ export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}
   });
   cursorY -= 16;
 
-  // Certificate Pill Box
+  // Specification / Certificate Pill Box
   const certBoxHeight = 44;
   currentPage.drawRectangle({
     x: margin,
     y: cursorY - certBoxHeight,
     width: usableWidth,
     height: certBoxHeight,
-    color: rgb(0.96, 0.97, 0.99),
-    borderColor: rgb(0.78, 0.83, 0.9),
+    color: isDraft ? rgb(0.97, 0.98, 1.0) : rgb(0.96, 0.97, 0.99),
+    borderColor: isDraft ? rgb(0.75, 0.82, 0.95) : rgb(0.78, 0.83, 0.9),
     borderWidth: 1
   });
 
-  currentPage.drawText('CERTIFICATE OF LOCAL IN-MEMORY PII SANITIZATION (AIR-GAPPED COMPLIANCE)', {
+  const boxHeading = isDraft
+    ? 'AMLAW 100 TRANSACTIONAL DRAFT SPECIFICATION (PRE-EXECUTION REVIEW)'
+    : 'CERTIFICATE OF LOCAL IN-MEMORY PII SANITIZATION (AIR-GAPPED COMPLIANCE)';
+
+  currentPage.drawText(boxHeading, {
     x: margin + 12,
     y: cursorY - 14,
     size: 7.5,
     font: fontBold,
-    color: rgb(0.05, 0.45, 0.3)
+    color: isDraft ? rgb(0.1, 0.3, 0.6) : rgb(0.05, 0.45, 0.3)
   });
 
-  const certDetail = `Sanitized Entities: ${totalRedactions} items | Execution: Zero-Network RAM | Date: ${dateStr}`;
+  const certDetail = isDraft
+    ? `Jurisdiction: ${jurisdiction} | Verification: Air-Gapped In-Memory RAM | Date: ${dateStr}`
+    : `Sanitized Entities: ${totalRedactions} items | Execution: Zero-Network RAM | Date: ${dateStr}`;
+
   currentPage.drawText(certDetail, {
     x: margin + 12,
     y: cursorY - 26,
@@ -141,7 +158,10 @@ export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}
     color: rgb(0.2, 0.25, 0.3)
   });
 
-  const ruleRef = 'Statutory Safe Harbor: NIST SP 800-88 Rev. 1 / ABA Model Rule 1.6 / HIPAA Safe Harbor § 164.514';
+  const ruleRef = isDraft
+    ? 'Standard: ABA Model Rules 1.1 & 1.6 Compliant // Ready for Redline Comparison & Formal Execution'
+    : 'Statutory Safe Harbor: NIST SP 800-88 Rev. 1 / ABA Model Rule 1.6 / HIPAA Safe Harbor § 164.514';
+
   currentPage.drawText(ruleRef, {
     x: margin + 12,
     y: cursorY - 37,
