@@ -1,232 +1,342 @@
 /**
- * Nexus ContractGuard Enterprise — Court-Grade Redacted PDF Generator
+ * Nexus ContractGuard Enterprise — Court-Grade Legal PDF Generator
  * 100% In-Memory RAM Generation via pdf-lib (Air-Gapped & ABA Rule 1.6 Compliant).
- * Produces clean, multi-page legal discovery PDFs with pagination, letterheads,
- * and certified redaction audit notices.
+ * Produces authentic, black & white, firm-grade legal documents and court-ready discovery files
+ * with Times-Roman legal typography, section hierarchy, pagination, and zero AI artifacts.
  */
 
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 /**
- * Wraps text into lines that do not exceed maxWidth points.
+ * Sanitizes input strings for strict WinAnsi (Windows-1252) encoding compatibility.
+ * Replaces unicode block characters (█), smart quotes, em-dashes, and unsupported symbols
+ * to eliminate runtime encoding exceptions in pdf-lib.
  */
-function wrapText(text, font, fontSize, maxWidth) {
-  const paragraphs = text.split('\n');
-  const wrappedLines = [];
-
-  for (const para of paragraphs) {
-    if (para.trim() === '') {
-      wrappedLines.push('');
-      continue;
-    }
-
-    const words = para.split(' ');
-    let currentLine = '';
-
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const width = font.widthOfTextAtSize(testLine, fontSize);
-
-      if (width <= maxWidth) {
-        currentLine = testLine;
-      } else {
-        if (currentLine) wrappedLines.push(currentLine);
-        currentLine = word;
-      }
-    }
-    if (currentLine) wrappedLines.push(currentLine);
-  }
-
-  return wrappedLines;
+export function sanitizeForWinAnsi(str) {
+  if (!str) return '';
+  return str
+    // Unicode full block and partial block characters used in redactions
+    .replace(/[\u2580-\u259F]+/g, '[REDACTED]')
+    .replace(/█+/g, '[REDACTED]')
+    // Em and En dashes to standard legal ASCII representations
+    .replace(/\u2014/g, ' -- ')
+    .replace(/\u2013/g, '-')
+    .replace(/[\u2010\u2011\u2012]/g, '-')
+    // Curly quotes and smart apostrophes to standard straight quotes
+    .replace(/[\u201C\u201D\u201E]/g, '"')
+    .replace(/[\u2018\u2019\u201A]/g, "'")
+    // Ellipsis and bullets
+    .replace(/\u2026/g, '...')
+    .replace(/[\u2022\u25E6\u2023\u2043]/g, '-')
+    // Directional arrows and checkmarks
+    .replace(/[\u2190-\u21FF]/g, '->')
+    .replace(/[\u2713\u2714]/g, '[X]')
+    .replace(/[\u2717\u2718]/g, '[ ]')
+    // Section symbols: ensure safe ASCII or literal
+    .replace(/§/g, 'Section ')
+    // Strip any remaining characters outside standard printable Latin / WinAnsi range
+    .replace(/[^\x20-\x7E\xA0-\xFF\n\r\t]/g, '');
 }
 
 /**
- * Generates an executive, court-grade PDF document containing sanitized/redacted contract text.
+ * Wraps text into lines that do not exceed maxWidth points.
+ */
+function wrapParagraph(paragraph, font, fontSize, maxWidth) {
+  if (!paragraph || paragraph.trim() === '') {
+    return [''];
+  }
+
+  const words = paragraph.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [''];
+
+  const lines = [];
+  let currentLine = words[0];
+
+  for (let i = 1; i < words.length; i++) {
+    const word = words[i];
+    const candidate = `${currentLine} ${word}`;
+    const width = font.widthOfTextAtSize(candidate, fontSize);
+
+    if (width <= maxWidth) {
+      currentLine = candidate;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  return lines;
+}
+
+/**
+ * Generates an authentic, executive legal PDF document.
  * 
- * @param {string} sanitizedText - The redacted contract text
- * @param {Object} metadata - Job metadata (title, totalRedactions, date, ruleCounts)
+ * @param {string} rawText - Document text (draft contract or sanitized text)
+ * @param {Object} metadata - Job metadata (title, isDraft, jurisdiction, totalRedactions, date)
  * @returns {Promise<Uint8Array>} Raw PDF bytes
  */
-export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}) {
-  const pdfDoc = await PDFDocument.create();
-  
-  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const fontCourier = await pdfDoc.embedFont(StandardFonts.Courier);
-
-  const title = metadata.title || 'Sanitized Legal Matter';
-  const totalRedactions = metadata.totalRedactions ?? 0;
+export async function generateRedactedPDFBytes(rawText = '', metadata = {}) {
   const isDraft = metadata.isDraft === true;
-  const jurisdiction = metadata.jurisdiction || 'United States Commercial Law';
-  const dateStr = metadata.date || new Date().toLocaleDateString('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
+  const sanitizedText = sanitizeForWinAnsi(rawText);
+  const rawTitle = metadata.title || (isDraft ? 'Commercial Legal Agreement' : 'Sanitized Discovery Matter');
+  const title = sanitizeForWinAnsi(rawTitle);
+  const totalRedactions = metadata.totalRedactions ?? 0;
+  const jurisdiction = sanitizeForWinAnsi(metadata.jurisdiction || 'United States Commercial Law');
+  const dateStr = sanitizeForWinAnsi(
+    metadata.date || new Date().toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    })
+  );
 
-  const pageWidth = 612; // US Letter width
-  const pageHeight = 792; // US Letter height
-  const margin = 54; // 0.75 in
-  const usableWidth = pageWidth - (margin * 2);
-  const fontSize = 9.5;
-  const lineHeight = 13.5;
+  const pdfDoc = await PDFDocument.create();
 
-  // Split and wrap document text
-  const lines = wrapText(sanitizedText, fontCourier, fontSize, usableWidth);
+  // Load classic legal serif typography (Times-Roman standard)
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+  const fontItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic);
+
+  const pageWidth = 612;   // Standard US Letter Width (8.5 inches)
+  const pageHeight = 792;  // Standard US Letter Height (11 inches)
+  const marginX = 54;      // 0.75 in margins
+  const marginTop = 54;
+  const marginBottom = 54;
+  const usableWidth = pageWidth - (marginX * 2);
+
+  // Black legal ink only
+  const blackColor = rgb(0, 0, 0);
+
+  const bodyFontSize = 10;
+  const bodyLineHeight = 14;
+  const headingFontSize = 11;
+  const titleFontSize = 13;
+
+  // Split input text into paragraphs
+  const rawParagraphs = sanitizedText.split(/\r?\n/);
 
   let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-  let cursorY = pageHeight - margin;
+  let cursorY = pageHeight - marginTop;
+  const pagesList = [currentPage];
 
-  const drawPageHeader = (page) => {
-    const headerTitle = isDraft
-      ? 'PRIVILEGED & CONFIDENTIAL // ATTORNEY WORK PRODUCT // AMLAW 100 DRAFT'
-      : 'PRIVILEGED & CONFIDENTIAL // PRODUCED UNDER ABA MODEL RULE 1.6 & COURT PROTECTIVE ORDER';
+  // Helper to draw top running header on pages 2+
+  const drawRunningHeader = (page, pageNum) => {
+    if (pageNum === 1) return; // Page 1 has formal title, no running header
+
+    const headerText = isDraft
+      ? 'CONFIDENTIAL -- ATTORNEY-CLIENT PRIVILEGED / WORK PRODUCT'
+      : 'PRIVILEGED & CONFIDENTIAL // PRODUCED UNDER PROTECTIVE ORDER';
     
-    page.drawText(headerTitle, {
-      x: margin,
-      y: pageHeight - 32,
-      size: 7.5,
-      font: fontBold,
-      color: rgb(0.35, 0.4, 0.45)
+    page.drawText(headerText, {
+      x: marginX,
+      y: pageHeight - 34,
+      size: 8,
+      font: fontItalic,
+      color: blackColor
     });
+
+    const shortMatter = title.length > 40 ? title.substring(0, 37) + '...' : title;
+    const shortWidth = fontRegular.widthOfTextAtSize(shortMatter, 8);
+    page.drawText(shortMatter, {
+      x: pageWidth - marginX - shortWidth,
+      y: pageHeight - 34,
+      size: 8,
+      font: fontRegular,
+      color: blackColor
+    });
+
+    // 0.5pt black horizontal rule
     page.drawLine({
-      start: { x: margin, y: pageHeight - 38 },
-      end: { x: pageWidth - margin, y: pageHeight - 38 },
-      thickness: 0.75,
-      color: rgb(0.8, 0.83, 0.88)
+      start: { x: marginX, y: pageHeight - 39 },
+      end: { x: pageWidth - marginX, y: pageHeight - 39 },
+      thickness: 0.5,
+      color: blackColor
     });
   };
 
-  // Draw Page 1 Letterhead & Specification Box
-  drawPageHeader(currentPage);
-  cursorY = pageHeight - 50;
+  if (isDraft) {
+    // --------------------------------------------------------------------------
+    // DRAFT CONTRACT MODE: Authentic, Black & White Law Firm Execution Layout
+    // --------------------------------------------------------------------------
 
-  // Header Title
-  const bannerText = isDraft
-    ? 'NEXUS CONTRACTGUARD // AMLAW 100 TRANSACTIONAL CONTRACT DRAFT'
-    : 'NEXUS CONTRACTGUARD // AIR-GAPPED REDACTED PRODUCTION';
+    // Top rule on page 1
+    currentPage.drawLine({
+      start: { x: marginX, y: cursorY },
+      end: { x: pageWidth - marginX, y: cursorY },
+      thickness: 1,
+      color: blackColor
+    });
+    cursorY -= 16;
 
-  currentPage.drawText(bannerText, {
-    x: margin,
-    y: cursorY,
-    size: 10.5,
-    font: fontBold,
-    color: rgb(0.08, 0.12, 0.18)
-  });
-  cursorY -= 14;
+    // Document Title (Centered, All Caps, Bold 13pt)
+    const upperTitle = title.toUpperCase();
+    const titleWidth = fontBold.widthOfTextAtSize(upperTitle, titleFontSize);
+    const titleX = Math.max(marginX, (pageWidth - titleWidth) / 2);
+    currentPage.drawText(upperTitle, {
+      x: titleX,
+      y: cursorY,
+      size: titleFontSize,
+      font: fontBold,
+      color: blackColor
+    });
+    cursorY -= 14;
 
-  currentPage.drawText(`DOCUMENT MATTER: ${title.toUpperCase()}`, {
-    x: margin,
-    y: cursorY,
-    size: 8.5,
-    font: fontBold,
-    color: rgb(0.25, 0.3, 0.35)
-  });
-  cursorY -= 16;
+    // Subtitle Line (Jurisdiction & Date, Centered 8.5pt Italic)
+    const subLine = `Governing Jurisdiction: ${jurisdiction}  |  Effective Date: ${dateStr}`;
+    const subWidth = fontItalic.widthOfTextAtSize(subLine, 8.5);
+    const subX = Math.max(marginX, (pageWidth - subWidth) / 2);
+    currentPage.drawText(subLine, {
+      x: subX,
+      y: cursorY,
+      size: 8.5,
+      font: fontItalic,
+      color: blackColor
+    });
+    cursorY -= 12;
 
-  // Specification / Certificate Pill Box
-  const certBoxHeight = 44;
-  currentPage.drawRectangle({
-    x: margin,
-    y: cursorY - certBoxHeight,
-    width: usableWidth,
-    height: certBoxHeight,
-    color: isDraft ? rgb(0.97, 0.98, 1.0) : rgb(0.96, 0.97, 0.99),
-    borderColor: isDraft ? rgb(0.75, 0.82, 0.95) : rgb(0.78, 0.83, 0.9),
-    borderWidth: 1
-  });
+    // Bottom decorative line of title block
+    currentPage.drawLine({
+      start: { x: marginX, y: cursorY },
+      end: { x: pageWidth - marginX, y: cursorY },
+      thickness: 0.5,
+      color: blackColor
+    });
+    cursorY -= 20;
 
-  const boxHeading = isDraft
-    ? 'AMLAW 100 TRANSACTIONAL DRAFT SPECIFICATION (PRE-EXECUTION REVIEW)'
-    : 'CERTIFICATE OF LOCAL IN-MEMORY PII SANITIZATION (AIR-GAPPED COMPLIANCE)';
+  } else {
+    // --------------------------------------------------------------------------
+    // REDACTED DISCOVERY MODE: Clean Legal Production Notice
+    // --------------------------------------------------------------------------
+    currentPage.drawText('CONFIDENTIAL DISCOVERY PRODUCTION // SUBJECT TO COURT PROTECTIVE ORDER', {
+      x: marginX,
+      y: cursorY,
+      size: 8.5,
+      font: fontBold,
+      color: blackColor
+    });
+    cursorY -= 12;
 
-  currentPage.drawText(boxHeading, {
-    x: margin + 12,
-    y: cursorY - 14,
-    size: 7.5,
-    font: fontBold,
-    color: isDraft ? rgb(0.1, 0.3, 0.6) : rgb(0.05, 0.45, 0.3)
-  });
+    currentPage.drawText(`IN RE MATTER: ${title.toUpperCase()}`, {
+      x: marginX,
+      y: cursorY,
+      size: 10,
+      font: fontBold,
+      color: blackColor
+    });
+    cursorY -= 14;
 
-  const certDetail = isDraft
-    ? `Jurisdiction: ${jurisdiction} | Verification: Air-Gapped In-Memory RAM | Date: ${dateStr}`
-    : `Sanitized Entities: ${totalRedactions} items | Execution: Zero-Network RAM | Date: ${dateStr}`;
+    // Clean Black & White Formal Notice Box
+    const noticeHeight = 36;
+    currentPage.drawRectangle({
+      x: marginX,
+      y: cursorY - noticeHeight,
+      width: usableWidth,
+      height: noticeHeight,
+      borderColor: blackColor,
+      borderWidth: 0.75,
+      color: rgb(1, 1, 1)
+    });
 
-  currentPage.drawText(certDetail, {
-    x: margin + 12,
-    y: cursorY - 26,
-    size: 7.5,
-    font: fontRegular,
-    color: rgb(0.2, 0.25, 0.3)
-  });
+    currentPage.drawText('FORMAL NOTICE OF PRIVILEGE AND IN-MEMORY PII REDACTION', {
+      x: marginX + 10,
+      y: cursorY - 12,
+      size: 7.5,
+      font: fontBold,
+      color: blackColor
+    });
 
-  const ruleRef = isDraft
-    ? 'Standard: ABA Model Rules 1.1 & 1.6 Compliant // Ready for Redline Comparison & Formal Execution'
-    : 'Statutory Safe Harbor: NIST SP 800-88 Rev. 1 / ABA Model Rule 1.6 / HIPAA Safe Harbor § 164.514';
+    const certNotice = `Sanitized Entities: ${totalRedactions} items  |  Statutory Standard: ABA Model Rule 1.6 & NIST SP 800-88  |  Date: ${dateStr}`;
+    currentPage.drawText(certNotice, {
+      x: marginX + 10,
+      y: cursorY - 24,
+      size: 7,
+      font: fontRegular,
+      color: blackColor
+    });
 
-  currentPage.drawText(ruleRef, {
-    x: margin + 12,
-    y: cursorY - 37,
-    size: 6.5,
-    font: fontRegular,
-    color: rgb(0.4, 0.45, 0.5)
-  });
-
-  cursorY -= (certBoxHeight + 20);
-
-  // Render Body Lines
-  const pagesList = [currentPage];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // Check if space remaining on page
-    if (cursorY < margin + 30) {
-      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-      pagesList.push(currentPage);
-      drawPageHeader(currentPage);
-      cursorY = pageHeight - 55;
-    }
-
-    if (line !== '') {
-      // Draw text line
-      currentPage.drawText(line, {
-        x: margin,
-        y: cursorY,
-        size: fontSize,
-        font: fontCourier,
-        color: rgb(0.1, 0.12, 0.15)
-      });
-    }
-
-    cursorY -= lineHeight;
+    cursorY -= (noticeHeight + 18);
   }
 
-  // Draw Footers with Page Numbers on all pages
+  // Iterate over paragraphs and render lines
+  for (let pIdx = 0; pIdx < rawParagraphs.length; pIdx++) {
+    const rawPara = rawParagraphs[pIdx].trim();
+
+    if (rawPara === '') {
+      // Empty line -> add vertical paragraph spacing
+      cursorY -= 8;
+      continue;
+    }
+
+    // Identify if this paragraph is a major legal heading (e.g. ARTICLE, EXHIBIT, RECITALS, SCHEDULE)
+    const isArticleHeader = /^(ARTICLE\s+[IVXLCDM\d]+|EXHIBIT\s+[A-Z\d]|SCHEDULE\s+[A-Z\d]|RECITALS:?|WITNESSETH:?|IN\s+WITNESS\s+WHEREOF)/i.test(rawPara);
+    const isSectionHeader = /^(SECTION\s+\d+(\.\d+)?|\d+\.\d+)\s+/i.test(rawPara);
+
+    const activeFont = isArticleHeader || isSectionHeader ? fontBold : fontRegular;
+    const activeFontSize = isArticleHeader ? headingFontSize : bodyFontSize;
+
+    // If starting an article, add extra breath spacing
+    if (isArticleHeader) {
+      cursorY -= 8;
+    }
+
+    const wrappedLines = wrapParagraph(rawPara, activeFont, activeFontSize, usableWidth);
+
+    for (const line of wrappedLines) {
+      // Check page break condition
+      if (cursorY < marginBottom + 24) {
+        currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+        pagesList.push(currentPage);
+        drawRunningHeader(currentPage, pagesList.length);
+        cursorY = pageHeight - marginTop - 16;
+      }
+
+      if (line !== '') {
+        currentPage.drawText(line, {
+          x: marginX,
+          y: cursorY,
+          size: activeFontSize,
+          font: activeFont,
+          color: blackColor
+        });
+      }
+
+      cursorY -= bodyLineHeight;
+    }
+  }
+
+  // Draw Bottom Pagination & Footer on all pages
   const totalPages = pagesList.length;
   pagesList.forEach((page, idx) => {
     const pageNum = idx + 1;
+
+    // 0.5pt bottom rule
     page.drawLine({
-      start: { x: margin, y: margin + 12 },
-      end: { x: pageWidth - margin, y: margin + 12 },
+      start: { x: marginX, y: marginBottom + 14 },
+      end: { x: pageWidth - marginX, y: marginBottom + 14 },
       thickness: 0.5,
-      color: rgb(0.85, 0.88, 0.92)
+      color: blackColor
     });
 
-    page.drawText('PROCESSED LOCALLY VIA NEXUS CONTRACTGUARD AIR-GAPPED ENGINE // ABA RULE 1.6', {
-      x: margin,
-      y: margin - 2,
-      size: 6.5,
-      font: fontRegular,
-      color: rgb(0.5, 0.55, 0.6)
-    });
-
+    // Page number (Centered)
     const pageStr = `Page ${pageNum} of ${totalPages}`;
-    const pageStrWidth = fontRegular.widthOfTextAtSize(pageStr, 7.5);
+    const pageStrWidth = fontRegular.widthOfTextAtSize(pageStr, 8.5);
     page.drawText(pageStr, {
-      x: pageWidth - margin - pageStrWidth,
-      y: margin - 2,
-      size: 7.5,
+      x: (pageWidth - pageStrWidth) / 2,
+      y: marginBottom,
+      size: 8.5,
       font: fontRegular,
-      color: rgb(0.3, 0.35, 0.4)
+      color: blackColor
+    });
+
+    // Subtle Matter Reference on Left
+    const matterRef = isDraft ? 'TRANSACTIONAL EXECUTION COPY' : 'AIR-GAPPED SANITIZED PRODUCTION';
+    page.drawText(matterRef, {
+      x: marginX,
+      y: marginBottom,
+      size: 7,
+      font: fontItalic,
+      color: blackColor
     });
   });
 
@@ -234,24 +344,29 @@ export async function generateRedactedPDFBytes(sanitizedText = '', metadata = {}
 }
 
 /**
- * Downloads the clean, court-grade redacted PDF to the user's filesystem.
+ * Downloads the clean, court-grade PDF to the user's filesystem.
  */
-export async function downloadRedactedPDF(sanitizedText = '', metadata = {}) {
+export async function downloadRedactedPDF(rawText = '', metadata = {}) {
   try {
-    const pdfBytes = await generateRedactedPDFBytes(sanitizedText, metadata);
+    const isDraft = metadata.isDraft === true;
+    const pdfBytes = await generateRedactedPDFBytes(rawText, metadata);
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const safeTitle = (metadata.title || 'Sanitized_Matter').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+
+    const rawTitle = metadata.title || (isDraft ? 'Contract_Agreement' : 'Sanitized_Matter');
+    const safeTitle = rawTitle.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 32);
+    const suffix = isDraft ? 'EXECUTION_DRAFT' : 'REDACTED';
+
     a.href = url;
-    a.download = `${safeTitle}_REDACTED_${Date.now()}.pdf`;
+    a.download = `${safeTitle}_${suffix}_${Date.now()}.pdf`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     return true;
   } catch (err) {
-    console.error('Failed to generate redacted PDF:', err);
+    console.error('Failed to generate legal PDF:', err);
     throw err;
   }
 }

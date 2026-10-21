@@ -24,8 +24,8 @@ export default function LegalTemplatesView({ onSendToAudit }) {
       const matchCat = selectedCategory === 'all' || tpl.category === selectedCategory;
       const matchSearch = !searchQuery.trim() || 
         tpl.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tpl.titleAr.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tpl.summary.toLowerCase().includes(searchQuery.toLowerCase());
+        tpl.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (tpl.jurisdiction && tpl.jurisdiction.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchCat && matchSearch;
     });
   }, [selectedCategory, searchQuery]);
@@ -109,7 +109,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
                 </span>
               </h3>
               <p className="text-xs text-zinc-400 font-sans mt-0.5">
-                {selectedTemplate.titleAr} · {selectedTemplate.jurisdiction}
+                {selectedTemplate.jurisdiction}
               </p>
             </div>
           </div>
@@ -135,6 +135,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             <button
               onClick={handleDownloadTxt}
               className="px-3 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 transition-all cursor-pointer"
+              title="Download Plain Text"
             >
               <Download size={14} />
             </button>
@@ -161,40 +162,25 @@ export default function LegalTemplatesView({ onSendToAudit }) {
                 </span>
               </h4>
               <p className="text-xs text-zinc-400 mt-1">
-                Enter party names, purchase price, property parcel ID, and closing dates to auto-populate the agreement.
+                Edit variables below to update the agreement in real-time.
               </p>
             </div>
 
-            <div className="space-y-3.5">
-              {(selectedTemplate.variables || []).map((v) => (
+            <div className="space-y-3.5 flex-1 pr-1">
+              {(selectedTemplate.variables || []).map(v => (
                 <div key={v.key} className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider font-mono">
+                  <label className="text-[11px] font-mono uppercase font-semibold text-zinc-400">
                     {v.label}
                   </label>
                   <input
-                    type={v.type === 'date' ? 'date' : 'text'}
+                    type={v.type === 'date' ? 'text' : 'text'}
                     value={templateValues[v.key] ?? ''}
                     onChange={(e) => handleVariableChange(v.key, e.target.value)}
                     placeholder={v.defaultVal}
-                    className="w-full bg-black/60 border border-zinc-700/80 focus:border-emerald-500 rounded-xl px-3.5 py-2 text-xs font-mono text-white placeholder-zinc-500 outline-none transition-all"
+                    className="w-full bg-black/60 border border-zinc-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-zinc-600 outline-none transition-all"
                   />
                 </div>
               ))}
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-zinc-800/80 flex items-center justify-between">
-              <button
-                onClick={() => {
-                  const resetVals = {};
-                  (selectedTemplate.variables || []).forEach(v => {
-                    resetVals[v.key] = v.defaultVal || '';
-                  });
-                  setTemplateValues(resetVals);
-                }}
-                className="text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
-              >
-                Reset to Standard Defaults
-              </button>
             </div>
           </div>
 
@@ -259,7 +245,6 @@ export default function LegalTemplatesView({ onSendToAudit }) {
               }`}
             >
               <span>{cat.label}</span>
-              <span className="text-[10px] ml-1.5 opacity-70">({cat.labelAr})</span>
             </button>
           ))}
         </div>
@@ -295,9 +280,6 @@ export default function LegalTemplatesView({ onSendToAudit }) {
               <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
                 {tpl.title}
               </h3>
-              <p className="text-xs font-semibold text-emerald-400/90 font-sans mt-0.5">
-                {tpl.titleAr}
-              </p>
               <p className="text-xs text-zinc-400 mt-2 leading-relaxed line-clamp-3">
                 {tpl.summary}
               </p>

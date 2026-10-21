@@ -81,7 +81,8 @@ import {
   compileTemplateText 
 } from '../src/utils/legalTemplatesVault.js';
 import { 
-  generateRedactedPDFBytes 
+  generateRedactedPDFBytes,
+  sanitizeForWinAnsi
 } from '../src/utils/redactedPdfGenerator.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1228,6 +1229,30 @@ try {
 assert(redactedPdfBytes !== null && redactedPdfBytes.length > 500, 'T6.13: generateRedactedPDFBytes generates certified court-grade PDF in PII sanitization mode');
 const redactedPdfHeader = redactedPdfBytes ? Buffer.from(redactedPdfBytes.slice(0, 5)).toString('utf-8') : '';
 assert(redactedPdfHeader.startsWith('%PDF-'), 'T6.14: In-memory generated redacted PDF starts with valid standard PDF magic header (%PDF-)');
+
+// Test WinAnsi Sanitization against Unicode Block (█) and Smart Punctuation
+const dirtyInput = 'Notice of Redaction: \u2588\u2588\u2588\u2588\u2588 for \u201cEmployee\u201d em\u2014dash and \u0627\u0644\u0642\u0627\u0646\u0648\u0646';
+const sanitizedOutput = sanitizeForWinAnsi(dirtyInput);
+assert(!sanitizedOutput.includes('\u2588') && sanitizedOutput.includes('[REDACTED]'), 'T6.15: sanitizeForWinAnsi converts unicode black block (█) to [REDACTED]');
+assert(sanitizedOutput.includes('"Employee"') && sanitizedOutput.includes(' -- '), 'T6.16: sanitizeForWinAnsi converts smart quotes and em-dashes to standard legal ASCII');
+
+// Test that PDF generation with raw (█) does NOT throw WinAnsi exception
+let blockPdfBytes = null;
+let blockPdfError = null;
+try {
+  blockPdfBytes = await generateRedactedPDFBytes('CONFIDENTIAL SETTLEMENT: \u2588\u2588\u2588\u2588\u2588\u2588 paid to \u2588\u2588\u2588\u2588.', {
+    title: 'Adversarial Unicode Redaction Matter',
+    isDraft: false
+  });
+} catch (err) {
+  blockPdfError = err.message;
+}
+assert(blockPdfBytes !== null && !blockPdfError, `T6.17: generateRedactedPDFBytes handles raw unicode blocks without WinAnsi exception ${blockPdfError ? '(' + blockPdfError + ')' : ''}`);
+
+// Verify Zero Arabic characters in Legal Templates Vault
+const templatesStringified = JSON.stringify(LEGAL_TEMPLATES);
+const hasArabicCharacters = /[\u0600-\u06FF]/.test(templatesStringified);
+assert(!hasArabicCharacters, 'T6.18: Legal Templates Vault contains zero Arabic characters (100% US English institutional standard)');
 
 // ============================================================================
 // FINAL RUNTIME AIR-GAP AUDIT ASSERTION
