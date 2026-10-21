@@ -8,7 +8,8 @@ import {
   ShieldCheck, Check, RotateCcw, Calendar, DollarSign,
   Bookmark, HelpCircle, User, Users, StopCircle, Upload,
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
-  Settings, Key, Laptop, Copy, Mail, LogOut
+  Settings, Key, Laptop, Copy, Mail, LogOut,
+  BookOpen, FileDown, ArrowRight, Sparkles
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
 
@@ -34,10 +35,12 @@ import {
   deactivateLicenseFromDevice 
 } from '../utils/licenseManager';
 import { enrichAllAuditFindings } from '../utils/statutoryCodex';
+import { downloadRedactedPDF } from '../utils/redactedPdfGenerator';
+import LegalTemplatesView from '../components/LegalTemplatesView';
 import PirateTrapModal from '../components/PirateTrapModal';
 
 export default function ContractCompare() {
-  const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history
+  const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
   const [showDeviceModal, setShowDeviceModal] = useState(true);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [restoredSession, setRestoredSession] = useState(null);
@@ -278,6 +281,45 @@ export default function ContractCompare() {
               </div>
             </div>
           )}
+
+          {/* Module 5: Legal Templates Vault */}
+          <button
+            onClick={() => setActiveTool('templates')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+              activeTool === 'templates'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+            }`}
+          >
+            <BookOpen size={16} className={activeTool === 'templates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <div className="text-left flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="text-[13px] font-semibold leading-tight truncate">Template Vault</p>
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">AmLaw 100</span>
+              </div>
+              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">US commercial contract library</p>
+            </div>
+            {activeTool === 'templates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+          </button>
+          {activeTool === 'templates' && (
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
+              <div className="space-y-2 text-[11px] leading-relaxed">
+                <div className="flex gap-2">
+                  <span className="text-emerald-400 font-bold shrink-0">①</span>
+                  <span><span className="text-zinc-200 font-semibold">Standard Library — </span><span className="text-zinc-400">Institutional Land Purchase, Commercial Lease, MSA, NDA, and APA contracts.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-cyan-400 font-bold shrink-0">②</span>
+                  <span><span className="text-zinc-200 font-semibold">Quick-Fill Form — </span><span className="text-zinc-400">Type client party names, purchase price, parcel ID, and closing dates to populate instantly.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-amber-400 font-bold shrink-0">③</span>
+                  <span><span className="text-zinc-200 font-semibold">Audit Integration — </span><span className="text-zinc-400">Send compiled contract straight to ContractGuard audit engine with one click.</span></span>
+                </div>
+              </div>
+            </div>
+          )}
         </nav>
 
         {/* Workstation & License Settings Button */}
@@ -347,6 +389,14 @@ export default function ContractCompare() {
               <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
                 <AuditVaultView onSelectDiff={(session) => {
                   setRestoredSession(session);
+                  setActiveTool('analyzer');
+                }} />
+              </motion.div>
+            )}
+            {activeTool === 'templates' && (
+              <motion.div key="templates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                <LegalTemplatesView onSendToAudit={(contractText, title) => {
+                  setRestoredSession({ originalText: contractText, title });
                   setActiveTool('analyzer');
                 }} />
               </motion.div>
@@ -2524,7 +2574,27 @@ function PIIRedactorView() {
     }
   };
 
-  const handleDownloadSanitized = () => {
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const handleDownloadSanitizedPdf = async () => {
+    if (!sanitizedResult?.sanitizedText) return;
+    setIsGeneratingPdf(true);
+    try {
+      await downloadRedactedPDF(sanitizedResult.sanitizedText, {
+        title: 'Redacted_Discovery_Document',
+        totalRedactions: sanitizedResult.totalRedactions,
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+      });
+      setSaveStatus('Clean legal PDF downloaded successfully');
+      setTimeout(() => setSaveStatus(''), 4000);
+    } catch (err) {
+      alert('PDF generation error: ' + err.message);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  const handleDownloadSanitizedTxt = () => {
     if (!sanitizedResult?.sanitizedText) return;
     const blob = new Blob([sanitizedResult.sanitizedText], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -2662,12 +2732,24 @@ function PIIRedactorView() {
               SANITIZED PREVIEW {sanitizedResult ? `(${sanitizedResult.totalRedactions} items redacted)` : ''}
             </span>
             {sanitizedResult && (
-              <button
-                onClick={handleDownloadSanitized}
-                className="bg-nexus-emerald text-black px-2.5 py-1 rounded-lg text-xs font-bold hover:bg-white transition-colors flex items-center gap-1"
-              >
-                <Download size={12} /> Download
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleDownloadSanitizedPdf}
+                  disabled={isGeneratingPdf}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-50"
+                  title="Export court-grade redacted PDF (Letter format, headers, pagination, ABA Rule 1.6)"
+                >
+                  {isGeneratingPdf ? <RefreshCw className="animate-spin" size={13} /> : <FileDown size={13} />}
+                  <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Redacted PDF'}</span>
+                </button>
+                <button
+                  onClick={handleDownloadSanitizedTxt}
+                  className="bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                  title="Export raw text"
+                >
+                  <Download size={13} /> Text
+                </button>
+              </div>
             )}
           </div>
           <div className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 overflow-y-auto custom-scrollbar select-text">
