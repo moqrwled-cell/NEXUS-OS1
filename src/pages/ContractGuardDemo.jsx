@@ -20,7 +20,8 @@ import {
   getDemoAuditsRemaining, 
   consumeDemoAudit, 
   resetDemoAuditsForTesting, 
-  verifyDeviceLicense 
+  verifyDeviceLicense,
+  initializeHardenedMeter
 } from '../utils/licenseManager';
 
 // Pre-packaged Hazardous Legal Contract for instant testing
@@ -121,31 +122,38 @@ export default function ContractGuardDemo() {
   const [batesStartNum, setBatesStartNum] = useState('000001');
   const [batesPosition, setBatesPosition] = useState('bottom-right');
   const [batesColor, setBatesColor] = useState('black');
+  const [batesFile, setBatesFile] = useState(null);
   const [isGeneratingBates, setIsGeneratingBates] = useState(false);
 
   const handleDownloadSampleBates = async () => {
     setIsGeneratingBates(true);
     try {
-      const sampleDoc = await PDFDocument.create();
-      const page = sampleDoc.addPage([612, 792]);
-      const font = await sampleDoc.embedFont(StandardFonts.Helvetica);
-      const fontBold = await sampleDoc.embedFont(StandardFonts.HelveticaBold);
-      
-      page.drawText('UNITED STATES DISTRICT COURT', { x: 50, y: 740, size: 12, font: fontBold });
-      page.drawText('SOUTHERN DISTRICT OF NEW YORK', { x: 50, y: 722, size: 10, font });
-      page.drawText('CIVIL ACTION NO. 26-CV-04891', { x: 50, y: 704, size: 10, font });
-      page.drawText('EXHIBIT A: MASTER TRANSACTION AGREEMENT', { x: 50, y: 660, size: 11, font: fontBold });
-      page.drawText('This sample discovery exhibit was stamped client-side in RAM with Nexus ContractGuard.', { x: 50, y: 630, size: 10, font });
-      page.drawText('Notice the high-contrast white backing pill ensuring 100% legibility on court filings.', { x: 50, y: 610, size: 10, font });
-      
-      const pdfBytes = await sampleDoc.save();
+      let pdfBytes;
+      if (batesFile) {
+        pdfBytes = await batesFile.arrayBuffer();
+      } else {
+        const sampleDoc = await PDFDocument.create();
+        const page = sampleDoc.addPage([612, 792]);
+        const font = await sampleDoc.embedFont(StandardFonts.Helvetica);
+        const fontBold = await sampleDoc.embedFont(StandardFonts.HelveticaBold);
+        
+        page.drawText('UNITED STATES DISTRICT COURT', { x: 50, y: 740, size: 12, font: fontBold });
+        page.drawText('SOUTHERN DISTRICT OF NEW YORK', { x: 50, y: 722, size: 10, font });
+        page.drawText('CIVIL ACTION NO. 26-CV-04891', { x: 50, y: 704, size: 10, font });
+        page.drawText('EXHIBIT A: MASTER TRANSACTION AGREEMENT', { x: 50, y: 660, size: 11, font: fontBold });
+        page.drawText('This sample discovery exhibit was stamped client-side in RAM with Nexus ContractGuard.', { x: 50, y: 630, size: 10, font });
+        page.drawText('Notice the high-contrast white backing pill ensuring 100% legibility on court filings.', { x: 50, y: 610, size: 10, font });
+        
+        pdfBytes = await sampleDoc.save();
+      }
+
       const result = await executeBatesStamping([pdfBytes], {
         prefix: batesPrefix || 'EX-',
         startNumber: parseInt(batesStartNum, 10) || 1,
         position: batesPosition,
         color: batesColor
       });
-      result.download(`Sample_${batesPrefix || 'EX-'}${batesStartNum || '0001'}.pdf`);
+      result.download(batesFile ? `Stamped_${batesFile.name}` : `Sample_${batesPrefix || 'EX-'}${batesStartNum || '0001'}.pdf`);
     } catch (e) {
       console.error('Failed to generate sample Bates PDF', e);
       alert('Error generating Bates sample: ' + e.message);
@@ -174,19 +182,22 @@ export default function ContractGuardDemo() {
     cancelAnalysis
   } = useContractWorker();
 
-  // Check device license on initial mount (do NOT auto-run on empty buffer)
+  // Check device license & hardened anti-abuse meter on initial mount
   useEffect(() => {
-    async function checkLicense() {
+    async function checkLicenseAndMeter() {
       try {
         const lic = await verifyDeviceLicense();
         if (lic && lic.isValid) {
           setHasActiveLicense(true);
         }
+        // Deep multi-store audit count recovery (anti-tamper)
+        const hardenedCount = await initializeHardenedMeter();
+        setAuditsLeft(hardenedCount);
       } catch (e) {
-        console.error('License check error:', e);
+        console.error('License/Meter check error:', e);
       }
     }
-    checkLicense();
+    checkLicenseAndMeter();
   }, []);
 
   // Execute in-memory audit with evaluation pass tracking
@@ -888,9 +899,9 @@ export default function ContractGuardDemo() {
                         <span>ORIGINAL BASELINE CONTRACT</span>
                       </span>
                       <div className="flex items-center gap-2">
-                        <label className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
-                          <Upload size={10} />
-                          <span>Browse File</span>
+                        <label className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20 font-bold transition-colors">
+                          <Upload size={11} />
+                          <span>Browse Baseline File</span>
                           <input 
                             type="file" 
                             accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp" 
@@ -910,12 +921,44 @@ export default function ContractGuardDemo() {
                       </div>
                     )}
 
-                    <textarea
-                      value={baselineText}
-                      onChange={(e) => setBaselineText(e.target.value)}
-                      className="w-full bg-black/40 p-4 text-xs font-mono leading-relaxed text-zinc-200 outline-none resize-none custom-scrollbar min-h-[360px] focus:bg-black/60 transition-colors"
-                      placeholder="Paste original baseline contract here or drag and drop .docx / .pdf..."
-                    />
+                    {!baselineText.trim() ? (
+                      <div className="p-8 border-2 border-dashed border-cyan-500/30 hover:border-cyan-400/60 rounded-xl m-4 bg-cyan-950/[0.04] flex flex-col items-center justify-center text-center transition-all">
+                        <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-2 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+                          <Upload size={22} />
+                        </div>
+                        <h4 className="text-xs font-bold text-white tracking-tight">
+                          Drop Baseline Agreement Here (.docx / .pdf)
+                        </h4>
+                        <p className="text-[11px] text-zinc-400 max-w-xs mt-1 mb-3">
+                          Upload previous execution version or counterparty initial draft for redline diff comparison.
+                        </p>
+                        <label className="px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-[11px] transition-all cursor-pointer flex items-center gap-1.5 shadow-sm">
+                          <Upload size={11} />
+                          <span>Select Baseline File</span>
+                          <input 
+                            type="file" 
+                            accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp" 
+                            onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')} 
+                            className="hidden" 
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <textarea
+                          value={baselineText}
+                          onChange={(e) => setBaselineText(e.target.value)}
+                          className="w-full bg-black/40 p-4 text-xs font-mono leading-relaxed text-zinc-200 outline-none resize-none custom-scrollbar min-h-[360px] focus:bg-black/60 transition-colors"
+                          placeholder="Original baseline contract text..."
+                        />
+                        <button
+                          onClick={() => setBaselineText('')}
+                          className="absolute top-2 right-4 text-[10px] font-mono bg-zinc-900/90 hover:bg-rose-950/60 hover:text-rose-300 border border-zinc-700 px-2 py-0.5 rounded text-zinc-400 transition-colors"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -934,8 +977,8 @@ export default function ContractGuardDemo() {
                       <span>{analysisMode === 'comparative' ? 'COUNTERPARTY REDLINE / AMENDED DRAFT' : 'UNEXECUTED CONTRACT DRAFT (Interactive Buffer)'}</span>
                     </span>
                     <div className="flex items-center gap-2">
-                      <label className="text-[10px] font-mono text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                        <Upload size={10} />
+                      <label className="text-[10px] font-mono text-emerald-400 hover:text-emerald-300 cursor-pointer flex items-center gap-1 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 font-bold transition-colors">
+                        <Upload size={11} />
                         <span>Upload Contract (.pdf, .docx, scan)</span>
                         <input 
                           type="file" 
@@ -956,12 +999,62 @@ export default function ContractGuardDemo() {
                     </div>
                   )}
 
-                  <textarea
-                    value={contractText}
-                    onChange={(e) => setContractText(e.target.value)}
-                    className="w-full bg-black/40 p-4 text-xs font-mono leading-relaxed text-zinc-200 outline-none resize-none custom-scrollbar min-h-[360px] focus:bg-black/60 transition-colors"
-                    placeholder="Paste unexecuted contract draft here, type changes, or drop files..."
-                  />
+                  {!contractText.trim() ? (
+                    <div className="p-8 border-2 border-dashed border-emerald-500/30 hover:border-emerald-400/60 rounded-xl m-4 bg-emerald-950/[0.04] flex flex-col items-center justify-center text-center transition-all">
+                      <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-3 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+                        <Upload size={24} />
+                      </div>
+                      <h3 className="text-sm font-bold text-white tracking-tight">
+                        Drag & Drop Your Unexecuted Contract Here
+                      </h3>
+                      <p className="text-xs text-zinc-400 max-w-sm mt-1 mb-4 leading-relaxed">
+                        Supports Word <strong className="text-emerald-300">.docx</strong>, <strong className="text-emerald-300">.pdf</strong> (native & scanned with In-RAM OCR), and text files. 100% processed locally in workstation RAM.
+                      </p>
+                      <div className="flex flex-wrap items-center justify-center gap-2.5">
+                        <label className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-black font-extrabold text-xs transition-all shadow-md shadow-emerald-500/20 cursor-pointer flex items-center gap-1.5">
+                          <Upload size={13} className="fill-black" />
+                          <span>Browse Contract File</span>
+                          <input 
+                            type="file" 
+                            accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp" 
+                            onChange={(e) => handleFileUpload(e, setContractText, 'target')} 
+                            className="hidden" 
+                          />
+                        </label>
+                        <button
+                          onClick={handleLoadSample}
+                          className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <RefreshCw size={12} className="text-emerald-400" />
+                          <span>Load Sample Hazardous M&A Draft</span>
+                        </button>
+                      </div>
+                      <div className="mt-4 text-[10.5px] font-mono text-zinc-500">
+                        Or paste raw contract clauses directly below:
+                      </div>
+                      <textarea
+                        value={contractText}
+                        onChange={(e) => setContractText(e.target.value)}
+                        className="w-full mt-2 bg-black/40 p-3 text-xs font-mono rounded-lg border border-zinc-800/80 outline-none resize-none min-h-[90px] focus:border-emerald-500/50"
+                        placeholder="Paste contract clauses here..."
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <textarea
+                        value={contractText}
+                        onChange={(e) => setContractText(e.target.value)}
+                        className="w-full bg-black/40 p-4 text-xs font-mono leading-relaxed text-zinc-200 outline-none resize-none custom-scrollbar min-h-[360px] focus:bg-black/60 transition-colors"
+                        placeholder="Paste unexecuted contract draft here, type changes, or drop files..."
+                      />
+                      <button
+                        onClick={() => setContractText('')}
+                        className="absolute top-2 right-4 text-[10px] font-mono bg-zinc-900/90 hover:bg-rose-950/60 hover:text-rose-300 border border-zinc-700 px-2 py-0.5 rounded text-zinc-400 transition-colors"
+                      >
+                        Clear Buffer
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1324,10 +1417,22 @@ export default function ContractGuardDemo() {
                   <div className="p-4 rounded-xl bg-black/50 border border-zinc-800 flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-xs font-mono uppercase text-zinc-400 font-bold">Unredacted Source Draft (Sample)</h3>
-                        <span className="text-[10px] font-mono text-zinc-500">
-                          {redactInputText.trim().split(/\s+/).filter(Boolean).length} words
-                        </span>
+                        <h3 className="text-xs font-mono uppercase text-zinc-400 font-bold">Unredacted Source Draft</h3>
+                        <div className="flex items-center gap-2">
+                          <label className="text-[10px] font-mono text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 font-bold transition-colors">
+                            <Upload size={10} />
+                            <span>Upload File</span>
+                            <input 
+                              type="file" 
+                              accept=".pdf,.docx,.txt,.md" 
+                              onChange={(e) => handleFileUpload(e, setRedactInputText, 'target')} 
+                              className="hidden" 
+                            />
+                          </label>
+                          <span className="text-[10px] font-mono text-zinc-500">
+                            {redactInputText.trim().split(/\s+/).filter(Boolean).length} words
+                          </span>
+                        </div>
                       </div>
                       <textarea
                         value={redactInputText}
@@ -1490,6 +1595,31 @@ export default function ContractGuardDemo() {
                         <option value="bottom-center">Bottom Center</option>
                         <option value="top-right">Top Right (Docket Style)</option>
                       </select>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-mono text-zinc-300 block mb-1">Upload Evidentiary PDF (Optional):</label>
+                      <label className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 hover:border-amber-400 text-xs text-zinc-300 cursor-pointer transition-colors">
+                        <div className="flex items-center gap-1.5 truncate">
+                          <Upload size={12} className="text-amber-400 shrink-0" />
+                          <span className="truncate">{batesFile ? batesFile.name : 'Stamp Your Own PDF Document'}</span>
+                        </div>
+                        <span className="text-[10px] font-mono text-amber-400 font-bold shrink-0">Browse PDF</span>
+                        <input
+                          type="file"
+                          accept=".pdf"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) setBatesFile(e.target.files[0]);
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                      {batesFile && (
+                        <div className="mt-1 flex items-center justify-between text-[10px] font-mono text-zinc-400">
+                          <span className="truncate">Loaded: {batesFile.name}</span>
+                          <button onClick={() => setBatesFile(null)} className="text-rose-400 hover:underline cursor-pointer">Clear</button>
+                        </div>
+                      )}
                     </div>
 
                     <div>

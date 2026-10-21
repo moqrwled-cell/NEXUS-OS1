@@ -449,26 +449,180 @@ export function deactivateLicenseFromDevice() {
 }
 
 /**
+ * Hardened Multi-Layer Anti-Abuse Hardware Audit Meter
+ * Prevents bypass via localStorage.clear(), Cookie deletion, or DevTools tampering.
+ * Redundantly synchronizes across:
+ * 1. Hardware Fingerprint Keyed localStorage
+ * 2. Persistent Document Cookies (1-year TTL, SameSite=Strict)
+ * 3. Client-Side IndexedDB ('nexus_hardware_registry')
+ * 4. CacheStorage API ('nexus-runtime-cache')
+ */
+
+function getCookie(name) {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+function setCookie(name, val) {
+  if (typeof document === 'undefined') return;
+  const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(val)}; expires=${expires}; path=/; SameSite=Strict`;
+}
+
+function syncAllStores(count, fp) {
+  try {
+    localStorage.setItem(DEMO_AUDITS_KEY, String(count));
+    if (fp) localStorage.setItem(`${DEMO_AUDITS_KEY}_${fp}`, String(count));
+    setCookie(DEMO_AUDITS_KEY, String(count));
+    if (fp) setCookie(`${DEMO_AUDITS_KEY}_${fp}`, String(count));
+  } catch (e) {
+    // ignore quota errors
+  }
+}
+
+async function persistToDeepStorage(count) {
+  try {
+    const fp = await getDeviceFingerprint();
+    syncAllStores(count, fp);
+
+    // 1. IndexedDB persistence
+    if (typeof indexedDB !== 'undefined') {
+      const request = indexedDB.open('nexus_hardware_registry', 1);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('hardware_meters')) {
+          db.createObjectStore('hardware_meters', { keyPath: 'fp' });
+        }
+      };
+      request.onsuccess = (e) => {
+        const db = e.target.result;
+        try {
+          const tx = db.transaction('hardware_meters', 'readwrite');
+          const store = tx.objectStore('hardware_meters');
+          store.put({ fp, remaining: count, updatedAt: Date.now() });
+        } catch {}
+      };
+    }
+
+    // 2. CacheStorage persistence
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      const cache = await caches.open('nexus-runtime-cache');
+      const response = new Response(JSON.stringify({ fp, count, timestamp: Date.now() }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      await cache.put(new Request(`https://nexus-os.store/_device_token_${fp}`), response);
+    }
+  } catch (err) {
+    // silent failure in restricted sandboxes
+  }
+}
+
+/**
  * Demo Evaluation Pass Management (3 Free Real Audits)
+ * Enforces strict multi-store minimum to defeat browser data wiping.
  */
 export function getDemoAuditsRemaining() {
-  const stored = localStorage.getItem(DEMO_AUDITS_KEY);
-  if (stored === null) {
-    localStorage.setItem(DEMO_AUDITS_KEY, String(MAX_FREE_AUDITS));
-    return MAX_FREE_AUDITS;
+  if (typeof window === 'undefined') return MAX_FREE_AUDITS;
+  
+  // 1. Check general localStorage
+  const localVal = localStorage.getItem(DEMO_AUDITS_KEY);
+  
+  // 2. Check Cookie
+  const cookieVal = getCookie(DEMO_AUDITS_KEY);
+  
+  // 3. Check HW-keyed localStorage
+  const cachedFp = localStorage.getItem(DEVICE_FP_KEY);
+  const hwLocalVal = cachedFp ? localStorage.getItem(`${DEMO_AUDITS_KEY}_${cachedFp}`) : null;
+  const hwCookieVal = cachedFp ? getCookie(`${DEMO_AUDITS_KEY}_${cachedFp}`) : null;
+  
+  const values = [];
+  if (localVal !== null && !isNaN(parseInt(localVal, 10))) values.push(parseInt(localVal, 10));
+  if (cookieVal !== null && !isNaN(parseInt(cookieVal, 10))) values.push(parseInt(cookieVal, 10));
+  if (hwLocalVal !== null && !isNaN(parseInt(hwLocalVal, 10))) values.push(parseInt(hwLocalVal, 10));
+  if (hwCookieVal !== null && !isNaN(parseInt(hwCookieVal, 10))) values.push(parseInt(hwCookieVal, 10));
+  
+  // Take the strictest (minimum) count to prevent bypass
+  let remaining = MAX_FREE_AUDITS;
+  if (values.length > 0) {
+    remaining = Math.min(...values);
   }
-  return parseInt(stored, 10);
+  
+  remaining = Math.max(0, Math.min(MAX_FREE_AUDITS, remaining));
+  syncAllStores(remaining, cachedFp);
+  return remaining;
 }
 
 export function consumeDemoAudit() {
   const current = getDemoAuditsRemaining();
   if (current <= 0) return 0;
   const updated = current - 1;
-  localStorage.setItem(DEMO_AUDITS_KEY, String(updated));
+  
+  const cachedFp = localStorage.getItem(DEVICE_FP_KEY);
+  syncAllStores(updated, cachedFp);
+  persistToDeepStorage(updated);
   return updated;
 }
 
+export async function initializeHardenedMeter() {
+  try {
+    const fp = await getDeviceFingerprint();
+    let minDetected = getDemoAuditsRemaining();
+
+    // Check IndexedDB
+    if (typeof indexedDB !== 'undefined') {
+      await new Promise((resolve) => {
+        const req = indexedDB.open('nexus_hardware_registry', 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('hardware_meters')) {
+            db.createObjectStore('hardware_meters', { keyPath: 'fp' });
+          }
+        };
+        req.onsuccess = (e) => {
+          const db = e.target.result;
+          try {
+            const tx = db.transaction('hardware_meters', 'readonly');
+            const store = tx.objectStore('hardware_meters');
+            const getReq = store.get(fp);
+            getReq.onsuccess = () => {
+              if (getReq.result && typeof getReq.result.remaining === 'number') {
+                minDetected = Math.min(minDetected, getReq.result.remaining);
+              }
+              resolve();
+            };
+            getReq.onerror = () => resolve();
+          } catch {
+            resolve();
+          }
+        };
+        req.onerror = () => resolve();
+      });
+    }
+
+    // Check CacheStorage
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      try {
+        const cache = await caches.open('nexus-runtime-cache');
+        const matched = await cache.match(`https://nexus-os.store/_device_token_${fp}`);
+        if (matched) {
+          const json = await matched.json();
+          if (json && typeof json.count === 'number') {
+            minDetected = Math.min(minDetected, json.count);
+          }
+        }
+      } catch {}
+    }
+
+    syncAllStores(minDetected, fp);
+    return minDetected;
+  } catch (e) {
+    return getDemoAuditsRemaining();
+  }
+}
+
 export function resetDemoAuditsForTesting() {
-  localStorage.setItem(DEMO_AUDITS_KEY, String(MAX_FREE_AUDITS));
+  const fp = localStorage.getItem(DEVICE_FP_KEY);
+  syncAllStores(MAX_FREE_AUDITS, fp);
   return MAX_FREE_AUDITS;
 }
