@@ -133,7 +133,7 @@ export default function WarRoom() {
     });
   };
 
-  // Generate Email Content with Strict Unicode LTR Markers
+  // Generate Email Content with Strict Unicode LTR Markers & Hormozi Framing
   const generateEmailData = (lead, type) => {
     const isAttorney = type === 'attorneys';
     const name = isAttorney ? lead.name : (lead.managingPartner || 'Counsel');
@@ -143,22 +143,52 @@ export default function WarRoom() {
     // Unicode Left-to-Right Mark (LRM) guarantees LTR alignment in any email client
     const LRM = '\u200E';
 
-    const subject = `${LRM}quick question about ${firmName}'s contract review turnaround`;
-    const body = `${LRM}Hi ${name},
+    let subject = '';
+    let body = '';
 
-${LRM}Noticed your practice handles complex corporate transactions and commercial agreements.
+    if (isAttorney) {
+      // 1. Tailored Attorney-Specific Message
+      subject = `${LRM}confidentiality & contract redline turnaround for ${firmName}`;
+      body = `${LRM}Hi ${name},
 
-${LRM}Quick question: are your associates still spending 3+ hours manually redlining 40-page agreements, or risking attorney-client privilege uploading client drafts to public cloud AI like ChatGPT?
+${LRM}With state bar associations issuing formal ethics warnings regarding client data leaks into public cloud AI, transactional partners face an exhausting dilemma:
 
-${LRM}We engineered ContractGuard: an air-gapped forensic contract integrity engine that audits 50-page agreements for hidden financial discrepancies, broken cross-references, and undefined terms in under 200ms—100% locally in computer RAM with zero external cloud telemetry.
+${LRM}Either spend late nights manually cross-referencing multi-version indemnification clauses and defined terms, or risk privileged client exposure on third-party cloud servers.
 
-${LRM}You can test any real contract draft right now in our live interactive sandbox (zero signup or credit card required):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}We built an air-gapped forensic audit engine specifically to eliminate this ABA Model Rule 1.6 conflict. It audits 50-page agreements for broken cross-references, undefined capitalized terms, and silent financial discrepancies in under 3 seconds—running strictly inside your local workstation RAM with zero cloud transmission.
 
-${LRM}Curious to hear what your team thinks of the instant risk radar.
+${LRM}You can stress-test a sample redacted agreement directly in our zero-network sandbox:
+${LRM}https://www.nexus-os.store/demo
+
+${LRM}Zero account creation, zero cloud telemetry, and zero payment info required.
+
+${LRM}Would you be opposed to a 60-second test to see how it flags cross-clause shifts before closing?
 
 ${LRM}Best regards,
-${LRM}Nexus.OS`;
+${LRM}Nexus ContractGuard | Legal Forensic Systems
+${LRM}office@nexus-os.store`;
+    } else {
+      // 2. Tailored Law Firm & Managing Partner Message
+      subject = `${LRM}firm-wide ABA Model Rule 1.6 compliance & review efficiency at ${firmName}`;
+      body = `${LRM}Dear ${name},
+
+${LRM}As managing partner of ${firmName}, firm-wide compliance and associate review turnaround are likely constant balancing acts.
+
+${LRM}With recent Bar advisories warning firms about third-party subpoena risks and cloud LLM data retention, ensuring all associates audit agreements under strict ABA Model Rule 1.6 confidentiality has become a critical liability priority.
+
+${LRM}We engineered ContractGuard for boutique commercial firms: an on-premise, zero-network forensic audit engine. It empowers your transactional team to catch broken citations, missing exhibits, and hidden liability shifts in under 3 seconds—running 100% locally in workstation RAM with zero external server connection.
+
+${LRM}Unlike legacy enterprise platforms that charge $1,800/year per seat, we provide perpetual, air-gapped multi-workstation licenses for boutique practices.
+
+${LRM}Your team can test our live offline sandbox with any redacted agreement (no signup required):
+${LRM}https://www.nexus-os.store/demo
+
+${LRM}Would you be open to seeing how our air-gapped forensic radar protects ${firmName}'s client privilege while accelerating review speed?
+
+${LRM}Sincerely,
+${LRM}Nexus ContractGuard Enterprise | Corporate Systems
+${LRM}office@nexus-os.store`;
+    }
 
     return { name, firmName, email, subject, body };
   };
