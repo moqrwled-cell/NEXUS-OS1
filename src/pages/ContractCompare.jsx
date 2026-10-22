@@ -786,8 +786,52 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
 
 
 // =========================================================================
-// 1. CONTRACT ANALYZER VIEW (Dual Modes + Web Worker HUD + Multi-Export)
+// PRE-PACKAGED HAZARDOUS LEGAL CONTRACT FOR INSTANT IN-MEMORY EVALUATION
 // =========================================================================
+const HAZARDOUS_SAMPLE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT
+
+This Agreement is entered into on this 12th day of October, 2026, by and between Acme Holdings LLC ("Buyer") and Globex International Corp ("Seller").
+
+1. PURCHASE AND SALE OF ASSETS
+1.1 Subject to the terms and conditions hereof, Seller hereby agrees to transfer, assign, and convey to Buyer all of Seller's right, title, and interest in and to the Assets.
+
+2. COMMENCEMENT & TERM
+2.1 This Agreement shall commence on the Effective Date and shall continue in full force for a term of thirty-six (36) months unless terminated earlier in accordance with Section 14.2.
+
+3. CLOSING CONDITIONS & EXHIBITS
+3.1 The obligations of Buyer are subject to the delivery of all disclosure schedules set forth in Exhibit C, which are incorporated herein by reference.
+3.2 Seller shall furnish key managerial services utilizing Key Personnel as designated in Schedule 1.
+
+4. CONSIDERATION AND PAYMENT TERMS
+4.1 In consideration of the Assets and ongoing services, Buyer shall pay Seller the total purchase price of Two Hundred Fifty Thousand Dollars ($205,000) payable in three equal quarterly installments.
+4.2 Any disputed invoices shall be resolved within thirty (30) business days following receipt of notice.
+
+5. CONFIDENTIALITY AND PRIVILEGED DATA
+5.1 Each party shall hold in strict confidence all proprietary data, client lists, and technical specifications disclosed by the counterparty.
+
+9. TERMINATION FOR CAUSE
+9.2 Either party may terminate this Agreement immediately upon written notice in accordance with the procedures set forth in Section 14.2 of this Agreement.
+9.3 Notice period shall be sixty (60) days, except as provided in Section 9.1 which specifies ten (10) days.
+
+11. SURVIVAL
+11.4 The indemnification covenants and confidentiality obligations in Section 19.1 shall survive termination of this Agreement for five (5) years.`;
+
+const HAZARDOUS_BASELINE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT (ORIGINAL DRAFT)
+
+This Agreement is entered into on this 1st day of October, 2026, by and between Acme Holdings LLC ("Buyer") and Globex International Corp ("Seller").
+
+1. PURCHASE AND SALE OF ASSETS
+1.1 Seller agrees to transfer all designated Assets to Buyer.
+
+2. COMMENCEMENT & TERM
+2.1 Term shall be twenty-four (24) months.
+
+4. CONSIDERATION AND PAYMENT TERMS
+4.1 Purchase price shall be Two Hundred Thousand Dollars ($200,000).
+
+14. TERMINATION PROCEDURES
+14.2 Either party may terminate upon thirty (30) days notice.`;
+
 // =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + In-Memory Proofreader + Multi-Export)
 // =========================================================================
@@ -956,6 +1000,22 @@ function ContractAnalyzerView({ initialSession }) {
     if (file) {
       processDocumentFile(file, setTargetText, statusKey);
     }
+  };
+
+  const handleLoadSample = (modeToUse = analysisMode) => {
+    setText(HAZARDOUS_SAMPLE_CONTRACT);
+    setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
+    setDocumentTitle('Hazardous M&A Asset Purchase Agreement');
+    setClientParty('Acme Holdings LLC');
+    setCounterparty('Globex International Corp');
+    handleExecuteAudit({
+      text: HAZARDOUS_SAMPLE_CONTRACT,
+      baselineText: HAZARDOUS_BASELINE_CONTRACT,
+      mode: modeToUse,
+      title: 'Hazardous M&A Asset Purchase Agreement',
+      clientParty: 'Acme Holdings LLC',
+      counterparty: 'Globex International Corp'
+    });
   };
 
   const handleExecuteAudit = async (overridePayload) => {
@@ -1176,6 +1236,14 @@ function ContractAnalyzerView({ initialSession }) {
               {uploadStatus.target && (
                 <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
               )}
+              <button
+                type="button"
+                onClick={() => handleLoadSample('single')}
+                className="bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/35 px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.15)] hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Sparkles size={13} className="text-emerald-400" />
+                ⚡ Load Sample Hazardous M&A Draft
+              </button>
               <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5">
                 <Upload size={13} /> Import (.pdf / .docx / .txt / Scanned Image)
                 <input
@@ -1193,6 +1261,21 @@ function ContractAnalyzerView({ initialSession }) {
             placeholder="Paste contract text here or drag & drop .pdf / .docx / .txt file to audit for broken references, missing exhibits, undefined terms, and financial mismatches..."
             className="w-full bg-black/40 p-5 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[260px]"
           />
+          {!text.trim() && (
+            <div className="absolute inset-x-0 bottom-14 flex items-center justify-center pointer-events-none">
+              <div className="pointer-events-auto bg-zinc-900/95 backdrop-blur-md border border-zinc-700/80 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+                <span className="text-xs text-zinc-300">Need an immediate test draft with real-world drafting defects?</span>
+                <button
+                  type="button"
+                  onClick={() => handleLoadSample('single')}
+                  className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
+                >
+                  <Sparkles size={13} />
+                  ⚡ Load Sample Hazardous Draft
+                </button>
+              </div>
+            </div>
+          )}
           <div className="px-5 py-2.5 border-t border-zinc-800/80 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
             <span>Air-gapped client RAM processing · Drag & Drop enabled</span>
             <span className="font-semibold text-zinc-300">
@@ -1231,6 +1314,14 @@ function ContractAnalyzerView({ initialSession }) {
                 {uploadStatus.baseline && (
                   <span className="text-xs font-mono text-cyan-400">{uploadStatus.baseline}</span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => handleLoadSample('comparative')}
+                  className="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/35 px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.15)] hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <Sparkles size={12} className="text-cyan-400" />
+                  ⚡ Load Sample Pair
+                </button>
                 <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
                   <Upload size={12} /> Upload
                   <input

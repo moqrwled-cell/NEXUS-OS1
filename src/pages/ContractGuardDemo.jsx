@@ -913,16 +913,26 @@ export default function ContractGuardDemo() {
                         <p className="text-[11px] text-zinc-400 max-w-xs mt-1 mb-3">
                           Upload previous execution version or counterparty initial draft for redline diff comparison.
                         </p>
-                        <label className="px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-[11px] transition-all cursor-pointer flex items-center gap-1.5 shadow-sm">
-                          <Upload size={11} />
-                          <span>Select Baseline File</span>
-                          <input 
-                            type="file" 
-                            accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp" 
-                            onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')} 
-                            className="hidden" 
-                          />
-                        </label>
+                        <div className="flex flex-wrap items-center justify-center gap-2">
+                          <label className="px-3.5 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-[11px] transition-all cursor-pointer flex items-center gap-1.5 shadow-sm">
+                            <Upload size={11} />
+                            <span>Select Baseline File</span>
+                            <input 
+                              type="file" 
+                              accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp" 
+                              onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')} 
+                              className="hidden" 
+                            />
+                          </label>
+                          <a
+                            href="/samples/02_Apex_Acquisition_Agreement_BASELINE.docx"
+                            download
+                            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-zinc-700 text-zinc-300 text-[11px] font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Download size={11} className="text-cyan-400" />
+                            <span>Download Baseline .DOCX</span>
+                          </a>
+                        </div>
                       </div>
                     ) : (
                       <div className="relative">
@@ -1009,6 +1019,14 @@ export default function ContractGuardDemo() {
                           <RefreshCw size={12} className="text-emerald-400" />
                           <span>Load Sample Hazardous M&A Draft</span>
                         </button>
+                        <a
+                          href="/samples/01_Apex_Acquisition_Agreement_DEFECTIVE.docx"
+                          download
+                          className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-zinc-700 text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Download size={12} className="text-cyan-400" />
+                          <span>Download Sample .DOCX</span>
+                        </a>
                       </div>
                       <div className="mt-4 text-[10.5px] font-mono text-zinc-500">
                         Or paste raw contract clauses directly below:
