@@ -7,8 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        'nexus-bg': '#020608',
-        'nexus-card': 'rgba(6, 14, 18, 0.7)',
+        'nexus-bg': '#040B0E',
+        'nexus-card': 'rgba(10, 20, 25, 0.6)',
         'nexus-emerald': '#00FF9D',
         'nexus-cyan': '#00F0FF',
         'nexus-mint': '#00FF9D',
@@ -22,12 +22,12 @@ export default {
       },
       fontFamily: {
         // High-Precision Typography System
-        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
-        body: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
-        ui: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['"Instrument Serif"', 'serif'],
+        body: ['"Barlow"', 'sans-serif'],
+        sans: ['"Barlow"', '"Inter"', 'system-ui', 'sans-serif'],
+        ui: ['"Barlow"', '"Inter"', 'sans-serif'],
+        serif: ['"Instrument Serif"', '"Source Serif 4"', 'serif'],
         legal: ['"Source Serif 4"', 'Georgia', 'Cambria', 'serif'],
-        serif: ['"Source Serif 4"', 'Georgia', 'Cambria', 'serif'],
         mono: ['"IBM Plex Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
         // Fallback font aliases
         cairo: ['"Cairo"', '"Inter"', 'sans-serif'],
