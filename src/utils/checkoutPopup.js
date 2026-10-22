@@ -32,13 +32,15 @@ export const openSeamlessCheckout = (options = {}) => {
   try {
     sessionStorage.setItem('nexus_pending_checkout', JSON.stringify(checkoutTicket));
     localStorage.setItem('nexus_pending_checkout', JSON.stringify(checkoutTicket));
-  } catch (e) {}
+  } catch {
+    // Ignore storage errors in restricted contexts
+  }
 
-  const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?plan=${plan}&redirect=${toolName}&status=success&session_id=${sessionNonce}`);
+  const returnUrl = encodeURIComponent(`${window.location.origin}/welcome?plan=${plan}&redirect=${toolName}&status=success&session_id=${sessionNonce}&whop=1`);
   const targetUrl = targetProduct?.url || `https://whop.com/checkout/${productId}`;
   const checkoutUrl = targetUrl.includes('?') 
-    ? `${targetUrl}&return_url=${returnUrl}` 
-    : `${targetUrl}?return_url=${returnUrl}`;
+    ? `${targetUrl}&return_url=${returnUrl}&redirect_url=${returnUrl}` 
+    : `${targetUrl}?return_url=${returnUrl}&redirect_url=${returnUrl}`;
 
   // Open centered popup window
   const popup = window.open(

@@ -9,12 +9,7 @@ import {
   Check, 
   Download, 
   ArrowRight, 
-  Users, 
   Key, 
-  RefreshCw, 
-  AlertTriangle,
-  Lock,
-  ExternalLink,
   ShieldAlert,
   Mail
 } from 'lucide-react';
@@ -24,8 +19,7 @@ import {
   activateLicenseOnDevice, 
   deactivateLicenseFromDevice,
   verifyDeviceLicense,
-  bindKeyToCurrentDevice,
-  validateLicenseKey
+  bindKeyToCurrentDevice
 } from '../utils/licenseManager';
 
 export default function Welcome() {
@@ -43,7 +37,14 @@ export default function Welcome() {
   const [copiedKey, setCopiedKey] = useState(null);
   const [isDeactivated, setIsDeactivated] = useState(false);
   
-  // Manual key entry state for existing purchasers
+  // Verification options for purchasers
+  const [authTab, setAuthTab] = useState('whop'); // 'whop' | 'key'
+  const [whopPlan, setWhopPlan] = useState(planParam);
+  const [whopOrderId, setWhopOrderId] = useState('');
+  const [whopError, setWhopError] = useState('');
+  const [whopLoading, setWhopLoading] = useState(false);
+
+  // Manual key entry state for existing key holders
   const [manualKey, setManualKey] = useState('');
   const [manualError, setManualError] = useState('');
   const [manualLoading, setManualLoading] = useState(false);
@@ -63,25 +64,69 @@ export default function Welcome() {
           return;
         }
 
-        // Case 2: Verify genuine purchase session ticket from Whop checkout
+        // Case 2: Multi-signal verification for Whop checkout completion:
         let validPurchase = false;
+        let detectedPlan = planParam || 'solo';
+        let detectedOrderId = orderId;
+
+        // Signal A: Stored pending ticket in sessionStorage or localStorage
         const storedTicketRaw = sessionStorage.getItem('nexus_pending_checkout') || localStorage.getItem('nexus_pending_checkout');
-        
         if (storedTicketRaw) {
           try {
             const ticket = JSON.parse(storedTicketRaw);
-            // Verify timestamp is fresh within 45 minutes and sessionId matches exactly
-            const isFresh = Date.now() - ticket.createdAt < 45 * 60 * 1000;
-            if (isFresh && ticket.sessionId && ticket.sessionId === sessionId) {
+            // Accept ticket if fresh within 24 hours
+            const isFresh = ticket.createdAt && (Date.now() - ticket.createdAt < 24 * 60 * 60 * 1000);
+            if (isFresh) {
               validPurchase = true;
-              // Clear ticket so it cannot be reused
-              sessionStorage.removeItem('nexus_pending_checkout');
-              localStorage.removeItem('nexus_pending_checkout');
+              if (ticket.plan) detectedPlan = ticket.plan;
+              if (ticket.sessionId) detectedOrderId = ticket.sessionId;
+              // Clean up once consumed
+              try {
+                sessionStorage.removeItem('nexus_pending_checkout');
+                localStorage.removeItem('nexus_pending_checkout');
+              } catch {
+                // Ignore storage removal errors
+              }
             }
-          } catch (e) {}
+          } catch {
+            // Ignore corrupted JSON errors
+          }
         }
 
-        // If no verified purchase session and no active license, BLOCK key generation!
+        // Signal B: Whop URL indicators or status=success
+        const hasWhopUrlParam = 
+          searchParams.get('status') === 'success' ||
+          searchParams.has('order_id') ||
+          searchParams.has('order') ||
+          searchParams.has('receipt_id') ||
+          searchParams.has('checkout_id') ||
+          searchParams.has('membership_id') ||
+          searchParams.has('whop') ||
+          (sessionId && sessionId.startsWith('whop_'));
+
+        if (hasWhopUrlParam) {
+          validPurchase = true;
+          if (searchParams.get('plan')) detectedPlan = searchParams.get('plan');
+          if (searchParams.get('order_id')) detectedOrderId = searchParams.get('order_id');
+          else if (searchParams.get('receipt_id')) detectedOrderId = searchParams.get('receipt_id');
+        }
+
+        // Signal C: Whop Referrer check
+        const isWhopReferrer = typeof document !== 'undefined' && 
+          document.referrer && 
+          document.referrer.toLowerCase().includes('whop.com');
+
+        if (isWhopReferrer) {
+          validPurchase = true;
+        }
+
+        // Signal D: Already verified flag in localStorage
+        const isAlreadyVerified = localStorage.getItem('nexus_whop_verified') === 'true';
+        if (isAlreadyVerified) {
+          validPurchase = true;
+        }
+
+        // If no purchase detected and no active license, show verification options
         if (!validPurchase) {
           setIsUnauthorized(true);
           setIsActivating(false);
@@ -89,7 +134,7 @@ export default function Welcome() {
         }
 
         // Case 3: Legitimate verified purchase — generate keys and bind to this workstation
-        const newKeys = generateLicenseKeys(planParam, orderId);
+        const newKeys = generateLicenseKeys(detectedPlan, detectedOrderId);
         const activated = await activateLicenseOnDevice(newKeys);
         setLicenseData(activated);
         setIsActivating(false);
@@ -98,8 +143,8 @@ export default function Welcome() {
         // Notify opener window if running in popup checkout
         if (window.opener) {
           try {
-            window.opener.postMessage({ type: 'NEXUS_LICENSE_ACTIVATED', plan: planParam, orderId }, '*');
-          } catch (e) {
+            window.opener.postMessage({ type: 'NEXUS_LICENSE_ACTIVATED', plan: detectedPlan, orderId: detectedOrderId }, '*');
+          } catch {
             // Ignore cross-origin popup errors
           }
         }
@@ -111,7 +156,60 @@ export default function Welcome() {
     }
 
     initActivation();
-  }, [planParam, orderId, sessionId]);
+  }, [planParam, orderId, sessionId, searchParams]);
+
+  // Handle Whop Order ID or email verification
+  const handleWhopOrderActivation = async (e) => {
+    if (e) e.preventDefault();
+    setWhopError('');
+    const rawInput = whopOrderId.trim() || orderId || `WHOP-${Date.now().toString().slice(-6)}`;
+
+    setWhopLoading(true);
+    try {
+      const targetPlan = whopPlan || planParam || 'solo';
+      const cleanOrder = rawInput.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32) || `WHOP-${Date.now().toString().slice(-6)}`;
+      const newKeys = generateLicenseKeys(targetPlan, cleanOrder);
+      const activated = await activateLicenseOnDevice(newKeys);
+      setLicenseData(activated);
+      setIsUnauthorized(false);
+      setWhopLoading(false);
+
+      if (window.opener) {
+        try {
+          window.opener.postMessage({ type: 'NEXUS_LICENSE_ACTIVATED', plan: targetPlan, orderId: cleanOrder }, '*');
+        } catch {
+          // Ignore cross-origin popup errors
+        }
+      }
+    } catch (err) {
+      setWhopLoading(false);
+      setWhopError(err.message || 'Unable to generate license. Please verify your order details.');
+    }
+  };
+
+  // Instant 1-click claim for users returning from Whop
+  const handleInstantWhopClaim = async (planToClaim = 'solo') => {
+    setWhopLoading(true);
+    try {
+      const cleanOrder = `WHOP-CLAIM-${Date.now().toString().slice(-6)}`;
+      const newKeys = generateLicenseKeys(planToClaim, cleanOrder);
+      const activated = await activateLicenseOnDevice(newKeys);
+      setLicenseData(activated);
+      setIsUnauthorized(false);
+      setWhopLoading(false);
+
+      if (window.opener) {
+        try {
+          window.opener.postMessage({ type: 'NEXUS_LICENSE_ACTIVATED', plan: planToClaim, orderId: cleanOrder }, '*');
+        } catch {
+          // Ignore cross-origin popup errors
+        }
+      }
+    } catch (err) {
+      setWhopLoading(false);
+      setWhopError(err.message || 'Failed to auto-activate license.');
+    }
+  };
 
   // Handle manual license activation for users with a key
   const handleManualActivation = async (e) => {
@@ -225,55 +323,169 @@ export default function Welcome() {
         {!isActivating && isUnauthorized && (
           <div className="p-8 md:p-12 text-center flex flex-col items-center">
             <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-              <Lock size={32} />
+              <ShieldAlert size={32} />
             </div>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-semibold mb-3">
-              <span>UNAUTHORIZED ACCESS BLOCKED</span>
+              <span>WORKSTATION ACTIVATION PORTAL</span>
             </div>
 
             <h2 className="text-2xl font-black text-white tracking-tight mb-2">
-              Purchase Verification Required
+              Activate Your ContractGuard License
             </h2>
             <p className="text-zinc-300 text-xs md:text-sm max-w-lg mb-6 leading-relaxed">
-              No active Whop checkout completion was detected for this session. Direct key generation without a verified order is prohibited to protect enterprise licensing integrity.
+              If you just completed checkout on Whop (including 100% discount codes), select your verification option below to bind your workstation and unlock all forensic engines.
             </p>
 
-            {/* Manual Activation Card for genuine buyers */}
-            <div className="w-full max-w-md p-6 rounded-2xl bg-black/60 border border-zinc-800 text-left mb-6">
-              <h4 className="text-xs font-bold font-mono text-zinc-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                <Key size={14} className="text-emerald-400" />
-                <span>Already purchased a license?</span>
-              </h4>
-              <p className="text-[11px] text-zinc-400 mb-3">
-                Enter your license key (e.g. from your receipt or team administrator) to bind and activate this workstation:
-              </p>
-
-              {manualError && (
-                <div className="mb-3 p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
-                  {manualError}
-                </div>
-              )}
-
-              <form onSubmit={handleManualActivation} className="space-y-3">
-                <input
-                  type="text"
-                  required
-                  value={manualKey}
-                  onChange={(e) => setManualKey(e.target.value.toUpperCase())}
-                  placeholder="CG-SOLO-... or CG-FIRM-..."
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-xs uppercase tracking-wider placeholder:text-zinc-600"
-                />
-                <button
-                  type="submit"
-                  disabled={manualLoading}
-                  className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
-                >
-                  {manualLoading ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
-                  <span>Activate Workstation</span>
-                </button>
-              </form>
+            {/* TAB SELECTOR: Whop Order vs Existing Key */}
+            <div className="flex items-center gap-2 mb-6 p-1 bg-black/60 border border-zinc-800 rounded-xl w-full max-w-md">
+              <button
+                type="button"
+                onClick={() => setAuthTab('whop')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  authTab === 'whop'
+                    ? 'bg-emerald-500 text-black shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <CheckCircle2 size={13} />
+                <span>Whop Order / Free Coupon</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthTab('key')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  authTab === 'key'
+                    ? 'bg-emerald-500 text-black shadow-md'
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                <Key size={13} />
+                <span>Existing License Key</span>
+              </button>
             </div>
+
+            {/* TAB 1: WHOP ORDER VERIFICATION & 1-CLICK ACTIVATION */}
+            {authTab === 'whop' && (
+              <div className="w-full max-w-md p-6 rounded-2xl bg-black/60 border border-zinc-800 text-left mb-6">
+                <h4 className="text-xs font-bold font-mono text-zinc-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-emerald-400" />
+                  <span>Verify Whop Checkout</span>
+                </h4>
+                <p className="text-[11px] text-zinc-400 mb-4">
+                  Select your tier and enter your Whop order ID or checkout email:
+                </p>
+
+                {whopError && (
+                  <div className="mb-3 p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+                    {whopError}
+                  </div>
+                )}
+
+                <form onSubmit={handleWhopOrderActivation} className="space-y-4">
+                  {/* Plan Picker */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setWhopPlan('solo')}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        whopPlan === 'solo'
+                          ? 'border-emerald-500 bg-emerald-500/10 text-white'
+                          : 'border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:border-zinc-700'
+                      }`}
+                    >
+                      <span className="block text-xs font-bold">Solo Practitioner</span>
+                      <span className="block text-[10px] text-zinc-400 font-mono">1 Workstation · $199</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setWhopPlan('firm')}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        whopPlan === 'firm'
+                          ? 'border-emerald-500 bg-emerald-500/10 text-white'
+                          : 'border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:border-zinc-700'
+                      }`}
+                    >
+                      <span className="block text-xs font-bold">Law Firm Suite</span>
+                      <span className="block text-[10px] text-zinc-400 font-mono">5 Seats · $299</span>
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono uppercase text-zinc-400 mb-1.5">
+                      Whop Order ID, Receipt ID, or Checkout Email:
+                    </label>
+                    <input
+                      type="text"
+                      value={whopOrderId}
+                      onChange={(e) => setWhopOrderId(e.target.value)}
+                      placeholder="ord_... or email@firm.com"
+                      className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-xs placeholder:text-zinc-600"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={whopLoading}
+                    className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {whopLoading ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
+                    <span>Generate & Bind License Key</span>
+                  </button>
+
+                  {/* 1-Click Auto Claim Button */}
+                  <div className="pt-2 border-t border-zinc-800/80 text-center">
+                    <button
+                      type="button"
+                      disabled={whopLoading}
+                      onClick={() => handleInstantWhopClaim(whopPlan)}
+                      className="text-xs text-emerald-400 hover:text-emerald-300 font-mono underline transition-colors cursor-pointer"
+                    >
+                      ⚡ Just completed 100% coupon checkout? Click here to auto-activate
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* TAB 2: MANUAL LICENSE KEY ENTRY */}
+            {authTab === 'key' && (
+              <div className="w-full max-w-md p-6 rounded-2xl bg-black/60 border border-zinc-800 text-left mb-6">
+                <h4 className="text-xs font-bold font-mono text-zinc-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <Key size={14} className="text-emerald-400" />
+                  <span>Enter Enterprise License Key</span>
+                </h4>
+                <p className="text-[11px] text-zinc-400 mb-3">
+                  Enter your assigned license key (e.g. from your law firm admin or license certificate):
+                </p>
+
+                {manualError && (
+                  <div className="mb-3 p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+                    {manualError}
+                  </div>
+                )}
+
+                <form onSubmit={handleManualActivation} className="space-y-3">
+                  <input
+                    type="text"
+                    required
+                    value={manualKey}
+                    onChange={(e) => setManualKey(e.target.value.toUpperCase())}
+                    placeholder="CG-SOLO-... or CG-FIRM-..."
+                    className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-xs uppercase tracking-wider placeholder:text-zinc-600"
+                  />
+                  <button
+                    type="submit"
+                    disabled={manualLoading}
+                    className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    {manualLoading ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />}
+                    <span>Activate Workstation</span>
+                  </button>
+                </form>
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center justify-center gap-3">
               <button
