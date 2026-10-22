@@ -64,7 +64,7 @@ export const STATUTORY_DOCTRINES = {
  * Enriches a raw audit finding with authoritative statutory citations,
  * litigation exposure analysis, and an AmLaw 100 court-grade redline replacement.
  */
-export function enrichFindingWithStatutoryRemedy(finding, context = {}) {
+export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
   const category = (finding.category || finding.type || '').toUpperCase();
   const text = finding.text || finding.snippet || finding.explanation || '';
   const findingId = finding.id || ('f_' + (finding.targetName || finding.term || finding.type || Math.random().toString(36).substring(2, 7)).replace(/[^a-zA-Z0-9_-]/g, '_'));
@@ -85,8 +85,8 @@ export function enrichFindingWithStatutoryRemedy(finding, context = {}) {
       statutoryCitation: STATUTORY_DOCTRINES.UCC_WORDS_PREVAIL.statute,
       legalDoctrine: STATUTORY_DOCTRINES.UCC_WORDS_PREVAIL.doctrine,
       precedent: STATUTORY_DOCTRINES.UCC_WORDS_PREVAIL.precedent,
-      malpracticeRisk: `Severe Financial Exposure: Under UCC § 3-114, words prevail over numbers. Your client faces an unhedged $45,000 payment vulnerability or litigation discrepancy if executed without mathematical parity.`,
-      courtGradeRedline: `Buyer shall pay to Seller an aggregate cash purchase price of Two Million Four Hundred Fifty Thousand Dollars ($2,450,000) (the "Purchase Price"), payable in immediately available wire funds at Closing; provided, that in the event of any typographical or arithmetic discrepancy between words and numerals, the corrected numerical amount shall control for all settlement calculations.`,
+      malpracticeRisk: `Severe Financial Exposure: Under UCC § 3-114, words prevail over numbers. Your client faces an unhedged discrepancy between ${writtenWords} and ${numericStr} if executed without mathematical parity.`,
+      courtGradeRedline: `Buyer shall pay to Seller an aggregate cash purchase price of ${writtenWords} (${correctedNum}) (the "Purchase Price"), payable in immediately available wire funds at Closing; provided, that in the event of any typographical or arithmetic discrepancy between words and numerals, the corrected numerical amount shall control for all settlement calculations.`,
       actionableAdvice: `Amend Section 3.1 immediately to align the written words and numerical figures prior to circulation to counterparty.`
     };
   }

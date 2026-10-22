@@ -2,6 +2,7 @@
  * Nexus ContractGuard Enterprise — AmLaw 100 Legal Contract Templates Vault
  * Standardized institutional US legal agreements complying with Delaware General Corporation Law,
  * Uniform Commercial Code (UCC), Restatement (Second) of Contracts, and American Real Estate Practice.
+ * Modeled after authoritative transactional filings from SEC EDGAR, DocuSign, Contracko, and Terms.law.
  * 100% Pure English // Zero Mock Data // Authoritative Transactional Standards.
  */
 
@@ -22,6 +23,7 @@ export const LEGAL_TEMPLATES = [
     title: 'Commercial Land Purchase and Sale Agreement (PSA)',
     jurisdiction: 'United States Real Property Jurisprudence (State Specific)',
     summary: 'Institutional agreement for the purchase and conveyance of fee simple commercial land and parcels, complete with earnest money escrow, Phase I/II environmental diligence, ALTA title commitments, FIRPTA compliance, liquidated damages, and formal notary acknowledgment.',
+    statutoryHighlights: ['FIRPTA Section 1445 Withholding', 'ALTA Title Commitment', 'Phase I/II Environmental', 'Liquidated Damages Escrow'],
     variables: [
       { key: 'SELLER_NAME', label: 'Seller Legal Name', defaultVal: 'Midwest Industrial Land Holdings LLC', type: 'text' },
       { key: 'SELLER_STATE', label: 'Seller State of Formation', defaultVal: 'Delaware', type: 'text' },
@@ -37,7 +39,8 @@ export const LEGAL_TEMPLATES = [
       { key: 'ESCROW_AGENT', label: 'Title Company & Escrow Agent', defaultVal: 'First American Title Insurance Company', type: 'text' },
       { key: 'STUDY_PERIOD_DAYS', label: 'Due Diligence Period (Days)', defaultVal: '45', type: 'text' },
       { key: 'CLOSING_DATE', label: 'Closing Date Deadline', defaultVal: 'December 15, 2026', type: 'date' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Ohio', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Ohio', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County / Judicial District', defaultVal: 'Franklin County Court of Common Pleas', type: 'text' }
     ],
     templateBody: `COMMERCIAL LAND PURCHASE AND SALE AGREEMENT
 
@@ -62,13 +65,13 @@ ARTICLE III -- TITLE AND SURVEY EXAMINATION
 3.1 Title Commitment. Within ten (10) calendar days of the Effective Date, Seller shall cause Escrow Agent to issue an ALTA Title Insurance Commitment in the amount of the Purchase Price, accompanied by legible copies of all recorded instruments.
 3.2 Mandatory Cure of Monetary Liens. Seller covenants and agrees that all mortgages, deeds of trust, tax liens, mechanic's liens, and monetary encumbrances created by Seller shall be satisfied and discharged by Seller at or prior to Closing without exception.
 
-ARTICLE IV -- REPRESENTATIONS AND WARRANTIES OF SELLER
+ARTICLE IV -- REPRESENTATIONS, WARRANTIES, AND FIRPTA COMPLIANCE
 Seller represents and warrants to Buyer as of the Effective Date and the Closing Date:
 (a) Authority. Seller has full legal authority and organizational power to execute, deliver, and perform this Agreement.
 (b) Marketable Title. Seller owns unencumbered, marketable fee simple title to the Land, free of all leases, tenancies, options, and unrecorded claims.
 (c) Environmental Compliance. To Seller's actual knowledge, no hazardous materials, toxic substances, or underground storage tanks are present on or beneath the Land in violation of the Comprehensive Environmental Response, Compensation, and Liability Act (CERCLA) or state environmental laws.
 (d) Condemnation. There are no pending or threatened condemnation or eminent domain proceedings affecting the Land.
-(e) Foreign Person Status. Seller is not a "foreign person" as defined in Section 1445 of the Internal Revenue Code (FIRPTA).
+(e) FIRPTA Non-Foreign Status. Seller is not a "foreign person" as defined under Section 1445 of the Internal Revenue Code (FIRPTA). At Closing, Seller shall execute and deliver to Buyer a FIRPTA Non-Foreign Affidavit under penalty of perjury, certifying Seller's U.S. taxpayer identification number, in full compliance with Treasury Regulation Section 1.1445-2(b). If Seller fails to deliver such affidavit, Buyer shall withhold fifteen percent (15%) of the total Purchase Price and remit such sum to the Internal Revenue Service pursuant to IRS Form 8288.
 
 ARTICLE V -- CLOSING DELIVERIES AND MECHANICS
 5.1 Closing Date. The consummation of the purchase and sale transaction contemplated herein (the "Closing") shall occur through escrow with the Escrow Agent on or before {{CLOSING_DATE}} (the "Closing Date").
@@ -85,7 +88,7 @@ ARTICLE VI -- DEFAULT AND REMEDIES
 6.2 Seller Default. If Seller breaches this Agreement, Buyer shall have the right to either: (a) terminate this Agreement and receive an immediate refund of the Deposit; or (b) initiate an action for specific performance to enforce conveyance of the Land.
 
 ARTICLE VII -- MISCELLANEOUS COVENANTS
-7.1 Governing Law. This Agreement shall be governed by, and construed in accordance with, the laws of the State of {{GOVERNING_STATE}}.
+7.1 Governing Law and Venue. This Agreement shall be governed by, and construed in accordance with, the laws of the State of {{GOVERNING_STATE}}. Any judicial proceeding arising hereunder shall be brought exclusively in the {{VENUE_COUNTY}}.
 7.2 Waiver of Jury Trial. BUYER AND SELLER EACH HEREBY IRREVOCABLY WAIVE ALL RIGHT TO TRIAL BY JURY IN ANY ACTION, PROCEEDING, OR COUNTERCLAIM ARISING OUT OF OR RELATING TO THIS AGREEMENT.
 7.3 Integration. This Agreement constitutes the entire agreement between the Parties and supersedes all prior drafts, letters of intent, and oral understandings.
 
@@ -114,6 +117,7 @@ My Commission Expires: _________________`
     title: 'Residential Real Property Purchase Agreement',
     jurisdiction: 'United States Residential Real Estate Standards',
     summary: 'Comprehensive residential real estate conveyance contract featuring standard mortgage financing contingency clauses, home and radon inspection periods, lead-based paint disclosures (42 U.S.C. 4852d), and title covenants.',
+    statutoryHighlights: ['Lead Paint Disclosure 42 U.S.C. 4852d', 'Mortgage Financing Contingency', 'Home/Radon Inspection Period', 'General Warranty Deed'],
     variables: [
       { key: 'SELLER_NAMES', label: 'Seller Full Legal Names', defaultVal: 'Arthur Pendelton and Beatrice Pendelton', type: 'text' },
       { key: 'BUYER_NAMES', label: 'Buyer Full Legal Names', defaultVal: 'Christopher M. Hayes and Eleanor Hayes', type: 'text' },
@@ -123,7 +127,8 @@ My Commission Expires: _________________`
       { key: 'LOAN_AMOUNT', label: 'Mortgage Loan Financing ($)', defaultVal: '$680,000', type: 'text' },
       { key: 'INSPECTION_DAYS', label: 'Inspection Contingency (Days)', defaultVal: '14', type: 'text' },
       { key: 'CLOSING_DATE', label: 'Settlement Closing Date', defaultVal: 'November 20, 2026', type: 'date' },
-      { key: 'GOVERNING_STATE', label: 'Governing State', defaultVal: 'Virginia', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing State', defaultVal: 'Virginia', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County Court', defaultVal: 'Fairfax County Circuit Court', type: 'text' }
     ],
     templateBody: `RESIDENTIAL REAL PROPERTY PURCHASE AGREEMENT
 
@@ -142,8 +147,8 @@ Seller agrees to sell and convey, and Buyer agrees to purchase, the residential 
 3. INSPECTION CONTINGENCY
 Buyer shall have {{INSPECTION_DAYS}} calendar days following the Effective Date to obtain independent home, radon, pest, and structural engineering inspections. If defects are identified exceeding Five Hundred Dollars ($500.00) in aggregate repair value, Buyer may submit a repair amendment or terminate this Agreement with immediate return of the Deposit.
 
-4. LEAD-BASED PAINT DISCLOSURE
-Federal law (42 U.S.C. 4852d) requires disclosure of known lead-based paint for residential dwellings built prior to 1978. Seller discloses no actual knowledge of lead-based hazards on the Property unless otherwise set forth in written disclosures attached hereto.
+4. LEAD-BASED PAINT DISCLOSURE (42 U.S.C. SECTION 4852d)
+Every purchaser of any interest in residential real property on which a residential dwelling was built prior to 1978 is notified that such property may present exposure to lead from lead-based paint that may place young children at risk of developing lead poisoning. Seller represents that: (a) Seller has no actual knowledge of lead-based paint hazards on the Property; and (b) Buyer acknowledges receipt of the EPA approved lead hazard information pamphlet "Protect Your Family from Lead in Your Home" prior to execution hereof.
 
 5. TITLE AND DEED
 Seller shall convey marketable fee simple title to Buyer by General Warranty Deed, free and clear of all liens and encumbrances except existing zoning ordinances and utility easements of record.
@@ -151,8 +156,8 @@ Seller shall convey marketable fee simple title to Buyer by General Warranty Dee
 6. CLOSING AND SETTLEMENT
 Closing shall occur on or before {{CLOSING_DATE}} through a licensed title settlement company. Real estate taxes, water dues, and HOA assessments shall be prorated as of the settlement date.
 
-7. GOVERNING LAW
-This Agreement shall be construed in accordance with the laws of the State of {{GOVERNING_STATE}}.
+7. GOVERNING LAW AND VENUE
+This Agreement shall be construed in accordance with the laws of the State of {{GOVERNING_STATE}}, with exclusive venue in the {{VENUE_COUNTY}}.
 
 SELLER:                                BUYER:
 _______________________________        _______________________________
@@ -167,6 +172,7 @@ Date: _________________________        Date: _________________________`
     title: 'Commercial Real Estate Letter of Intent (LOI)',
     jurisdiction: 'United States Real Estate Practice (Universal Form)',
     summary: 'Standard non-binding commercial acquisition term sheet outlining purchase price, earnest money escrow, physical diligence milestones, closing timelines, and binding exclusivity (no-shop) covenants.',
+    statutoryHighlights: ['Binding Exclusivity / No-Shop', 'Feasibility Milestones', 'Refundable Escrow Deposit', 'Non-Binding Letter Format'],
     variables: [
       { key: 'PROSPECTIVE_BUYER', label: 'Prospective Buyer Name', defaultVal: 'Vanguard Commercial Acquisitions LLC', type: 'text' },
       { key: 'PROSPECTIVE_SELLER', label: 'Property Owner / Seller Name', defaultVal: 'Crestline Development Partners LP', type: 'text' },
@@ -177,7 +183,8 @@ Date: _________________________        Date: _________________________`
       { key: 'INSPECTION_PERIOD_DAYS', label: 'Feasibility & Inspection Period (Days)', defaultVal: '30', type: 'text' },
       { key: 'CLOSING_PERIOD_DAYS', label: 'Closing Period Post-Diligence (Days)', defaultVal: '30', type: 'text' },
       { key: 'EXCLUSIVITY_DAYS', label: 'Exclusivity / No-Shop Period (Days)', defaultVal: '45', type: 'text' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Illinois', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Illinois', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County / Court', defaultVal: 'Cook County Circuit Court', type: 'text' }
     ],
     templateBody: `NON-BINDING LETTER OF INTENT FOR COMMERCIAL REAL ESTATE ACQUISITION
 
@@ -209,8 +216,8 @@ With the exception of this Section 5 and Section 6, this LOI is an expression of
 BINDING EXCLUSIVITY COVENANT:
 In consideration of Buyer expending substantial legal, architectural, and engineering costs to evaluate the Property, Seller agrees that for a period of {{EXCLUSIVITY_DAYS}} calendar days from the date of this LOI (the "Exclusivity Period"), Seller and its partners, brokers, agents, and affiliates shall not solicit, negotiate, or enter into any letters of intent, contracts, or discussions regarding the sale, financing, or transfer of the Property with any third party.
 
-6. GOVERNING LAW
-The binding portions of this LOI shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+6. GOVERNING LAW AND VENUE
+The binding portions of this LOI shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive venue in the {{VENUE_COUNTY}}.
 
 AGREED AND ACCEPTED:
 
@@ -229,6 +236,7 @@ Title: Authorized Signatory            Title: Authorized Signatory`
     title: 'Commercial Triple Net (NNN) Lease Agreement',
     jurisdiction: 'United States Commercial Real Estate Standards',
     summary: 'Full-length commercial Triple Net lease agreement where Tenant pays base rent plus proportional real estate taxes, property insurance, and common area maintenance (CAM), complete with default remedies and subordination.',
+    statutoryHighlights: ['Absolute Net Structure (NNN)', 'CAM Proportional Allocation', 'Accelerated Default Remedies', 'Casualty & Subordination'],
     variables: [
       { key: 'LANDLORD_NAME', label: 'Landlord Legal Entity', defaultVal: 'Metropolitan Commercial Properties LP', type: 'text' },
       { key: 'TENANT_NAME', label: 'Tenant Legal Entity', defaultVal: 'BioHealth Diagnostics Laboratories Inc.', type: 'text' },
@@ -238,7 +246,8 @@ Title: Authorized Signatory            Title: Authorized Signatory`
       { key: 'SECURITY_DEPOSIT', label: 'Security Deposit ($)', defaultVal: '$72,500.00', type: 'text' },
       { key: 'LEASE_TERM_YEARS', label: 'Lease Term (Years)', defaultVal: '7', type: 'text' },
       { key: 'COMMENCEMENT_DATE', label: 'Commencement Date', defaultVal: 'January 1, 2027', type: 'date' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'North Carolina', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'North Carolina', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County Court', defaultVal: 'Mecklenburg County Superior Court', type: 'text' }
     ],
     templateBody: `COMMERCIAL TRIPLE NET (NNN) LEASE AGREEMENT
 
@@ -263,8 +272,8 @@ Tenant shall use the Premises solely for general executive office and commercial
 6. DEFAULT AND REMEDIES
 If Tenant fails to pay rent within ten (10) days of due date, or breaches any other covenant and fails to cure within thirty (30) days following written notice, Landlord may terminate this Lease, re-enter the Premises, and accelerate remaining rent payments.
 
-7. GOVERNING LAW
-This Lease shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+7. GOVERNING LAW AND VENUE
+This Lease shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive venue in the {{VENUE_COUNTY}}.
 
 LANDLORD:                              TENANT:
 {{LANDLORD_NAME}}                      {{TENANT_NAME}}
@@ -280,13 +289,15 @@ Title: Authorized Representative       Title: Authorized Representative`
     title: 'LLC Operating Agreement (Manager-Managed)',
     jurisdiction: 'Delaware / US State LLC Acts',
     summary: 'Comprehensive institutional LLC Operating Agreement featuring capital account maintenance under IRC § 704(b), fiduciary duty safe harbors, transfer restrictions (Right of First Refusal), and drag-along/tag-along mechanics.',
+    statutoryHighlights: ['IRC Section 704(b) Capital Accounts', 'Right of First Refusal (ROFR)', 'Major Decisions Supermajority', 'Fiduciary Safe Harbors'],
     variables: [
       { key: 'COMPANY_NAME', label: 'Company Legal Name LLC', defaultVal: 'Apex Strategic Holdings LLC', type: 'text' },
       { key: 'STATE_OF_FORMATION', label: 'State of Formation', defaultVal: 'Delaware', type: 'text' },
       { key: 'PRINCIPAL_OFFICE', label: 'Principal Business Address', defaultVal: '1209 Orange Street, Wilmington, DE 19801', type: 'text' },
       { key: 'MANAGER_NAME', label: 'Initial Manager Full Name', defaultVal: 'Alexander Sterling', type: 'text' },
       { key: 'INITIAL_CAPITAL_CONTRIBUTION', label: 'Initial Capital Contribution ($)', defaultVal: '$500,000', type: 'text' },
-      { key: 'INITIAL_MEMBERS', label: 'Founding Members List', defaultVal: 'Sterling Ventures Inc. (60%) and Horizon Capital Partners LLC (40%)', type: 'text' }
+      { key: 'INITIAL_MEMBERS', label: 'Founding Members List', defaultVal: 'Sterling Ventures Inc. (60%) and Horizon Capital Partners LLC (40%)', type: 'text' },
+      { key: 'VENUE_COURT', label: 'Court of Chancery Venue', defaultVal: 'Court of Chancery of the State of Delaware', type: 'text' }
     ],
     templateBody: `LIMITED LIABILITY COMPANY OPERATING AGREEMENT
 OF {{COMPANY_NAME}}
@@ -315,8 +326,8 @@ ARTICLE V -- TRANSFER RESTRICTIONS
 5.1 General Prohibition. No Member may sell, assign, pledge, or transfer any Membership Interest without the prior written consent of the Manager.
 5.2 Right of First Refusal (ROFR). If a Member receives a bona fide third-party purchase offer, the Company and other Members shall have the exclusive right of first refusal to acquire the offered interests on the same economic terms.
 
-ARTICLE VI -- DISSOLUTION
-The Company shall dissolve only upon: (a) unanimous written election of the Members; (b) entry of a judicial decree of dissolution; or (c) liquidation of all Company assets.
+ARTICLE VI -- GOVERNING LAW AND CHANCERY VENUE
+This Agreement shall be governed by the laws of the State of {{STATE_OF_FORMATION}}. Any dispute or action between the Members or Manager arising under this Agreement shall be brought exclusively in the {{VENUE_COURT}}.
 
 IN WITNESS WHEREOF, the undersigned have executed this Operating Agreement as of the Effective Date.
 
@@ -325,20 +336,22 @@ MANAGER:                               MEMBERS:
 By: ___________________________        By: ___________________________`
   },
 
-  // 6. ASSET PURCHASE AGREEMENT (APA)
+  // 6. ASSET PURCHASE AGREEMENT (APA - SEC EDGAR MIDDLE MARKET STANDARD)
   {
     id: 'commercial_asset_purchase_agreement',
     category: 'corporate',
     title: 'Asset Purchase Agreement (APA)',
-    jurisdiction: 'Delaware / US Corporate Law (Model Provisions)',
+    jurisdiction: 'Delaware / US Corporate Law (SEC EDGAR Model Standard)',
     summary: 'Standard middle-market Asset Purchase Agreement specifying acquired assets, excluded liabilities, indemnification escrow holdbacks, employee transition covenants, and non-competition restrictions.',
+    statutoryHighlights: ['SEC EDGAR Middle-Market Architecture', 'Excluded Liabilities Firewall', 'Indemnity Escrow Holdback', '3-Year Non-Competition Covenant'],
     variables: [
       { key: 'SELLER_ENTITY', label: 'Seller Corporate Legal Name', defaultVal: 'Nexus Logistics Technologies LLC', type: 'text' },
       { key: 'BUYER_ENTITY', label: 'Buyer Corporate Legal Name', defaultVal: 'Horizon Global Supply Chain Corp.', type: 'text' },
       { key: 'PURCHASE_PRICE', label: 'Total Purchase Consideration ($)', defaultVal: '$8,500,000', type: 'text' },
       { key: 'ESCROW_HOLDBACK', label: 'Indemnification Holdback Escrow ($)', defaultVal: '$850,000', type: 'text' },
       { key: 'CLOSING_DATE', label: 'Target Closing Date', defaultVal: 'October 31, 2026', type: 'date' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Delaware', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Delaware', type: 'text' },
+      { key: 'VENUE_COURT', label: 'Exclusive Chancery Court Venue', defaultVal: 'Court of Chancery of the State of Delaware', type: 'text' }
     ],
     templateBody: `ASSET PURCHASE AGREEMENT
 
@@ -366,8 +379,8 @@ Seller represents and warrants that Seller owns good and marketable title to all
 5. RESTRICTIVE COVENANTS
 Seller agrees that for a period of three (3) years following Closing, Seller shall not directly or indirectly engage in any commercial business competing with the Business within North America.
 
-6. GOVERNING LAW
-This Agreement shall be governed by and construed in accordance with the laws of the State of {{GOVERNING_STATE}}.
+6. GOVERNING LAW AND VENUE
+This Agreement shall be governed by and construed in accordance with the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COURT}}.
 
 SELLER: {{SELLER_ENTITY}}             BUYER: {{BUYER_ENTITY}}
 By: ___________________________        By: ___________________________
@@ -381,11 +394,13 @@ Title: Authorized Signatory            Title: Authorized Signatory`
     title: 'Master Services Agreement (MSA)',
     jurisdiction: 'United States Commercial Law (B2B SaaS / Services)',
     summary: 'Master Services Agreement establishing terms of engagement, Statement of Work (SOW) protocols, intellectual property work-for-hire assignment, indemnification, and liability caps.',
+    statutoryHighlights: ['Work-Made-for-Hire 17 U.S.C. 101', 'Statement of Work (SOW) Framework', '12-Month Consequential Liability Cap', 'B2B Commercial Standard'],
     variables: [
       { key: 'CUSTOMER_NAME', label: 'Client / Customer Legal Name', defaultVal: 'Apex Capital Analytics Corp.', type: 'text' },
       { key: 'PROVIDER_NAME', label: 'Service Provider Legal Name', defaultVal: 'Nexus Intelligence Systems Inc.', type: 'text' },
       { key: 'LIABILITY_CAP', label: 'Aggregate Limitation of Liability ($)', defaultVal: '12 months of fees paid under applicable SOW', type: 'text' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'New York', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'New York', type: 'text' },
+      { key: 'VENUE_COURT', label: 'Venue Judicial District', defaultVal: 'Courts of the State of New York, New York County', type: 'text' }
     ],
     templateBody: `MASTER SERVICES AGREEMENT
 
@@ -398,7 +413,7 @@ Provider shall perform professional technology, consulting, and development serv
 Customer shall pay Provider the fees set forth in each SOW. All invoices shall be payable within thirty (30) days of receipt. Overdue invoices shall accrue interest at 1.5% per month or the statutory maximum.
 
 3. INTELLECTUAL PROPERTY AND WORK PRODUCT
-Customer shall own all right, title, and interest in and to all custom deliverables, code, and documentation created by Provider specifically for Customer under an SOW (the "Work Product"). All copyrightable Work Product shall be deemed a "work made for hire" for Customer under 17 U.S.C. Section 101.
+Customer shall own all right, title, and interest in and to all custom deliverables, code, and documentation created by Provider specifically for Customer under an SOW (the "Work Product"). All copyrightable Work Product shall be deemed a "work made for hire" for Customer under 17 U.S.C. Section 101. To the extent any deliverable is not deemed a work made for hire, Provider hereby unconditionally assigns and transfers to Customer all right, title, and interest therein.
 
 4. CONFIDENTIALITY
 Each party shall protect the other party's Confidential Information with the same degree of care it uses for its own confidential information, but not less than reasonable care.
@@ -406,8 +421,8 @@ Each party shall protect the other party's Confidential Information with the sam
 5. LIMITATION OF LIABILITY
 NEITHER PARTY SHALL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES. EACH PARTY'S TOTAL AGGREGATE LIABILITY ARISING UNDER THIS AGREEMENT SHALL BE STRICTLY LIMITED TO {{LIABILITY_CAP}}.
 
-6. GOVERNING LAW
-This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+6. GOVERNING LAW AND VENUE
+This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COURT}}.
 
 CUSTOMER: {{CUSTOMER_NAME}}            PROVIDER: {{PROVIDER_NAME}}
 By: ___________________________        By: ___________________________
@@ -421,11 +436,13 @@ Title: Authorized Signatory            Title: Authorized Signatory`
     title: 'Mutual Non-Disclosure Agreement (DTSA Compliant)',
     jurisdiction: 'Defend Trade Secrets Act (DTSA) / US Federal Standard',
     summary: 'Bilateral confidentiality agreement protecting proprietary technology, customer lists, and financial forecasts, complete with Defend Trade Secrets Act (18 U.S.C. § 1836) whistleblower safe harbor notices.',
+    statutoryHighlights: ['Defend Trade Secrets Act 18 U.S.C. 1833 Notice', 'Perpetual Trade Secret Survival', 'Need-to-Know Access Restriction', 'Injunctive Relief Authorization'],
     variables: [
       { key: 'PARTY_A_NAME', label: 'Party A Legal Name', defaultVal: 'Vanguard Cybernetics Inc.', type: 'text' },
       { key: 'PARTY_B_NAME', label: 'Party B Legal Name', defaultVal: 'Crestview Capital Partners LP', type: 'text' },
       { key: 'CONFIDENTIALITY_TERM_YEARS', label: 'Confidentiality Term (Years)', defaultVal: '3', type: 'text' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Delaware', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Delaware', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County / Judicial District', defaultVal: 'New Castle County Court of Chancery', type: 'text' }
     ],
     templateBody: `MUTUAL NON-DISCLOSURE AGREEMENT
 
@@ -444,10 +461,10 @@ Receiving Party shall: (a) hold Confidential Information in strict confidence; (
 The obligations herein shall survive for {{CONFIDENTIALITY_TERM_YEARS}} years from disclosure, provided that trade secrets shall be protected for so long as they remain trade secrets under applicable law.
 
 5. DEFEND TRADE SECRETS ACT NOTICE (18 U.S.C. SECTION 1833)
-An individual shall not be held criminally or civilly liable under any trade secret law for disclosure of a trade secret made in confidence to a government official or attorney solely for reporting or investigating a suspected violation of law.
+An individual shall not be held criminally or civilly liable under any federal or state trade secret law for disclosure of a trade secret made in confidence to a government official or attorney solely for reporting or investigating a suspected violation of law, or in a complaint filed under seal in a lawsuit.
 
-6. GOVERNING LAW
-This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+6. GOVERNING LAW AND VENUE
+This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COUNTY}}.
 
 PARTY A: {{PARTY_A_NAME}}              PARTY B: {{PARTY_B_NAME}}
 By: ___________________________        By: ___________________________
@@ -461,12 +478,14 @@ Title: Authorized Signatory            Title: Authorized Signatory`
     title: 'Independent Contractor Agreement (1099)',
     jurisdiction: 'United States Labor & IP Jurisprudence',
     summary: 'Standard 1099 independent contractor agreement affirming non-employment tax status, milestone compensation, non-solicitation, and full IP assignment under 17 U.S.C. § 101.',
+    statutoryHighlights: ['Work-Made-for-Hire 17 U.S.C. 101', 'Present-Tense IP Assignment', 'IRS 1099 Tax Self-Affirmation', 'Non-Solicitation Protections'],
     variables: [
       { key: 'COMPANY_NAME', label: 'Company / Hiring Entity', defaultVal: 'Apex Cloud Innovations LLC', type: 'text' },
       { key: 'CONTRACTOR_NAME', label: 'Contractor Full Name / Entity', defaultVal: 'Dr. Gregory Vance, Ph.D.', type: 'text' },
       { key: 'SERVICES_DESCRIPTION', label: 'Scope of Services', defaultVal: 'software optimization, patent portfolio analysis, and machine learning infrastructure review', type: 'text' },
       { key: 'COMPENSATION_RATE', label: 'Compensation Rate', defaultVal: '$225.00 per hour, not to exceed $25,000 monthly', type: 'text' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'California', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'California', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County / Judicial Court', defaultVal: 'San Francisco County Superior Court', type: 'text' }
     ],
     templateBody: `INDEPENDENT CONTRACTOR AGREEMENT
 
@@ -481,11 +500,11 @@ Company shall compensate Contractor at the rate of {{COMPENSATION_RATE}}. Contra
 3. INDEPENDENT CONTRACTOR STATUS
 Contractor is an independent contractor and not an employee or agent of Company. Contractor shall not be entitled to worker's compensation, health insurance, or unemployment benefits. Contractor bears sole responsibility for all self-employment and income taxes.
 
-4. INTELLECTUAL PROPERTY ASSIGNMENT
-All inventions, software code, reports, designs, and work product created by Contractor in connection with the Services (the "Work Product") shall belong exclusively to Company. Contractor acknowledges that all copyrightable Work Product constitutes a "work made for hire" for Company under 17 U.S.C. Section 101. To the extent any Work Product is not deemed a work made for hire, Contractor hereby irrevocably assigns to Company all right, title, and interest therein.
+4. COMPREHENSIVE INTELLECTUAL PROPERTY ASSIGNMENT
+All inventions, software code, reports, designs, and work product created by Contractor in connection with the Services (the "Work Product") shall belong exclusively to Company. Contractor acknowledges that all copyrightable Work Product constitutes a "work made for hire" for Company under 17 U.S.C. Section 101. In addition, Contractor hereby unconditionally and irrevocably sells, assigns, and transfers to Company all right, title, and interest worldwide in and to all Work Product, patents, copyrights, and trade secrets arising therefrom, effective immediately upon creation.
 
-5. GOVERNING LAW
-This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+5. GOVERNING LAW AND VENUE
+This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COUNTY}}.
 
 COMPANY: {{COMPANY_NAME}}           CONTRACTOR: {{CONTRACTOR_NAME}}
 By: ___________________________    By: ___________________________`
@@ -498,6 +517,7 @@ By: ___________________________    By: ___________________________`
     title: 'Executive Employment & Severance Agreement',
     jurisdiction: 'United States Corporate Employment Jurisprudence',
     summary: 'Executive-level employment agreement incorporating base compensation, performance bonuses, termination definitions (Cause vs Without Cause), severance salary continuation, and Section 409A deferred compensation compliance.',
+    statutoryHighlights: ['IRC Section 409A Compliance', 'Cause vs Without Cause Definitions', 'Severance Continuation Mechanics', 'Post-Termination Restrictive Covenants'],
     variables: [
       { key: 'EMPLOYER_NAME', label: 'Company / Employer Name', defaultVal: 'Nexus Cybernetics Technologies Corp.', type: 'text' },
       { key: 'EXECUTIVE_NAME', label: 'Executive Legal Name', defaultVal: 'Victoria Sterling, J.D.', type: 'text' },
@@ -505,7 +525,8 @@ By: ___________________________    By: ___________________________`
       { key: 'BASE_SALARY', label: 'Annual Base Salary ($)', defaultVal: '$375,000', type: 'text' },
       { key: 'ANNUAL_BONUS_PERCENT', label: 'Target Incentive Bonus (%)', defaultVal: '40%', type: 'text' },
       { key: 'SEVERANCE_MONTHS', label: 'Severance Continuation (Months)', defaultVal: '12', type: 'text' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'New York', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'New York', type: 'text' },
+      { key: 'VENUE_COURT', label: 'Venue Judicial Court', defaultVal: 'Supreme Court of the State of New York, County of New York', type: 'text' }
     ],
     templateBody: `EXECUTIVE EMPLOYMENT AGREEMENT
 
@@ -527,11 +548,11 @@ Executive shall serve as {{EXECUTIVE_TITLE}} of the Company, reporting directly 
 4. RESTRICTIVE COVENANTS
 Executive covenants not to disclose trade secrets or solicit active employees or customers of Company for twelve (12) months following termination.
 
-5. SECTION 409A COMPLIANCE
-This Agreement complies with Internal Revenue Code Section 409A. Any severance payments shall commence only upon Executive's separation from service.
+5. INTERNAL REVENUE CODE SECTION 409A COMPLIANCE
+This Agreement is intended to comply with, or be exempt from, Internal Revenue Code Section 409A. Any severance payments triggered upon termination shall commence only upon Executive experiencing a separation from service within the meaning of Section 409A.
 
-6. GOVERNING LAW
-This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}.
+6. GOVERNING LAW AND VENUE
+This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COURT}}.
 
 COMPANY: {{EMPLOYER_NAME}}           EXECUTIVE: {{EXECUTIVE_NAME}}
 By: ___________________________       _______________________________
@@ -545,6 +566,7 @@ Title: Authorized Signatory           {{EXECUTIVE_NAME}}`
     title: 'Secured Commercial Promissory Note',
     jurisdiction: 'Uniform Commercial Code (UCC Article 9 / Lending Standard)',
     summary: 'Institutional commercial promissory note featuring fixed interest accrual, acceleration upon event of default, UCC Article 9 security cross-collateralization, and collection attorney fee recovery.',
+    statutoryHighlights: ['UCC Article 9 Security Grant', 'UCC-1 Financing Statement Filing Authorization', 'Default Rate Acceleration', 'Attorney Collection Fees'],
     variables: [
       { key: 'BORROWER_NAME', label: 'Borrower Legal Name', defaultVal: 'Vanguard Industrial Real Estate Holdings LLC', type: 'text' },
       { key: 'LENDER_NAME', label: 'Lender Legal Name', defaultVal: 'Crestview Commercial Credit Facility LP', type: 'text' },
@@ -552,7 +574,8 @@ Title: Authorized Signatory           {{EXECUTIVE_NAME}}`
       { key: 'INTEREST_RATE_PERCENT', label: 'Annual Fixed Interest Rate (%)', defaultVal: '8.25%', type: 'text' },
       { key: 'DEFAULT_INTEREST_RATE', label: 'Default Interest Rate (%)', defaultVal: '13.25%', type: 'text' },
       { key: 'MATURITY_DATE', label: 'Maturity Date Deadline', defaultVal: 'October 31, 2028', type: 'date' },
-      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Delaware', type: 'text' }
+      { key: 'GOVERNING_STATE', label: 'Governing Law State', defaultVal: 'Delaware', type: 'text' },
+      { key: 'VENUE_COUNTY', label: 'Venue County / Judicial Court', defaultVal: 'New Castle County Court of Chancery', type: 'text' }
     ],
     templateBody: `SECURED COMMERCIAL PROMISSORY NOTE
 
@@ -565,8 +588,8 @@ FOR VALUE RECEIVED, the undersigned, {{BORROWER_NAME}}, a Delaware limited liabi
 1. PAYMENT TERMS
 Borrower shall make monthly payments of accrued interest on the first business day of each calendar month. The entire outstanding principal balance, together with all unpaid accrued interest, shall be due and payable in full on {{MATURITY_DATE}} (the "Maturity Date").
 
-2. SECURITY
-This Note is secured by a first-priority commercial security interest granted by Borrower to Lender under a Security Agreement covering all commercial assets and proceeds of Borrower pursuant to Article 9 of the Uniform Commercial Code.
+2. SECURITY AND UCC ARTICLE 9 PERFECTION
+This Note is secured by a first-priority commercial security interest granted by Borrower to Lender under a Security Agreement covering all commercial assets, accounts, equipment, and proceeds of Borrower pursuant to Article 9 of the Uniform Commercial Code. Borrower hereby authorizes Lender to file UCC-1 financing statements, amendments, and continuation statements with the Delaware Secretary of State and all other applicable state and county recording offices to perfect and maintain the security interest granted herein.
 
 3. EVENTS OF DEFAULT AND ACCELERATION
 The occurrence of any of the following shall constitute an "Event of Default": (a) failure to pay any principal or interest within five (5) days of due date; (b) voluntary or involuntary bankruptcy of Borrower; or (c) material breach of any loan agreement. Upon an Event of Default, the entire unpaid balance shall become immediately due and payable at the option of Lender, and interest shall accrue at {{DEFAULT_INTEREST_RATE}}.
@@ -574,8 +597,8 @@ The occurrence of any of the following shall constitute an "Event of Default": (
 4. ATTORNEY FEES AND COSTS
 Borrower agrees to pay all reasonable attorney fees and court costs incurred by Lender in enforcing or collecting this Note.
 
-5. GOVERNING LAW
-This Note shall be governed by and construed in accordance with the laws of the State of {{GOVERNING_STATE}}.
+5. GOVERNING LAW AND VENUE
+This Note shall be governed by and construed in accordance with the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COUNTY}}.
 
 BORROWER:
 {{BORROWER_NAME}}
@@ -592,6 +615,7 @@ Title: Authorized Manager`
     title: 'Settlement and Mutual General Release Agreement',
     jurisdiction: 'United States Civil Litigation Practice (All 50 States)',
     summary: 'Universal settlement and release of legal claims containing complete mutual covenants, dismissal with prejudice, California Civil Code § 1542 waiver of unknown claims, non-disparagement, and confidentiality.',
+    statutoryHighlights: ['California Civil Code 1542 Waiver', 'Dismissal with Prejudice Stipulation', 'Comprehensive Mutual General Release', 'Strict Non-Disparagement & Confidentiality'],
     variables: [
       { key: 'FIRST_PARTY', label: 'Claimant / First Party Legal Name', defaultVal: 'Vanguard Dynamics Software Inc.', type: 'text' },
       { key: 'SECOND_PARTY', label: 'Respondent / Second Party Legal Name', defaultVal: 'Quantum Analytics Partners LLC', type: 'text' },
@@ -631,8 +655,8 @@ This Agreement is the compromise of a disputed claim and shall not be construed 
 6. CONFIDENTIALITY AND NON-DISPARAGEMENT
 The financial terms of this settlement shall remain strictly confidential. Each Party covenants not to make or publish any disparaging remarks regarding the other Party.
 
-7. GOVERNING LAW
-This Agreement shall be governed in accordance with the laws of the State of {{GOVERNING_STATE}}.
+7. GOVERNING LAW AND VENUE
+This Agreement shall be governed in accordance with the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{COURT_JURISDICTION}}.
 
 FIRST PARTY: {{FIRST_PARTY}}           SECOND PARTY: {{SECOND_PARTY}}
 By: ___________________________        By: ___________________________

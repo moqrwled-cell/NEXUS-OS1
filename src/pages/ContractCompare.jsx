@@ -257,43 +257,7 @@ export default function ContractCompare() {
             </div>
           )}
 
-          {/* Module 4: Audit Vault */}
-          <button
-            onClick={() => setActiveTool('history')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
-              activeTool === 'history'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
-            }`}
-          >
-            <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
-            <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Encrypted local persistence</p>
-            </div>
-            {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
-          </button>
-          {activeTool === 'history' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Local Storage — </span><span className="text-zinc-400">Every audit and redline session is retained in client-side IndexedDB without cloud transmission.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Restore Session — </span><span className="text-zinc-400">Reopen previous contract reviews, re-examine liabilities, or export updated client memos.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-red-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Purge Vault — </span><span className="text-zinc-400">Permanently clears local database records to uphold strict client-attorney confidentiality.</span></span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Module 5: Legal Templates Vault */}
+          {/* Module 4: Legal Templates Vault */}
           <button
             onClick={() => setActiveTool('templates')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
@@ -327,6 +291,42 @@ export default function ContractCompare() {
                 <div className="flex gap-2">
                   <span className="text-amber-400 font-bold shrink-0">③</span>
                   <span><span className="text-zinc-200 font-semibold">Audit Integration — </span><span className="text-zinc-400">Send compiled contract straight to ContractGuard audit engine with one click.</span></span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Module 5: Audit Vault */}
+          <button
+            onClick={() => setActiveTool('history')}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+              activeTool === 'history'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+            }`}
+          >
+            <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <div className="text-left flex-1 min-w-0">
+              <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
+              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Encrypted local persistence</p>
+            </div>
+            {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+          </button>
+          {activeTool === 'history' && (
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
+              <div className="space-y-2 text-[11px] leading-relaxed">
+                <div className="flex gap-2">
+                  <span className="text-emerald-400 font-bold shrink-0">①</span>
+                  <span><span className="text-zinc-200 font-semibold">Local Storage — </span><span className="text-zinc-400">Every audit and redline session is retained in client-side IndexedDB without cloud transmission.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-cyan-400 font-bold shrink-0">②</span>
+                  <span><span className="text-zinc-200 font-semibold">Restore Session — </span><span className="text-zinc-400">Reopen previous contract reviews, re-examine liabilities, or export updated client memos.</span></span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="text-red-400 font-bold shrink-0">③</span>
+                  <span><span className="text-zinc-200 font-semibold">Purge Vault — </span><span className="text-zinc-400">Permanently clears local database records to uphold strict client-attorney confidentiality.</span></span>
                 </div>
               </div>
             </div>

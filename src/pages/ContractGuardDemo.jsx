@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  ShieldAlert, ShieldCheck, Search, EyeOff, Layers, Database,
+  ShieldAlert, ShieldCheck, Search, EyeOff, Layers, Database, BookOpen,
   FileText, Upload, RefreshCw, Zap, Lock, ArrowRight, CheckCircle2,
   AlertTriangle, AlertCircle, X, Download, HardDriveDownload,
   Users, User, Briefcase, FileCheck, Check, Sparkles, ExternalLink,
@@ -10,6 +10,7 @@ import {
   Copy
 } from 'lucide-react';
 import * as mammoth from 'mammoth';
+import LegalTemplatesView from '../components/LegalTemplatesView';
 
 import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
@@ -588,6 +589,27 @@ export default function ContractGuardDemo() {
                   </div>
                   <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Court evidence numbering</p>
                 </div>
+              </button>
+
+              <button
+                onClick={() => setActiveTool('templates')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 active:scale-[0.98] cursor-pointer text-left ${
+                  activeTool === 'templates'
+                    ? 'bg-white/[0.08] text-white border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15),inset_0_1px_0_0_rgba(255,255,255,0.1)] font-semibold'
+                    : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200 border border-transparent'
+                }`}
+              >
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${activeTool === 'templates' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-zinc-800/60 text-zinc-400'}`}>
+                  <BookOpen size={15} />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[13px] font-semibold leading-tight truncate">AmLaw 100 Vault</p>
+                    <span className="text-[8.5px] font-mono uppercase bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-1 py-0.2 rounded font-bold">12 Models</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 mt-0.5 truncate">US commercial contract library</p>
+                </div>
+                {activeTool === 'templates' && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />}
               </button>
 
               <button
@@ -1773,6 +1795,17 @@ export default function ContractGuardDemo() {
                   </button>
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {/* VIEW 3.5: AMLAW 100 TEMPLATES VAULT (PLACED ABOVE AUDIT VAULT) */}
+          {activeTool === 'templates' && (
+            <motion.div key="templates" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
+              <LegalTemplatesView onSendToAudit={(compiledText, templateTitle) => {
+                setContractText(compiledText);
+                setDocumentTitle(templateTitle);
+                setActiveTool('analyzer');
+              }} />
             </motion.div>
           )}
 
