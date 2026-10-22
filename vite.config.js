@@ -12,7 +12,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('pdf-lib') || id.includes('pdfjs-dist') || id.includes('mammoth') || id.includes('docx')) {
+            if (id.includes('pdf-lib') || id.includes('pdfjs-dist') || id.includes('docx') || id.includes('jszip')) {
               return 'vendor-doc-engine';
             }
             if (id.includes('three') || id.includes('@react-three')) {

@@ -1,4 +1,19 @@
 {
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self' https: http: data: blob: 'unsafe-inline' 'unsafe-eval'; script-src 'self' https: http: data: blob: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: http: 'unsafe-inline'; font-src 'self' https: http: data:; img-src 'self' https: http: data: blob:; connect-src 'self' https: http: data: blob:; worker-src 'self' blob: data:; frame-src 'self' https: http:;"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

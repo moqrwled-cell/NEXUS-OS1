@@ -9,7 +9,7 @@ import {
   ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play,
   Copy
 } from 'lucide-react';
-import * as mammoth from 'mammoth';
+import { extractTextFromDOCX } from '../utils/docxExtractor';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 
 import { useContractWorker } from '../utils/useContractWorker';
@@ -322,7 +322,7 @@ export default function ContractGuardDemo() {
         }));
       } else if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ arrayBuffer });
+        const result = await extractTextFromDOCX(arrayBuffer);
         setTargetText(result.value);
         setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
       } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {

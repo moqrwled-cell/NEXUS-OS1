@@ -4,7 +4,7 @@
  * the user away from the site, and listens for automated license activation.
  */
 
-import { WHOP_CONFIG } from '../config/whopConfig';
+import { WHOP_CONFIG } from '../config/whopConfig.js';
 
 export const openSeamlessCheckout = (options = {}) => {
   // Support string argument format: openSeamlessCheckout('firm') or openSeamlessCheckout('solo')

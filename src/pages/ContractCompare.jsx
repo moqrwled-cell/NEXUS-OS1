@@ -11,7 +11,7 @@ import {
   Settings, Key, Laptop, Copy, Mail, LogOut,
   BookOpen, FileDown
 } from 'lucide-react';
-import * as mammoth from 'mammoth';
+import { extractTextFromDOCX } from '../utils/docxExtractor';
 
 // Flagship Engines & Utilities
 import { sanitizeDocumentPII, PII_RULES } from '../utils/piiEngine';
@@ -967,7 +967,7 @@ function ContractAnalyzerView({ initialSession }) {
         }));
       } else if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ arrayBuffer });
+        const result = await extractTextFromDOCX(arrayBuffer);
         setTargetText(result.value);
         setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
       } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
@@ -2866,7 +2866,7 @@ function PIIRedactorView() {
         setText(txt);
       } else if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
-        const result = await mammoth.extractRawText({ arrayBuffer });
+        const result = await extractTextFromDOCX(arrayBuffer);
         setText(result.value);
       } else if (lowerName.endsWith('.pdf')) {
         const pdfResult = await extractTextFromPDF(file);

@@ -180,6 +180,7 @@ https.request = function (...args) {
     'src/utils/redactedPdfGenerator.js',
     'src/utils/legalTemplatesVault.js',
     'src/utils/docxExportEngine.js',
+    'src/utils/docxExtractor.js',
     'src/components/LegalTemplatesView.jsx',
     'src/workers/contractWorker.js',
     'src/pages/ContractCompare.jsx'
