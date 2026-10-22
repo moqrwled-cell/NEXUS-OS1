@@ -51,9 +51,9 @@ export default function Nexus3DNode() {
       </div>
 
       {/* Floating RAM Forensics HUD Badge */}
-      <div className="absolute bottom-2 px-3 py-1 rounded-full bg-black/60 border border-nexus-emerald/30 text-[10px] font-mono text-nexus-emerald flex items-center gap-1.5 shadow-lg backdrop-blur-md">
+      <div className="absolute bottom-2 px-3.5 py-1 rounded-full bg-black/75 border border-nexus-emerald/30 text-[9.5px] font-mono text-nexus-emerald flex items-center gap-1.5 shadow-lg backdrop-blur-md">
         <span className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-ping" />
-        <span>LOCAL IN-RAM CRYPTOGRAPHIC NODE</span>
+        <span>LOCAL IN-RAM FORENSIC ENGINE · 0 CLOUD TELEMETRY · ABA RULE 1.6 PRIVILEGED</span>
       </div>
 
     </div>

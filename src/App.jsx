@@ -9,19 +9,21 @@ import {
   Lock, 
   FileText, 
   AlertTriangle, 
-  ChevronDown,
-  Sparkles,
-  Scale,
-  Search,
-  EyeOff,
-  AlertCircle,
-  Download,
-  CheckCircle,
-  XCircle
+  ChevronDown, 
+  Sparkles, 
+  Scale, 
+  Search, 
+  EyeOff, 
+  AlertCircle, 
+  Download, 
+  CheckCircle, 
+  XCircle,
+  FileDown
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import Nexus3DNode from './components/Nexus3DNode';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
+import { downloadContractDOCX } from './utils/docxExportEngine';
 
 // Institutional Shield Monogram (Clean, Authoritative, Non-generic)
 function BrandMark({ className = "w-9 h-9" }) {
@@ -44,6 +46,47 @@ export default function App() {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const [isDownloadingSampleRider, setIsDownloadingSampleRider] = useState(false);
+
+  const handleDownloadSampleRider = async () => {
+    setIsDownloadingSampleRider(true);
+    try {
+      const sampleRiderText = `PRE-SIGNING AMENDMENT RIDER & HARMONIZATION SCHEDULE
+(DELAWARE GENERAL CORPORATION LAW & UCC MODEL ACCORD)
+
+This Pre-Signing Amendment Rider (this "Rider") is entered into and effective as of this closing date by and between Acme Holdings LLC ("Buyer") and Globex International Corp ("Seller") to amend, settle, and harmonize that certain Master Asset Purchase and Services Agreement (the "Agreement").
+
+RECITALS
+WHEREAS, the parties desire to execute the Agreement free of drafting contradictions, broken internal citations, and numerical ambiguities; and
+WHEREAS, pursuant to Uniform Commercial Code § 3-114 (UCC § 3-114) and established Delaware Chancery principles of contractual interpretation, the parties stipulate to the harmonized terms set forth herein.
+
+NOW, THEREFORE, the Agreement is hereby amended as follows:
+
+SECTION 1. CONSIDERATION AND MONETARY PAYMENT RECONCILIATION
+Section 4.1 of the Agreement is hereby amended and restated in its entirety to resolve a patent clerical discrepancy between written words and parenthetical digits:
+   "4.1 Purchase Price. In full consideration of the Acquired Assets and Services, Buyer shall pay Seller the total agreed consideration of Two Hundred Fifty Thousand Dollars ($250,000.00 USD), payable in three equal quarterly installments of Eighty-Three Thousand Three Hundred Thirty-Three and 33/100 Dollars ($83,333.33 USD)."
+
+SECTION 2. RECTIFICATION OF CROSS-REFERENCE CITATIONS
+Section 8.2 of the Agreement cross-reference to "Section 14.3" is hereby amended to reference "Section 14.2 (Termination Procedures)", and all indemnification obligations set forth in Exhibit D are superseded and incorporated directly into Schedule 3.1.
+
+SECTION 3. ARTICLE I DEFINITIONS SUPPLEMENT
+Article I (Definitions) of the Agreement is hereby supplemented by inserting the following definition in appropriate alphabetical sequence:
+   "Key Personnel" means those corporate officers, technology architects, and managerial specialists designated on Schedule 1.1 whose continued engagement constitutes an express condition precedent to Closing.
+
+[Executed under Delaware Choice of Law and AmLaw 100 Model Drafting Standards]`;
+
+      await downloadContractDOCX(sampleRiderText, {
+        title: 'Pre-Signing Amendment Rider',
+        jurisdiction: 'Delaware Commercial Law',
+        category: 'amendment'
+      });
+    } catch (e) {
+      alert('Error generating Word document: ' + e.message);
+    } finally {
+      setIsDownloadingSampleRider(false);
+    }
   };
 
   return (
@@ -153,14 +196,14 @@ export default function App() {
                 </span>
               </motion.h1>
               
-              {/* Subheadline with Precise Legal Value Proposition */}
+              {/* Subheadline with Precise Legal Value Proposition & Word .docx Emphasis */}
               <motion.p 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className="text-base md:text-lg text-zinc-300 leading-relaxed mb-8 font-body"
               >
-                Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Catches broken section cross-references, word-to-number financial mismatches, undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.
+                Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Audits native <strong className="text-white">Microsoft Word (.docx)</strong> and PDF drafts client-side. Catches broken section cross-references, word-to-number financial mismatches ($250k vs $205k), undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.
               </motion.p>
 
               {/* Action Buttons */}
@@ -168,7 +211,7 @@ export default function App() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="flex flex-wrap gap-4 items-center mb-10 font-body"
+                className="flex flex-wrap gap-3.5 items-center mb-10 font-body"
               >
                 <button 
                   onClick={() => navigate('/demo')}
@@ -178,17 +221,29 @@ export default function App() {
                   <span>⚡ Try Interactive Live Demo</span>
                   <ArrowRight size={16} />
                 </button>
+
+                {/* Instant Real Microsoft Word .docx Download for Attorney Verification */}
+                <button
+                  type="button"
+                  onClick={handleDownloadSampleRider}
+                  disabled={isDownloadingSampleRider}
+                  className="px-5 py-3.5 rounded-xl bg-nexus-emerald/10 hover:bg-nexus-emerald/20 border border-nexus-emerald/40 text-emerald-300 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(0,255,157,0.15)] group"
+                  title="Download an authentic Pre-Signing Amendment Rider in Microsoft Word (.docx) format to inspect AmLaw 100 formatting"
+                >
+                  <FileDown size={16} className={`text-nexus-emerald ${isDownloadingSampleRider ? 'animate-bounce' : 'group-hover:scale-110'} transition-transform`} />
+                  <span>{isDownloadingSampleRider ? 'Generating Word DOCX...' : 'Download Sample Word Rider (.docx)'}</span>
+                </button>
                 
                 <button 
                   onClick={() => navigate('/app/contractcompare')}
-                  className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <span>Full Studio</span>
                 </button>
 
                 <button 
                   onClick={() => scrollToSection('pricing')}
-                  className="px-6 py-3.5 rounded-xl bg-nexus-cyan/10 hover:bg-nexus-cyan/20 border border-nexus-cyan/30 text-nexus-cyan font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-3.5 rounded-xl bg-nexus-cyan/10 hover:bg-nexus-cyan/20 border border-nexus-cyan/30 text-nexus-cyan font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Lock size={15} />
                   <span>Lifetime Licenses ($199 / $299)</span>
@@ -442,6 +497,67 @@ export default function App() {
               </ul>
             </div>
 
+          </div>
+
+          {/* Institutional 3-Way Comparison Matrix Table */}
+          <div className="mt-14 rounded-3xl bg-[#060D12] border border-white/10 p-6 md:p-8 overflow-x-auto shadow-2xl font-body">
+            <div className="text-center max-w-2xl mx-auto mb-8">
+              <span className="font-mono text-[11px] font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
+                DELAWARE & AMLAW 100 BENCHMARK
+              </span>
+              <h3 className="text-2xl md:text-3xl font-normal font-heading text-white mt-3">
+                How ContractGuard Outperforms Traditional Alternatives
+              </h3>
+            </div>
+
+            <table className="w-full text-left border-collapse min-w-[640px] text-xs md:text-sm">
+              <thead>
+                <tr className="border-b border-white/10 text-zinc-400 font-mono text-[11px] uppercase tracking-wider">
+                  <th className="py-3 px-4">Evaluation Dimension</th>
+                  <th className="py-3 px-4">Manual Associate Review</th>
+                  <th className="py-3 px-4 text-rose-400">Cloud Legal AI (ChatGPT/Harvey)</th>
+                  <th className="py-3 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5 rounded-t-xl">Nexus ContractGuard Enterprise</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 text-zinc-300">
+                <tr>
+                  <td className="py-3.5 px-4 font-semibold text-white">Privilege & Ethics (ABA Rule 1.6)</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Maintained (Slow & Fatigued)</td>
+                  <td className="py-3.5 px-4 text-rose-400">Severe Waiver & Subpoena Risk</td>
+                  <td className="py-3.5 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5">100% In-RAM Air-Gapped (0 Bytes Sent)</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-semibold text-white">Numerical Traps ($250k vs $205k)</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Glazed Over at Late Hours</td>
+                  <td className="py-3.5 px-4 text-amber-300">Probabilistic & Hallucination-Prone</td>
+                  <td className="py-3.5 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5">Deterministic UCC § 3-114 Matcher</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-semibold text-white">Cross-Reference & Missing Schedules</td>
+                  <td className="py-3.5 px-4 text-zinc-400">4–8 Billable Hours Lost</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Partial Surface Check</td>
+                  <td className="py-3.5 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5">Exhaustive Graph Mapping (&lt; 200ms)</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-semibold text-white">Native Word (.docx) & Track Changes</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Manual Track Changes</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Messy Plaintext Conversion</td>
+                  <td className="py-3.5 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5">Native DOCX Ingestion & Word Export</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-semibold text-white">Pre-Signing Amendment Rider</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Drafted from scratch in Word</td>
+                  <td className="py-3.5 px-4 text-zinc-400">Unformatted chat outputs</td>
+                  <td className="py-3.5 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5">Auto-Compiled Court-Grade Word (.docx)</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-4 font-semibold text-white">Pricing & Overhead</td>
+                  <td className="py-3.5 px-4 text-zinc-400">$350–$600/hr Billable Drain</td>
+                  <td className="py-3.5 px-4 text-rose-400">$1,800–$3,000/yr Recurring SaaS</td>
+                  <td className="py-3.5 px-4 text-nexus-emerald font-bold bg-nexus-emerald/5 rounded-b-xl">$199 / $299 Perpetual Lifetime License</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
