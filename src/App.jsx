@@ -13,7 +13,16 @@ import {
   CheckCircle2, 
   FileCheck,
   Layers,
-  FolderLock
+  FolderLock,
+  Scale,
+  ShieldAlert,
+  ShieldCheck,
+  Cpu,
+  FileCode,
+  SlidersHorizontal,
+  XCircle,
+  CheckCircle,
+  FileText
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
@@ -21,8 +30,8 @@ import { openSeamlessCheckout } from './utils/checkoutPopup';
 // Brand Monogram: Authoritative, Architectural Security Monogram
 function BrandShieldIcon({ className = "w-9 h-9" }) {
   return (
-    <div className={`relative flex items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/20 via-emerald-500/10 to-transparent border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)] shrink-0 ${className}`}>
-      <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-emerald-400" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <div className={`relative flex items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/25 via-emerald-500/15 to-cyan-500/10 border border-emerald-400/40 shadow-[0_0_25px_rgba(0,255,157,0.25)] shrink-0 ${className}`}>
+      <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-emerald-300" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         <path d="M9 12l2 2 4-4" />
       </svg>
@@ -35,6 +44,7 @@ export default function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
   const [activeTab, setActiveTab] = useState('audit'); // 'audit' | 'diff' | 'redact' | 'bates'
+  const [simMode, setSimMode] = useState('defective'); // 'defective' | 'verified'
 
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -46,22 +56,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-zinc-100 selection:bg-emerald-500 selection:text-black antialiased font-ui">
+    <div className="min-h-screen bg-[#020608] text-zinc-100 selection:bg-emerald-400 selection:text-black antialiased font-ui">
       
-      {/* Background Architectural Grid & Subtle Apple Ambient Glows */}
+      {/* Background Architectural Grid & Subtle Cyber-Emerald Radiance */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff04_1px,transparent_1px),linear-gradient(to_bottom,#ffffff04_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[360px] bg-emerald-500/8 blur-[140px] rounded-full pointer-events-none" />
-        <div className="absolute top-[40%] right-[-10%] w-[500px] h-[400px] bg-cyan-500/5 blur-[160px] rounded-full pointer-events-none" />
+        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[750px] h-[380px] bg-emerald-500/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute top-[40%] right-[-10%] w-[550px] h-[450px] bg-cyan-500/6 blur-[180px] rounded-full pointer-events-none" />
       </div>
 
       {/* ========================================================================= */}
-      {/* 1. TOP NAVIGATION: Sleek Apple-Style Floating Bar                         */}
+      {/* 1. TOP NAVIGATION: High-Precision Executive Floating Bar                 */}
       {/* ========================================================================= */}
       <header className="fixed w-full z-50 top-0 pt-4 px-4 sm:px-8 max-w-7xl left-1/2 -translate-x-1/2">
-        <nav className="w-full py-2.5 px-4 sm:px-6 flex items-center justify-between rounded-2xl bg-[#070D14]/85 backdrop-blur-2xl backdrop-saturate-180 border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+        <nav className="w-full py-2.5 px-4 sm:px-6 flex items-center justify-between rounded-2xl bg-[#040A0F]/90 backdrop-blur-2xl backdrop-saturate-180 border border-emerald-500/20 shadow-[0_8px_32px_rgba(0,0,0,0.7)]">
           
-          {/* Brand Logo & Name */}
+          {/* Brand Logo & Authoritative Title */}
           <div 
             className="flex items-center gap-3 cursor-pointer select-none group"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -69,33 +79,35 @@ export default function App() {
             <BrandShieldIcon />
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="text-base sm:text-lg font-extrabold tracking-tight text-white group-hover:text-emerald-300 transition-colors">
-                  ContractGuard
+                <span className="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-emerald-300 transition-colors">
+                  Nexus <span className="text-emerald-400">ContractGuard</span>
                 </span>
-                <span className="hidden md:inline-block font-mono text-[9px] font-semibold tracking-wider bg-white/[0.06] text-zinc-400 border border-white/10 px-1.5 py-0.5 rounded uppercase">
-                  Air-Gapped
+                <span className="hidden md:inline-block font-mono text-[9px] font-bold tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded uppercase">
+                  Air-Gapped v2.4
                 </span>
               </div>
-              <span className="text-[10px] text-zinc-500 font-mono tracking-wider uppercase -mt-0.5">by Nexus Systems</span>
+              <span className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase -mt-0.5">
+                Local-First Legal Forensics
+              </span>
             </div>
           </div>
           
           {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center gap-7 text-xs font-medium text-zinc-400">
-            <button onClick={() => scrollToSection('features')} className="hover:text-white transition-colors cursor-pointer">
-              Features
+          <div className="hidden lg:flex items-center gap-7 text-xs font-semibold text-zinc-300">
+            <button onClick={() => scrollToSection('features')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+              Forensic Engines
             </button>
-            <button onClick={() => scrollToSection('security')} className="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5">
-              <span>Air-Gapped Security</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <button onClick={() => scrollToSection('security')} className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5">
+              <span>ABA Model Rule 1.6</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             </button>
-            <button onClick={() => scrollToSection('templates')} className="hover:text-white transition-colors cursor-pointer">
-              AmLaw 100 Templates
+            <button onClick={() => scrollToSection('templates')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+              AmLaw 100 Vault
             </button>
-            <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition-colors cursor-pointer">
-              Pricing
+            <button onClick={() => scrollToSection('pricing')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+              Perpetual Licensing
             </button>
-            <button onClick={() => scrollToSection('faq')} className="hover:text-white transition-colors cursor-pointer">
+            <button onClick={() => scrollToSection('faq')} className="hover:text-emerald-400 transition-colors cursor-pointer">
               FAQ
             </button>
           </div>
@@ -113,7 +125,7 @@ export default function App() {
             {/* Try Interactive Live Demo */}
             <button 
               onClick={() => navigate('/demo')}
-              className="px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-semibold text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+              className="px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.2)]"
             >
               <Sparkles size={13} className="text-cyan-400 shrink-0" />
               <span>Live Demo</span>
@@ -122,7 +134,7 @@ export default function App() {
             {/* Direct Purchase / License Trigger */}
             <button 
               onClick={() => scrollToSection('pricing')}
-              className="bg-emerald-400 text-black px-4 py-1.5 sm:py-2 rounded-xl text-xs font-bold hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-1.5 cursor-pointer"
+              className="bg-emerald-400 text-black px-4 py-1.5 sm:py-2 rounded-xl text-xs font-black hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.35)] flex items-center gap-1.5 cursor-pointer"
             >
               <span>Get License</span>
               <ArrowRight size={13} />
@@ -133,19 +145,19 @@ export default function App() {
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. HERO SECTION: Punchy, Clear, High-Converting                           */}
+      {/* 2. HERO SECTION: Distinctive, Powerful, High-Stakes Legal Authority       */}
       {/* ========================================================================= */}
       <main className="relative z-10 pt-32 sm:pt-40 pb-20">
-        <section className="px-5 sm:px-8 max-w-6xl mx-auto text-center mb-20">
+        <section className="px-5 sm:px-8 max-w-6xl mx-auto text-center mb-16">
           
           {/* Trust Pill */}
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px] font-mono uppercase tracking-wider mb-8"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono uppercase tracking-wider mb-8 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>100% In-RAM Forensic Engine · Zero Cloud · ABA Rule 1.6 Compliant</span>
+            <span>100% IN-RAM FORENSIC ENGINE · 0 CLOUD TELEMETRY · ABA RULE 1.6 PRIVILEGED</span>
           </motion.div>
 
           {/* Master Headline */}
@@ -153,46 +165,45 @@ export default function App() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-[-0.035em] text-white leading-[1.08] max-w-4xl mx-auto mb-6"
+            className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-[-0.035em] text-white leading-[1.08] max-w-4xl mx-auto mb-6"
           >
-            Audit legal contracts in milliseconds. <br className="hidden sm:inline" />
+            The $100,000 Typo Killer. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-300 to-white">
-              Without uploading a word to the cloud.
+              Pre-Signing Legal Defense in RAM.
             </span>
           </motion.h1>
 
-          {/* Direct, Plain-English Value Proposition */}
+          {/* Direct, Punchy Value Proposition */}
           <motion.p 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-base sm:text-xl text-zinc-300 max-w-2xl mx-auto leading-relaxed mb-10 font-normal"
           >
-            The offline, air-gapped contract defense studio for attorneys and M&A dealmakers. 
-            Instantly catch broken cross-references, numerical traps, and missing exhibits locally in private browser memory.
+            Catch fatal contract errors before signing: broken section cross-references, word-to-figure numerical mismatches ($10k vs $100k), and missing exhibits — computed 100% locally in your browser with zero cloud exposure.
           </motion.p>
 
-          {/* Core Call to Action Buttons */}
+          {/* Core Action Buttons */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4 mb-14"
+            className="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4 mb-12"
           >
             {/* Primary Demo Button */}
             <button 
               onClick={() => navigate('/demo')}
-              className="bg-emerald-400 text-black px-7 py-3.5 rounded-xl font-bold text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(16,185,129,0.35)] flex items-center gap-2 cursor-pointer"
+              className="bg-emerald-400 text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(0,255,157,0.4)] flex items-center gap-2 cursor-pointer"
             >
               <Sparkles size={16} />
-              <span>Try Live Interactive Demo</span>
+              <span>⚡ Try Live Interactive Demo</span>
               <ArrowRight size={16} />
             </button>
 
             {/* Direct Purchase Button */}
             <button 
               onClick={() => scrollToSection('pricing')}
-              className="px-6 py-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/12 text-white font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer active:scale-[0.98]"
+              className="px-6 py-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/12 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer active:scale-[0.98]"
             >
               <Lock size={15} className="text-emerald-400" />
               <span>Get Lifetime License ($199)</span>
@@ -201,14 +212,14 @@ export default function App() {
             {/* Direct Studio Launcher */}
             <button 
               onClick={() => navigate('/app/contractcompare')}
-              className="px-5 py-3.5 rounded-xl text-zinc-400 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+              className="px-5 py-3.5 rounded-xl text-zinc-400 hover:text-white text-sm font-semibold transition-colors cursor-pointer"
             >
               Launch Studio →
             </button>
           </motion.div>
 
-          {/* Micro Proof Metrics Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8 border-t border-white/[0.08] text-center">
+          {/* Verified Micro-Metrics Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-6 border-t border-white/[0.08] text-center">
             <div className="p-2">
               <div className="text-2xl sm:text-3xl font-black text-white font-mono">0 KB</div>
               <div className="text-xs text-zinc-400 mt-1">Uploaded to External Servers</div>
@@ -230,101 +241,148 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 3. TANGIBLE PRODUCT PREVIEW CARD (Interactive Proof, Not AI Gimmicks)     */}
+        {/* 3. INTERACTIVE FORENSIC TERMINAL (Live Defective vs Verified Switcher)    */}
         {/* ========================================================================= */}
         <section className="px-5 sm:px-8 max-w-5xl mx-auto mb-28">
-          <div className="rounded-2xl border border-white/12 bg-[#060D14] shadow-[0_20px_80px_rgba(0,0,0,0.8)] overflow-hidden">
+          <div className="rounded-2xl border-2 border-emerald-500/30 bg-[#040A0F] shadow-[0_20px_90px_rgba(0,0,0,0.85)] overflow-hidden">
             
-            {/* macOS / Chrome Window Frame Header */}
-            <div className="px-4 py-3 bg-[#04080D] border-b border-white/8 flex items-center justify-between text-xs text-zinc-400">
+            {/* macOS / Judicial Window Frame */}
+            <div className="px-4 py-3 bg-[#03070A] border-b border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-400">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-rose-500/80" />
                 <div className="w-3 h-3 rounded-full bg-amber-500/80" />
                 <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                <span className="ml-2 font-mono text-[11px] text-zinc-300">
-                  Apex_Acquisition_Agreement_DEFECTIVE.docx
+                <span className="ml-2 font-mono text-[11px] text-zinc-200">
+                  Apex_Acquisition_Agreement_Final_v4.docx
                 </span>
               </div>
+
+              {/* Interactive Simulation Switcher */}
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/60 border border-white/10">
+                <button
+                  onClick={() => setSimMode('defective')}
+                  className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    simMode === 'defective'
+                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  🔴 Defective Counterparty Draft
+                </button>
+                <button
+                  onClick={() => setSimMode('verified')}
+                  className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    simMode === 'verified'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  🟢 Verified with ContractGuard
+                </button>
+              </div>
+
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span className="font-mono text-[11px] text-emerald-400 font-semibold hidden sm:inline">
-                  RAM WORKER ACTIVE · 0 NETWORK CALLS
+                <span className="font-mono text-[10px] text-emerald-400 font-bold hidden sm:inline">
+                  LOCAL RAM AUDIT ACTIVE
                 </span>
               </div>
             </div>
 
-            {/* Interactive Document Inspection Screen */}
+            {/* Document Inspection Screen */}
             <div className="p-6 sm:p-8 space-y-4">
               
-              {/* Document Sample Preview Banner */}
-              <div className="flex items-center justify-between pb-3 border-b border-white/8 text-xs font-mono">
-                <span className="text-zinc-400">SAMPLE FORENSIC AUDIT TELEMETRY</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-rose-400 bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded font-bold">
-                    DEFECTS FOUND: 3 CRITICAL
-                  </span>
-                </div>
+              <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs font-mono">
+                <span className="text-zinc-400">FORENSIC RADAR TELEMETRY</span>
+                <span className={`px-2.5 py-0.5 rounded font-bold ${
+                  simMode === 'defective' 
+                    ? 'text-rose-400 bg-rose-500/15 border border-rose-500/30'
+                    : 'text-emerald-300 bg-emerald-500/15 border border-emerald-500/30'
+                }`}>
+                  {simMode === 'defective' ? 'RISK SCORE: 88/100 (FATAL DEFECTS)' : 'RISK SCORE: 0/100 (READY TO EXECUTE)'}
+                </span>
               </div>
 
-              {/* Finding 1: Numerical Mismatch */}
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-amber-500/25">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-bold text-white text-xs sm:text-sm">SECTION 4.1 — CONSIDERATION & PURCHASE PRICE</span>
-                  <span className="text-[10px] font-mono text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded uppercase font-semibold">
-                    Mathematical Contradiction
-                  </span>
-                </div>
-                <p className="text-zinc-300 font-legal text-sm leading-relaxed mb-2">
-                  "Buyer shall pay Seller the purchase price of <span className="bg-amber-500/20 text-amber-300 px-1 py-0.5 rounded font-bold border border-amber-500/40">Two Hundred Fifty Thousand Dollars ($205,000)</span> in three equal installments."
-                </p>
-                <div className="flex items-center gap-1.5 text-xs text-amber-400 font-mono">
-                  <AlertTriangle size={13} className="shrink-0" />
-                  <span>Discrepancy: Written word specifies $250,000 while numerals state $205,000 ($45,000 legal exposure).</span>
-                </div>
-              </div>
+              {simMode === 'defective' ? (
+                <>
+                  {/* Finding 1: Numerical Mismatch */}
+                  <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/30">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-bold text-white text-xs sm:text-sm">SECTION 4.1 — CONSIDERATION & PAYMENT OBLIGATION</span>
+                      <span className="text-[10px] font-mono text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded uppercase font-bold">
+                        Numerical Trap ($45,000 Exposure)
+                      </span>
+                    </div>
+                    <p className="text-zinc-200 font-legal text-sm leading-relaxed mb-2">
+                      "Buyer shall pay Seller the purchase price of <span className="bg-amber-500/25 text-amber-300 px-1.5 py-0.5 rounded font-bold border border-amber-500/40">Two Hundred Fifty Thousand Dollars ($205,000)</span> in three quarterly installments."
+                    </p>
+                    <div className="flex items-center gap-1.5 text-xs text-amber-400 font-mono">
+                      <AlertTriangle size={13} className="shrink-0" />
+                      <span>Mathematical Contradiction: Written word says $250,000 while numerals state $205,000.</span>
+                    </div>
+                  </div>
 
-              {/* Finding 2: Broken Section Cross-Reference */}
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-rose-500/25">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-bold text-white text-xs sm:text-sm">SECTION 11.4 — INDEMNIFICATION SURVIVAL</span>
-                  <span className="text-[10px] font-mono text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded uppercase font-semibold">
-                    Broken Citation
-                  </span>
-                </div>
-                <p className="text-zinc-300 font-legal text-sm leading-relaxed mb-2">
-                  "The indemnification covenants in <span className="bg-rose-500/20 text-rose-300 px-1 py-0.5 rounded font-bold border border-rose-500/40">Section 19.1</span> shall survive termination of this Agreement for five (5) years."
-                </p>
-                <div className="flex items-center gap-1.5 text-xs text-rose-400 font-mono">
-                  <AlertCircle size={13} className="shrink-0" />
-                  <span>Fatal Error: Section 19 does not exist in this agreement (agreement terminates at Section 14).</span>
-                </div>
-              </div>
+                  {/* Finding 2: Broken Section Cross-Reference */}
+                  <div className="p-4 rounded-xl bg-rose-500/5 border border-rose-500/30">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-bold text-white text-xs sm:text-sm">SECTION 11.4 — INDEMNIFICATION SURVIVAL</span>
+                      <span className="text-[10px] font-mono text-rose-400 bg-rose-500/20 px-2 py-0.5 rounded uppercase font-bold">
+                        Broken Section Citation
+                      </span>
+                    </div>
+                    <p className="text-zinc-200 font-legal text-sm leading-relaxed mb-2">
+                      "The indemnification covenants in <span className="bg-rose-500/25 text-rose-300 px-1.5 py-0.5 rounded font-bold border border-rose-500/40">Section 19.1</span> shall survive termination of this Agreement for five (5) years."
+                    </p>
+                    <div className="flex items-center gap-1.5 text-xs text-rose-400 font-mono">
+                      <AlertCircle size={13} className="shrink-0" />
+                      <span>Fatal Citation: Section 19 does not exist in the agreement (agreement ends at Section 14).</span>
+                    </div>
+                  </div>
 
-              {/* Finding 3: Missing Exhibit Schedule */}
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-cyan-500/25">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="font-bold text-white text-xs sm:text-sm">SECTION 3.1 — DISCLOSURE SCHEDULES</span>
-                  <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded uppercase font-semibold">
-                    Missing Attachment
-                  </span>
+                  {/* Finding 3: Missing Exhibit Schedule */}
+                  <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/30">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-bold text-white text-xs sm:text-sm">SECTION 3.1 — CLOSING CONDITIONS & SCHEDULES</span>
+                      <span className="text-[10px] font-mono text-cyan-300 bg-cyan-500/20 px-2 py-0.5 rounded uppercase font-bold">
+                        Missing Schedule
+                      </span>
+                    </div>
+                    <p className="text-zinc-200 font-legal text-sm leading-relaxed mb-2">
+                      "The obligations of Buyer are subject to delivery of all schedules set forth in <span className="bg-cyan-500/25 text-cyan-300 px-1.5 py-0.5 rounded font-bold border border-cyan-500/40">Exhibit C</span>."
+                    </p>
+                    <div className="flex items-center gap-1.5 text-xs text-cyan-300 font-mono">
+                      <CheckCircle2 size={13} className="shrink-0" />
+                      <span>Orphaned Attachment: Exhibit C is referenced as closing condition but omitted from draft.</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="p-6 rounded-xl bg-emerald-500/5 border border-emerald-500/30 space-y-4">
+                  <div className="flex items-center gap-2.5 text-emerald-400 font-bold text-sm">
+                    <CheckCircle size={18} />
+                    <span>Automated Pre-Signing Amendment Rider Compiled in RAM</span>
+                  </div>
+                  <div className="p-4 rounded-lg bg-black/60 border border-white/5 font-mono text-xs text-zinc-300 space-y-2">
+                    <div className="text-emerald-400 font-bold">AMENDMENT RIDER § 1: CONSIDERATION HARMONIZATION</div>
+                    <p>Section 4.1 is hereby amended to clarify that consideration is fixed at Two Hundred Fifty Thousand Dollars ($250,000.00 USD).</p>
+                    <div className="text-emerald-400 font-bold pt-2">AMENDMENT RIDER § 2: CITATION RECTIFICATION</div>
+                    <p>Section 11.4 cross-reference to "Section 19.1" is hereby corrected to reference "Section 14.2 (Indemnification Procedures)".</p>
+                  </div>
+                  <div className="flex items-center justify-between text-xs font-mono text-zinc-400 pt-2">
+                    <span>Export format: Microsoft Word (.docx) & Certified PDF</span>
+                    <span className="text-emerald-400">Audit Status: Defect-Free ✓</span>
+                  </div>
                 </div>
-                <p className="text-zinc-300 font-legal text-sm leading-relaxed mb-2">
-                  "The obligations of Buyer are subject to delivery of all schedules set forth in <span className="bg-cyan-500/20 text-cyan-300 px-1 py-0.5 rounded font-bold border border-cyan-500/40">Exhibit C</span>."
-                </p>
-                <div className="flex items-center gap-1.5 text-xs text-cyan-300 font-mono">
-                  <CheckCircle2 size={13} className="shrink-0" />
-                  <span>Orphaned Schedule: Exhibit C referenced as closing condition but omitted from document package.</span>
-                </div>
-              </div>
+              )}
 
-              {/* Action Trigger inside Mockup */}
+              {/* Action Bar */}
               <div className="pt-3 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <span className="text-zinc-400 font-mono">
-                  1-Click Output: Generate Court-Ready Amendment Rider (.docx / .pdf)
+                  Test your own transaction agreements with zero cloud telemetry.
                 </span>
                 <button
                   onClick={() => navigate('/demo')}
-                  className="px-4 py-2 rounded-lg bg-emerald-400 text-black font-bold text-xs hover:bg-white transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-emerald-400 text-black font-bold text-xs hover:bg-white transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(0,255,157,0.3)]"
                 >
                   <span>Open Full Workstation in Demo</span>
                   <ArrowRight size={13} />
@@ -337,7 +395,7 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 4. THE 3 CORE PILLARS (Clean Emil Kowalski Grid)                          */}
+        {/* 4. THE 3 CORE PILLARS OF DEFENSE                                          */}
         {/* ========================================================================= */}
         <section id="features" className="px-5 sm:px-8 max-w-6xl mx-auto mb-28 scroll-mt-28">
           
@@ -345,24 +403,24 @@ export default function App() {
             <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
               BUILT FOR AM-LAW 100 RIGOR
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-4">
-              Everything you need to verify contracts with mathematical certainty.
+            <h2 className="text-3xl sm:text-4xl font-black text-white mt-4">
+              Everything required to verify contracts with mathematical certainty.
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Pillar 1 */}
-            <div className="p-7 rounded-2xl bg-[#060D14] border border-white/10 hover:border-emerald-500/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#040A0F] border border-white/10 hover:border-emerald-500/40 transition-all flex flex-col justify-between shadow-lg">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5">
-                  <Search size={20} />
+                <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-5 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                  <Search size={22} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">
                   Forensic Cross-Reference & Math Hunter
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                  Scans thousands of contractual clauses in under a second. Automatically reconciles spelled-out words with parenthetical digits, flags deleted clause citations, and highlights undefined capitalized terms.
+                  Scans thousands of clauses in under a second. Automatically reconciles spelled-out words with parenthetical digits, flags deleted clause citations, and highlights undefined capitalized terms.
                 </p>
               </div>
               <div className="mt-6 pt-4 border-t border-white/5 text-[11px] font-mono text-emerald-400">
@@ -371,10 +429,10 @@ export default function App() {
             </div>
 
             {/* Pillar 2 */}
-            <div className="p-7 rounded-2xl bg-[#060D14] border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#040A0F] border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col justify-between shadow-lg">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5">
-                  <EyeOff size={20} />
+                <div className="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mb-5 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                  <EyeOff size={22} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">
                   100% Air-Gapped Privilege Protection
@@ -389,10 +447,10 @@ export default function App() {
             </div>
 
             {/* Pillar 3 */}
-            <div className="p-7 rounded-2xl bg-[#060D14] border border-white/10 hover:border-purple-500/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#040A0F] border border-white/10 hover:border-purple-500/40 transition-all flex flex-col justify-between shadow-lg">
               <div>
-                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-5">
-                  <FileCheck size={20} />
+                <div className="w-11 h-11 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 mb-5 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                  <FileCheck size={22} />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-2">
                   AmLaw 100 Templates & Word Export
@@ -411,7 +469,7 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 5. INTERACTIVE 4-IN-1 STUDIO WALKTHROUGH (Tabbed Apple Component)         */}
+        {/* 5. THE 4 FLAGSHIP ENGINES (Interactive Tab Switcher)                      */}
         {/* ========================================================================= */}
         <section className="px-5 sm:px-8 max-w-5xl mx-auto mb-28">
           
@@ -425,7 +483,7 @@ export default function App() {
           </div>
 
           {/* Interactive Navigation Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl bg-[#060D14] border border-white/10 max-w-2xl mx-auto mb-8">
+          <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-2xl bg-[#040A0F] border border-white/10 max-w-2xl mx-auto mb-8">
             {[
               { id: 'audit', label: '1. Forensic Risk Audit', icon: Search },
               { id: 'diff', label: '2. Redline Diff Engine', icon: Layers },
@@ -438,7 +496,7 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                     isActive 
                       ? 'bg-emerald-400 text-black shadow-md' 
                       : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
@@ -452,7 +510,7 @@ export default function App() {
           </div>
 
           {/* Tab Content Display */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-[#060D14] border border-white/10">
+          <div className="p-6 sm:p-8 rounded-2xl bg-[#040A0F] border border-white/10 shadow-xl">
             {activeTab === 'audit' && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-white/8">
@@ -577,7 +635,52 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 6. AMLAW 100 TEMPLATES VAULT SHOWCASE                                     */}
+        {/* 6. ETHICS & PRIVACY: ABA MODEL RULE 1.6 ARCHITECTURE                      */}
+        {/* ========================================================================= */}
+        <section id="security" className="px-5 sm:px-8 max-w-6xl mx-auto mb-28 scroll-mt-28">
+          <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-[#050C10] to-[#020608] border border-emerald-500/30 shadow-[0_10px_50px_rgba(0,0,0,0.7)] relative overflow-hidden">
+            <div className="max-w-2xl mb-8">
+              <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full">
+                LEGAL ETHICS & MALPRACTICE SHIELD
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-black text-white mt-4 mb-3">
+                Why Law Firms Choose ContractGuard Over Cloud AI.
+              </h2>
+              <p className="text-zinc-300 text-xs sm:text-sm leading-relaxed">
+                Under ABA Model Rule 1.6(c), attorneys have a strict ethical duty to prevent disclosure of confidential client communications and deal drafts. Uploading client contracts to public cloud AI risks waiving attorney-client privilege.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="p-5 rounded-2xl bg-black/60 border border-white/10 hover:border-emerald-500/40 transition-all">
+                <ShieldCheck size={22} className="text-emerald-400 mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1.5">100% In-Browser Execution</h4>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  All grammatical, chronological, and citation algorithms execute in client memory via Web Workers.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-black/60 border border-white/10 hover:border-cyan-500/40 transition-all">
+                <EyeOff size={22} className="text-cyan-400 mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1.5">Zero Server Telemetry</h4>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Zero analytics, no remote logging, and no persistent server caching. Disconnect your Wi-Fi — it still audits.
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-black/60 border border-white/10 hover:border-purple-500/40 transition-all">
+                <Lock size={22} className="text-purple-400 mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1.5">Zero AI Model Training</h4>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Your proprietary transaction structures and negotiation positions are never retained for model training.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 7. AMLAW 100 TEMPLATES VAULT SHOWCASE                                     */}
         {/* ========================================================================= */}
         <section id="templates" className="px-5 sm:px-8 max-w-6xl mx-auto mb-28 scroll-mt-28">
           
@@ -585,13 +688,13 @@ export default function App() {
             
             <div className="max-w-2xl mb-8">
               <span className="font-mono text-xs font-bold text-cyan-300 uppercase tracking-wider bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full">
-                INCLUDED AT NO ADDITIONAL COST
+                PRE-DRAFTED AM-LAW 100 STANDARD
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-white mt-4 mb-3">
                 12 Master AmLaw 100 Institutional Templates.
               </h2>
               <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-                Pre-configured with governing law provisions, UCC Article 9 compliance, DTSA whistleblower immunity notices, and statutory California Civil Code § 1542 waivers.
+                Pre-configured with Delaware governing law, UCC Article 9 compliance, DTSA whistleblower immunity notices, and statutory California Civil Code § 1542 waivers.
               </p>
             </div>
 
@@ -632,13 +735,13 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 7. TRANSPARENT B2B LICENSING (No Subscriptions, Lifetime Access)          */}
+        {/* 8. TRANSPARENT B2B LICENSING (No Subscriptions, Lifetime Access)          */}
         {/* ========================================================================= */}
         <section id="pricing" className="px-5 sm:px-8 max-w-5xl mx-auto mb-28 scroll-mt-28">
           
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="font-mono text-xs font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
-              SIMPLE, PREDICTABLE LICENSING
+              PERPETUAL B2B LICENSING
             </span>
             <h2 className="text-3xl sm:text-5xl font-black text-white mt-4">
               One-time payment. Lifetime ownership.
@@ -651,7 +754,7 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
             
             {/* Plan 1: Solo Practitioner */}
-            <div className="p-7 sm:p-9 rounded-3xl bg-[#060D14] border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between">
+            <div className="p-7 sm:p-9 rounded-3xl bg-[#040A0F] border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between shadow-xl">
               <div>
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -714,7 +817,7 @@ export default function App() {
             </div>
 
             {/* Plan 2: Law Firm Suite (Most Popular) */}
-            <div className="p-7 sm:p-9 rounded-3xl bg-[#06141A] border-2 border-emerald-400/80 relative shadow-[0_0_50px_rgba(16,185,129,0.15)] flex flex-col justify-between">
+            <div className="p-7 sm:p-9 rounded-3xl bg-[#05131A] border-2 border-emerald-400/80 relative shadow-[0_0_50px_rgba(0,255,157,0.2)] flex flex-col justify-between">
               <div className="absolute top-0 right-6 -translate-y-1/2 bg-emerald-400 text-black text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
                 Recommended for Practices
               </div>
@@ -776,7 +879,7 @@ export default function App() {
                     toolName: 'contractcompare',
                     onSuccess: () => navigate('/app/contractcompare')
                   })}
-                  className="w-full bg-emerald-400 text-black hover:bg-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(16,185,129,0.35)] text-xs sm:text-sm cursor-pointer active:scale-[0.98]"
+                  className="w-full bg-emerald-400 text-black hover:bg-white font-black py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] text-xs sm:text-sm cursor-pointer active:scale-[0.98]"
                 >
                   <Lock size={15} />
                   <span>Purchase Law Firm Suite ($299)</span>
@@ -793,7 +896,7 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 8. CLIENT FAQ ACCORDION (Clean, Scannable)                                */}
+        {/* 9. CLIENT FAQ ACCORDION (Clean, Scannable)                                */}
         {/* ========================================================================= */}
         <section id="faq" className="px-5 sm:px-8 max-w-3xl mx-auto mb-28 scroll-mt-28">
           
@@ -829,7 +932,7 @@ export default function App() {
                 a: 'No. Both plans are lifetime perpetual licenses with zero recurring fees.'
               }
             ].map((item, idx) => (
-              <div key={idx} className="rounded-xl border border-white/10 bg-[#060D14] overflow-hidden">
+              <div key={idx} className="rounded-xl border border-white/10 bg-[#040A0F] overflow-hidden">
                 <button
                   onClick={() => toggleFaq(idx)}
                   className="w-full p-4 sm:p-5 text-left flex items-center justify-between text-xs sm:text-sm font-semibold text-white hover:text-emerald-400 transition-colors cursor-pointer"
@@ -856,10 +959,10 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 9. GRAND CLOSING CALL TO ACTION                                           */}
+        {/* 10. GRAND CLOSING CALL TO ACTION                                          */}
         {/* ========================================================================= */}
         <section className="px-5 sm:px-8 max-w-5xl mx-auto mb-20 text-center">
-          <div className="p-10 sm:p-14 rounded-3xl bg-gradient-to-b from-[#07131B] to-[#04080D] border border-emerald-500/30 shadow-[0_20px_80px_rgba(16,185,129,0.12)] relative overflow-hidden">
+          <div className="p-10 sm:p-14 rounded-3xl bg-gradient-to-b from-[#06141A] to-[#020608] border border-emerald-500/40 shadow-[0_20px_80px_rgba(0,255,157,0.15)] relative overflow-hidden">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
               Never sign an unverified contract again.
             </h2>
@@ -869,7 +972,7 @@ export default function App() {
             <div className="flex flex-wrap items-center justify-center gap-3.5">
               <button
                 onClick={() => navigate('/demo')}
-                className="bg-emerald-400 text-black px-7 py-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(16,185,129,0.3)] flex items-center gap-2 cursor-pointer"
+                className="bg-emerald-400 text-black px-7 py-3 rounded-xl font-bold text-xs sm:text-sm hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.35)] flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles size={15} />
                 <span>Open Free Live Demo</span>
@@ -885,13 +988,13 @@ export default function App() {
         </section>
 
         {/* ========================================================================= */}
-        {/* 10. CLEAN EXECUTIVE FOOTER                                                */}
+        {/* 11. CLEAN EXECUTIVE FOOTER                                                */}
         {/* ========================================================================= */}
         <footer className="border-t border-white/8 pt-10 pb-12 px-5 sm:px-8 max-w-6xl mx-auto text-xs text-zinc-400">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
               <BrandShieldIcon className="w-6 h-6" />
-              <span className="font-bold text-white text-sm">ContractGuard</span>
+              <span className="font-bold text-white text-sm">Nexus ContractGuard</span>
               <span className="text-zinc-500">·</span>
               <span className="text-zinc-400">Air-Gapped Legal Integrity Studio</span>
             </div>

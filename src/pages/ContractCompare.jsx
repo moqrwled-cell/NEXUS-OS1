@@ -406,10 +406,13 @@ export default function ContractCompare() {
             )}
             {activeTool === 'templates' && (
               <motion.div key="templates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <LegalTemplatesView onSendToAudit={(contractText, title) => {
-                  setRestoredSession({ originalText: contractText, title });
-                  setActiveTool('analyzer');
-                }} />
+                <LegalTemplatesView 
+                  isDemoMode={false}
+                  onSendToAudit={(contractText, title) => {
+                    setRestoredSession({ originalText: contractText, title });
+                    setActiveTool('analyzer');
+                  }} 
+                />
               </motion.div>
             )}
           </AnimatePresence>

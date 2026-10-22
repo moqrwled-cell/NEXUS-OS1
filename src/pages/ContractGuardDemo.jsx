@@ -1811,11 +1811,18 @@ export default function ContractGuardDemo() {
           {/* VIEW 3.5: AMLAW 100 TEMPLATES VAULT (PLACED ABOVE AUDIT VAULT) */}
           {activeTool === 'templates' && (
             <motion.div key="templates" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
-              <LegalTemplatesView onSendToAudit={(compiledText, templateTitle) => {
-                setContractText(compiledText);
-                setDocumentTitle(templateTitle);
-                setActiveTool('analyzer');
-              }} />
+              <LegalTemplatesView 
+                isDemoMode={!hasActiveLicense}
+                onTriggerUpgrade={(reason = 'export') => {
+                  setModalReason(reason);
+                  setShowUpgradeModal(true);
+                }}
+                onSendToAudit={(compiledText, templateTitle) => {
+                  setContractText(compiledText);
+                  setDocumentTitle(templateTitle);
+                  setActiveTool('analyzer');
+                }} 
+              />
             </motion.div>
           )}
 

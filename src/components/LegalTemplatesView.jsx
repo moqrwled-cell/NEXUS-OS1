@@ -3,7 +3,7 @@ import {
   BookOpen, Copy, Check, Download, FileDown, 
   Sparkles, ArrowRight, RefreshCw, CheckCircle2,
   AlertTriangle, ShieldCheck, Scale, FileText,
-  ChevronDown, ChevronUp, SlidersHorizontal
+  ChevronDown, ChevronUp, SlidersHorizontal, Lock
 } from 'lucide-react';
 import { LEGAL_TEMPLATES, TEMPLATE_CATEGORIES, compileTemplateText } from '../utils/legalTemplatesVault';
 import { downloadRedactedPDF } from '../utils/redactedPdfGenerator';
@@ -84,7 +84,11 @@ const STATUTORY_GUIDANCE_MAP = {
   },
 };
 
-export default function LegalTemplatesView({ onSendToAudit }) {
+export default function LegalTemplatesView({ 
+  onSendToAudit,
+  isDemoMode = false,
+  onTriggerUpgrade
+}) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState(null);
@@ -219,43 +223,67 @@ export default function LegalTemplatesView({ onSendToAudit }) {
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Word DOCX Download Button */}
-            <button
-              onClick={handleDownloadDocx}
-              disabled={isGeneratingDocx}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600/90 hover:bg-blue-500 text-white border border-blue-400/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.25)] disabled:opacity-50"
-              title="Download fully editable Microsoft Word document (.docx)"
-            >
-              {isGeneratingDocx ? <RefreshCw className="animate-spin" size={14} /> : <FileText size={14} />}
-              <span>{isGeneratingDocx ? 'Exporting Word...' : 'Download Word (.docx)'}</span>
-            </button>
+            {isDemoMode ? (
+              <button
+                onClick={() => onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Template Word DOCX export requires an active license.')}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                title="Unlock Word (.docx) export with lifetime license"
+              >
+                <Lock size={13} className="text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>Unlock Word (.docx)</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleDownloadDocx}
+                disabled={isGeneratingDocx}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600/90 hover:bg-blue-500 text-white border border-blue-400/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.25)] disabled:opacity-50"
+                title="Download fully editable Microsoft Word document (.docx)"
+              >
+                {isGeneratingDocx ? <RefreshCw className="animate-spin" size={14} /> : <FileText size={14} />}
+                <span>{isGeneratingDocx ? 'Exporting Word...' : 'Download Word (.docx)'}</span>
+              </button>
+            )}
 
             {/* Legal PDF Download Button */}
-            <button
-              onClick={handleDownloadPdf}
-              disabled={isGeneratingPdf}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
-            >
-              {isGeneratingPdf ? <RefreshCw className="animate-spin" size={14} /> : <FileDown size={14} />}
-              <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Legal PDF'}</span>
-            </button>
+            {isDemoMode ? (
+              <button
+                onClick={() => onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Legal PDF download requires an active license.')}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                title="Unlock PDF export with lifetime license"
+              >
+                <Lock size={13} className="text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>Unlock PDF</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleDownloadPdf}
+                disabled={isGeneratingPdf}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
+              >
+                {isGeneratingPdf ? <RefreshCw className="animate-spin" size={14} /> : <FileDown size={14} />}
+                <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Legal PDF'}</span>
+              </button>
+            )}
 
             {/* Copy Full Agreement */}
-            <button
-              onClick={handleCopyText}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-200 border border-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              {copiedContract ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-              <span>{copiedContract ? 'Copied to Clipboard! ✓' : 'Copy Text'}</span>
-            </button>
-
-            {/* Plain TXT Download */}
-            <button
-              onClick={handleDownloadTxt}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 transition-all cursor-pointer"
-              title="Download Plain Text (.txt)"
-            >
-              <Download size={14} />
-            </button>
+            {isDemoMode ? (
+              <button
+                onClick={() => onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Full template clipboard copying requires an active license.')}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-400 border border-zinc-800 transition-all flex items-center gap-1.5 cursor-pointer"
+                title="Unlock copying with lifetime license"
+              >
+                <Lock size={13} className="text-amber-400" />
+                <span>Copy (Locked)</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleCopyText}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-200 border border-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                {copiedContract ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                <span>{copiedContract ? 'Copied to Clipboard! ✓' : 'Copy Text'}</span>
+              </button>
+            )}
 
             {/* Audit in ContractGuard */}
             <button
@@ -263,7 +291,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
               className="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-90 text-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
             >
               <Sparkles size={14} />
-              <span>Audit in ContractGuard →</span>
+              <span>{isDemoMode ? 'Audit Preview in Studio →' : 'Audit in ContractGuard →'}</span>
             </button>
           </div>
         </div>
@@ -291,27 +319,54 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             <div className="mb-4 pb-3 border-b border-zinc-800">
               <h4 className="text-sm font-bold text-white flex items-center justify-between">
                 <span>Dynamic Deal Parameters</span>
-                <span className="text-[11px] font-mono text-cyan-400">
-                  {selectedTemplate.variables?.length || 0} Configurable Fields
+                <span className={`text-[11px] font-mono ${isDemoMode ? 'text-amber-400' : 'text-cyan-400'}`}>
+                  {isDemoMode ? '🔒 Locked (Preview Mode)' : `${selectedTemplate.variables?.length || 0} Configurable Fields`}
                 </span>
               </h4>
               <p className="text-xs text-zinc-400 mt-1">
-                Customize party names, purchase considerations, dates, and governing jurisdiction below. Changes compile into the agreement in real-time.
+                {isDemoMode 
+                  ? 'Variable customization is locked in demo mode. You can inspect all structural parameters below.'
+                  : 'Customize party names, purchase considerations, dates, and governing jurisdiction below. Changes compile into the agreement in real-time.'}
               </p>
             </div>
+
+            {isDemoMode && (
+              <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2.5 text-xs">
+                <Lock size={15} className="text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-bold text-amber-300">Template Customization Locked</div>
+                  <p className="text-[11px] text-zinc-300 mt-0.5 leading-relaxed">
+                    You can view the full agreement structure and clauses. To edit variables and download editable Word DOCX files, activate your lifetime license.
+                  </p>
+                  <button
+                    onClick={() => onTriggerUpgrade && onTriggerUpgrade('export')}
+                    className="mt-2 px-3 py-1 rounded-lg bg-amber-400 text-black text-[11px] font-bold hover:bg-white transition-colors cursor-pointer"
+                  >
+                    Unlock Full Templates ($199 / $299) →
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-3.5 flex-1 pr-1">
               {(selectedTemplate.variables || []).map(v => (
                 <div key={v.key} className="flex flex-col gap-1">
-                  <label className="text-[11px] font-mono uppercase font-semibold text-zinc-400">
-                    {v.label}
+                  <label className="text-[11px] font-mono uppercase font-semibold text-zinc-400 flex items-center justify-between">
+                    <span>{v.label}</span>
+                    {isDemoMode && <Lock size={10} className="text-amber-400/80" />}
                   </label>
                   <input
                     type="text"
                     value={templateValues[v.key] ?? ''}
-                    onChange={(e) => handleVariableChange(v.key, e.target.value)}
+                    readOnly={isDemoMode}
+                    disabled={isDemoMode}
+                    onChange={(e) => !isDemoMode && handleVariableChange(v.key, e.target.value)}
                     placeholder={v.defaultVal}
-                    className="w-full bg-black/60 border border-zinc-800 focus:border-cyan-500 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-zinc-600 outline-none transition-all"
+                    className={`w-full border rounded-xl px-3 py-2 text-xs font-mono outline-none transition-all ${
+                      isDemoMode 
+                        ? 'bg-black/40 border-zinc-800/80 text-zinc-400 cursor-not-allowed opacity-80' 
+                        : 'bg-black/60 border-zinc-800 focus:border-cyan-500 text-white placeholder-zinc-600'
+                    }`}
                   />
                 </div>
               ))}
@@ -321,8 +376,10 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             <div className="mt-4 pt-3 border-t border-zinc-800 text-[11.5px] text-zinc-300 flex items-start gap-2.5 leading-relaxed bg-zinc-900/60 p-3 rounded-xl border border-zinc-700/60">
               <SlidersHorizontal size={15} className="text-cyan-400 shrink-0 mt-0.5" />
               <div>
-                <span className="text-white font-semibold">Custom Drafting Freedom: </span>
-                <span>You can edit all variables above, download the agreement in Word (.docx) to insert bespoke transaction covenants, or send directly to ContractGuard to audit for hidden liability gaps.</span>
+                <span className="text-white font-semibold">Institutional Standard: </span>
+                <span>{isDemoMode 
+                  ? 'This master draft adheres to Delaware corporate law and standard AmLaw 100 practice.'
+                  : 'You can edit all variables above, download the agreement in Word (.docx) to insert bespoke transaction covenants, or send directly to ContractGuard to audit for hidden liability gaps.'}</span>
               </div>
             </div>
           </div>
@@ -331,8 +388,8 @@ export default function LegalTemplatesView({ onSendToAudit }) {
           <div className="lg:col-span-7 flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
             <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400 font-mono flex items-center gap-1.5">
-                <CheckCircle2 size={13} className="text-emerald-400" />
-                COMPILED CONTRACT PREVIEW (READY FOR EXECUTION & REDLINING)
+                {isDemoMode ? <Lock size={13} className="text-amber-400" /> : <CheckCircle2 size={13} className="text-emerald-400" />}
+                {isDemoMode ? 'PREVIEW MODE · FULL CONTRACT TEXT (READ-ONLY)' : 'COMPILED CONTRACT PREVIEW (READY FOR EXECUTION & REDLINING)'}
               </span>
               <span className="text-[11px] font-mono text-zinc-400">
                 {compiledText.split(/\s+/).filter(Boolean).length} Words
