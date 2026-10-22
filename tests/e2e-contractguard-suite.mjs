@@ -68,8 +68,10 @@ import {
   exportExecutiveClientMemoHTML, 
   exportObligationsCSV, 
   exportObligationsJSON, 
+  exportPreSigningAmendmentRiderHTML,
   escapeHtml 
 } from '../src/utils/exportEngine.js';
+import { generatePreSigningAmendmentRiderText } from '../src/utils/statutoryCodex.js';
 
 import { computeContractDiff } from '../src/utils/diffEngine.js';
 import { sanitizeDocumentPII } from '../src/utils/piiEngine.js';
@@ -82,6 +84,7 @@ import {
 } from '../src/utils/legalTemplatesVault.js';
 import { 
   generateRedactedPDFBytes,
+  generateAmendmentRiderPDFBytes,
   sanitizeForWinAnsi
 } from '../src/utils/redactedPdfGenerator.js';
 
@@ -1253,6 +1256,44 @@ assert(blockPdfBytes !== null && !blockPdfError, `T6.17: generateRedactedPDFByte
 const templatesStringified = JSON.stringify(LEGAL_TEMPLATES);
 const hasArabicCharacters = /[\u0600-\u06FF]/.test(templatesStringified);
 assert(!hasArabicCharacters, 'T6.18: Legal Templates Vault contains zero Arabic characters (100% US English institutional standard)');
+
+// Test Court-Grade Pre-Signing Amendment Rider Generator
+const mockAuditData = {
+  meta: { title: 'Asset Purchase Agreement', clientParty: 'Alpha Corp', counterparty: 'Beta LLC' },
+  crossRefs: {
+    issues: [
+      { type: 'broken_reference', targetName: '17.4', referenceText: 'Section 17.4', line: 63, snippet: 'notice under Section 17.4' },
+      { type: 'missing_exhibit', targetName: 'Exhibit C', referenceText: 'Exhibit C', line: 41, snippet: 'delivery of Exhibit C' }
+    ]
+  },
+  financialDates: {
+    issues: [
+      { type: 'amount_mismatch', title: 'Consideration Discrepancy', writtenWords: 'Two Million Dollars', numericStr: '$1,900,000', line: 15, snippet: '$1,900,000 (Two Million Dollars)' }
+    ]
+  },
+  definedTerms: {
+    undefinedTerms: [
+      { term: 'Key Personnel', line: 12, count: 2 }
+    ],
+    entityIssues: [
+      { entity: 'Beta LLC', discrepancy: 'Designated as Beta Inc in recitals', line: 5 }
+    ],
+    boilerplateArtifacts: [
+      { placeholder: '[Closing Date]', line: 8 }
+    ]
+  }
+};
+
+const riderText = generatePreSigningAmendmentRiderText(mockAuditData, { title: 'Asset Purchase Agreement' });
+assert(riderText.includes('PRE-SIGNING AMENDMENT RIDER AND DRAFTING REVISIONS SCHEDULE'), 'T6.19: generatePreSigningAmendmentRiderText produces formal AmLaw 100 caption');
+assert(riderText.includes('Section 17.4') && riderText.includes('Exhibit C') && riderText.includes('UCC § 3-114'), 'T6.20: Amendment Rider itemizes cross-reference, exhibit, and UCC monetary corrections');
+
+const riderPdfBytes = await generateAmendmentRiderPDFBytes(mockAuditData, { title: 'Asset Purchase Agreement' });
+const riderPdfHeader = riderPdfBytes ? Buffer.from(riderPdfBytes.slice(0, 5)).toString('utf-8') : '';
+assert(riderPdfHeader.startsWith('%PDF-'), 'T6.21: generateAmendmentRiderPDFBytes compiles valid court-grade PDF binary in RAM');
+
+const riderHtml = exportPreSigningAmendmentRiderHTML(mockAuditData, { title: 'Asset Purchase Agreement' });
+assert(riderHtml.includes('<!DOCTYPE html>') && riderHtml.includes('@page') && riderHtml.includes('Times New Roman'), 'T6.22: exportPreSigningAmendmentRiderHTML outputs clean print-ready HTML rider');
 
 // ============================================================================
 // FINAL RUNTIME AIR-GAP AUDIT ASSERTION

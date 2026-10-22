@@ -349,3 +349,163 @@ export function enrichAllAuditFindings(auditData) {
     totalDefects: allEnriched.length
   };
 }
+
+/**
+ * Generates an official, court-grade Pre-Signing Amendment Rider & Revision Schedule
+ * formatted to institutional AmLaw 100 transactional legal standards.
+ * 
+ * @param {Object} auditData - Complete audit results from useContractWorker
+ * @param {Object} meta - Metadata containing title, clientParty, counterparty, date
+ * @returns {string} Clean, court-grade ASCII legal rider text
+ */
+export function generatePreSigningAmendmentRiderText(auditData, meta = {}) {
+  const contractTitle = meta.contractTitle || meta.title || auditData?.meta?.title || 'Commercial Agreement';
+  const clientName = meta.clientName || meta.clientParty || auditData?.meta?.clientParty || 'Client Entity';
+  const counterpartyName = meta.counterpartyName || meta.counterparty || auditData?.meta?.counterparty || 'Counterparty Entity';
+  const effectiveDate = meta.date || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const brokenRefs = (auditData?.crossRefs?.issues || []).filter(i => i.type === 'broken_reference');
+  const missingExhibits = (auditData?.crossRefs?.issues || []).filter(i => i.type === 'missing_exhibit');
+  const amountMismatches = (auditData?.financialDates?.issues || []).filter(i => i.type === 'amount_mismatch');
+  const timelineContradictions = (auditData?.financialDates?.issues || []).filter(i => i.type === 'timeline_contradiction' || i.type === 'expired_date');
+  const undefinedTerms = auditData?.definedTerms?.undefinedTerms || [];
+  const entityIssues = auditData?.definedTerms?.entityIssues || [];
+  const boilerplateArtifacts = auditData?.definedTerms?.boilerplateArtifacts || [];
+
+  let sectionsCount = 0;
+  const sections = [];
+
+  // RIDER 1: Cross-References & Missing Section Harmonization
+  if (brokenRefs.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. INTERNAL CROSS-REFERENCE AND SECTION HARMONIZATION\n\n`;
+    secText += `The parties hereby stipulate and agree that the following internal cross-references in the Agreement are erroneous and are hereby amended as follows to ensure procedural certainty:\n\n`;
+    brokenRefs.forEach((b, idx) => {
+      const enriched = enrichFindingWithStatutoryRemedy(b);
+      secText += `${sectionsCount}.${idx + 1} Citation to ${b.referenceText || b.targetName} (Line ${b.line}). `;
+      secText += `The reference to "${b.referenceText || b.targetName}" is hereby modified and replaced with the following operative covenant:\n`;
+      secText += `   "${enriched.courtGradeRedline}"\n\n`;
+    });
+    sections.push(secText);
+  }
+
+  // RIDER 2: Disclosure Schedules & Exhibits Stipulation
+  if (missingExhibits.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. DISCLOSURE SCHEDULES AND EXHIBITS STIPULATION\n\n`;
+    secText += `The parties hereby acknowledge that certain disclosure schedules and exhibits referenced in the Agreement were omitted from the initial draft bundle. The parties hereby covenant and agree:\n\n`;
+    missingExhibits.forEach((ex, idx) => {
+      const enriched = enrichFindingWithStatutoryRemedy(ex);
+      secText += `${sectionsCount}.${idx + 1} Delivery of ${ex.targetName || ex.referenceText} (Line ${ex.line}). `;
+      secText += `${enriched.courtGradeRedline}\n\n`;
+    });
+    sections.push(secText);
+  }
+
+  // RIDER 3: Financial Consideration & Price Harmonization (UCC § 3-114)
+  if (amountMismatches.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. MONETARY CONSIDERATION AND PAYMENT RECONCILIATION\n\n`;
+    secText += `Pursuant to Uniform Commercial Code § 3-114 (UCC § 3-114) and established rules of construction governing commercial instruments, where written words conflict with parenthetical numerals, written words govern. The parties hereby confirm and settle the monetary terms of the Agreement as follows:\n\n`;
+    amountMismatches.forEach((m, idx) => {
+      const enriched = enrichFindingWithStatutoryRemedy(m);
+      secText += `${sectionsCount}.${idx + 1} Reconciliation of ${m.title || 'Consideration Amount'} (Line ${m.line}). `;
+      secText += `The financial consideration is hereby confirmed and amended to read as follows:\n`;
+      secText += `   "${enriched.courtGradeRedline}"\n\n`;
+    });
+    sections.push(secText);
+  }
+
+  // RIDER 4: Timeline & Vital Dates Reconciliation
+  if (timelineContradictions.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. CHRONOLOGY AND VITAL MILESTONES RECONCILIATION\n\n`;
+    secText += `The parties hereby resolve all chronological anomalies and reconcile the contractual sequence of milestones as follows:\n\n`;
+    timelineContradictions.forEach((t, idx) => {
+      const enriched = enrichFindingWithStatutoryRemedy(t);
+      secText += `${sectionsCount}.${idx + 1} Harmonization of ${t.title || 'Date Milestone'} (Line ${t.line}). `;
+      secText += `${enriched.courtGradeRedline}\n\n`;
+    });
+    sections.push(secText);
+  }
+
+  // RIDER 5: Article I Defined Terms Supplement
+  if (undefinedTerms.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. ARTICLE I DEFINITIONS SUPPLEMENT\n\n`;
+    secText += `Article I (Definitions) of the Agreement is hereby amended and supplemented by inserting the following defined terms in appropriate alphabetical order:\n\n`;
+    undefinedTerms.forEach((u, idx) => {
+      const termName = u.term;
+      let defBody = `means those operational, technical, or business assets or criteria designated in the Agreement, subject to objective commercial standards.`;
+      if (termName.toLowerCase().includes('personnel')) {
+        defBody = `means the key officers and managerial personnel listed on Schedule 1.1 whose continued service is a condition precedent to Closing.`;
+      } else if (termName.toLowerCase().includes('asset')) {
+        defBody = `means all tangible and intangible proprietary assets, contracts, IP, and goodwill specified in Section 1.2.`;
+      } else if (termName.toLowerCase().includes('date')) {
+        defBody = `means the outside date specified in Section 2.3 by which all closing conditions must be fulfilled.`;
+      }
+      secText += `${sectionsCount}.${idx + 1} "${termName}" ${defBody}\n\n`;
+    });
+    sections.push(secText);
+  }
+
+  // RIDER 6: Corporate Entity Standing & Liability Partitioning
+  if (entityIssues.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. CORPORATE ENTITY STATUS AND LIABILITY PARTITIONING\n\n`;
+    secText += `The parties hereby clarify and stipulate the legal entity identity and limited liability status of each contracting party:\n\n`;
+    entityIssues.forEach((e, idx) => {
+      const enriched = enrichFindingWithStatutoryRemedy(e);
+      secText += `${sectionsCount}.${idx + 1} Entity Clarification for ${e.entity || 'Contracting Party'} (Line ${e.line}). `;
+      secText += `${enriched.courtGradeRedline}\n\n`;
+    });
+    sections.push(secText);
+  }
+
+  // RIDER 7: Template Boilerplate Purge
+  if (boilerplateArtifacts.length > 0) {
+    sectionsCount++;
+    let secText = `SECTION ${sectionsCount}. DELETION OF UNFILLED DRAFTING PLACEHOLDERS\n\n`;
+    secText += `All square-bracketed placeholders and blank lines identified in the preliminary draft (including ${boilerplateArtifacts.map(b => b.placeholder).slice(0, 5).join(', ')}) are hereby superseded and replaced with the negotiated terms set forth herein.\n\n`;
+    sections.push(secText);
+  }
+
+  // Ratification & Signatures
+  sectionsCount++;
+  let closingSec = `SECTION ${sectionsCount}. RATIFICATION AND FULL FORCE AND EFFECT\n\n`;
+  closingSec += `Except as expressly amended, modified, or supplemented by this Rider, all terms, covenants, representations, and warranties of the Agreement shall remain unchanged and in full force and effect. This Rider may be executed in counterparts, each of which shall be deemed an original, and all of which together shall constitute one and the same instrument. Delivery of an executed counterpart via electronic transmission (PDF or digital signature) shall be legally binding as an original delivery.\n\n`;
+  closingSec += `IN WITNESS WHEREOF, the Parties have executed and delivered this Pre-Signing Amendment Rider as of the Effective Date set forth above.\n\n`;
+  closingSec += `CLIENT / BUYER:\n`;
+  closingSec += `${clientName.toUpperCase()}\n\n`;
+  closingSec += `By: _____________________________________\n`;
+  closingSec += `Name: Authorized Signatory\n`;
+  closingSec += `Title: Managing Director / Authorized Officer\n\n\n`;
+  closingSec += `COUNTERPARTY / SELLER:\n`;
+  closingSec += `${counterpartyName.toUpperCase()}\n\n`;
+  closingSec += `By: _____________________________________\n`;
+  closingSec += `Name: Authorized Signatory\n`;
+  closingSec += `Title: Chief Executive Officer / Authorized Officer\n`;
+
+  let fullRider = `================================================================================\n`;
+  fullRider += `PRE-SIGNING AMENDMENT RIDER AND DRAFTING REVISIONS SCHEDULE\n`;
+  fullRider += `TO ${contractTitle.toUpperCase()}\n`;
+  fullRider += `================================================================================\n\n`;
+  fullRider += `Dated as of: ${effectiveDate}\n`;
+  fullRider += `Parties: ${clientName} ("Client") and ${counterpartyName} ("Counterparty")\n\n`;
+  fullRider += `RECITALS & STIPULATIONS\n`;
+  fullRider += `-----------------------\n`;
+  fullRider += `WHEREAS, the Parties have prepared that certain draft agreement entitled "${contractTitle}" (the "Agreement"); and\n\n`;
+  fullRider += `WHEREAS, pre-signature due diligence and forensic document integrity review conducted under Delaware General Corporation Law, the Uniform Commercial Code, and Restatement (Second) of Contracts identified drafting discrepancies, broken cross-references, missing schedules, and/or financial contradictions; and\n\n`;
+  fullRider += `WHEREAS, the Parties desire to resolve and cure all such drafting defects prior to execution to ensure complete enforceability and eliminate litigation ambiguity.\n\n`;
+  fullRider += `NOW, THEREFORE, for good and valuable consideration, the receipt and sufficiency of which are hereby acknowledged, the Parties agree as follows:\n\n`;
+
+  if (sections.length === 0) {
+    fullRider += `SECTION 1. CONFIRMATION OF DRAFT INTEGRITY\n\n`;
+    fullRider += `The parties have conducted a complete forensic review of the Agreement and confirmed that all cross-references resolve to indexed sections, all disclosure schedules are present, and all financial figures are aligned. The Agreement is approved for execution as drafted.\n\n`;
+  } else {
+    fullRider += sections.join('\n');
+  }
+
+  fullRider += '\n' + closingSec;
+  return fullRider;
+}

@@ -5,7 +5,7 @@
  * 100% Client-Side generation with zero server dependencies (ABA Rule 1.6 compliant).
  */
 
-import { enrichAllAuditFindings } from './statutoryCodex.js';
+import { enrichAllAuditFindings, generatePreSigningAmendmentRiderText } from './statutoryCodex.js';
 
 function downloadFile(content, fileName, mimeType) {
   if (typeof document === 'undefined' || typeof window === 'undefined') {
@@ -1074,4 +1074,85 @@ export function exportRedlineSummaryTXT(diffResult, risks = [], meta = {}) {
 
   downloadFile(txt, `Redline_Summary_${Date.now()}.txt`, 'text/plain;charset=utf-8');
   return txt;
+}
+
+/**
+ * Exports a formal Pre-Signing Amendment Rider in court-grade HTML with print CSS.
+ */
+export function exportPreSigningAmendmentRiderHTML(auditData, meta = {}) {
+  const riderText = generatePreSigningAmendmentRiderText(auditData, meta);
+  const contractTitle = meta.contractTitle || meta.title || auditData?.meta?.title || 'Commercial Agreement';
+  const safeTitle = contractTitle.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 36) || 'Contract';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pre-Signing Amendment Rider - ${escapeHtml(contractTitle)}</title>
+  <style>
+    @page {
+      size: letter portrait;
+      margin: 0.75in;
+    }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 11pt;
+      line-height: 1.5;
+      color: #000;
+      background: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    .rider-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .print-bar {
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13px;
+    }
+    .print-btn {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    @media print {
+      .print-bar { display: none !important; }
+      body { padding: 0; }
+    }
+    pre {
+      white-space: pre-wrap;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 10.5pt;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+  <div class="rider-container">
+    <div class="print-bar">
+      <div>
+        <strong>Nexus ContractGuard Enterprise</strong> // Official Pre-Signing Amendment Rider
+      </div>
+      <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+    <pre>${escapeHtml(riderText)}</pre>
+  </div>
+</body>
+</html>`;
+
+  downloadFile(html, `Pre_Signing_Amendment_Rider_${safeTitle}_${Date.now()}.html`, 'text/html;charset=utf-8');
+  return html;
 }

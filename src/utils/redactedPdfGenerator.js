@@ -6,6 +6,7 @@
  */
 
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { generatePreSigningAmendmentRiderText } from './statutoryCodex.js';
 
 /**
  * Sanitizes input strings for strict WinAnsi (Windows-1252) encoding compatibility.
@@ -367,6 +368,57 @@ export async function downloadRedactedPDF(rawText = '', metadata = {}) {
     return true;
   } catch (err) {
     console.error('Failed to generate legal PDF:', err);
+    throw err;
+  }
+}
+
+/**
+ * Compiles a court-grade Pre-Signing Amendment Rider PDF in browser RAM.
+ * 
+ * @param {Object} auditData - Full audit results
+ * @param {Object} metadata - Title, client, counterparty
+ * @returns {Promise<Uint8Array>} PDF byte buffer
+ */
+export async function generateAmendmentRiderPDFBytes(auditData, metadata = {}) {
+  const riderText = generatePreSigningAmendmentRiderText(auditData, metadata);
+  const rawTitle = metadata.title || (metadata.contractTitle ? `Amendment Rider - ${metadata.contractTitle}` : 'Pre-Signing Amendment Rider');
+  return await generateRedactedPDFBytes(riderText, {
+    ...metadata,
+    title: rawTitle,
+    isDraft: true
+  });
+}
+
+/**
+ * Downloads the court-ready Pre-Signing Amendment Rider PDF to client filesystem.
+ * 
+ * @param {Object} auditData - Full audit results
+ * @param {Object} metadata - Title, client, counterparty
+ */
+export async function downloadAmendmentRiderPDF(auditData, metadata = {}) {
+  try {
+    const riderText = generatePreSigningAmendmentRiderText(auditData, metadata);
+    const rawTitle = metadata.title || (metadata.contractTitle ? `${metadata.contractTitle}_RIDER` : 'PRE_SIGNING_AMENDMENT_RIDER');
+    const safeTitle = rawTitle.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 32);
+
+    const pdfBytes = await generateRedactedPDFBytes(riderText, {
+      ...metadata,
+      title: 'PRE-SIGNING AMENDMENT RIDER & DRAFTING REVISIONS SCHEDULE',
+      isDraft: true
+    });
+
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeTitle}_AMENDMENT_RIDER_${Date.now()}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    return true;
+  } catch (err) {
+    console.error('Failed to generate Amendment Rider PDF:', err);
     throw err;
   }
 }
