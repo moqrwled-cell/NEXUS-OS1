@@ -11,12 +11,9 @@ import { recognizeImage } from './ocrEngine.js';
 // Configure worker source in browser environments without external network CDNs
 if (typeof window !== 'undefined' && pdfjsLib.GlobalWorkerOptions && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
   try {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-      'pdfjs-dist/build/pdf.worker.min.mjs',
-      import.meta.url
-    ).toString();
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
   } catch {
-    // If dynamic URL resolution fails, pdfjs falls back to local fake-worker emulation
+    // If resolution fails, pdfjs falls back to local fake-worker emulation
   }
 }
 

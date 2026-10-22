@@ -931,7 +931,12 @@ function ContractAnalyzerView({ initialSession }) {
     try {
       const lowerName = file.name.toLowerCase();
 
-      if (lowerName.endsWith('.pdf')) {
+      if (lowerName.endsWith('.docx')) {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await extractTextFromDOCX(arrayBuffer);
+        setTargetText(result.value);
+        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
+      } else if (lowerName.endsWith('.pdf')) {
         setUploadStatus(prev => ({ ...prev, [statusKey]: 'Reading PDF document...' }));
         const pdfResult = await extractTextFromPDF(file, {
           enableOcr: true,
@@ -965,11 +970,6 @@ function ContractAnalyzerView({ initialSession }) {
           ...prev,
           [statusKey]: `Scanned Image OCR Complete (${wordCount} words · ${ocrResult.confidence.toFixed(1)}% conf · ${ocrResult.durationMs}ms)`
         }));
-      } else if (lowerName.endsWith('.docx')) {
-        const arrayBuffer = await file.arrayBuffer();
-        const result = await extractTextFromDOCX(arrayBuffer);
-        setTargetText(result.value);
-        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
       } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
         const fileContent = await file.text();
         setTargetText(fileContent);

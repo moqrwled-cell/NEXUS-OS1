@@ -10,6 +10,7 @@ import {
   Copy
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
+import { isImageFile, recognizeImage } from '../utils/ocrEngine';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 
 import { useContractWorker } from '../utils/useContractWorker';
@@ -295,7 +296,12 @@ export default function ContractGuardDemo() {
     try {
       const lowerName = file.name.toLowerCase();
 
-      if (lowerName.endsWith('.pdf')) {
+      if (lowerName.endsWith('.docx')) {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await extractTextFromDOCX(arrayBuffer);
+        setTargetText(result.value);
+        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
+      } else if (lowerName.endsWith('.pdf')) {
         setUploadStatus(prev => ({ ...prev, [statusKey]: 'Reading PDF structure...' }));
         const pdfResult = await extractTextFromPDF(file, {
           enableOcr: true,
@@ -329,11 +335,6 @@ export default function ContractGuardDemo() {
           ...prev,
           [statusKey]: `OCR Complete (${wordCount} words · ${ocrResult.confidence.toFixed(1)}% conf)`
         }));
-      } else if (lowerName.endsWith('.docx')) {
-        const arrayBuffer = await file.arrayBuffer();
-        const result = await extractTextFromDOCX(arrayBuffer);
-        setTargetText(result.value);
-        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
       } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
         const content = await file.text();
         setTargetText(content);
