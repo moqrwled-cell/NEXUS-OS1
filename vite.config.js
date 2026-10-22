@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/', // Ensures assets load correctly on Netlify for nested routes
   build: {
+    minify: false,
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {

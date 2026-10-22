@@ -1,8 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #123B5C;      /* أزرق كحلي */
+  --primary-dark: #0C2A42;
+  --accent: #0E6B52;       /* أخضر زمردي داكن */
+  --success: #0E6B52;
+  --text: #0F1B2A;
+  --muted-text: #5A6B7A;
+  --background: #F7F9FA;
+  --surface: #FFFFFF;
+  --border: #D9E1E7;
+  --danger: #B3261E;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .font-ui {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  .font-legal {
+    font-family: 'Source Serif 4', Georgia, Cambria, serif;
+  }
+  .legal-paper {
+    background-color: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(15, 27, 42, 0.04), 0 6px 20px rgba(15, 27, 42, 0.03);
+  }
+  .legal-textarea {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background-color: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    line-height: 1.75;
+  }
+  .legal-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(18, 59, 92, 0.15);
+  }
+  .btn-legal-primary {
+    background-color: var(--primary);
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .btn-legal-primary:hover {
+    background-color: var(--primary-dark);
+  }
+}
 
 @layer utilities {
   .liquid-glass {

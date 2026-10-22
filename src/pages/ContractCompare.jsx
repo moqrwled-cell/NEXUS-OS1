@@ -113,73 +113,72 @@ export default function ContractCompare() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00F0FF]/8 blur-[180px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#00FF9D]/8 blur-[180px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#F7F9FA] text-[#0F1B2A] font-ui flex flex-col md:flex-row relative overflow-hidden">
+      {/* Background Architectural Grid */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-40 bg-[linear-gradient(to_right,#0F1B2A08_1px,transparent_1px),linear-gradient(to_bottom,#0F1B2A08_1px,transparent_1px)] bg-[size:3rem_3rem]" />
 
-      {/* Sidebar — Professional Legal Dashboard */}
-      <aside className="w-full md:w-[280px] bg-[#050A0F] border-r border-zinc-800/60 flex flex-col shrink-0 z-20">
+      {/* Sidebar — Institutional AmLaw 100 Legal Studio */}
+      <aside className="w-full md:w-[280px] bg-[#0C2A42] text-white border-r border-[#123B5C] flex flex-col shrink-0 z-20">
         {/* Brand Header */}
-        <div className="px-5 py-5 border-b border-zinc-800/60">
-          <div className="flex items-center justify-between mb-3.5">
+        <div className="px-5 py-5 border-b border-[#123B5C]">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.15)]">
-                <ShieldAlert className="text-emerald-400" size={18} />
+              <div className="w-9 h-9 rounded-lg bg-[#123B5C] border border-[#0E6B52]/60 flex items-center justify-center shadow-sm">
+                <ShieldAlert className="text-[#0E6B52]" size={18} />
               </div>
               <div>
-                <h1 className="text-sm font-bold text-white tracking-tight">ContractGuard</h1>
-                <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
+                <h1 className="text-sm font-bold text-white tracking-tight font-ui">ContractGuard</h1>
+                <p className="text-[10px] text-[#A0B3C6] font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-zinc-500 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
+            <span className="text-[10px] font-mono text-[#D9E1E7] bg-[#123B5C] border border-[#1E4D74] px-2 py-0.5 rounded-md font-semibold">v2.4 Pro</span>
           </div>
 
           {/* Security Badge */}
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-500/8 border border-emerald-500/15 text-[10px] text-emerald-400/90 font-mono">
-            <ShieldCheck size={12} className="shrink-0 text-emerald-400" />
-            <span>Air-Gapped · RAM-Only · 0 Cloud</span>
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#0E6B52]/20 border border-[#0E6B52]/40 text-[10px] text-[#A3E635] font-mono font-medium">
+            <ShieldCheck size={12} className="shrink-0 text-[#4ADE80]" />
+            <span className="text-[#E2E8F0]">Air-Gapped · In-RAM · Zero Cloud</span>
           </div>
         </div>
 
         {/* Navigation Modules */}
         <nav className="flex-1 px-3 py-3 flex flex-col gap-1 overflow-y-auto custom-scrollbar">
-          <p className="text-[9px] uppercase tracking-[0.15em] text-zinc-500 font-semibold px-2 mb-1">Modules</p>
+          <p className="text-[9px] uppercase tracking-[0.15em] text-[#8EA3B7] font-semibold px-2 mb-1 font-ui">Workstation Modules</p>
 
           {/* Module 1: Deterministic Fact-Checking Engine */}
           <button
             onClick={() => setActiveTool('analyzer')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer font-ui ${
               activeTool === 'analyzer'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-[#123B5C] text-white border-l-4 border-l-[#0E6B52] shadow-sm'
+                : 'text-[#D9E1E7] hover:bg-[#123B5C]/60 hover:text-white'
             }`}
           >
-            <ShieldCheck size={16} className={activeTool === 'analyzer' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <ShieldCheck size={16} className={activeTool === 'analyzer' ? 'text-[#4ADE80] shrink-0' : 'text-[#8EA3B7] shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Deterministic Fact-Checking Engine</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">0% Hallucination · Mathematical Audit</p>
+              <p className="text-[10px] text-[#A0B3C6] mt-0.5 truncate">0% Hallucination · Mathematical Audit</p>
             </div>
-            {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+            {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-[#0E6B52] shrink-0" />}
           </button>
           {activeTool === 'analyzer' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-emerald-400 font-bold mb-2 flex items-center justify-between">
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-[#081F33] border border-[#1E4D74]">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[#4ADE80] font-bold mb-2 flex items-center justify-between font-ui">
                 <span>MATHEMATICAL FORENSICS</span>
-                <span className="text-[8px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">100% RAM</span>
+                <span className="text-[8px] bg-[#0E6B52]/30 text-[#D9E1E7] px-1.5 py-0.5 rounded font-mono">100% RAM</span>
               </p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
+              <div className="space-y-2 text-[11px] leading-relaxed font-ui">
                 <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Single Draft Forensic Audit — </span><span className="text-zinc-400">Deterministic AST verification of broken cross-references, missing exhibits, undefined terms, and financial discrepancies with zero AI hallucinations.</span></span>
+                  <span className="text-[#4ADE80] font-bold shrink-0">①</span>
+                  <span><span className="text-white font-semibold">Single Draft Forensic Audit — </span><span className="text-[#CBD5E1]">Deterministic AST verification of broken cross-references, missing exhibits, undefined terms, and financial discrepancies with zero AI hallucinations.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Redline Diff Mode — </span><span className="text-zinc-400">Myers LCS comparative diff highlighting exact additions and deletions side-by-side.</span></span>
+                  <span className="text-[#60A5FA] font-bold shrink-0">②</span>
+                  <span><span className="text-white font-semibold">Redline Diff Mode — </span><span className="text-[#CBD5E1]">Myers LCS comparative diff highlighting exact additions and deletions side-by-side.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Pre-Signing Court Rider — </span><span className="text-zinc-400">One-click generation of court-ready Pre-Signing Amendment Rider (PDF/HTML/Copy) and Client Memo.</span></span>
+                  <span className="text-[#FBBF24] font-bold shrink-0">③</span>
+                  <span><span className="text-white font-semibold">Pre-Signing Court Rider — </span><span className="text-[#CBD5E1]">One-click generation of court-ready Pre-Signing Amendment Rider (PDF/HTML/Copy) and Client Memo.</span></span>
                 </div>
               </div>
             </div>
@@ -188,34 +187,34 @@ export default function ContractCompare() {
           {/* Module 2: PII Redactor */}
           <button
             onClick={() => setActiveTool('redact')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer font-ui ${
               activeTool === 'redact'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-[#123B5C] text-white border-l-4 border-l-[#0E6B52] shadow-sm'
+                : 'text-[#D9E1E7] hover:bg-[#123B5C]/60 hover:text-white'
             }`}
           >
-            <EyeOff size={16} className={activeTool === 'redact' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <EyeOff size={16} className={activeTool === 'redact' ? 'text-[#4ADE80] shrink-0' : 'text-[#8EA3B7] shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Smart PII Redactor</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Identity & financial scrub</p>
+              <p className="text-[10px] text-[#A0B3C6] mt-0.5 truncate">Identity & financial scrub</p>
             </div>
-            {activeTool === 'redact' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+            {activeTool === 'redact' && <div className="w-1.5 h-1.5 rounded-full bg-[#0E6B52] shrink-0" />}
           </button>
           {activeTool === 'redact' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-[#081F33] border border-[#1E4D74]">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[#A0B3C6] font-bold mb-2 font-ui">How To Use (For Counsel)</p>
+              <div className="space-y-2 text-[11px] leading-relaxed font-ui">
                 <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Active Rules — </span><span className="text-zinc-400">Toggle detection filters for SSN, tax IDs, credit cards, banking info, emails, and phone numbers.</span></span>
+                  <span className="text-[#4ADE80] font-bold shrink-0">①</span>
+                  <span><span className="text-white font-semibold">Active Rules — </span><span className="text-[#CBD5E1]">Toggle detection filters for SSN, tax IDs, credit cards, banking info, emails, and phone numbers.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Custom Keywords — </span><span className="text-zinc-400">Add proprietary client names, company tags, or project titles for automated scrubbing.</span></span>
+                  <span className="text-[#60A5FA] font-bold shrink-0">②</span>
+                  <span><span className="text-white font-semibold">Custom Keywords — </span><span className="text-[#CBD5E1]">Add proprietary client names, company tags, or project titles for automated scrubbing.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Masking Style — </span><span className="text-zinc-400">Choose redaction output: Solid Black Block (█████), Semantic Tag ([REDACTED]), or Asterisks.</span></span>
+                  <span className="text-[#FBBF24] font-bold shrink-0">③</span>
+                  <span><span className="text-white font-semibold">Masking Style — </span><span className="text-[#CBD5E1]">Choose redaction output: Solid Black Block (█████), Semantic Tag ([REDACTED]), or Asterisks.</span></span>
                 </div>
               </div>
             </div>
@@ -224,34 +223,34 @@ export default function ContractCompare() {
           {/* Module 3: Bates Stamping */}
           <button
             onClick={() => setActiveTool('bates')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer font-ui ${
               activeTool === 'bates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-[#123B5C] text-white border-l-4 border-l-[#0E6B52] shadow-sm'
+                : 'text-[#D9E1E7] hover:bg-[#123B5C]/60 hover:text-white'
             }`}
           >
-            <Layers size={16} className={activeTool === 'bates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <Layers size={16} className={activeTool === 'bates' ? 'text-[#4ADE80] shrink-0' : 'text-[#8EA3B7] shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Bates Stamping Suite</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Court evidence numbering</p>
+              <p className="text-[10px] text-[#A0B3C6] mt-0.5 truncate">Court evidence numbering</p>
             </div>
-            {activeTool === 'bates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+            {activeTool === 'bates' && <div className="w-1.5 h-1.5 rounded-full bg-[#0E6B52] shrink-0" />}
           </button>
           {activeTool === 'bates' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-[#081F33] border border-[#1E4D74]">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[#A0B3C6] font-bold mb-2 font-ui">How To Use (For Counsel)</p>
+              <div className="space-y-2 text-[11px] leading-relaxed font-ui">
                 <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Bates Standard — </span><span className="text-zinc-400">Official court discovery numbering sequence (e.g. PLTF-0001) applied directly to evidentiary PDFs.</span></span>
+                  <span className="text-[#4ADE80] font-bold shrink-0">①</span>
+                  <span><span className="text-white font-semibold">Bates Standard — </span><span className="text-[#CBD5E1]">Official court discovery numbering sequence (e.g. PLTF-0001) applied directly to evidentiary PDFs.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Prefix Attribution — </span><span className="text-zinc-400">Designate party filing: PLTF (Plaintiff), DEF (Defendant), or CONF (Confidential exhibit).</span></span>
+                  <span className="text-[#60A5FA] font-bold shrink-0">②</span>
+                  <span><span className="text-white font-semibold">Prefix Attribution — </span><span className="text-[#CBD5E1]">Designate party filing: PLTF (Plaintiff), DEF (Defendant), or CONF (Confidential exhibit).</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Contrast Backing — </span><span className="text-zinc-400">Renders high-contrast white backing pill to ensure legibility across dark scanned exhibits.</span></span>
+                  <span className="text-[#FBBF24] font-bold shrink-0">③</span>
+                  <span><span className="text-white font-semibold">Contrast Backing — </span><span className="text-[#CBD5E1]">Renders high-contrast white backing pill to ensure legibility across dark scanned exhibits.</span></span>
                 </div>
               </div>
             </div>
@@ -260,34 +259,34 @@ export default function ContractCompare() {
           {/* Module 4: Audit Vault */}
           <button
             onClick={() => setActiveTool('history')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer font-ui ${
               activeTool === 'history'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-[#123B5C] text-white border-l-4 border-l-[#0E6B52] shadow-sm'
+                : 'text-[#D9E1E7] hover:bg-[#123B5C]/60 hover:text-white'
             }`}
           >
-            <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <Database size={16} className={activeTool === 'history' ? 'text-[#4ADE80] shrink-0' : 'text-[#8EA3B7] shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Encrypted local persistence</p>
+              <p className="text-[10px] text-[#A0B3C6] mt-0.5 truncate">Encrypted local persistence</p>
             </div>
-            {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+            {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-[#0E6B52] shrink-0" />}
           </button>
           {activeTool === 'history' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-[#081F33] border border-[#1E4D74]">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[#A0B3C6] font-bold mb-2 font-ui">How To Use (For Counsel)</p>
+              <div className="space-y-2 text-[11px] leading-relaxed font-ui">
                 <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Local Storage — </span><span className="text-zinc-400">Every audit and redline session is retained in client-side IndexedDB without cloud transmission.</span></span>
+                  <span className="text-[#4ADE80] font-bold shrink-0">①</span>
+                  <span><span className="text-white font-semibold">Local Storage — </span><span className="text-[#CBD5E1]">Every audit and redline session is retained in client-side IndexedDB without cloud transmission.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Restore Session — </span><span className="text-zinc-400">Reopen previous contract reviews, re-examine liabilities, or export updated client memos.</span></span>
+                  <span className="text-[#60A5FA] font-bold shrink-0">②</span>
+                  <span><span className="text-white font-semibold">Restore Session — </span><span className="text-[#CBD5E1]">Reopen previous contract reviews, re-examine liabilities, or export updated client memos.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-red-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Purge Vault — </span><span className="text-zinc-400">Permanently clears local database records to uphold strict client-attorney confidentiality.</span></span>
+                  <span className="text-[#F87171] font-bold shrink-0">③</span>
+                  <span><span className="text-white font-semibold">Purge Vault — </span><span className="text-[#CBD5E1]">Permanently clears local database records to uphold strict client-attorney confidentiality.</span></span>
                 </div>
               </div>
             </div>
@@ -296,37 +295,37 @@ export default function ContractCompare() {
           {/* Module 5: Legal Templates Vault */}
           <button
             onClick={() => setActiveTool('templates')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer font-ui ${
               activeTool === 'templates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-[#123B5C] text-white border-l-4 border-l-[#0E6B52] shadow-sm'
+                : 'text-[#D9E1E7] hover:bg-[#123B5C]/60 hover:text-white'
             }`}
           >
-            <BookOpen size={16} className={activeTool === 'templates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <BookOpen size={16} className={activeTool === 'templates' ? 'text-[#4ADE80] shrink-0' : 'text-[#8EA3B7] shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
                 <p className="text-[13px] font-semibold leading-tight truncate">Template Vault</p>
-                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">AmLaw 100</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#081F33] text-[#93C5FD] border border-[#1E4D74] font-mono">AmLaw 100</span>
               </div>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">US commercial contract library</p>
+              <p className="text-[10px] text-[#A0B3C6] mt-0.5 truncate">US commercial contract library</p>
             </div>
-            {activeTool === 'templates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+            {activeTool === 'templates' && <div className="w-1.5 h-1.5 rounded-full bg-[#0E6B52] shrink-0" />}
           </button>
           {activeTool === 'templates' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
+            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-[#081F33] border border-[#1E4D74]">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-[#A0B3C6] font-bold mb-2 font-ui">How To Use (For Counsel)</p>
+              <div className="space-y-2 text-[11px] leading-relaxed font-ui">
                 <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Standard Library — </span><span className="text-zinc-400">Institutional Land Purchase, Commercial Lease, MSA, NDA, and APA contracts.</span></span>
+                  <span className="text-[#4ADE80] font-bold shrink-0">①</span>
+                  <span><span className="text-white font-semibold">Standard Library — </span><span className="text-[#CBD5E1]">Institutional Land Purchase, Commercial Lease, MSA, NDA, and APA contracts.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Quick-Fill Form — </span><span className="text-zinc-400">Type client party names, purchase price, parcel ID, and closing dates to populate instantly.</span></span>
+                  <span className="text-[#60A5FA] font-bold shrink-0">②</span>
+                  <span><span className="text-white font-semibold">Quick-Fill Form — </span><span className="text-[#CBD5E1]">Type client party names, purchase price, parcel ID, and closing dates to populate instantly.</span></span>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Audit Integration — </span><span className="text-zinc-400">Send compiled contract straight to ContractGuard audit engine with one click.</span></span>
+                  <span className="text-[#FBBF24] font-bold shrink-0">③</span>
+                  <span><span className="text-white font-semibold">Audit Integration — </span><span className="text-[#CBD5E1]">Send compiled contract straight to ContractGuard audit engine with one click.</span></span>
                 </div>
               </div>
             </div>
@@ -334,35 +333,35 @@ export default function ContractCompare() {
         </nav>
 
         {/* Workstation & License Settings Button */}
-        <div className="px-3.5 pt-2 pb-1.5 border-t border-zinc-800/60">
+        <div className="px-3.5 pt-2 pb-1.5 border-t border-[#123B5C]">
           <button
             onClick={() => { setShowSettingsModal(true); loadDeviceLicenseData(); }}
-            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm group"
+            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-[#123B5C] hover:bg-[#081F33] border border-[#1E4D74] text-xs font-semibold text-white transition-all cursor-pointer shadow-sm group font-ui"
           >
             <div className="flex items-center gap-2 min-w-0">
-              <Settings size={14} className="text-emerald-400 group-hover:rotate-45 transition-transform" />
+              <Settings size={14} className="text-[#4ADE80] group-hover:rotate-45 transition-transform" />
               <span className="truncate">Workstation & License</span>
             </div>
-            <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold shrink-0">
+            <span className="text-[9px] font-mono uppercase bg-[#0E6B52]/40 text-white border border-[#0E6B52] px-1.5 py-0.2 rounded font-bold shrink-0">
               {licenseData?.plan === 'firm' ? 'Firm' : 'Solo'}
             </span>
           </button>
         </div>
 
         {/* Bottom: PWA Install */}
-        <div className="px-4 py-3 border-t border-zinc-800/40">
+        <div className="px-4 py-3 border-t border-[#123B5C]">
           <button
             onClick={handleInstallApp}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs px-4 py-2.5 rounded-lg transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)] cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 bg-[#123B5C] hover:bg-[#081F33] border border-[#0E6B52] text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-all shadow-sm cursor-pointer font-ui"
           >
-            <HardDriveDownload size={14} />
+            <HardDriveDownload size={14} className="text-[#4ADE80]" />
             Install Offline App (PWA)
           </button>
         </div>
       </aside>
 
       {/* Main Workspace */}
-      <main className="flex-1 p-5 md:p-7 overflow-y-auto z-10 custom-scrollbar flex flex-col">
+      <main className="flex-1 p-5 md:p-7 overflow-y-auto z-10 custom-scrollbar flex flex-col font-ui bg-[#F7F9FA]">
         {!isUnlocked ? (
           <div className="flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto my-auto">
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
@@ -510,7 +509,7 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto font-ui"
       onClick={onClose}
     >
       <motion.div
@@ -518,104 +517,104 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 12 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl bg-[#08121A] border border-emerald-500/30 rounded-2xl p-6 shadow-[0_0_50px_rgba(16,185,129,0.15)] flex flex-col gap-5 my-8 max-h-[90vh] overflow-y-auto custom-scrollbar"
+        className="w-full max-w-2xl bg-[#FFFFFF] border border-[#D9E1E7] rounded-2xl p-6 shadow-2xl flex flex-col gap-5 my-8 max-h-[90vh] overflow-y-auto custom-scrollbar text-[#0F1B2A]"
       >
         {/* Header */}
-        <div className="flex items-start justify-between pb-4 border-b border-zinc-800">
+        <div className="flex items-start justify-between pb-4 border-b border-[#D9E1E7]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#123B5C]">
               <Settings size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white tracking-tight">Workstation & License Settings</h3>
-                <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+                <h3 className="text-base font-bold text-[#0F1B2A] tracking-tight">Workstation & License Settings</h3>
+                <span className="text-[9px] font-mono uppercase bg-[#EFF6FF] text-[#123B5C] border border-[#BFDBFE] px-2 py-0.5 rounded font-bold">
                   {licenseData?.plan === 'firm' ? 'Firm Suite' : 'Solo License'}
                 </span>
               </div>
-              <p className="text-xs text-zinc-400 mt-0.5 font-mono">
+              <p className="text-xs text-[#5A6B7A] mt-0.5 font-mono">
                 Hardware ID Binding · Cryptographic Seat Governance · Migration
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#5A6B7A] hover:text-[#0F1B2A] hover:bg-[#F7F9FA] transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Section 1: Workstation Hardware ID */}
-        <div className="p-4 rounded-xl bg-[#050A0F] border border-zinc-800 space-y-2">
+        <div className="p-4 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold flex items-center gap-1.5">
-              <Laptop size={12} className="text-emerald-400" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#5A6B7A] font-bold flex items-center gap-1.5">
+              <Laptop size={12} className="text-[#123B5C]" />
               <span>Workstation Hardware ID (Device Fingerprint)</span>
             </span>
-            <span className="text-[9.5px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded font-bold flex items-center gap-1">
+            <span className="text-[9.5px] font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] px-2 py-0.5 rounded font-bold flex items-center gap-1">
               <ShieldCheck size={11} />
               <span>Bound & Active</span>
             </span>
           </div>
 
-          <div className="flex items-center justify-between bg-black/60 p-2.5 rounded-lg border border-zinc-800 gap-2">
-            <span className="font-mono text-xs text-emerald-400 select-all truncate font-semibold">
+          <div className="flex items-center justify-between bg-[#FFFFFF] p-2.5 rounded-lg border border-[#D9E1E7] gap-2">
+            <span className="font-mono text-xs text-[#0F1B2A] select-all truncate font-semibold">
               {workstationFp || 'DEV-HARDWARE-HASH-LOCAL'}
             </span>
             <button
               onClick={() => copyText(workstationFp, 'workstation_fp')}
-              className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 shrink-0 cursor-pointer"
+              className="px-2.5 py-1 rounded-md bg-[#F7F9FA] hover:bg-[#E5EAEF] text-[#123B5C] border border-[#D9E1E7] text-xs font-mono flex items-center gap-1.5 shrink-0 cursor-pointer"
             >
-              {copiedField === 'workstation_fp' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              {copiedField === 'workstation_fp' ? <Check size={12} className="text-[#0E6B52]" /> : <Copy size={12} />}
               <span>{copiedField === 'workstation_fp' ? 'Copied' : 'Copy ID'}</span>
             </button>
           </div>
 
-          <p className="text-[11px] text-zinc-400 leading-relaxed">
+          <p className="text-[11px] text-[#5A6B7A] leading-relaxed">
             This cryptographic hash uniquely binds ContractGuard to this physical machine's isolated browser environment. All document audits run in local RAM with zero cloud transmission.
           </p>
         </div>
 
         {/* Section 2: Active License & Seat Info */}
-        <div className="p-4 rounded-xl bg-[#050A0F] border border-zinc-800 space-y-3">
+        <div className="p-4 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold flex items-center gap-1.5">
-              <Key size={12} className="text-cyan-400" />
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#5A6B7A] font-bold flex items-center gap-1.5">
+              <Key size={12} className="text-[#123B5C]" />
               <span>License Details</span>
             </span>
-            <span className="text-xs font-mono text-cyan-300 font-semibold">
+            <span className="text-xs font-mono text-[#123B5C] font-bold">
               {licenseData?.tierName || (licenseData?.plan === 'firm' ? 'Law Firm Suite (5 Seats)' : 'Solo Practitioner (1 User)')}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <div className="p-2.5 rounded-lg bg-black/40 border border-zinc-800/80">
-              <span className="text-[10px] font-mono uppercase text-zinc-400">Current Workstation Role</span>
-              <p className="font-semibold text-white mt-0.5">
+            <div className="p-2.5 rounded-lg bg-[#FFFFFF] border border-[#D9E1E7]">
+              <span className="text-[10px] font-mono uppercase text-[#5A6B7A]">Current Workstation Role</span>
+              <p className="font-semibold text-[#0F1B2A] mt-0.5">
                 {isFirmAdmin ? 'Primary Purchaser / Managing Partner (Admin)' : isFirmAssociate ? `Associate Workstation (Seat 0${licenseData?.currentSeatNumber || 2})` : 'Primary Attorney Workstation'}
               </p>
             </div>
-            <div className="p-2.5 rounded-lg bg-black/40 border border-zinc-800/80">
-              <span className="text-[10px] font-mono uppercase text-zinc-400">Seat Allocation</span>
-              <p className="font-semibold text-white mt-0.5">
+            <div className="p-2.5 rounded-lg bg-[#FFFFFF] border border-[#D9E1E7]">
+              <span className="text-[10px] font-mono uppercase text-[#5A6B7A]">Seat Allocation</span>
+              <p className="font-semibold text-[#0F1B2A] mt-0.5">
                 Seat {licenseData?.currentSeatNumber || 1} of {licenseData?.plan === 'firm' ? '5 Total Seats' : '1 Seat'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between bg-black/60 p-2.5 rounded-lg border border-zinc-800 gap-2">
+          <div className="flex items-center justify-between bg-[#FFFFFF] p-2.5 rounded-lg border border-[#D9E1E7] gap-2">
             <div className="min-w-0">
-              <span className="text-[9px] font-mono uppercase text-zinc-400 block">Active Workstation License Key</span>
-              <span className="font-mono text-xs text-white select-all truncate font-semibold">
+              <span className="text-[9px] font-mono uppercase text-[#5A6B7A] block">Active Workstation License Key</span>
+              <span className="font-mono text-xs text-[#0F1B2A] select-all truncate font-semibold">
                 {licenseData?.primaryKey || 'CG-ACTIVE-KEY'}
               </span>
             </div>
             <button
               onClick={() => copyText(licenseData?.primaryKey, 'primary_key')}
-              className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 shrink-0 cursor-pointer"
+              className="px-2.5 py-1 rounded-md bg-[#F7F9FA] hover:bg-[#E5EAEF] text-[#123B5C] border border-[#D9E1E7] text-xs font-mono flex items-center gap-1.5 shrink-0 cursor-pointer"
             >
-              {copiedField === 'primary_key' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              {copiedField === 'primary_key' ? <Check size={12} className="text-[#0E6B52]" /> : <Copy size={12} />}
               <span>{copiedField === 'primary_key' ? 'Copied' : 'Copy Key'}</span>
             </button>
           </div>
@@ -623,22 +622,22 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
 
         {/* Section 3: Law Firm Suite Multi-Seat Provisioning */}
         {isFirmAdmin && seatKeys.length > 0 && (
-          <div className="p-4 rounded-xl bg-gradient-to-b from-[#050A0F] to-[#08121A] border border-emerald-500/30 space-y-3">
+          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] space-y-3 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-[#123B5C] font-bold flex items-center gap-1.5">
                 <Users size={13} />
                 <span>Firm Workstation Keys (5 Seats Included)</span>
               </span>
               <button
                 onClick={handleDownloadTeamKeys}
-                className="px-2.5 py-1 rounded-md bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-md bg-[#123B5C] text-white text-[11px] font-mono font-bold flex items-center gap-1.5 hover:bg-[#0C2A42] transition-colors cursor-pointer"
               >
                 <Download size={11} />
                 <span>Download Team Keys (.txt)</span>
               </button>
             </div>
 
-            <p className="text-[11px] text-zinc-300 leading-snug">
+            <p className="text-[11px] text-[#5A6B7A] leading-snug">
               As the managing purchaser, distribute each individual seat key to other lawyers or paralegals in your practice. Each key locks to one physical device.
             </p>
 
@@ -650,19 +649,19 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
                     key={seat.key || idx}
                     className={`p-2.5 rounded-lg border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 ${
                       isCurrent
-                        ? 'bg-emerald-950/20 border-emerald-500/40 text-white'
-                        : 'bg-black/50 border-zinc-800 text-zinc-300'
+                        ? 'bg-[#F0FDF4] border-[#BBF7D0] text-[#0F1B2A]'
+                        : 'bg-[#F7F9FA] border-[#D9E1E7] text-[#0F1B2A]'
                     }`}
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${
-                        isCurrent ? 'bg-emerald-500 text-black' : 'bg-zinc-800 text-zinc-300'
+                        isCurrent ? 'bg-[#0E6B52] text-white' : 'bg-[#D9E1E7] text-[#0F1B2A]'
                       }`}>
                         SEAT 0{seat.seatNumber || idx + 1}
                       </span>
                       <span className="font-mono text-xs truncate">{seat.key}</span>
                       {isCurrent && (
-                        <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
+                        <span className="text-[9px] font-mono text-[#0E6B52] bg-[#FFFFFF] px-1.5 py-0.5 rounded border border-[#BBF7D0]">
                           This Workstation
                         </span>
                       )}
@@ -670,9 +669,9 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
 
                     <button
                       onClick={() => copyText(seat.key, `seat_${idx}`)}
-                      className="px-2 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-mono flex items-center gap-1 shrink-0 cursor-pointer self-end sm:self-auto"
+                      className="px-2 py-0.5 rounded bg-[#FFFFFF] border border-[#D9E1E7] hover:bg-[#F7F9FA] text-[#123B5C] text-[11px] font-mono flex items-center gap-1 shrink-0 cursor-pointer self-end sm:self-auto"
                     >
-                      {copiedField === `seat_${idx}` ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                      {copiedField === `seat_${idx}` ? <Check size={11} className="text-[#0E6B52]" /> : <Copy size={11} />}
                       <span>{copiedField === `seat_${idx}` ? 'Copied' : 'Copy'}</span>
                     </button>
                   </div>
@@ -684,42 +683,42 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
 
         {/* Section 3b: If Associate Member (Hide other keys) */}
         {isFirmAssociate && (
-          <div className="p-4 rounded-xl bg-[#050A0F] border border-cyan-500/30 space-y-2">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold flex items-center gap-1.5">
+          <div className="p-4 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] space-y-2">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#123B5C] font-bold flex items-center gap-1.5">
               <User size={13} />
               <span>Associate Workstation License</span>
             </span>
-            <p className="text-[11px] text-zinc-300 leading-relaxed">
+            <p className="text-[11px] text-[#5A6B7A] leading-relaxed">
               Your workstation is authenticated under an enterprise Law Firm Suite seat allocation. Firm administrative keys and additional seat distribution are restricted to your firm's primary license administrator.
             </p>
           </div>
         )}
 
         {/* Section 4: License Migration & Deactivation */}
-        <div className="p-4 rounded-xl bg-[#050A0F] border border-amber-500/30 space-y-3">
+        <div className="p-4 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[#92400E] font-bold flex items-center gap-1.5">
               <RotateCcw size={13} />
               <span>Transfer License to a New Computer</span>
             </span>
-            <span className="text-[9.5px] font-mono text-amber-300 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded font-bold">
+            <span className="text-[9.5px] font-mono text-[#92400E] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded font-bold">
               Device Migration
             </span>
           </div>
 
-          <div className="p-3 rounded-lg bg-black/40 border border-zinc-800 text-[11.5px] text-zinc-300 leading-relaxed space-y-1.5">
-            <p className="font-semibold text-white">How to migrate to another machine:</p>
-            <div className="space-y-1 text-zinc-400 text-xs">
+          <div className="p-3 rounded-lg bg-[#FFFFFF] border border-[#FDE68A] text-[11.5px] text-[#0F1B2A] leading-relaxed space-y-1.5">
+            <p className="font-semibold text-[#0F1B2A]">How to migrate to another machine:</p>
+            <div className="space-y-1 text-[#5A6B7A] text-xs">
               <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">1.</span>
+                <span className="text-[#D97706] font-bold">1.</span>
                 <span>Click <strong>"Deactivate from this Machine"</strong> below to release the hardware lock.</span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">2.</span>
-                <span>Copy your license key: <code className="text-emerald-400 font-mono select-all">{licenseData?.primaryKey || 'Your Key'}</code></span>
+                <span className="text-[#D97706] font-bold">2.</span>
+                <span>Copy your license key: <code className="text-[#123B5C] font-mono font-bold select-all">{licenseData?.primaryKey || 'Your Key'}</code></span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="text-amber-400 font-bold">3.</span>
+                <span className="text-[#D97706] font-bold">3.</span>
                 <span>Open ContractGuard on your new workstation, paste your key, and it will immediately bind to your new hardware.</span>
               </div>
             </div>
@@ -728,26 +727,26 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
           {!showConfirmDeactivate ? (
             <button
               onClick={() => setShowConfirmDeactivate(true)}
-              className="w-full py-2.5 px-4 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#FFFFFF] border border-[#D97706] text-[#D97706] hover:bg-[#D97706] hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer font-ui"
             >
               <LogOut size={14} />
               <span>Deactivate from this Machine (Migrate License)</span>
             </button>
           ) : (
-            <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/50 space-y-3">
-              <p className="text-xs text-rose-200 font-semibold">
+            <div className="p-3.5 rounded-xl bg-[#FDF2F2] border border-[#FCA5A5] space-y-3">
+              <p className="text-xs text-[#991B1B] font-semibold">
                 Confirm Machine Deactivation: ContractGuard will release this computer's hardware binding and lock the local studio. You can reactivate anytime on this computer or enter the key on a new computer.
               </p>
               <div className="flex items-center gap-3">
                 <button
                   onClick={onDeactivate}
-                  className="flex-1 py-2 px-3 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-colors cursor-pointer"
+                  className="flex-1 py-2 px-3 rounded-lg bg-[#B3261E] hover:bg-[#8F1D17] text-white text-xs font-bold transition-colors cursor-pointer"
                 >
                   Yes, Deactivate Workstation Now
                 </button>
                 <button
                   onClick={() => setShowConfirmDeactivate(false)}
-                  className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold cursor-pointer"
+                  className="px-4 py-2 rounded-lg bg-[#FFFFFF] border border-[#D9E1E7] text-[#0F1B2A] text-xs font-semibold cursor-pointer hover:bg-[#F7F9FA]"
                 >
                   Cancel
                 </button>
@@ -757,14 +756,14 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
         </div>
 
         {/* Section 5: Official Support */}
-        <div className="p-3.5 rounded-xl bg-black/40 border border-zinc-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="p-3.5 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
-            <Mail size={16} className="text-emerald-400 shrink-0" />
+            <Mail size={16} className="text-[#123B5C] shrink-0" />
             <div>
-              <p className="font-semibold text-white">Direct Developer & Legal Tech Support</p>
+              <p className="font-semibold text-[#0F1B2A]">Direct Developer & Legal Tech Support</p>
               <a
                 href="mailto:nexus.os.store@gmail.com"
-                className="text-emerald-400 hover:underline font-mono text-[11px]"
+                className="text-[#123B5C] hover:underline font-mono text-[11px]"
               >
                 nexus.os.store@gmail.com
               </a>
@@ -773,9 +772,9 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
 
           <button
             onClick={() => copyText('nexus.os.store@gmail.com', 'support_email')}
-            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 cursor-pointer self-end sm:self-auto"
+            className="px-3 py-1.5 rounded-lg bg-[#FFFFFF] border border-[#D9E1E7] hover:bg-[#E5EAEF] text-[#123B5C] text-xs font-mono flex items-center gap-1.5 cursor-pointer self-end sm:self-auto font-ui"
           >
-            {copiedField === 'support_email' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+            {copiedField === 'support_email' ? <Check size={12} className="text-[#0E6B52]" /> : <Copy size={12} />}
             <span>{copiedField === 'support_email' ? 'Copied' : 'Copy Email'}</span>
           </button>
         </div>
@@ -1101,39 +1100,39 @@ function ContractAnalyzerView({ initialSession }) {
                               'bg-emerald-500 text-black border-emerald-400';
 
   return (
-    <div className="max-w-7xl mx-auto h-full flex flex-col gap-6">
+    <div className="max-w-7xl mx-auto h-full flex flex-col gap-6 font-ui">
       {/* Top Header & Mode Toggle */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-              <ShieldCheck className="text-emerald-400 shrink-0" size={24} />
+            <h2 className="text-2xl font-black tracking-tight text-[#0C2A42] flex items-center gap-2.5 font-ui">
+              <ShieldCheck className="text-[#0E6B52] shrink-0" size={24} />
               <span>Deterministic Fact-Checking Engine</span>
             </h2>
-            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#0E6B52]/10 text-[#0E6B52] border border-[#0E6B52]/30">
               100% IN-MEMORY RAM
             </span>
-            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#123B5C]/10 text-[#123B5C] border border-[#123B5C]/30">
               0% AI PROBABILITY
             </span>
           </div>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-[#5A6B7A] mt-1 font-ui">
             Mathematical AST & regex verification across cross-references, missing exhibits, defined terms, and financial figures. ABA Model Rule 1.6 Privileged.
           </p>
         </div>
 
-        {/* Mode Selector only — Apple macOS Segmented Pill */}
+        {/* Mode Selector — Executive Tab Pill */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex apple-segmented-pill bg-black/60">
+          <div className="flex bg-[#E5EAEF] border border-[#D9E1E7] p-1 rounded-xl">
             <button
               onClick={() => {
                 setAnalysisMode('single');
                 setActiveHudTab('dealBreakers');
               }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer font-ui ${
                 analysisMode === 'single'
-                  ? 'apple-segmented-pill-active'
-                  : 'text-zinc-400 hover:text-white'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'text-[#5A6B7A] hover:text-[#0F1B2A]'
               }`}
             >
               <FileCheck size={14} />
@@ -1144,10 +1143,10 @@ function ContractAnalyzerView({ initialSession }) {
                 setAnalysisMode('comparative');
                 setActiveHudTab('diff');
               }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer font-ui ${
                 analysisMode === 'comparative'
-                  ? 'bg-cyan-500/15 border border-cyan-400/35 border-t-white/30 text-cyan-300 shadow-[0_2px_10px_rgba(0,240,255,0.15)]'
-                  : 'text-zinc-400 hover:text-white'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'text-[#5A6B7A] hover:text-[#0F1B2A]'
               }`}
             >
               <Search size={14} />
@@ -1158,48 +1157,48 @@ function ContractAnalyzerView({ initialSession }) {
       </div>
 
       {/* Zero-Cloud Privilege Shield Trust Bar */}
-      <div className="px-4 py-2.5 rounded-xl bg-emerald-500/8 border border-emerald-500/20 flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-xs font-mono">
-        <div className="flex items-center gap-2.5 text-emerald-300">
-          <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-          <span><strong>ZERO-CLOUD PRIVILEGE SHIELD:</strong> 100% In-Memory RAM execution. Client contracts, confidential party covenants, and financial terms never touch an external cloud server or LLM API.</span>
+      <div className="px-5 py-3 rounded-xl bg-[#FFFFFF] border-l-4 border-l-[#0E6B52] border-y border-r border-[#D9E1E7] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-xs font-ui">
+        <div className="flex items-center gap-2.5 text-[#0F1B2A]">
+          <ShieldCheck size={16} className="text-[#0E6B52] shrink-0" />
+          <span><strong className="text-[#0C2A42]">ZERO-CLOUD PRIVILEGE SHIELD:</strong> 100% In-Memory RAM execution. Client contracts, confidential party covenants, and financial terms never touch an external cloud server or LLM API.</span>
         </div>
-        <span className="text-zinc-500 text-[11px] shrink-0 font-bold uppercase tracking-wider">ABA Model Rule 1.6 Certified</span>
+        <span className="text-[#0E6B52] bg-[#E6F4EA] border border-[#0E6B52]/30 px-2.5 py-0.5 rounded font-mono text-[10px] font-bold uppercase tracking-wider shrink-0">ABA Model Rule 1.6 Certified</span>
       </div>
 
       {/* Clean Horizontal Matter Metadata Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 p-4 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl shadow-xs font-ui">
         <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1">Matter / Agreement Title</label>
+          <label className="text-xs font-semibold text-[#5A6B7A] block mb-1">Matter / Agreement Title</label>
           <input
             type="text"
             value={documentTitle}
             onChange={(e) => setDocumentTitle(e.target.value)}
             placeholder="e.g. Master Services Agreement"
-            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-colors"
+            className="w-full bg-[#F7F9FA] border border-[#D9E1E7] rounded-lg px-3.5 py-2 text-sm text-[#0F1B2A] focus:border-[#123B5C] focus:bg-[#FFFFFF] outline-none transition-colors"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1 flex items-center gap-1.5">
-            <User size={13} className="text-cyan-400" /> Client Entity (Your Side)
+          <label className="text-xs font-semibold text-[#5A6B7A] block mb-1 flex items-center gap-1.5">
+            <User size={13} className="text-[#123B5C]" /> Client Entity (Your Side)
           </label>
           <input
             type="text"
             value={clientParty}
             onChange={(e) => setClientParty(e.target.value)}
             placeholder="e.g. Acme Corporation"
-            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-cyan-500 outline-none transition-colors"
+            className="w-full bg-[#F7F9FA] border border-[#D9E1E7] rounded-lg px-3.5 py-2 text-sm text-[#0F1B2A] focus:border-[#123B5C] focus:bg-[#FFFFFF] outline-none transition-colors"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1 flex items-center gap-1.5">
-            <Users size={13} className="text-emerald-400" /> Counterparty Name
+          <label className="text-xs font-semibold text-[#5A6B7A] block mb-1 flex items-center gap-1.5">
+            <Users size={13} className="text-[#0E6B52]" /> Counterparty Name
           </label>
           <input
             type="text"
             value={counterparty}
             onChange={(e) => setCounterparty(e.target.value)}
             placeholder="e.g. Globex Systems Inc"
-            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-colors"
+            className="w-full bg-[#F7F9FA] border border-[#D9E1E7] rounded-lg px-3.5 py-2 text-sm text-[#0F1B2A] focus:border-[#123B5C] focus:bg-[#FFFFFF] outline-none transition-colors"
           />
         </div>
       </div>
@@ -1211,40 +1210,40 @@ function ContractAnalyzerView({ initialSession }) {
           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
           onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
-          className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+          className={`flex flex-col rounded-xl bg-[#FFFFFF] border transition-all overflow-hidden shadow-xs relative ${
             isDraggingTarget 
-              ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.3)] ring-2 ring-emerald-400/50' 
-              : 'border-zinc-800'
+              ? 'border-[#0E6B52] bg-[#F0FDF4] ring-2 ring-[#0E6B52]/30' 
+              : 'border-[#D9E1E7]'
           }`}
         >
           {isDraggingTarget && (
-            <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+            <div className="absolute inset-0 z-30 bg-[#FFFFFF]/95 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-[#0E6B52] gap-3 animate-in fade-in">
+              <div className="w-16 h-16 rounded-2xl bg-[#0E6B52]/10 border border-[#0E6B52]/30 flex items-center justify-center shadow-md">
                 <Upload size={30} className="animate-bounce" />
               </div>
-              <p className="text-sm font-bold text-white tracking-wide">Drop Contract Document Here</p>
-              <p className="text-xs text-zinc-400 font-mono">Supports .pdf, .docx, .txt, .md + Scanned Images (.png, .jpg)</p>
+              <p className="text-sm font-bold text-[#0F1B2A] tracking-wide font-ui">Drop Contract Document Here</p>
+              <p className="text-xs text-[#5A6B7A] font-ui">Supports .pdf, .docx, .txt, .md + Scanned Images</p>
             </div>
           )}
 
-          <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
-              <FileCheck size={15} className="text-emerald-400" />
+          <div className="px-4 py-3 bg-[#F7F9FA] border-b border-[#D9E1E7] flex items-center justify-between font-ui">
+            <span className="text-xs font-bold text-[#123B5C] flex items-center gap-2">
+              <FileCheck size={15} className="text-[#0E6B52]" />
               CONTRACT DRAFT TO PROOFREAD (Drag & Drop or Import)
             </span>
             <div className="flex items-center gap-2">
               {uploadStatus.target && (
-                <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
+                <span className="text-xs font-mono text-[#123B5C]">{uploadStatus.target}</span>
               )}
               <button
                 type="button"
                 onClick={() => handleLoadSample('single')}
-                className="bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/35 px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.15)] hover:scale-[1.02] active:scale-[0.98]"
+                className="bg-[#FFFFFF] hover:bg-[#F0FDF4] text-[#0E6B52] border border-[#0E6B52] px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.98]"
               >
-                <Sparkles size={13} className="text-emerald-400" />
+                <Sparkles size={13} className="text-[#0E6B52]" />
                 ⚡ Load Sample Hazardous M&A Draft
               </button>
-              <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5">
+              <label className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] px-3 py-1.5 rounded-lg text-xs font-semibold text-[#123B5C] transition-colors flex items-center gap-1.5">
                 <Upload size={13} /> Import (.pdf / .docx / .txt / Scanned Image)
                 <input
                   type="file"
@@ -1259,26 +1258,26 @@ function ContractAnalyzerView({ initialSession }) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste contract text here or drag & drop .pdf / .docx / .txt file to audit for broken references, missing exhibits, undefined terms, and financial mismatches..."
-            className="w-full bg-black/40 p-5 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[260px]"
+            className="w-full bg-[#FFFFFF] p-6 text-[14.5px] font-serif leading-[1.8] text-[#0F1B2A] outline-none resize-none focus:bg-[#FFFFFF] custom-scrollbar min-h-[280px]"
           />
           {!text.trim() && (
             <div className="absolute inset-x-0 bottom-14 flex items-center justify-center pointer-events-none">
-              <div className="pointer-events-auto bg-zinc-900/95 backdrop-blur-md border border-zinc-700/80 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
-                <span className="text-xs text-zinc-300">Need an immediate test draft with real-world drafting defects?</span>
+              <div className="pointer-events-auto bg-[#FFFFFF] border border-[#D9E1E7] px-5 py-3 rounded-xl shadow-lg flex items-center gap-3">
+                <span className="text-xs text-[#5A6B7A] font-ui">Need an immediate test draft with real-world drafting defects?</span>
                 <button
                   type="button"
                   onClick={() => handleLoadSample('single')}
-                  className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg bg-[#123B5C] hover:bg-[#0C2A42] text-white text-xs font-bold font-ui transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
                 >
-                  <Sparkles size={13} />
+                  <Sparkles size={13} className="text-[#60A5FA]" />
                   ⚡ Load Sample Hazardous Draft
                 </button>
               </div>
             </div>
           )}
-          <div className="px-5 py-2.5 border-t border-zinc-800/80 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
-            <span>Air-gapped client RAM processing · Drag & Drop enabled</span>
-            <span className="font-semibold text-zinc-300">
+          <div className="px-5 py-2.5 border-t border-[#D9E1E7] bg-[#F7F9FA] text-xs font-ui text-[#5A6B7A] flex items-center justify-between">
+            <span>Air-gapped client RAM processing · Zero cloud leakage</span>
+            <span className="font-semibold text-[#0F1B2A]">
               {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words • {text.split('\n').length} lines
             </span>
           </div>
@@ -1291,38 +1290,38 @@ function ContractAnalyzerView({ initialSession }) {
             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(true); }}
             onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(false); }}
             onDrop={(e) => handleFileDrop(e, setBaselineText, 'baseline', setIsDraggingBaseline)}
-            className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+            className={`flex flex-col rounded-xl bg-[#FFFFFF] border transition-all overflow-hidden shadow-xs relative ${
               isDraggingBaseline 
-                ? 'border-cyan-400 bg-cyan-500/10 shadow-[0_0_25px_rgba(6,182,212,0.25)] ring-2 ring-cyan-400/50' 
-                : 'border-zinc-800'
+                ? 'border-[#123B5C] bg-[#F0F4F8] ring-2 ring-[#123B5C]/30' 
+                : 'border-[#D9E1E7]'
             }`}
           >
             {isDraggingBaseline && (
-              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-cyan-400 gap-2 animate-in fade-in">
+              <div className="absolute inset-0 z-30 bg-[#FFFFFF]/95 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-[#123B5C] gap-2 animate-in fade-in">
                 <Upload size={26} className="animate-bounce" />
-                <p className="text-xs font-bold text-white">Drop Baseline Document Here</p>
-                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt</p>
+                <p className="text-xs font-bold text-[#0F1B2A] font-ui">Drop Baseline Document Here</p>
+                <p className="text-[10px] text-[#5A6B7A] font-ui">.pdf, .docx, .txt</p>
               </div>
             )}
 
-            <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
-              <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
-                <FileText size={14} className="text-zinc-400" />
+            <div className="px-4 py-3 bg-[#F7F9FA] border-b border-[#D9E1E7] flex items-center justify-between font-ui">
+              <span className="text-xs font-bold text-[#123B5C] flex items-center gap-2">
+                <FileText size={14} className="text-[#5A6B7A]" />
                 ORIGINAL BASELINE (Drop file here)
               </span>
               <div className="flex items-center gap-2">
                 {uploadStatus.baseline && (
-                  <span className="text-xs font-mono text-cyan-400">{uploadStatus.baseline}</span>
+                  <span className="text-xs font-mono text-[#123B5C]">{uploadStatus.baseline}</span>
                 )}
                 <button
                   type="button"
                   onClick={() => handleLoadSample('comparative')}
-                  className="bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/35 px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.15)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="bg-[#FFFFFF] hover:bg-[#F0F4F8] text-[#123B5C] border border-[#123B5C]/40 px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs hover:scale-[1.01] active:scale-[0.98]"
                 >
-                  <Sparkles size={12} className="text-cyan-400" />
+                  <Sparkles size={12} className="text-[#123B5C]" />
                   ⚡ Load Sample Pair
                 </button>
-                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
+                <label className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] px-2.5 py-1 rounded-lg text-xs font-medium text-[#123B5C] transition-colors flex items-center gap-1">
                   <Upload size={12} /> Upload
                   <input
                     type="file"
@@ -1337,9 +1336,9 @@ function ContractAnalyzerView({ initialSession }) {
               value={baselineText}
               onChange={(e) => setBaselineText(e.target.value)}
               placeholder="Paste original baseline contract or drop file here..."
-              className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
+              className="w-full bg-[#FFFFFF] p-5 text-[14px] font-serif leading-[1.8] text-[#0F1B2A] outline-none resize-none focus:bg-[#FFFFFF] custom-scrollbar min-h-[260px]"
             />
-            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
+            <div className="px-4 py-2 border-t border-[#D9E1E7] bg-[#F7F9FA] text-xs font-ui text-[#5A6B7A] text-right">
               {baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString() : 0} words
             </div>
           </div>
@@ -1349,30 +1348,30 @@ function ContractAnalyzerView({ initialSession }) {
             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
             onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
             onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
-            className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+            className={`flex flex-col rounded-xl bg-[#FFFFFF] border transition-all overflow-hidden shadow-xs relative ${
               isDraggingTarget 
-                ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-2 ring-emerald-400/50' 
-                : 'border-zinc-800'
+                ? 'border-[#0E6B52] bg-[#F0FDF4] ring-2 ring-[#0E6B52]/30' 
+                : 'border-[#D9E1E7]'
             }`}
           >
             {isDraggingTarget && (
-              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2 animate-in fade-in">
+              <div className="absolute inset-0 z-30 bg-[#FFFFFF]/95 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-[#0E6B52] gap-2 animate-in fade-in">
                 <Upload size={26} className="animate-bounce" />
-                <p className="text-xs font-bold text-white">Drop Amended Document Here</p>
-                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt, .png, .jpg</p>
+                <p className="text-xs font-bold text-[#0F1B2A] font-ui">Drop Amended Document Here</p>
+                <p className="text-[10px] text-[#5A6B7A] font-ui">.pdf, .docx, .txt, .png, .jpg</p>
               </div>
             )}
 
-            <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
-              <span className="text-xs font-semibold text-cyan-400 font-mono flex items-center gap-2">
-                <FileCheck size={14} className="text-cyan-400" />
+            <div className="px-4 py-3 bg-[#F7F9FA] border-b border-[#D9E1E7] flex items-center justify-between font-ui">
+              <span className="text-xs font-bold text-[#123B5C] flex items-center gap-2">
+                <FileCheck size={14} className="text-[#0E6B52]" />
                 AMENDED DRAFT (Drop file here)
               </span>
               <div className="flex items-center gap-2">
                 {uploadStatus.target && (
-                  <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
+                  <span className="text-xs font-mono text-[#0E6B52]">{uploadStatus.target}</span>
                 )}
-                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
+                <label className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] px-2.5 py-1 rounded-lg text-xs font-medium text-[#123B5C] transition-colors flex items-center gap-1">
                   <Upload size={12} /> Upload
                   <input
                     type="file"
@@ -1387,9 +1386,9 @@ function ContractAnalyzerView({ initialSession }) {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Paste modified or redlined contract text here or drop file..."
-              className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
+              className="w-full bg-[#FFFFFF] p-5 text-[14px] font-serif leading-[1.8] text-[#0F1B2A] outline-none resize-none focus:bg-[#FFFFFF] custom-scrollbar min-h-[260px]"
             />
-            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
+            <div className="px-4 py-2 border-t border-[#D9E1E7] bg-[#F7F9FA] text-xs font-ui text-[#5A6B7A] text-right">
               {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words
             </div>
           </div>
@@ -1397,24 +1396,24 @@ function ContractAnalyzerView({ initialSession }) {
       )}
 
       {/* Control Bar & Progress */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs font-ui">
         <div className="flex items-center gap-4">
           {analysisMode === 'comparative' && (
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-zinc-400">Diff Precision:</span>
-              <div className="flex bg-black/60 p-1 rounded-xl border border-zinc-800">
+              <span className="text-xs font-semibold text-[#5A6B7A]">Diff Precision:</span>
+              <div className="flex bg-[#F7F9FA] p-1 rounded-lg border border-[#D9E1E7]">
                 <button
                   onClick={() => setDiffGranularity('word')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                    diffGranularity === 'word' ? 'bg-emerald-500 text-black' : 'text-zinc-400 hover:text-white'
+                  className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
+                    diffGranularity === 'word' ? 'bg-[#123B5C] text-white shadow-xs' : 'text-[#5A6B7A] hover:text-[#0F1B2A]'
                   }`}
                 >
                   Word
                 </button>
                 <button
                   onClick={() => setDiffGranularity('line')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                    diffGranularity === 'line' ? 'bg-emerald-500 text-black' : 'text-zinc-400 hover:text-white'
+                  className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
+                    diffGranularity === 'line' ? 'bg-[#123B5C] text-white shadow-xs' : 'text-[#5A6B7A] hover:text-[#0F1B2A]'
                   }`}
                 >
                   Line
@@ -1424,13 +1423,13 @@ function ContractAnalyzerView({ initialSession }) {
           )}
 
           {saveStatus && (
-            <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 animate-fade-in">
+            <span className="text-xs font-mono text-[#0E6B52] flex items-center gap-1.5 animate-fade-in font-bold">
               <Check size={14} /> {saveStatus}
             </span>
           )}
 
           {workerError && (
-            <span className="text-xs font-mono text-red-400 flex items-center gap-1.5">
+            <span className="text-xs font-mono text-[#B3261E] flex items-center gap-1.5 font-bold">
               <AlertCircle size={14} /> {workerError}
             </span>
           )}
@@ -1445,9 +1444,9 @@ function ContractAnalyzerView({ initialSession }) {
                 e.stopPropagation();
                 cancelAnalysis();
               }}
-              className="px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.4)] cursor-pointer active:scale-95"
+              className="px-5 py-2.5 bg-[#B3261E] hover:bg-[#8F1D17] text-white font-bold text-xs rounded-lg transition-all flex items-center gap-2 shadow-xs cursor-pointer active:scale-95"
             >
-              <StopCircle size={16} />
+              <StopCircle size={15} />
               <span>Cancel Audit</span>
             </button>
           )}
@@ -1456,12 +1455,12 @@ function ContractAnalyzerView({ initialSession }) {
             type="button"
             onClick={() => handleExecuteAudit()}
             disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-            className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+            className="px-8 py-3 bg-[#123B5C] hover:bg-[#0C2A42] text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-xs active:scale-[0.98] cursor-pointer"
           >
-            {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
+            {isProcessing ? <RefreshCw className="animate-spin text-[#60A5FA]" size={16} /> : <Play size={16} className="text-[#60A5FA]" />}
             <span>
               {isProcessing
-                ? 'Auditing in Local Memory...'
+                ? 'Auditing in Local RAM...'
                 : analysisMode === 'single'
                 ? 'Run Integrity Audit'
                 : 'Execute Redline Diff & Audit'}
@@ -1472,14 +1471,14 @@ function ContractAnalyzerView({ initialSession }) {
 
       {/* Live In-Memory Progress Bar */}
       {isProcessing && (
-        <div className="p-4 rounded-2xl bg-zinc-900 border border-cyan-500/30 animate-pulse">
+        <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#123B5C]/30 shadow-xs font-ui">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-2">
-              <RefreshCw className="animate-spin text-cyan-400" size={14} />
+            <span className="text-xs font-mono font-bold text-[#123B5C] flex items-center gap-2">
+              <RefreshCw className="animate-spin text-[#123B5C]" size={14} />
               {progress?.msg || 'Auditing contract in local memory...'}
             </span>
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-bold text-white">
+              <span className="text-xs font-mono font-bold text-[#0F1B2A]">
                 {progress?.percent || 0}%
               </span>
               <button
@@ -1488,15 +1487,15 @@ function ContractAnalyzerView({ initialSession }) {
                   e.preventDefault();
                   cancelAnalysis();
                 }}
-                className="px-2.5 py-1 bg-red-600/80 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                className="px-2.5 py-1 bg-[#FDF2F2] border border-[#B3261E]/30 text-[#B3261E] hover:bg-[#B3261E] hover:text-white text-xs font-bold rounded transition-colors cursor-pointer"
               >
                 Cancel
               </button>
             </div>
           </div>
-          <div className="w-full bg-black/60 rounded-full h-2.5 overflow-hidden border border-zinc-800">
+          <div className="w-full bg-[#E5EAEF] rounded-full h-2.5 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-2.5 rounded-full transition-all duration-150"
+              className="bg-[#123B5C] h-2.5 rounded-full transition-all duration-150"
               style={{ width: `${progress?.percent || 0}%` }}
             />
           </div>
@@ -1505,24 +1504,24 @@ function ContractAnalyzerView({ initialSession }) {
 
       {/* Analysis Results HUD */}
       {auditResults && (
-        <div className="flex flex-col gap-6 animate-fade-in mt-2">
+        <div className="flex flex-col gap-6 animate-fade-in mt-2 font-ui">
           {/* Executive Risk Score & Metrics Banner */}
-          <div className="p-6 rounded-2xl bg-zinc-900/70 border border-zinc-800 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl">
+          <div className="p-6 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-xs font-ui">
             <div className="flex items-center gap-6">
-              <div className={`px-6 py-4 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-lg shrink-0`}>
+              <div className={`px-6 py-4 rounded-xl border text-center ${riskScoreBadgeColor} shadow-xs shrink-0`}>
                 <span className="text-4xl font-black block font-mono tracking-tight">{riskScore}</span>
                 <span className="text-xs font-extrabold uppercase tracking-wider block mt-0.5">
                   {riskLevel} RISK
                 </span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white tracking-tight">
+                <h3 className="text-xl font-extrabold text-[#0C2A42] tracking-tight font-ui">
                   {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
                    riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
                    riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
                    'Clean Document Integrity Profile'}
                 </h3>
-                <p className="text-sm text-zinc-400 mt-1 max-w-xl leading-relaxed">
+                <p className="text-sm text-[#5A6B7A] mt-1 max-w-xl leading-relaxed font-ui">
                   {auditResults.meta?.wordCount || 0} words audited in {auditResults.meta?.processingTimeMs || 0}ms across 4 verification engines. 100% in-memory RAM processing.
                 </p>
               </div>
@@ -1536,7 +1535,7 @@ function ContractAnalyzerView({ initialSession }) {
                   clientName: clientParty.trim() || 'Client',
                   counterpartyName: counterparty.trim() || 'Counterparty'
                 })}
-                className="px-4 py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-400 hover:opacity-95 text-black font-extrabold rounded-xl text-xs transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                className="px-4 py-2.5 bg-[#123B5C] hover:bg-[#0C2A42] text-white font-extrabold rounded-xl text-xs transition-all flex items-center gap-2 shadow-xs cursor-pointer font-ui"
                 title="Download court-grade Pre-Signing Amendment Rider & Revisions Schedule (PDF)"
               >
                 <FileText size={14} />
@@ -1549,26 +1548,26 @@ function ContractAnalyzerView({ initialSession }) {
                   clientName: clientParty.trim() || 'Client',
                   counterpartyName: counterparty.trim() || 'Counterparty'
                 })}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] rounded-xl text-xs font-bold text-[#123B5C] transition-all flex items-center gap-2 cursor-pointer font-ui shadow-xs"
                 title="Open print-ready Court Amendment Rider (HTML/Print)"
               >
-                <FileCode size={14} className="text-emerald-400" />
+                <FileCode size={14} className="text-[#0E6B52]" />
                 Rider (HTML)
               </button>
 
               <button
                 onClick={handleCopyFullRider}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 bg-[#FFFFFF] hover:bg-[#F0FDF4] border border-[#0E6B52] rounded-xl text-xs font-bold text-[#0E6B52] transition-all flex items-center gap-2 cursor-pointer font-ui shadow-xs"
                 title="Copy full pre-signing court amendment schedule to clipboard"
               >
                 {copiedRiderSuccess ? (
                   <>
-                    <Check size={14} className="text-emerald-400" />
-                    <span className="text-emerald-300">Rider Copied! ✓</span>
+                    <Check size={14} className="text-[#0E6B52]" />
+                    <span className="text-[#0E6B52]">Rider Copied! ✓</span>
                   </>
                 ) : (
                   <>
-                    <Copy size={14} className="text-cyan-400" />
+                    <Copy size={14} className="text-[#0E6B52]" />
                     <span>Copy Rider</span>
                   </>
                 )}
@@ -1581,36 +1580,36 @@ function ContractAnalyzerView({ initialSession }) {
                   counterpartyName: counterparty.trim() || 'Counterparty',
                   auditData: auditResults
                 })}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] rounded-xl text-xs font-bold text-[#0F1B2A] transition-all flex items-center gap-2 cursor-pointer font-ui shadow-xs"
                 title="Generate executive legal memorandum with print CSS for 1-click PDF"
               >
-                <Download size={14} />
+                <Download size={14} className="text-[#123B5C]" />
                 Client Memo (PDF)
               </button>
 
               <button
                 onClick={() => exportObligationsCSV(auditResults.obligations)}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer"
+                className="px-3.5 py-2.5 bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] rounded-xl text-xs font-bold text-[#0F1B2A] transition-all flex items-center gap-2 cursor-pointer font-ui shadow-xs"
                 title="Export contractual obligations schedule to CSV spreadsheet"
               >
-                <FileSpreadsheet size={14} className="text-cyan-400" />
+                <FileSpreadsheet size={14} className="text-[#0E6B52]" />
                 Obligations CSV
               </button>
 
               {auditResults.diff && (
                 <button
                   onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' })}
-                  className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-3 py-2.5 bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] rounded-xl text-xs font-bold text-[#0F1B2A] transition-all flex items-center gap-2 cursor-pointer font-ui shadow-xs"
                   title="Export interactive HTML redline with insertions & deletions"
                 >
-                  <FileCode size={14} />
+                  <FileCode size={14} className="text-[#123B5C]" />
                   Redline HTML
                 </button>
               )}
 
               <button
                 onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' })}
-                className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-300 transition-all cursor-pointer"
+                className="px-3 py-2.5 bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] rounded-xl text-xs font-bold text-[#5A6B7A] transition-all cursor-pointer font-ui shadow-xs"
                 title="Export compliance JSON verification record"
               >
                 JSON
@@ -1619,78 +1618,78 @@ function ContractAnalyzerView({ initialSession }) {
           </div>
 
           {/* Key Metrics Banner */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 font-ui">
             <div 
               onClick={() => setActiveHudTab('dealBreakers')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'dealBreakers' ? 'border-red-500 bg-red-950/20 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-red-500/20 hover:border-red-500/40'
-              } text-center`}
+              className={`p-4 rounded-xl bg-[#FFFFFF] border transition-all cursor-pointer ${
+                activeHudTab === 'dealBreakers' ? 'border-[#B3261E] ring-2 ring-[#B3261E]/20 bg-[#FDF2F2]' : 'border-[#D9E1E7] hover:border-[#B3261E]/40'
+              } text-center shadow-xs`}
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-red-400">Deal Breakers</p>
-              <p className="text-3xl font-black text-red-400 mt-1 font-mono">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#B3261E] font-ui">Deal Breakers</p>
+              <p className="text-3xl font-black text-[#B3261E] mt-1 font-mono">
                 {enrichedAudit?.dealBreakers?.length || 0}
               </p>
             </div>
             <div 
               onClick={() => setActiveHudTab('enforceability')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'enforceability' ? 'border-amber-500 bg-amber-950/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-amber-500/20 hover:border-amber-500/40'
-              } text-center`}
+              className={`p-4 rounded-xl bg-[#FFFFFF] border transition-all cursor-pointer ${
+                activeHudTab === 'enforceability' ? 'border-[#B45309] ring-2 ring-[#B45309]/20 bg-[#FFFBEB]' : 'border-[#D9E1E7] hover:border-[#B45309]/40'
+              } text-center shadow-xs`}
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Enforceability Hazards</p>
-              <p className="text-3xl font-black text-amber-400 mt-1 font-mono">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#B45309] font-ui">Enforceability Hazards</p>
+              <p className="text-3xl font-black text-[#B45309] mt-1 font-mono">
                 {enrichedAudit?.enforceabilityHazards?.length || 0}
               </p>
             </div>
             <div 
               onClick={() => setActiveHudTab('financialDates')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'financialDates' ? 'border-orange-500 bg-orange-950/20 shadow-[0_0_15px_rgba(249,115,22,0.2)]' : 'border-orange-500/20 hover:border-orange-500/40'
-              } text-center`}
+              className={`p-4 rounded-xl bg-[#FFFFFF] border transition-all cursor-pointer ${
+                activeHudTab === 'financialDates' ? 'border-[#B45309] ring-2 ring-[#B45309]/20 bg-[#FFFBEB]' : 'border-[#D9E1E7] hover:border-[#B45309]/40'
+              } text-center shadow-xs`}
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">Financial Mismatches</p>
-              <p className="text-3xl font-black text-orange-400 mt-1 font-mono">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#B45309] font-ui">Financial Mismatches</p>
+              <p className="text-3xl font-black text-[#B45309] mt-1 font-mono">
                 {auditResults.financialDates?.stats?.mismatchCount || 0}
               </p>
             </div>
             <div 
               onClick={() => setActiveHudTab('crossRefs')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'crossRefs' ? 'border-cyan-500 bg-cyan-950/20 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-cyan-500/20 hover:border-cyan-500/40'
-              } text-center`}
+              className={`p-4 rounded-xl bg-[#FFFFFF] border transition-all cursor-pointer ${
+                activeHudTab === 'crossRefs' ? 'border-[#123B5C] ring-2 ring-[#123B5C]/20 bg-[#F0F4F8]' : 'border-[#D9E1E7] hover:border-[#123B5C]/40'
+              } text-center shadow-xs`}
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Broken Citations</p>
-              <p className="text-3xl font-black text-cyan-400 mt-1 font-mono">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#123B5C] font-ui">Broken Citations</p>
+              <p className="text-3xl font-black text-[#123B5C] mt-1 font-mono">
                 {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
               </p>
             </div>
             <div 
               onClick={() => setActiveHudTab('obligations')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'obligations' ? 'border-emerald-500 bg-emerald-950/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'border-emerald-500/20 hover:border-emerald-500/40'
-              } text-center`}
+              className={`p-4 rounded-xl bg-[#FFFFFF] border transition-all cursor-pointer ${
+                activeHudTab === 'obligations' ? 'border-[#0E6B52] ring-2 ring-[#0E6B52]/20 bg-[#F0FDF4]' : 'border-[#D9E1E7] hover:border-[#0E6B52]/40'
+              } text-center shadow-xs`}
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Contract Obligations</p>
-              <p className="text-3xl font-black text-emerald-400 mt-1 font-mono">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#0E6B52] font-ui">Contract Obligations</p>
+              <p className="text-3xl font-black text-[#0E6B52] mt-1 font-mono">
                 {auditResults.obligations?.stats?.totalObligations || 0}
               </p>
             </div>
           </div>
 
           {/* Complete HUD Sub-Tabs Navigation */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-800 custom-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#D9E1E7] custom-scrollbar font-ui">
             <button
               onClick={() => setActiveHudTab('dealBreakers')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                 activeHudTab === 'dealBreakers'
-                  ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.35)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
               }`}
             >
-              <ShieldAlert size={14} />
+              <ShieldAlert size={14} className={activeHudTab === 'dealBreakers' ? 'text-[#FCA5A5]' : 'text-[#B3261E]'} />
               <span>Deal Breakers</span>
               {(enrichedAudit?.dealBreakers?.length || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-red-950 text-red-200 border border-red-500/50 font-mono font-bold">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[#B3261E] text-white font-mono font-bold">
                   {enrichedAudit.dealBreakers.length}
                 </span>
               )}
@@ -1700,14 +1699,14 @@ function ContractAnalyzerView({ initialSession }) {
               onClick={() => setActiveHudTab('enforceability')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                 activeHudTab === 'enforceability'
-                  ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
               }`}
             >
-              <AlertTriangle size={14} />
+              <AlertTriangle size={14} className={activeHudTab === 'enforceability' ? 'text-[#FCD34D]' : 'text-[#B45309]'} />
               <span>Enforceability Hazards</span>
               {(enrichedAudit?.enforceabilityHazards?.length || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-amber-950 text-amber-200 border border-amber-500/50 font-mono font-bold">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[#B45309] text-white font-mono font-bold">
                   {enrichedAudit.enforceabilityHazards.length}
                 </span>
               )}
@@ -1717,14 +1716,14 @@ function ContractAnalyzerView({ initialSession }) {
               onClick={() => setActiveHudTab('crossRefs')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                 activeHudTab === 'crossRefs'
-                  ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
               }`}
             >
-              <Bookmark size={14} />
+              <Bookmark size={14} className={activeHudTab === 'crossRefs' ? 'text-[#93C5FD]' : 'text-[#123B5C]'} />
               <span>Citations & Exhibits</span>
               {((auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-cyan-950 text-cyan-200 border border-cyan-500/50 font-mono font-bold">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[#123B5C] text-white font-mono font-bold">
                   {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
                 </span>
               )}
@@ -1734,14 +1733,14 @@ function ContractAnalyzerView({ initialSession }) {
               onClick={() => setActiveHudTab('financialDates')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                 activeHudTab === 'financialDates'
-                  ? 'bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
               }`}
             >
-              <DollarSign size={14} />
+              <DollarSign size={14} className={activeHudTab === 'financialDates' ? 'text-[#FCD34D]' : 'text-[#B45309]'} />
               <span>Financial & Dates</span>
               {((auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-950 text-orange-200 border border-orange-500/50 font-mono font-bold">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[#B45309] text-white font-mono font-bold">
                   {(auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)}
                 </span>
               )}
@@ -1751,14 +1750,14 @@ function ContractAnalyzerView({ initialSession }) {
               onClick={() => setActiveHudTab('definedTerms')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                 activeHudTab === 'definedTerms'
-                  ? 'bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
               }`}
             >
-              <Tag size={14} />
+              <Tag size={14} className={activeHudTab === 'definedTerms' ? 'text-[#C4B5FD]' : 'text-[#6D28D9]'} />
               <span>Defined Terms & Entities</span>
               {(auditResults.definedTerms?.stats?.undefinedCount || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-purple-950 text-purple-200 border border-purple-500/50 font-mono font-bold">
+                <span className="px-2 py-0.5 rounded-full text-xs bg-[#6D28D9] text-white font-mono font-bold">
                   {auditResults.definedTerms?.stats?.undefinedCount}
                 </span>
               )}
@@ -1768,11 +1767,11 @@ function ContractAnalyzerView({ initialSession }) {
               onClick={() => setActiveHudTab('obligations')}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                 activeHudTab === 'obligations'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#123B5C] text-white shadow-xs'
+                  : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
               }`}
             >
-              <CheckSquare size={14} />
+              <CheckSquare size={14} className={activeHudTab === 'obligations' ? 'text-[#86EFAC]' : 'text-[#0E6B52]'} />
               <span>Obligations ({auditResults.obligations?.stats?.totalObligations || 0})</span>
             </button>
 
@@ -1781,11 +1780,11 @@ function ContractAnalyzerView({ initialSession }) {
                 onClick={() => setActiveHudTab('diff')}
                 className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                   activeHudTab === 'diff'
-                    ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.25)]'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#123B5C] text-white shadow-xs'
+                    : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
                 }`}
               >
-                <Search size={14} />
+                <Search size={14} className={activeHudTab === 'diff' ? 'text-[#93C5FD]' : 'text-[#123B5C]'} />
                 <span>Redline Diff ({auditResults.diff.stats?.similarity}% Sim)</span>
               </button>
             )}
@@ -1795,11 +1794,11 @@ function ContractAnalyzerView({ initialSession }) {
                 onClick={() => setActiveHudTab('risks')}
                 className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
                   activeHudTab === 'risks'
-                    ? 'bg-red-500/80 text-white shadow-[0_0_15px_rgba(239,68,68,0.25)]'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-[#123B5C] text-white shadow-xs'
+                    : 'bg-[#FFFFFF] text-[#5A6B7A] border border-[#D9E1E7] hover:text-[#0F1B2A] hover:bg-[#F7F9FA]'
                 }`}
               >
-                <ShieldAlert size={14} />
+                <ShieldAlert size={14} className={activeHudTab === 'risks' ? 'text-[#FCA5A5]' : 'text-[#B3261E]'} />
                 <span>Risk Radar ({auditResults.risks.length})</span>
               </button>
             )}
@@ -1808,60 +1807,60 @@ function ContractAnalyzerView({ initialSession }) {
           {/* TAB: CRITICAL DEAL BREAKERS */}
           {activeHudTab === 'dealBreakers' && (
             <div className="flex flex-col gap-5">
-              <div className="p-4 rounded-2xl bg-red-950/20 border border-red-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="p-4 rounded-xl bg-[#FDF2F2] border border-[#FCA5A5] flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-red-300 flex items-center gap-2">
-                    <ShieldAlert size={18} className="text-red-400 shrink-0" />
+                  <h3 className="text-sm font-bold text-[#B3261E] flex items-center gap-2 font-ui">
+                    <ShieldAlert size={18} className="text-[#B3261E] shrink-0" />
                     <span>Critical Deal Breakers & Malpractice Liabilities ({enrichedAudit?.dealBreakers?.length || 0})</span>
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-1">
+                  <p className="text-xs text-[#5A6B7A] mt-1 font-ui">
                     Severe drafting defects that threaten transaction enforceability, expose counsel to malpractice liability, or establish unilateral walk-away rights under Delaware & UCC jurisprudence.
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#B3261E] text-white">
                     Mandatory Pre-Signing Redlines
                   </span>
                 </div>
               </div>
 
               {(!enrichedAudit?.dealBreakers || enrichedAudit.dealBreakers.length === 0) ? (
-                <div className="p-8 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl flex flex-col items-center gap-2">
-                  <CheckCircle2 size={24} className="text-emerald-400" />
+                <div className="p-8 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl flex flex-col items-center gap-2">
+                  <CheckCircle2 size={24} className="text-[#0E6B52]" />
                   <span>✓ Zero critical deal-breaker defects detected. All conditions precedent, consideration terms, and party entities are legally sound.</span>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {enrichedAudit.dealBreakers.map((item, idx) => (
-                    <div key={item.id || idx} className="p-5 rounded-2xl bg-zinc-900/80 border border-red-500/35 hover:border-red-500/60 transition-all flex flex-col gap-4">
+                    <div key={item.id || idx} className="p-5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] hover:border-[#123B5C]/40 shadow-xs transition-all flex flex-col gap-4">
                       {/* Card Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D9E1E7] pb-3">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-red-500 text-white shadow-sm">
+                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-[#B3261E] text-white shadow-xs">
                             {item.legalSeverityLabel || 'CRITICAL DEAL BREAKER'}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
+                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-[#F7F9FA] text-[#0F1B2A] border border-[#D9E1E7]">
                             {item.clauseRef || item.clause || `Line ${item.line}`}
                           </span>
                           {item.occurrences > 1 && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
                               Cited {item.occurrences}x across document
                             </span>
                           )}
                         </div>
-                        <span className="text-xs font-mono text-red-400/90 font-bold flex items-center gap-1.5">
-                          <AlertTriangle size={14} className="text-red-400" />
+                        <span className="text-xs font-mono text-[#B3261E] font-bold flex items-center gap-1.5">
+                          <AlertTriangle size={14} className="text-[#B3261E]" />
                           <span>Pre-Execution Stop</span>
                         </span>
                       </div>
 
                       {/* Title & Malpractice Risk */}
                       <div>
-                        <h4 className="text-sm font-bold text-white mb-1.5">{item.title}</h4>
-                        <div className="p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs text-red-200/90 leading-relaxed font-sans flex items-start gap-2.5">
-                          <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                        <h4 className="text-sm font-bold text-[#0F1B2A] mb-1.5 font-ui">{item.title}</h4>
+                        <div className="p-3 rounded-xl bg-[#FDF2F2] border border-[#FCA5A5] text-xs text-[#991B1B] leading-relaxed font-ui flex items-start gap-2.5">
+                          <AlertCircle size={16} className="text-[#B3261E] shrink-0 mt-0.5" />
                           <div>
-                            <span className="font-bold text-red-300">Malpractice & Litigation Exposure: </span>
+                            <span className="font-bold text-[#7F1D1D]">Malpractice & Litigation Exposure: </span>
                             <span>{item.malpracticeRisk}</span>
                           </div>
                         </div>
@@ -1869,41 +1868,41 @@ function ContractAnalyzerView({ initialSession }) {
 
                       {/* Statutory Authority */}
                       <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                        <span className="text-zinc-500 font-semibold">Governing Doctrine:</span>
-                        <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
+                        <span className="text-[#5A6B7A] font-semibold">Governing Doctrine:</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E40AF] font-bold">
                           ⚖️ {item.statutoryCitation}
                         </span>
                         {item.precedent && (
-                          <span className="text-zinc-400 italic">
+                          <span className="text-[#5A6B7A] italic">
                             ({item.precedent})
                           </span>
                         )}
                       </div>
 
-                      {/* Defective Snippet */}
+                      {/* Defective Snippet - Source Serif 4 / Georgia */}
                       {item.snippet && (
-                        <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
-                          <span className="text-zinc-500 text-[10px] uppercase font-bold block mb-1">Defective Draft Language:</span>
-                          <span className="italic text-zinc-300">"{item.snippet}"</span>
-                          {item.line && <span className="text-zinc-500 ml-2">(Line {item.line})</span>}
+                        <div className="p-3 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] text-xs">
+                          <span className="text-[#5A6B7A] text-[10px] uppercase font-bold block mb-1 font-ui">Defective Draft Language:</span>
+                          <span className="italic text-[#0F1B2A] font-serif leading-relaxed">"{item.snippet}"</span>
+                          {item.line && <span className="text-[#5A6B7A] ml-2 font-mono text-xs">(Line {item.line})</span>}
                         </div>
                       )}
 
                       {/* Court-Grade Redline Replacement */}
                       {item.courtGradeRedline && (
-                        <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
+                        <div className="p-4 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#0E6B52] flex flex-col gap-2.5">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                              <CheckCircle2 size={14} className="text-emerald-400" />
+                            <span className="text-xs font-bold text-[#0E6B52] flex items-center gap-1.5 font-ui">
+                              <CheckCircle2 size={14} className="text-[#0E6B52]" />
                               AmLaw 100 Court-Grade Replacement Language
                             </span>
                             <button
                               onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
-                              className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
+                              className="px-3 py-1 rounded-lg text-xs font-bold bg-[#FFFFFF] border border-[#0E6B52] text-[#0E6B52] hover:bg-[#0E6B52] hover:text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0 font-ui"
                             >
                               {copiedRedlineId === (item.id || idx) ? (
                                 <>
-                                  <Check size={13} className="text-black" />
+                                  <Check size={13} className="text-current" />
                                   <span>Copied! ✓</span>
                                 </>
                               ) : (
@@ -1914,12 +1913,12 @@ function ContractAnalyzerView({ initialSession }) {
                               )}
                             </button>
                           </div>
-                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                          <div className="p-3 bg-[#FFFFFF] rounded-lg text-xs font-serif text-[#0F1B2A] leading-relaxed border border-[#D9E1E7] select-all shadow-xs">
                             {item.courtGradeRedline}
                           </div>
                           {item.actionableAdvice && (
-                            <p className="text-[11px] text-zinc-400 font-sans italic">
-                              <span className="text-emerald-400/90 font-bold">Counsel Guidance: </span>
+                            <p className="text-[11px] text-[#5A6B7A] font-ui italic">
+                              <span className="text-[#0E6B52] font-bold">Counsel Guidance: </span>
                               {item.actionableAdvice}
                             </p>
                           )}
@@ -1935,60 +1934,60 @@ function ContractAnalyzerView({ initialSession }) {
           {/* TAB: ENFORCEABILITY HAZARDS */}
           {activeHudTab === 'enforceability' && (
             <div className="flex flex-col gap-5">
-              <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="p-4 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
-                    <AlertTriangle size={18} className="text-amber-400 shrink-0" />
+                  <h3 className="text-sm font-bold text-[#92400E] flex items-center gap-2 font-ui">
+                    <AlertTriangle size={18} className="text-[#D97706] shrink-0" />
                     <span>Enforceability Hazards & Ambiguity Traps ({enrichedAudit?.enforceabilityHazards?.length || 0})</span>
                   </h3>
-                  <p className="text-xs text-zinc-400 mt-1">
+                  <p className="text-xs text-[#5A6B7A] mt-1 font-ui">
                     Citations to nonexistent sections, undefined operative capitalized terms, and procedural voids vulnerable to contra proferentem interpretation.
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#D97706] text-white">
                     Remedial Redlines Available
                   </span>
                 </div>
               </div>
 
               {(!enrichedAudit?.enforceabilityHazards || enrichedAudit.enforceabilityHazards.length === 0) ? (
-                <div className="p-8 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl flex flex-col items-center gap-2">
-                  <CheckCircle2 size={24} className="text-emerald-400" />
+                <div className="p-8 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl flex flex-col items-center gap-2">
+                  <CheckCircle2 size={24} className="text-[#0E6B52]" />
                   <span>✓ All internal cross-references resolve cleanly and all operative capitalized terms are formally defined.</span>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {enrichedAudit.enforceabilityHazards.map((item, idx) => (
-                    <div key={item.id || idx} className="p-5 rounded-2xl bg-zinc-900/80 border border-amber-500/35 hover:border-amber-500/60 transition-all flex flex-col gap-4">
+                    <div key={item.id || idx} className="p-5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] hover:border-[#123B5C]/40 shadow-xs transition-all flex flex-col gap-4">
                       {/* Card Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D9E1E7] pb-3">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-amber-500 text-black shadow-sm">
+                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-[#D97706] text-white shadow-xs">
                             {item.legalSeverityLabel || 'ENFORCEABILITY HAZARD'}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
+                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-[#F7F9FA] text-[#0F1B2A] border border-[#D9E1E7]">
                             {item.clauseRef || item.clause || `Line ${item.line}`}
                           </span>
                           {item.occurrences > 1 && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]">
                               Referenced {item.occurrences}x
                             </span>
                           )}
                         </div>
-                        <span className="text-xs font-mono text-amber-400 font-bold flex items-center gap-1.5">
-                          <Bookmark size={14} className="text-amber-400" />
+                        <span className="text-xs font-mono text-[#D97706] font-bold flex items-center gap-1.5">
+                          <Bookmark size={14} className="text-[#D97706]" />
                           <span>Procedural Hazard</span>
                         </span>
                       </div>
 
                       {/* Title & Malpractice Risk */}
                       <div>
-                        <h4 className="text-sm font-bold text-white mb-1.5">{item.title}</h4>
-                        <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-500/30 text-xs text-amber-200/90 leading-relaxed font-sans flex items-start gap-2.5">
-                          <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                        <h4 className="text-sm font-bold text-[#0F1B2A] mb-1.5 font-ui">{item.title}</h4>
+                        <div className="p-3 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] text-xs text-[#92400E] leading-relaxed font-ui flex items-start gap-2.5">
+                          <AlertCircle size={16} className="text-[#D97706] shrink-0 mt-0.5" />
                           <div>
-                            <span className="font-bold text-amber-300">Litigation & Interpretation Risk: </span>
+                            <span className="font-bold text-[#78350F]">Litigation & Interpretation Risk: </span>
                             <span>{item.malpracticeRisk}</span>
                           </div>
                         </div>
@@ -1996,41 +1995,41 @@ function ContractAnalyzerView({ initialSession }) {
 
                       {/* Statutory Authority */}
                       <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                        <span className="text-zinc-500 font-semibold">Governing Rule:</span>
-                        <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
+                        <span className="text-[#5A6B7A] font-semibold">Governing Rule:</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] text-[#1E40AF] font-bold">
                           ⚖️ {item.statutoryCitation}
                         </span>
                         {item.precedent && (
-                          <span className="text-zinc-400 italic">
+                          <span className="text-[#5A6B7A] italic">
                             ({item.precedent})
                           </span>
                         )}
                       </div>
 
-                      {/* Defective Snippet */}
+                      {/* Defective Snippet - Source Serif 4 / Georgia */}
                       {item.snippet && (
-                        <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
-                          <span className="text-zinc-500 text-[10px] uppercase font-bold block mb-1">Operative Draft Context:</span>
-                          <span className="italic text-zinc-300">"{item.snippet}"</span>
-                          {item.line && <span className="text-zinc-500 ml-2">(Line {item.line})</span>}
+                        <div className="p-3 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] text-xs">
+                          <span className="text-[#5A6B7A] text-[10px] uppercase font-bold block mb-1 font-ui">Operative Draft Context:</span>
+                          <span className="italic text-[#0F1B2A] font-serif leading-relaxed">"{item.snippet}"</span>
+                          {item.line && <span className="text-[#5A6B7A] ml-2 font-mono text-xs">(Line {item.line})</span>}
                         </div>
                       )}
 
                       {/* Court-Grade Redline Replacement */}
                       {item.courtGradeRedline && (
-                        <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
+                        <div className="p-4 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#0E6B52] flex flex-col gap-2.5">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                              <CheckCircle2 size={14} className="text-emerald-400" />
+                            <span className="text-xs font-bold text-[#0E6B52] flex items-center gap-1.5 font-ui">
+                              <CheckCircle2 size={14} className="text-[#0E6B52]" />
                               AmLaw 100 Court-Grade Replacement Language
                             </span>
                             <button
                               onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
-                              className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
+                              className="px-3 py-1 rounded-lg text-xs font-bold bg-[#FFFFFF] border border-[#0E6B52] text-[#0E6B52] hover:bg-[#0E6B52] hover:text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs shrink-0 font-ui"
                             >
                               {copiedRedlineId === (item.id || idx) ? (
                                 <>
-                                  <Check size={13} className="text-black" />
+                                  <Check size={13} className="text-current" />
                                   <span>Copied! ✓</span>
                                 </>
                               ) : (
@@ -2041,12 +2040,12 @@ function ContractAnalyzerView({ initialSession }) {
                               )}
                             </button>
                           </div>
-                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                          <div className="p-3 bg-[#FFFFFF] rounded-lg text-xs font-serif text-[#0F1B2A] leading-relaxed border border-[#D9E1E7] select-all shadow-xs">
                             {item.courtGradeRedline}
                           </div>
                           {item.actionableAdvice && (
-                            <p className="text-[11px] text-zinc-400 font-sans italic">
-                              <span className="text-emerald-400/90 font-bold">Counsel Guidance: </span>
+                            <p className="text-[11px] text-[#5A6B7A] font-ui italic">
+                              <span className="text-[#0E6B52] font-bold">Counsel Guidance: </span>
                               {item.actionableAdvice}
                             </p>
                           )}
@@ -2064,32 +2063,32 @@ function ContractAnalyzerView({ initialSession }) {
             <div className="flex flex-col gap-6">
               {/* Summary Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-gray-400 block text-[11px]">Indexed Sections</span>
-                  <span className="text-lg font-bold text-white">{auditResults.crossRefs?.stats?.totalIndexed || 0}</span>
+                <div className="p-3.5 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl shadow-xs">
+                  <span className="text-[#5A6B7A] block text-[11px] font-ui">Indexed Sections</span>
+                  <span className="text-xl font-bold text-[#0F1B2A]">{auditResults.crossRefs?.stats?.totalIndexed || 0}</span>
                 </div>
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-gray-400 block text-[11px]">Citations Found</span>
-                  <span className="text-lg font-bold text-nexus-cyan">{auditResults.crossRefs?.stats?.totalCitations || 0}</span>
+                <div className="p-3.5 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl shadow-xs">
+                  <span className="text-[#5A6B7A] block text-[11px] font-ui">Citations Found</span>
+                  <span className="text-xl font-bold text-[#123B5C]">{auditResults.crossRefs?.stats?.totalCitations || 0}</span>
                 </div>
-                <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl">
-                  <span className="text-red-400 block text-[11px]">Broken References</span>
-                  <span className="text-lg font-bold text-red-400">{auditResults.crossRefs?.stats?.brokenCount || 0}</span>
+                <div className="p-3.5 bg-[#FDF2F2] border border-[#FCA5A5] rounded-xl shadow-xs">
+                  <span className="text-[#991B1B] block text-[11px] font-ui font-semibold">Broken References</span>
+                  <span className="text-xl font-bold text-[#B3261E]">{auditResults.crossRefs?.stats?.brokenCount || 0}</span>
                 </div>
-                <div className="p-3 bg-amber-950/20 border border-amber-500/30 rounded-xl">
-                  <span className="text-amber-400 block text-[11px]">Missing Exhibits</span>
-                  <span className="text-lg font-bold text-amber-400">{auditResults.crossRefs?.stats?.missingExhibitCount || 0}</span>
+                <div className="p-3.5 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl shadow-xs">
+                  <span className="text-[#92400E] block text-[11px] font-ui font-semibold">Missing Exhibits</span>
+                  <span className="text-xl font-bold text-[#D97706]">{auditResults.crossRefs?.stats?.missingExhibitCount || 0}</span>
                 </div>
               </div>
 
               {/* Broken References Schedule */}
               <div className="flex flex-col gap-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <AlertTriangle size={16} className="text-red-400" />
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <AlertTriangle size={16} className="text-[#B3261E]" />
                   Broken References & Missing Sections ({(auditResults.crossRefs?.issues || []).filter(i => i.type === 'broken_reference').length})
                 </h4>
                 {(auditResults.crossRefs?.issues || []).filter(i => i.type === 'broken_reference').length === 0 ? (
-                  <div className="p-6 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl">
+                  <div className="p-6 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl">
                     ✓ All internal section citations ("Section X", "Clause Y") resolve to indexed sections in the agreement.
                   </div>
                 ) : (
@@ -2098,42 +2097,42 @@ function ContractAnalyzerView({ initialSession }) {
                       const enriched = enrichFindingWithStatutoryRemedy(issue);
                       const cardId = `cr_broken_${idx}`;
                       return (
-                        <div key={idx} className="p-4 rounded-xl bg-zinc-900/80 border border-red-500/35 hover:border-red-500/60 transition-all flex flex-col gap-3">
-                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-2">
+                        <div key={idx} className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] hover:border-[#123B5C]/40 shadow-xs transition-all flex flex-col gap-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D9E1E7] pb-2">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-mono font-bold text-red-300 text-sm">
+                              <span className="font-mono font-bold text-[#B3261E] text-sm">
                                 {issue.referenceText}
                               </span>
-                              <span className="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
+                              <span className="bg-[#B3261E] text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
                                 Target Missing: {issue.targetName}
                               </span>
-                              <span className="font-mono text-gray-400 text-[11px]">
+                              <span className="font-mono text-[#5A6B7A] text-[11px]">
                                 Line {issue.line}
                               </span>
                             </div>
-                            <span className="text-[11px] text-red-400 font-mono font-bold">
+                            <span className="text-[11px] text-[#B3261E] font-mono font-bold">
                               Delaware Chancery Patent Ambiguity
                             </span>
                           </div>
 
-                          <div className="p-2.5 rounded-lg bg-black/60 border border-zinc-800 text-xs font-mono text-gray-300 italic">
+                          <div className="p-2.5 rounded-lg bg-[#F7F9FA] border border-[#D9E1E7] text-xs font-serif text-[#0F1B2A] italic leading-relaxed">
                             "{issue.snippet}"
                           </div>
 
                           {enriched.courtGradeRedline && (
-                            <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 flex flex-col gap-2">
+                            <div className="p-3 rounded-lg bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#0E6B52] flex flex-col gap-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                                  <CheckCircle2 size={13} className="text-emerald-400" />
+                                <span className="text-xs font-bold text-[#0E6B52] flex items-center gap-1.5 font-ui">
+                                  <CheckCircle2 size={13} className="text-[#0E6B52]" />
                                   AmLaw 100 Court-Grade Replacement Language
                                 </span>
                                 <button
                                   onClick={() => handleCopyRedline(cardId, enriched.courtGradeRedline)}
-                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-[#FFFFFF] border border-[#0E6B52] text-[#0E6B52] hover:bg-[#0E6B52] hover:text-white transition-all flex items-center gap-1 cursor-pointer shrink-0 font-ui"
                                 >
                                   {copiedRedlineId === cardId ? (
                                     <>
-                                      <Check size={12} className="text-black" />
+                                      <Check size={12} className="text-current" />
                                       <span>Copied! ✓</span>
                                     </>
                                   ) : (
@@ -2144,7 +2143,7 @@ function ContractAnalyzerView({ initialSession }) {
                                   )}
                                 </button>
                               </div>
-                              <div className="p-2 bg-black/70 rounded text-[11px] font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                              <div className="p-2.5 bg-[#FFFFFF] rounded text-xs font-serif text-[#0F1B2A] leading-relaxed border border-[#D9E1E7] select-all shadow-xs">
                                 {enriched.courtGradeRedline}
                               </div>
                             </div>
@@ -2158,12 +2157,12 @@ function ContractAnalyzerView({ initialSession }) {
 
               {/* Missing Exhibits Schedule */}
               <div className="flex flex-col gap-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Bookmark size={16} className="text-amber-400" />
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <Bookmark size={16} className="text-[#D97706]" />
                   Missing Exhibits, Schedules & Appendices ({(auditResults.crossRefs?.issues || []).filter(i => i.type === 'missing_exhibit').length})
                 </h4>
                 {(auditResults.crossRefs?.issues || []).filter(i => i.type === 'missing_exhibit').length === 0 ? (
-                  <div className="p-6 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl">
+                  <div className="p-6 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl">
                     ✓ All referenced Exhibits, Schedules, and Appendices are indexed in the agreement package.
                   </div>
                 ) : (
@@ -2172,42 +2171,42 @@ function ContractAnalyzerView({ initialSession }) {
                       const enriched = enrichFindingWithStatutoryRemedy(issue);
                       const cardId = `cr_exhibit_${idx}`;
                       return (
-                        <div key={idx} className="p-4 rounded-xl bg-zinc-900/80 border border-amber-500/35 hover:border-amber-500/60 transition-all flex flex-col gap-3">
-                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-2">
+                        <div key={idx} className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] hover:border-[#123B5C]/40 shadow-xs transition-all flex flex-col gap-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D9E1E7] pb-2">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-mono font-bold text-amber-300 text-sm">
+                              <span className="font-mono font-bold text-[#92400E] text-sm">
                                 {issue.referenceText}
                               </span>
-                              <span className="bg-amber-500 text-black font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
+                              <span className="bg-[#D97706] text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
                                 Exhibit Missing
                               </span>
-                              <span className="font-mono text-gray-400 text-[11px]">
+                              <span className="font-mono text-[#5A6B7A] text-[11px]">
                                 Line {issue.line}
                               </span>
                             </div>
-                            <span className="text-[11px] text-amber-400 font-mono font-bold">
+                            <span className="text-[11px] text-[#92400E] font-mono font-bold">
                               Failure of Condition Precedent (Restatement § 224)
                             </span>
                           </div>
 
-                          <div className="p-2.5 rounded-lg bg-black/60 border border-zinc-800 text-xs font-mono text-gray-300 italic">
+                          <div className="p-2.5 rounded-lg bg-[#F7F9FA] border border-[#D9E1E7] text-xs font-serif text-[#0F1B2A] italic leading-relaxed">
                             "{issue.snippet}"
                           </div>
 
                           {enriched.courtGradeRedline && (
-                            <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 flex flex-col gap-2">
+                            <div className="p-3 rounded-lg bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#0E6B52] flex flex-col gap-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                                  <CheckCircle2 size={13} className="text-emerald-400" />
+                                <span className="text-xs font-bold text-[#0E6B52] flex items-center gap-1.5 font-ui">
+                                  <CheckCircle2 size={13} className="text-[#0E6B52]" />
                                   AmLaw 100 Pre-Signing Delivery Covenant
                                 </span>
                                 <button
                                   onClick={() => handleCopyRedline(cardId, enriched.courtGradeRedline)}
-                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-[#FFFFFF] border border-[#0E6B52] text-[#0E6B52] hover:bg-[#0E6B52] hover:text-white transition-all flex items-center gap-1 cursor-pointer shrink-0 font-ui"
                                 >
                                   {copiedRedlineId === cardId ? (
                                     <>
-                                      <Check size={12} className="text-black" />
+                                      <Check size={12} className="text-current" />
                                       <span>Copied! ✓</span>
                                     </>
                                   ) : (
@@ -2218,7 +2217,7 @@ function ContractAnalyzerView({ initialSession }) {
                                   )}
                                 </button>
                               </div>
-                              <div className="p-2 bg-black/70 rounded text-[11px] font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                              <div className="p-2.5 bg-[#FFFFFF] rounded text-xs font-serif text-[#0F1B2A] leading-relaxed border border-[#D9E1E7] select-all shadow-xs">
                                 {enriched.courtGradeRedline}
                               </div>
                             </div>
@@ -2231,18 +2230,18 @@ function ContractAnalyzerView({ initialSession }) {
               </div>
 
               {/* Indexed Headings Directory */}
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                <h4 className="text-xs font-bold uppercase text-gray-400 font-mono mb-3">
+              <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+                <h4 className="text-xs font-bold uppercase text-[#5A6B7A] font-ui mb-3">
                   Indexed Document Structure ({auditResults.crossRefs?.indexedSections?.length || 0} Sections, {auditResults.crossRefs?.indexedExhibits?.length || 0} Exhibits)
                 </h4>
                 <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto custom-scrollbar">
                   {(auditResults.crossRefs?.indexedSections || []).map((sec, i) => (
-                    <span key={i} className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-gray-300" title={`Line ${sec.line}: ${sec.title}`}>
+                    <span key={i} className="px-2.5 py-1 rounded-lg bg-[#F7F9FA] border border-[#D9E1E7] text-xs font-mono text-[#0F1B2A]" title={`Line ${sec.line}: ${sec.title}`}>
                       § {sec.id} {sec.title ? `— ${sec.title}` : ''}
                     </span>
                   ))}
                   {(auditResults.crossRefs?.indexedExhibits || []).map((ex, i) => (
-                    <span key={'ex-' + i} className="px-2.5 py-1 rounded-lg bg-nexus-cyan/10 border border-nexus-cyan/30 text-xs font-mono text-nexus-cyan" title={`Line ${ex.line}`}>
+                    <span key={'ex-' + i} className="px-2.5 py-1 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] text-xs font-mono text-[#123B5C] font-semibold" title={`Line ${ex.line}`}>
                       📎 {ex.id} {ex.title ? `— ${ex.title}` : ''}
                     </span>
                   ))}
@@ -2256,35 +2255,35 @@ function ContractAnalyzerView({ initialSession }) {
             <div className="flex flex-col gap-6">
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-gray-400 block text-[11px]">Formal Defined Terms</span>
-                  <span className="text-lg font-bold text-nexus-emerald">{auditResults.definedTerms?.stats?.totalDefined || 0}</span>
+                <div className="p-3.5 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl shadow-xs">
+                  <span className="text-[#5A6B7A] block text-[11px] font-ui">Formal Defined Terms</span>
+                  <span className="text-xl font-bold text-[#0E6B52]">{auditResults.definedTerms?.stats?.totalDefined || 0}</span>
                 </div>
-                <div className="p-3 bg-amber-950/20 border border-amber-500/30 rounded-xl">
-                  <span className="text-amber-400 block text-[11px]">Undefined Capitalized Terms</span>
-                  <span className="text-lg font-bold text-amber-400">{auditResults.definedTerms?.stats?.undefinedCount || 0}</span>
+                <div className="p-3.5 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl shadow-xs">
+                  <span className="text-[#92400E] block text-[11px] font-ui font-semibold">Undefined Capitalized Terms</span>
+                  <span className="text-xl font-bold text-[#D97706]">{auditResults.definedTerms?.stats?.undefinedCount || 0}</span>
                 </div>
-                <div className="p-3 bg-blue-950/20 border border-blue-500/30 rounded-xl">
-                  <span className="text-blue-400 block text-[11px]">Unused Defined Terms</span>
-                  <span className="text-lg font-bold text-blue-400">{auditResults.definedTerms?.stats?.unusedCount || 0}</span>
+                <div className="p-3.5 bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl shadow-xs">
+                  <span className="text-[#1E40AF] block text-[11px] font-ui font-semibold">Unused Defined Terms</span>
+                  <span className="text-xl font-bold text-[#1E40AF]">{auditResults.definedTerms?.stats?.unusedCount || 0}</span>
                 </div>
-                <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl">
-                  <span className="text-red-400 block text-[11px]">Template Artifacts</span>
-                  <span className="text-lg font-bold text-red-400">{auditResults.definedTerms?.stats?.artifactCount || 0}</span>
+                <div className="p-3.5 bg-[#FDF2F2] border border-[#FCA5A5] rounded-xl shadow-xs">
+                  <span className="text-[#991B1B] block text-[11px] font-ui font-semibold">Template Artifacts</span>
+                  <span className="text-xl font-bold text-[#B3261E]">{auditResults.definedTerms?.stats?.artifactCount || 0}</span>
                 </div>
               </div>
 
               {/* Undefined Capitalized Terms */}
               <div className="flex flex-col gap-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <HelpCircle size={16} className="text-amber-400" />
+                  <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                    <HelpCircle size={16} className="text-[#D97706]" />
                     Undefined Capitalized Terms ({auditResults.definedTerms?.undefinedTerms?.length || 0})
                   </h4>
                   {(auditResults.definedTerms?.undefinedTerms?.length || 0) > 0 && (
                     <button
                       onClick={handleCopyAllDefinitions}
-                      className="px-3 py-1 rounded-lg text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#123B5C] hover:bg-[#0C2A42] text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs font-ui"
                     >
                       {copiedDefsSuccess ? (
                         <>
@@ -2301,27 +2300,27 @@ function ContractAnalyzerView({ initialSession }) {
                   )}
                 </div>
                 {(!auditResults.definedTerms?.undefinedTerms || auditResults.definedTerms.undefinedTerms.length === 0) ? (
-                  <div className="p-5 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-xl">
+                  <div className="p-5 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl">
                     ✓ No undefined capitalized terms detected.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {auditResults.definedTerms.undefinedTerms.map((termItem, idx) => (
-                      <div key={idx} className="p-3.5 rounded-xl bg-black/40 border border-amber-500/30 text-xs font-mono flex flex-col justify-between gap-2.5">
+                      <div key={idx} className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs text-xs flex flex-col justify-between gap-2.5">
                         <div>
                           <div className="flex items-center justify-between mb-1">
-                            <span className="font-bold text-amber-300 text-sm">"{termItem.term}"</span>
-                            <span className="text-[10px] text-gray-400 bg-white/5 px-2 py-0.5 rounded">
+                            <span className="font-bold text-[#0F1B2A] font-serif text-sm">"{termItem.term}"</span>
+                            <span className="text-[10px] font-mono text-[#5A6B7A] bg-[#F7F9FA] border border-[#D9E1E7] px-2 py-0.5 rounded">
                               {termItem.count || 1}x
                             </span>
                           </div>
-                          <p className="text-[11px] text-gray-400">First referenced at line {termItem.line} without operative definition in Section 1.</p>
+                          <p className="text-[11px] text-[#5A6B7A] font-ui">First referenced at line {termItem.line} without operative definition in Section 1.</p>
                         </div>
                         <button
                           onClick={() => handleCopyRedline(`def_${idx}`, `"${termItem.term}" means [specify exact operational criteria, title designations, and material scope].`)}
-                          className="self-end px-2 py-1 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white rounded text-[10px] font-mono flex items-center gap-1 transition-colors cursor-pointer"
+                          className="self-end px-2.5 py-1 bg-[#F7F9FA] hover:bg-[#E5EAEF] text-[#123B5C] border border-[#D9E1E7] rounded text-[10px] font-ui font-semibold flex items-center gap-1 transition-colors cursor-pointer"
                         >
-                          {copiedRedlineId === `def_${idx}` ? <><Check size={11} className="text-emerald-400" /> Copied</> : <><Copy size={11} /> Copy Definition</>}
+                          {copiedRedlineId === `def_${idx}` ? <><Check size={11} className="text-[#0E6B52]" /> Copied</> : <><Copy size={11} /> Copy Definition</>}
                         </button>
                       </div>
                     ))}
@@ -2331,20 +2330,20 @@ function ContractAnalyzerView({ initialSession }) {
 
               {/* Unused Defined Terms */}
               <div className="flex flex-col gap-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Tag size={16} className="text-blue-400" />
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <Tag size={16} className="text-[#1E40AF]" />
                   Unused Defined Terms ({auditResults.definedTerms?.unusedDefinedTerms?.length || 0})
                 </h4>
                 {(!auditResults.definedTerms?.unusedDefinedTerms || auditResults.definedTerms.unusedDefinedTerms.length === 0) ? (
-                  <div className="p-5 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-xl">
+                  <div className="p-5 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl">
                     ✓ All defined terms are actively utilized in operative clauses.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {auditResults.definedTerms.unusedDefinedTerms.map((unusedItem, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-black/40 border border-blue-500/30 text-xs font-mono">
-                        <span className="font-bold text-blue-300 block mb-1">"{unusedItem.term}"</span>
-                        <p className="text-[11px] text-gray-400">Defined at line {unusedItem.line} but never referenced in operative covenants.</p>
+                      <div key={idx} className="p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs text-xs">
+                        <span className="font-bold text-[#1E40AF] font-serif block mb-1">"{unusedItem.term}"</span>
+                        <p className="text-[11px] text-[#5A6B7A] font-ui">Defined at line {unusedItem.line} but never referenced in operative covenants.</p>
                       </div>
                     ))}
                   </div>
@@ -2353,24 +2352,24 @@ function ContractAnalyzerView({ initialSession }) {
 
               {/* Template Placeholders & Leftovers */}
               <div className="flex flex-col gap-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <AlertCircle size={16} className="text-red-400" />
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <AlertCircle size={16} className="text-[#B3261E]" />
                   Leftover Boilerplate & Unfilled Placeholders ({auditResults.definedTerms?.boilerplateArtifacts?.length || 0})
                 </h4>
                 {(!auditResults.definedTerms?.boilerplateArtifacts || auditResults.definedTerms.boilerplateArtifacts.length === 0) ? (
-                  <div className="p-5 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-xl">
+                  <div className="p-5 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl">
                     ✓ Zero unfilled template brackets (`[Company Name]`, `___`) detected.
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {auditResults.definedTerms.boilerplateArtifacts.map((art, idx) => (
-                      <div key={idx} className="p-3.5 rounded-xl bg-red-950/20 border border-red-500/40 text-xs font-mono flex items-center justify-between">
+                      <div key={idx} className="p-3.5 rounded-xl bg-[#FDF2F2] border border-[#FCA5A5] text-xs flex items-center justify-between">
                         <div>
-                          <span className="font-bold text-red-300 text-sm">{art.placeholder}</span>
-                          <span className="text-gray-400 ml-2">Line {art.line}</span>
-                          <p className="text-gray-300 italic mt-0.5">"{art.snippet}"</p>
+                          <span className="font-bold text-[#B3261E] font-mono text-sm">{art.placeholder}</span>
+                          <span className="text-[#5A6B7A] ml-2 font-mono">Line {art.line}</span>
+                          <p className="text-[#0F1B2A] font-serif italic mt-0.5">"{art.snippet}"</p>
                         </div>
-                        <span className="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
+                        <span className="bg-[#B3261E] text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase font-ui">
                           Drafting Artifact
                         </span>
                       </div>
@@ -2382,8 +2381,8 @@ function ContractAnalyzerView({ initialSession }) {
               {/* Entity Inconsistencies */}
               {(auditResults.definedTerms?.entityIssues?.length || 0) > 0 && (
                 <div className="flex flex-col gap-3">
-                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    <Users size={16} className="text-orange-400" />
+                  <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                    <Users size={16} className="text-[#D97706]" />
                     Entity Discrepancies & Alien Counterparties ({auditResults.definedTerms.entityIssues.length})
                   </h4>
                   <div className="space-y-3">
@@ -2391,32 +2390,32 @@ function ContractAnalyzerView({ initialSession }) {
                       const enriched = enrichFindingWithStatutoryRemedy(ent);
                       const cardId = `ent_${idx}`;
                       return (
-                        <div key={idx} className="p-4 rounded-xl bg-orange-950/20 border border-orange-500/40 text-xs font-mono flex flex-col gap-3">
+                        <div key={idx} className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs text-xs flex flex-col gap-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-orange-300 text-sm">{ent.entity}: </span>
-                              <span className="text-gray-300">{ent.discrepancy}</span>
-                              <span className="text-gray-500 text-[11px]">(Line {ent.line})</span>
+                              <span className="font-bold text-[#0F1B2A] font-serif text-sm">{ent.entity}: </span>
+                              <span className="text-[#5A6B7A] font-ui">{ent.discrepancy}</span>
+                              <span className="text-[#5A6B7A] text-[11px] font-mono">(Line {ent.line})</span>
                             </div>
-                            <span className="bg-orange-500 text-black text-[9px] font-extrabold uppercase px-2 py-0.5 rounded">
+                            <span className="bg-[#D97706] text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded font-ui">
                               Veil-Piercing Exposure
                             </span>
                           </div>
                           {enriched.courtGradeRedline && (
-                            <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 flex flex-col gap-2">
+                            <div className="p-3 rounded-lg bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#0E6B52] flex flex-col gap-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                                  <CheckCircle2 size={13} className="text-emerald-400" />
+                                <span className="text-xs font-bold text-[#0E6B52] flex items-center gap-1.5 font-ui">
+                                  <CheckCircle2 size={13} className="text-[#0E6B52]" />
                                   AmLaw 100 Corporate Entity Harmonization Covenant
                                 </span>
                                 <button
                                   onClick={() => handleCopyRedline(cardId, enriched.courtGradeRedline)}
-                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-[#FFFFFF] border border-[#0E6B52] text-[#0E6B52] hover:bg-[#0E6B52] hover:text-white transition-all flex items-center gap-1 cursor-pointer shrink-0 font-ui"
                                 >
-                                  {copiedRedlineId === cardId ? <><Check size={12} className="text-black" /> Copied! ✓</> : <><Copy size={12} /> Copy Covenant</>}
+                                  {copiedRedlineId === cardId ? <><Check size={12} className="text-current" /> Copied! ✓</> : <><Copy size={12} /> Copy Covenant</>}
                                 </button>
                               </div>
-                              <div className="p-2 bg-black/70 rounded text-[11px] font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                              <div className="p-2.5 bg-[#FFFFFF] rounded text-xs font-serif text-[#0F1B2A] leading-relaxed border border-[#D9E1E7] select-all shadow-xs">
                                 {enriched.courtGradeRedline}
                               </div>
                             </div>
@@ -2435,32 +2434,32 @@ function ContractAnalyzerView({ initialSession }) {
             <div className="flex flex-col gap-6">
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-gray-400 block text-[11px]">Financial Pairings</span>
-                  <span className="text-lg font-bold text-white">{auditResults.financialDates?.stats?.totalAmounts || 0}</span>
+                <div className="p-3.5 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl shadow-xs">
+                  <span className="text-[#5A6B7A] block text-[11px] font-ui">Financial Pairings</span>
+                  <span className="text-xl font-bold text-[#0F1B2A]">{auditResults.financialDates?.stats?.totalAmounts || 0}</span>
                 </div>
-                <div className="p-3 bg-red-950/20 border border-red-500/30 rounded-xl">
-                  <span className="text-red-400 block text-[11px]">Words vs Digits Mismatches</span>
-                  <span className="text-lg font-bold text-red-400">{auditResults.financialDates?.stats?.mismatchCount || 0}</span>
+                <div className="p-3.5 bg-[#FDF2F2] border border-[#FCA5A5] rounded-xl shadow-xs">
+                  <span className="text-[#991B1B] block text-[11px] font-ui font-semibold">Words vs Digits Mismatches</span>
+                  <span className="text-xl font-bold text-[#B3261E]">{auditResults.financialDates?.stats?.mismatchCount || 0}</span>
                 </div>
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl">
-                  <span className="text-gray-400 block text-[11px]">Contract Dates Found</span>
-                  <span className="text-lg font-bold text-nexus-cyan">{auditResults.financialDates?.stats?.totalDates || 0}</span>
+                <div className="p-3.5 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl shadow-xs">
+                  <span className="text-[#5A6B7A] block text-[11px] font-ui">Contract Dates Found</span>
+                  <span className="text-xl font-bold text-[#123B5C]">{auditResults.financialDates?.stats?.totalDates || 0}</span>
                 </div>
-                <div className="p-3 bg-amber-950/20 border border-amber-500/30 rounded-xl">
-                  <span className="text-amber-400 block text-[11px]">Chronology Conflicts</span>
-                  <span className="text-lg font-bold text-amber-400">{auditResults.financialDates?.stats?.dateIssuesCount || 0}</span>
+                <div className="p-3.5 bg-[#FFFBEB] border border-[#FDE68A] rounded-xl shadow-xs">
+                  <span className="text-[#92400E] block text-[11px] font-ui font-semibold">Chronology Conflicts</span>
+                  <span className="text-xl font-bold text-[#D97706]">{auditResults.financialDates?.stats?.dateIssuesCount || 0}</span>
                 </div>
               </div>
 
               {/* Side-by-Side Financial Mismatches */}
               <div className="flex flex-col gap-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <DollarSign size={16} className="text-red-400" />
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <DollarSign size={16} className="text-[#B3261E]" />
                   Words vs Numbers Financial Contradictions ({(auditResults.financialDates?.issues || []).filter(i => i.type === 'amount_mismatch').length})
                 </h4>
                 {(auditResults.financialDates?.issues || []).filter(i => i.type === 'amount_mismatch').length === 0 ? (
-                  <div className="p-6 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl">
+                  <div className="p-6 text-center text-xs font-mono text-[#0E6B52] bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl">
                     ✓ All numeric figures and written monetary values ("$10,000" vs "Ten Thousand Dollars") are in perfect alignment.
                   </div>
                 ) : (
@@ -2469,41 +2468,41 @@ function ContractAnalyzerView({ initialSession }) {
                       const enriched = enrichFindingWithStatutoryRemedy(mismatch);
                       const cardId = `fin_${idx}`;
                       return (
-                        <div key={idx} className="p-4 rounded-xl bg-zinc-900/80 border border-red-500/40 hover:border-red-500/60 transition-all flex flex-col gap-3">
-                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-2">
+                        <div key={idx} className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] hover:border-[#123B5C]/40 shadow-xs transition-all flex flex-col gap-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D9E1E7] pb-2">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-red-300 text-sm">{mismatch.title}</span>
-                              <span className="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
+                              <span className="font-bold text-[#B3261E] text-sm font-ui">{mismatch.title}</span>
+                              <span className="bg-[#B3261E] text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase font-ui">
                                 Critical Mismatch
                               </span>
-                              <span className="text-gray-400 text-xs font-mono">(Line {mismatch.line})</span>
+                              <span className="text-[#5A6B7A] text-xs font-mono">(Line {mismatch.line})</span>
                             </div>
-                            <span className="text-xs font-mono text-red-400 font-bold">
+                            <span className="text-xs font-mono text-[#B3261E] font-bold">
                               UCC § 3-114 Words-Over-Numbers Rule
                             </span>
                           </div>
 
-                          <p className="text-gray-200 text-xs leading-relaxed">{mismatch.details}</p>
+                          <p className="text-[#0F1B2A] text-xs leading-relaxed font-ui">{mismatch.details}</p>
 
-                          <div className="p-2.5 bg-black/60 rounded-lg text-gray-300 text-xs font-mono italic border border-zinc-800">
+                          <div className="p-2.5 bg-[#F7F9FA] rounded-lg text-[#0F1B2A] text-xs font-serif italic border border-[#D9E1E7] leading-relaxed">
                             "{mismatch.snippet}"
                           </div>
 
                           {enriched.courtGradeRedline && (
-                            <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30 flex flex-col gap-2">
+                            <div className="p-3 rounded-lg bg-[#F0FDF4] border border-[#BBF7D0] border-l-4 border-l-[#0E6B52] flex flex-col gap-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                                  <CheckCircle2 size={13} className="text-emerald-400" />
+                                <span className="text-xs font-bold text-[#0E6B52] flex items-center gap-1.5 font-ui">
+                                  <CheckCircle2 size={13} className="text-[#0E6B52]" />
                                   AmLaw 100 Court-Grade Reconciliation Clause
                                 </span>
                                 <button
                                   onClick={() => handleCopyRedline(cardId, enriched.courtGradeRedline)}
-                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1 cursor-pointer shrink-0"
+                                  className="px-2.5 py-1 rounded-md text-xs font-bold bg-[#FFFFFF] border border-[#0E6B52] text-[#0E6B52] hover:bg-[#0E6B52] hover:text-white transition-all flex items-center gap-1 cursor-pointer shrink-0 font-ui"
                                 >
-                                  {copiedRedlineId === cardId ? <><Check size={12} className="text-black" /> Copied! ✓</> : <><Copy size={12} /> Copy Clause</>}
+                                  {copiedRedlineId === cardId ? <><Check size={12} className="text-current" /> Copied! ✓</> : <><Copy size={12} /> Copy Clause</>}
                                 </button>
                               </div>
-                              <div className="p-2 bg-black/70 rounded text-[11px] font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
+                              <div className="p-2.5 bg-[#FFFFFF] rounded text-xs font-serif text-[#0F1B2A] leading-relaxed border border-[#D9E1E7] select-all shadow-xs">
                                 {enriched.courtGradeRedline}
                               </div>
                             </div>
@@ -2517,25 +2516,25 @@ function ContractAnalyzerView({ initialSession }) {
 
               {/* Timeline & Chronology Schedule */}
               <div className="flex flex-col gap-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Calendar size={16} className="text-nexus-cyan" />
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <Calendar size={16} className="text-[#123B5C]" />
                   Contract Chronology & Vital Milestones ({auditResults.financialDates?.timeline?.length || 0} Events)
                 </h4>
                 {(!auditResults.financialDates?.timeline || auditResults.financialDates.timeline.length === 0) ? (
-                  <div className="p-4 text-center text-xs text-gray-500 font-mono">
+                  <div className="p-4 text-center text-xs text-[#5A6B7A] font-ui bg-[#F7F9FA] rounded-xl border border-[#D9E1E7]">
                     No explicit dates or milestones detected.
                   </div>
                 ) : (
                   <div className="space-y-2">
                     {auditResults.financialDates.timeline.map((item, idx) => (
-                      <div key={idx} className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between ${item.isPast ? 'bg-amber-950/20 border-amber-500/30' : 'bg-black/40 border-white/5'}`}>
+                      <div key={idx} className={`p-3.5 rounded-xl border text-xs font-mono flex items-center justify-between shadow-xs ${item.isPast ? 'bg-[#FFFBEB] border-[#FDE68A]' : 'bg-[#FFFFFF] border-[#D9E1E7]'}`}>
                         <div>
-                          <span className="font-bold text-white">{item.event}: </span>
-                          <span className={item.isPast ? 'text-amber-400 font-bold' : 'text-nexus-cyan'}>{item.date}</span>
-                          <span className="text-gray-500 ml-2">(Line {item.line})</span>
+                          <span className="font-bold text-[#0F1B2A]">{item.event}: </span>
+                          <span className={item.isPast ? 'text-[#D97706] font-bold' : 'text-[#123B5C] font-bold'}>{item.date}</span>
+                          <span className="text-[#5A6B7A] ml-2">(Line {item.line})</span>
                         </div>
                         {item.isPast && (
-                          <span className="bg-amber-500 text-black text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
+                          <span className="bg-[#D97706] text-white text-[10px] font-extrabold px-2 py-0.5 rounded uppercase font-ui">
                             Date Expired / In Past
                           </span>
                         )}
@@ -2547,17 +2546,17 @@ function ContractAnalyzerView({ initialSession }) {
 
               {/* Notice Periods */}
               {(auditResults.financialDates?.noticePeriods?.length || 0) > 0 && (
-                <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
-                  <h4 className="text-xs font-bold uppercase text-gray-400 font-mono mb-3 flex items-center gap-2">
-                    <Clock size={14} className="text-nexus-emerald" />
+                <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+                  <h4 className="text-xs font-bold uppercase text-[#5A6B7A] font-ui mb-3 flex items-center gap-2">
+                    <Clock size={14} className="text-[#0E6B52]" />
                     Notice Periods & Response Deadlines ({auditResults.financialDates.noticePeriods.length})
                   </h4>
                   <div className="space-y-2">
                     {auditResults.financialDates.noticePeriods.map((notice, idx) => (
-                      <div key={idx} className="p-2.5 rounded-lg bg-white/[0.02] border border-white/5 text-xs font-mono flex items-center justify-between">
-                        <span className="text-nexus-emerald font-bold">{notice.periodDays} Days</span>
-                        <span className="text-gray-300 truncate max-w-lg">"{notice.context}"</span>
-                        <span className="text-gray-500">Line {notice.line}</span>
+                      <div key={idx} className="p-2.5 rounded-lg bg-[#F7F9FA] border border-[#D9E1E7] text-xs flex items-center justify-between">
+                        <span className="text-[#0E6B52] font-bold font-mono">{notice.periodDays} Days</span>
+                        <span className="text-[#0F1B2A] truncate max-w-lg font-serif italic">"{notice.context}"</span>
+                        <span className="text-[#5A6B7A] font-mono">Line {notice.line}</span>
                       </div>
                     ))}
                   </div>
@@ -2570,36 +2569,36 @@ function ContractAnalyzerView({ initialSession }) {
           {activeHudTab === 'obligations' && (
             <div className="flex flex-col gap-4">
               {/* Party Breakdown Filters & CSV Export */}
-              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl liquid-glass border border-white/5">
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="text-gray-400 font-mono mr-1">Party:</span>
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-ui">
+                  <span className="text-[#5A6B7A] font-medium mr-1">Party:</span>
                   <button
                     onClick={() => setObligationPartyFilter('all')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'all' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${obligationPartyFilter === 'all' ? 'bg-[#123B5C] text-white' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#F7F9FA] border border-[#D9E1E7]'}`}
                   >
                     All ({auditResults.obligations?.stats?.totalObligations || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Client')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Client' ? 'bg-sky-500 text-white' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${obligationPartyFilter === 'Client' ? 'bg-[#123B5C] text-white' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#F7F9FA] border border-[#D9E1E7]'}`}
                   >
                     Client ({auditResults.obligations?.partyBreakdown?.clientCount || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Counterparty')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Counterparty' ? 'bg-amber-500 text-black' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${obligationPartyFilter === 'Counterparty' ? 'bg-[#123B5C] text-white' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#F7F9FA] border border-[#D9E1E7]'}`}
                   >
                     Counterparty ({auditResults.obligations?.partyBreakdown?.counterpartyCount || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Mutual')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Mutual' ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${obligationPartyFilter === 'Mutual' ? 'bg-[#123B5C] text-white' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#F7F9FA] border border-[#D9E1E7]'}`}
                   >
                     Mutual ({auditResults.obligations?.partyBreakdown?.mutualCount || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Third Party')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Third Party' ? 'bg-gray-400 text-black' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${obligationPartyFilter === 'Third Party' ? 'bg-[#123B5C] text-white' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#F7F9FA] border border-[#D9E1E7]'}`}
                   >
                     Third Party ({auditResults.obligations?.partyBreakdown?.thirdPartyCount || 0})
                   </button>
@@ -2607,18 +2606,18 @@ function ContractAnalyzerView({ initialSession }) {
 
                 <button
                   onClick={() => exportObligationsCSV(auditResults.obligations)}
-                  className="px-3 py-1.5 bg-nexus-emerald text-black text-xs font-bold rounded-xl hover:bg-white transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(0,255,157,0.2)]"
+                  className="px-3.5 py-1.5 bg-[#FFFFFF] border border-[#123B5C] text-[#123B5C] hover:bg-[#123B5C] hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-xs cursor-pointer font-ui"
                 >
                   <Download size={13} /> Export CSV
                 </button>
               </div>
 
               {/* Obligations Table */}
-              <div className="rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
+              <div className="rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs overflow-hidden">
                 <div className="overflow-x-auto max-h-[500px] custom-scrollbar">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-white/[0.04] border-b border-white/10 font-mono text-gray-400 uppercase text-[11px]">
+                      <tr className="bg-[#F7F9FA] border-b border-[#D9E1E7] font-ui text-[#5A6B7A] uppercase text-[11px]">
                         <th className="p-3 w-12">#</th>
                         <th className="p-3 w-28">Party</th>
                         <th className="p-3 w-28">Duty Type</th>
@@ -2627,45 +2626,45 @@ function ContractAnalyzerView({ initialSession }) {
                         <th className="p-3 w-24">Severity</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5 font-mono">
+                    <tbody className="divide-y divide-[#D9E1E7]">
                       {filteredObligations.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-gray-500">
+                          <td colSpan={6} className="p-8 text-center text-[#5A6B7A] font-ui">
                             No obligations found matching the current party filter.
                           </td>
                         </tr>
                       ) : (
                         filteredObligations.map((obl, idx) => {
-                          const partyPill = obl.responsibleParty === 'Client' ? 'bg-sky-500/20 text-sky-400 border-sky-500/30' :
-                                            obl.responsibleParty === 'Counterparty' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                                            obl.responsibleParty === 'Mutual' ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' :
-                                            'bg-gray-500/20 text-gray-400 border-gray-500/30';
-                          const sevPill = obl.severity === 'high' ? 'bg-red-500 text-white' :
-                                          obl.severity === 'medium' ? 'bg-amber-500 text-black' : 'bg-blue-500 text-white';
+                          const partyPill = obl.responsibleParty === 'Client' ? 'bg-[#EFF6FF] text-[#1E40AF] border-[#BFDBFE]' :
+                                            obl.responsibleParty === 'Counterparty' ? 'bg-[#FFFBEB] text-[#92400E] border-[#FDE68A]' :
+                                            obl.responsibleParty === 'Mutual' ? 'bg-[#EEF2FF] text-[#3730A3] border-[#C7D2FE]' :
+                                            'bg-[#F7F9FA] text-[#5A6B7A] border-[#D9E1E7]';
+                          const sevPill = obl.severity === 'high' ? 'bg-[#B3261E] text-white' :
+                                          obl.severity === 'medium' ? 'bg-[#D97706] text-white' : 'bg-[#123B5C] text-white';
 
                           return (
-                            <tr key={obl.id || idx} className="hover:bg-white/[0.02] transition-colors">
-                              <td className="p-3 text-gray-500">#{idx + 1}</td>
+                            <tr key={obl.id || idx} className="hover:bg-[#F7F9FA] transition-colors">
+                              <td className="p-3 text-[#5A6B7A] font-mono">#{idx + 1}</td>
                               <td className="p-3">
-                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase ${partyPill}`}>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase font-ui ${partyPill}`}>
                                   {obl.responsibleParty}
                                 </span>
                               </td>
                               <td className="p-3">
-                                <span className="font-bold text-white">{obl.modalVerb}</span>
-                                <span className="text-[10px] text-gray-400 ml-1">({obl.dutyType})</span>
+                                <span className="font-bold text-[#123B5C] font-ui">{obl.modalVerb}</span>
+                                <span className="text-[10px] text-[#5A6B7A] ml-1 font-mono">({obl.dutyType})</span>
                               </td>
-                              <td className="p-3 font-sans text-gray-200 leading-relaxed">
+                              <td className="p-3 font-serif text-[#0F1B2A] leading-relaxed text-xs">
                                 {obl.sentence || obl.action}
                                 {obl.sectionContext && (
-                                  <span className="block text-[10px] font-mono text-gray-500 mt-0.5">
+                                  <span className="block text-[10px] font-mono text-[#5A6B7A] mt-0.5">
                                     Context: {obl.sectionContext}
                                   </span>
                                 )}
                               </td>
-                              <td className="p-3 text-gray-400">{obl.line}</td>
+                              <td className="p-3 text-[#5A6B7A] font-mono">{obl.line}</td>
                               <td className="p-3">
-                                <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${sevPill}`}>
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase font-ui ${sevPill}`}>
                                   {obl.severity}
                                 </span>
                               </td>
@@ -2683,28 +2682,28 @@ function ContractAnalyzerView({ initialSession }) {
           {/* TAB 5: RISK RADAR (49 Liability Rules) */}
           {activeHudTab === 'risks' && (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <ShieldAlert size={16} className="text-red-400" />
+              <div className="flex items-center justify-between border-b border-[#D9E1E7] pb-3">
+                <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center gap-2 font-ui">
+                  <ShieldAlert size={16} className="text-[#B3261E]" />
                   Scanned Legal Liabilities & Red Flags ({auditResults.risks?.length || 0})
                 </h4>
-                <div className="flex items-center gap-1 text-xs">
-                  <Filter size={13} className="text-gray-400 mr-1" />
+                <div className="flex items-center gap-1 text-xs font-ui">
+                  <Filter size={13} className="text-[#5A6B7A] mr-1" />
                   <button
                     onClick={() => setRiskSeverityFilter('all')}
-                    className={`px-2.5 py-1 rounded-lg ${riskSeverityFilter === 'all' ? 'bg-white/20 text-white font-bold' : 'text-gray-400'}`}
+                    className={`px-2.5 py-1 rounded-lg cursor-pointer ${riskSeverityFilter === 'all' ? 'bg-[#123B5C] text-white font-bold' : 'text-[#5A6B7A] hover:text-[#0F1B2A]'}`}
                   >
                     All ({auditResults.risks?.length || 0})
                   </button>
                   <button
                     onClick={() => setRiskSeverityFilter('critical')}
-                    className={`px-2.5 py-1 rounded-lg ${riskSeverityFilter === 'critical' ? 'bg-red-500/20 text-red-400 font-bold' : 'text-gray-400'}`}
+                    className={`px-2.5 py-1 rounded-lg cursor-pointer ${riskSeverityFilter === 'critical' ? 'bg-[#B3261E] text-white font-bold' : 'text-[#5A6B7A] hover:text-[#0F1B2A]'}`}
                   >
                     Critical ({auditResults.risks?.filter(r => r.severity === 'critical').length || 0})
                   </button>
                   <button
                     onClick={() => setRiskSeverityFilter('warning')}
-                    className={`px-2.5 py-1 rounded-lg ${riskSeverityFilter === 'warning' ? 'bg-amber-500/20 text-amber-400 font-bold' : 'text-gray-400'}`}
+                    className={`px-2.5 py-1 rounded-lg cursor-pointer ${riskSeverityFilter === 'warning' ? 'bg-[#D97706] text-white font-bold' : 'text-[#5A6B7A] hover:text-[#0F1B2A]'}`}
                   >
                     Warnings ({auditResults.risks?.filter(r => r.severity === 'warning').length || 0})
                   </button>
@@ -2713,41 +2712,41 @@ function ContractAnalyzerView({ initialSession }) {
 
               <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
                 {filteredRisks.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500 bg-black/30 rounded-2xl">
+                  <div className="p-8 text-center text-[#5A6B7A] font-ui bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl">
                     No risk clauses matching the active filter.
                   </div>
                 ) : (
                   filteredRisks.map((risk, index) => {
                     const isCrit = risk.severity === 'critical';
                     const isWarn = risk.severity === 'warning';
-                    const borderColor = isCrit ? 'border-red-500/40 bg-red-950/20' : isWarn ? 'border-amber-500/40 bg-amber-950/20' : 'border-blue-500/40 bg-blue-950/20';
-                    const tagColor = isCrit ? 'bg-red-500 text-white' : isWarn ? 'bg-amber-500 text-black' : 'bg-blue-500 text-white';
+                    const borderLeft = isCrit ? 'border-l-4 border-l-[#B3261E]' : isWarn ? 'border-l-4 border-l-[#D97706]' : 'border-l-4 border-l-[#123B5C]';
+                    const tagColor = isCrit ? 'bg-[#B3261E] text-white' : isWarn ? 'bg-[#D97706] text-white' : 'bg-[#123B5C] text-white';
 
                     return (
-                      <div key={risk.id + index} className={`p-5 rounded-2xl border ${borderColor} transition-all`}>
+                      <div key={risk.id + index} className={`p-5 rounded-xl border border-[#D9E1E7] ${borderLeft} bg-[#FFFFFF] shadow-xs transition-all`}>
                         <div className="flex items-start justify-between gap-4 mb-2">
                           <div className="flex items-center gap-2">
-                            <AlertTriangle size={18} className={isCrit ? 'text-red-400' : isWarn ? 'text-amber-400' : 'text-blue-400'} />
-                            <h4 className="text-sm font-bold text-white font-mono">"{risk.phrase}"</h4>
+                            <AlertTriangle size={18} className={isCrit ? 'text-[#B3261E]' : isWarn ? 'text-[#D97706]' : 'text-[#123B5C]'} />
+                            <h4 className="text-sm font-bold text-[#0F1B2A] font-serif">"{risk.phrase}"</h4>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${tagColor}`}>
+                            <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full font-ui ${tagColor}`}>
                               {risk.severity}
                             </span>
-                            <span className="text-[11px] text-gray-400 font-mono">Found {risk.count}x</span>
+                            <span className="text-[11px] text-[#5A6B7A] font-mono">Found {risk.count}x</span>
                           </div>
                         </div>
 
-                        <p className="text-xs text-gray-300 mb-2">
-                          <strong className="text-gray-400">Risk Assessment: </strong>{risk.description}
+                        <p className="text-xs text-[#0F1B2A] mb-2 font-ui">
+                          <strong className="text-[#5A6B7A]">Risk Assessment: </strong>{risk.description}
                         </p>
 
-                        <div className="p-2.5 rounded-xl bg-black/40 border border-white/5 text-xs text-nexus-emerald font-mono">
+                        <div className="p-2.5 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-xs text-[#0E6B52] font-ui">
                           <strong>Negotiation Guidance: </strong>{risk.recommendation}
                         </div>
 
                         {risk.occurrences && risk.occurrences.length > 0 && (
-                          <div className="mt-2 text-[11px] font-mono text-gray-400 italic">
+                          <div className="mt-2 text-xs font-serif text-[#5A6B7A] italic bg-[#F7F9FA] p-2 rounded border border-[#D9E1E7]">
                             Context: "{risk.occurrences[0].snippet}"
                           </div>
                         )}
@@ -2762,13 +2761,13 @@ function ContractAnalyzerView({ initialSession }) {
           {/* TAB 6: REDLINE DIFF (Myers LCS) */}
           {activeHudTab === 'diff' && auditResults.diff && (
             <div className="flex flex-col gap-4">
-              <div className="p-6 rounded-2xl liquid-glass-strong border border-white/5 font-mono text-xs leading-relaxed max-h-[500px] overflow-y-auto custom-scrollbar bg-black/50">
+              <div className="p-6 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] font-serif text-sm leading-relaxed max-h-[500px] overflow-y-auto custom-scrollbar shadow-xs text-[#0F1B2A]">
                 {auditResults.diff.segments.map((seg) => {
                   if (seg.type === 'added') {
                     return (
                       <span 
                         key={seg.id} 
-                        className="bg-emerald-500/25 text-emerald-300 font-semibold px-1 py-0.5 mx-0.5 rounded border border-emerald-500/30"
+                        className="bg-[#DCFCE7] text-[#14532D] font-medium px-1 py-0.5 mx-0.5 rounded border border-[#86EFAC]"
                         title="Added in modified draft"
                       >
                         {seg.value}
@@ -2779,40 +2778,40 @@ function ContractAnalyzerView({ initialSession }) {
                     return (
                       <span 
                         key={seg.id} 
-                        className="bg-red-500/25 text-red-300 line-through px-1 py-0.5 mx-0.5 rounded border border-red-500/30 opacity-75"
+                        className="bg-[#FEE2E2] text-[#991B1B] line-through px-1 py-0.5 mx-0.5 rounded border border-[#FCA5A5] opacity-80"
                         title="Removed from original draft"
                       >
                         {seg.value}
                       </span>
                     );
                   }
-                  return <span key={seg.id} className="text-gray-300">{seg.value}</span>;
+                  return <span key={seg.id} className="text-[#0F1B2A]">{seg.value}</span>;
                 })}
               </div>
 
               {/* Clause Breakdown */}
               {auditResults.diff.clauseDiffs && (
                 <div className="space-y-2.5 max-h-[400px] overflow-y-auto custom-scrollbar">
-                  <h4 className="text-xs font-mono uppercase text-gray-400 font-bold mb-2">
+                  <h4 className="text-xs font-ui uppercase text-[#5A6B7A] font-bold mb-2">
                     Clause-by-Clause Modifications ({auditResults.diff.clauseDiffs.length} Clauses)
                   </h4>
                   {auditResults.diff.clauseDiffs.map((clause) => {
-                    const badge = clause.status === 'modified' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                                  clause.status === 'inserted' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                                  clause.status === 'deleted' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-white/5 text-gray-400 border-white/10';
+                    const badge = clause.status === 'modified' ? 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]' :
+                                  clause.status === 'inserted' ? 'bg-[#DCFCE7] text-[#14532D] border-[#86EFAC]' :
+                                  clause.status === 'deleted' ? 'bg-[#FEE2E2] text-[#991B1B] border-[#FCA5A5]' : 'bg-[#F7F9FA] text-[#5A6B7A] border-[#D9E1E7]';
 
                     return (
-                      <div key={clause.index} className="p-3.5 rounded-xl liquid-glass border border-white/5">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-bold text-gray-300">Clause / Paragraph #{clause.index}</span>
+                      <div key={clause.index} className="p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+                        <div className="flex items-center justify-between mb-1.5 font-ui">
+                          <span className="text-xs font-bold text-[#0F1B2A]">Clause / Paragraph #{clause.index}</span>
                           <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${badge}`}>
                             {clause.status}
                           </span>
                         </div>
 
-                        <div className="font-mono text-xs leading-relaxed text-gray-300">
+                        <div className="font-serif text-xs leading-relaxed text-[#0F1B2A]">
                           {clause.diff ? clause.diff.map((d, dIdx) => (
-                            <span key={dIdx} className={d.type === 'added' ? 'bg-emerald-500/20 text-emerald-300 font-bold px-0.5' : d.type === 'removed' ? 'bg-red-500/20 text-red-300 line-through px-0.5' : ''}>
+                            <span key={dIdx} className={d.type === 'added' ? 'bg-[#DCFCE7] text-[#14532D] font-bold px-0.5 rounded' : d.type === 'removed' ? 'bg-[#FEE2E2] text-[#991B1B] line-through px-0.5 rounded' : ''}>
                               {d.value}
                             </span>
                           )) : (
@@ -2830,27 +2829,27 @@ function ContractAnalyzerView({ initialSession }) {
           {/* ========================================================================= */}
           {/* LEGAL PROTECTION SHIELD & MALPRACTICE VERIFICATION NOTICE                 */}
           {/* ========================================================================= */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-zinc-950 to-cyan-950/20 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+          <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] border-l-4 border-l-[#0E6B52] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+              <div className="w-10 h-10 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] flex items-center justify-center text-[#0E6B52] shrink-0 mt-0.5">
                 <ShieldCheck size={20} />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                  <h4 className="text-xs font-bold text-[#0F1B2A] uppercase tracking-wider font-ui">
                     Legal Protection Shield · Malpractice & Quality Control Notice
                   </h4>
-                  <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
+                  <span className="text-[9px] font-ui bg-[#F0FDF4] text-[#0E6B52] border border-[#BBF7D0] px-2 py-0.5 rounded font-bold">
                     VERIFICATION MANDATE
                   </span>
                 </div>
-                <p className="text-[11px] text-zinc-300 leading-relaxed max-w-3xl">
+                <p className="text-[11px] text-[#5A6B7A] leading-relaxed max-w-3xl font-ui">
                   <strong>Mandatory Counsel Verification Notice:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics designed for preliminary analytical support. Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
                 </p>
               </div>
             </div>
             <div className="shrink-0 self-end md:self-center">
-              <span className="text-[10px] font-mono text-emerald-400/80 bg-black/40 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5">
+              <span className="text-[10px] font-mono text-[#0E6B52] bg-[#F7F9FA] border border-[#D9E1E7] px-2.5 py-1.5 rounded-lg flex items-center gap-1.5">
                 <Lock size={11} />
                 <span>Zero Cloud Liability</span>
               </span>
@@ -2998,29 +2997,29 @@ function PIIRedactorView() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto h-full flex flex-col gap-6">
+    <div className="max-w-6xl mx-auto h-full flex flex-col gap-6 font-ui text-[#0F1B2A]">
       <div>
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
+        <h2 className="text-2xl font-bold text-[#0F1B2A] flex items-center gap-3 tracking-tight">
           <span>Air-Gapped Smart PII Redactor</span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#F0FDF4] text-[#0E6B52] border border-[#BBF7D0] font-bold">
             Confidentiality Safe
           </span>
         </h2>
-        <p className="text-gray-400 text-xs mt-1">
+        <p className="text-[#5A6B7A] text-xs mt-1">
           Irreversibly sanitize Social Security numbers, payment cards, banking info, and confidential names in-memory before sharing documents.
         </p>
       </div>
 
       {/* Rules Selector Bar */}
-      <div className="p-4 rounded-2xl liquid-glass border border-white/5 flex flex-col gap-3">
+      <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Active Detection Rules:</span>
+          <span className="text-xs font-bold text-[#0F1B2A] uppercase tracking-wider">Active Detection Rules:</span>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">Masking Style:</span>
+            <span className="text-xs text-[#5A6B7A]">Masking Style:</span>
             <select
               value={maskStyle}
               onChange={(e) => setMaskStyle(e.target.value)}
-              className="bg-black/60 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-nexus-emerald"
+              className="bg-[#FFFFFF] border border-[#D9E1E7] rounded-lg px-2.5 py-1 text-xs text-[#0F1B2A] outline-none focus:border-[#123B5C]"
             >
               <option value="block">Black Block (█████)</option>
               <option value="label">Descriptive Tag ([REDACTED-SSN])</option>
@@ -3036,9 +3035,13 @@ function PIIRedactorView() {
               <button
                 key={rule.id}
                 onClick={() => toggleRule(rule.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-mono font-medium transition-all flex items-center gap-1.5 ${active ? 'bg-nexus-emerald/20 text-nexus-emerald border border-nexus-emerald/40 shadow-[0_0_10px_rgba(0,255,157,0.1)]' : 'bg-white/5 text-gray-500 border border-white/5 hover:bg-white/10'}`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-mono font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                  active 
+                    ? 'bg-[#123B5C] text-white shadow-xs' 
+                    : 'bg-[#F7F9FA] text-[#5A6B7A] border border-[#D9E1E7] hover:bg-[#E5EAEF]'
+                }`}
               >
-                {active ? <CheckCircle2 size={13} /> : <div className="w-3 h-3 rounded-full border border-gray-600" />}
+                {active ? <CheckCircle2 size={13} className="text-[#86EFAC]" /> : <div className="w-3 h-3 rounded-full border border-[#D9E1E7]" />}
                 {rule.label}
               </button>
             );
@@ -3046,8 +3049,8 @@ function PIIRedactorView() {
         </div>
 
         {/* Custom Keywords Tag Field */}
-        <div className="mt-2 pt-3 border-t border-white/5 flex flex-col gap-2">
-          <label className="text-xs text-gray-400 font-medium">Add Confidential Parties, Client Names, or Custom Keywords:</label>
+        <div className="mt-2 pt-3 border-t border-[#D9E1E7] flex flex-col gap-2">
+          <label className="text-xs text-[#5A6B7A] font-medium">Add Confidential Parties, Client Names, or Custom Keywords:</label>
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -3055,11 +3058,11 @@ function PIIRedactorView() {
               onChange={(e) => setCustomKeywordInput(e.target.value)}
               onKeyDown={handleAddKeyword}
               placeholder="e.g. Acme Corporation, John Doe, Project Falcon (Press Enter)"
-              className="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-nexus-cyan"
+              className="flex-1 bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-4 py-2 text-xs text-[#0F1B2A] outline-none focus:border-[#123B5C]"
             />
             <button
               onClick={handleAddKeyword}
-              className="px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-xl text-xs font-bold text-white transition-all"
+              className="px-4 py-2 bg-[#123B5C] hover:bg-[#0C2A42] text-xs font-bold text-white rounded-xl transition-all cursor-pointer shadow-xs"
             >
               Add Tag
             </button>
@@ -3068,9 +3071,9 @@ function PIIRedactorView() {
           {customKeywords.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-1">
               {customKeywords.map(kw => (
-                <span key={kw} className="px-2.5 py-1 rounded-lg bg-nexus-cyan/15 border border-nexus-cyan/30 text-nexus-cyan text-xs font-mono flex items-center gap-1.5">
+                <span key={kw} className="px-2.5 py-1 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] text-[#123B5C] text-xs font-mono flex items-center gap-1.5 font-bold">
                   {kw}
-                  <button onClick={() => removeKeyword(kw)} className="text-nexus-cyan hover:text-white"><X size={12} /></button>
+                  <button onClick={() => removeKeyword(kw)} className="text-[#123B5C] hover:text-[#B3261E]"><X size={12} /></button>
                 </span>
               ))}
             </div>
@@ -3085,24 +3088,24 @@ function PIIRedactorView() {
           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
           onDrop={handleFileDrop}
-          className={`flex flex-col rounded-2xl liquid-glass-strong border transition-all overflow-hidden relative ${
+          className={`flex flex-col rounded-xl bg-[#FFFFFF] border shadow-xs transition-all overflow-hidden relative ${
             isDragging 
-              ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-2 ring-emerald-400/50' 
-              : 'border-white/5'
+              ? 'border-[#0E6B52] bg-[#F0FDF4] ring-2 ring-[#0E6B52]/30' 
+              : 'border-[#D9E1E7]'
           }`}
         >
           {isDragging && (
-            <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+            <div className="absolute inset-0 z-30 bg-[#FFFFFF]/90 backdrop-blur-xs flex flex-col items-center justify-center pointer-events-none text-[#0E6B52] gap-3">
+              <div className="w-14 h-14 rounded-2xl bg-[#F0FDF4] border border-[#BBF7D0] flex items-center justify-center">
                 <Upload size={28} className="animate-bounce" />
               </div>
-              <p className="text-sm font-bold text-white tracking-wide">Drop Document to Redact Here</p>
-              <p className="text-xs text-zinc-400 font-mono">Supports .docx, .txt, .pdf</p>
+              <p className="text-sm font-bold text-[#0F1B2A] tracking-wide">Drop Document to Redact Here</p>
+              <p className="text-xs text-[#5A6B7A] font-mono">Supports .docx, .txt, .pdf</p>
             </div>
           )}
-          <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-300 font-mono">INPUT TEXT (Drag & Drop or Import)</span>
-            <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300 transition-colors">
+          <div className="p-3 bg-[#F7F9FA] border-b border-[#D9E1E7] flex items-center justify-between">
+            <span className="text-xs font-bold text-[#5A6B7A] font-ui">INPUT TEXT (Drag & Drop or Import)</span>
+            <label className="cursor-pointer bg-[#FFFFFF] hover:bg-[#F7F9FA] border border-[#D9E1E7] px-2.5 py-1 rounded-lg text-xs font-medium text-[#0F1B2A] transition-colors">
               Upload (.docx/.txt/.pdf)
               <input type="file" accept=".txt,.docx,.md,.pdf" className="hidden" onChange={handleFileUpload} />
             </label>
@@ -3111,14 +3114,15 @@ function PIIRedactorView() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste contract or memo text containing confidential information or drop file here to redact..."
-            className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 outline-none resize-none focus:bg-black/60 custom-scrollbar"
+            className="flex-1 bg-[#FFFFFF] p-4 text-xs font-serif leading-relaxed text-[#0F1B2A] outline-none resize-none focus:bg-[#FAFAFA] custom-scrollbar min-h-[300px]"
           />
         </div>
 
         {/* Right: Sanitized Preview */}
-        <div className="flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
-          <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-nexus-emerald font-mono">
+        <div className="flex flex-col rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs overflow-hidden">
+          <div className="p-3 bg-[#F7F9FA] border-b border-[#D9E1E7] flex items-center justify-between">
+            <span className="text-xs font-bold text-[#0E6B52] font-ui flex items-center gap-1.5">
+              <ShieldCheck size={14} className="text-[#0E6B52]" />
               SANITIZED PREVIEW {sanitizedResult ? `(${sanitizedResult.totalRedactions} items redacted)` : ''}
             </span>
             {sanitizedResult && (
@@ -3126,7 +3130,7 @@ function PIIRedactorView() {
                 <button
                   onClick={handleDownloadSanitizedPdf}
                   disabled={isGeneratingPdf}
-                  className="bg-emerald-500 hover:bg-emerald-400 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-50"
+                  className="bg-[#123B5C] hover:bg-[#0C2A42] text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-50 font-ui"
                   title="Export court-grade redacted PDF (Letter format, headers, pagination, ABA Rule 1.6)"
                 >
                   {isGeneratingPdf ? <RefreshCw className="animate-spin" size={13} /> : <FileDown size={13} />}
@@ -3134,7 +3138,7 @@ function PIIRedactorView() {
                 </button>
                 <button
                   onClick={handleDownloadSanitizedTxt}
-                  className="bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                  className="bg-[#FFFFFF] hover:bg-[#F7F9FA] text-[#0F1B2A] border border-[#D9E1E7] px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer font-ui"
                   title="Export raw text"
                 >
                   <Download size={13} /> Text
@@ -3142,13 +3146,13 @@ function PIIRedactorView() {
               </div>
             )}
           </div>
-          <div className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 overflow-y-auto custom-scrollbar select-text">
+          <div className="flex-1 bg-[#FFFFFF] p-4 text-xs font-serif leading-relaxed text-[#0F1B2A] overflow-y-auto custom-scrollbar select-text min-h-[300px]">
             {sanitizedResult ? (
-              <pre className="whitespace-pre-wrap font-mono">{sanitizedResult.sanitizedText}</pre>
+              <pre className="whitespace-pre-wrap font-serif text-[#0F1B2A]">{sanitizedResult.sanitizedText}</pre>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-gray-600 gap-2">
+              <div className="h-full flex flex-col items-center justify-center text-[#5A6B7A] gap-2 py-16">
                 <EyeOff size={32} className="opacity-40" />
-                <p>Click "Sanitize Document" to preview redacted text.</p>
+                <p className="font-ui text-xs">Click "Sanitize Document" to preview redacted text.</p>
               </div>
             )}
           </div>
@@ -3156,10 +3160,10 @@ function PIIRedactorView() {
       </div>
 
       {/* Action Footer */}
-      <div className="flex items-center justify-between p-4 rounded-2xl liquid-glass border border-white/5">
+      <div className="flex items-center justify-between p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
         <div className="flex items-center gap-2">
           {saveStatus && (
-            <span className="text-xs font-mono text-nexus-emerald flex items-center gap-1">
+            <span className="text-xs font-mono text-[#0E6B52] flex items-center gap-1 font-bold">
               <Check size={14} /> {saveStatus}
             </span>
           )}
@@ -3168,7 +3172,7 @@ function PIIRedactorView() {
         <button
           onClick={handleExecuteRedaction}
           disabled={isProcessing || !text.trim()}
-          className="px-8 py-3.5 bg-nexus-emerald text-black font-extrabold text-sm rounded-xl hover:bg-white transition-all flex items-center gap-2 disabled:opacity-40 shadow-[0_0_20px_rgba(0,255,157,0.25)]"
+          className="px-8 py-3.5 bg-[#123B5C] hover:bg-[#0C2A42] text-white font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-40 shadow-xs cursor-pointer font-ui"
         >
           {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <EyeOff size={16} />}
           {isProcessing ? 'Sanitizing...' : 'Sanitize Document (Zero-Latency)'}
@@ -3262,50 +3266,50 @@ function BatesStamperView() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
+    <div className="max-w-5xl mx-auto h-full flex flex-col gap-6 font-ui text-[#0F1B2A]">
       <div>
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
+        <h2 className="text-2xl font-bold text-[#0F1B2A] flex items-center gap-3 tracking-tight">
           <span>Enterprise Bates Stamping & Binder</span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/30">
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#EFF6FF] text-[#123B5C] border border-[#BFDBFE] font-bold">
             pdf-lib Native
           </span>
         </h2>
-        <p className="text-gray-400 text-xs mt-1">
+        <p className="text-[#5A6B7A] text-xs mt-1">
           Sequentially number trial exhibits and production binders locally. High-contrast backing pill ensures readability on dark scans.
         </p>
       </div>
 
       {/* Configuration Grid */}
-      <div className="p-6 rounded-2xl liquid-glass-strong border border-white/5 flex flex-col gap-4">
+      <div className="p-6 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs flex flex-col gap-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Bates Prefix</label>
+            <label className="block text-[11px] font-bold text-[#5A6B7A] mb-1.5 uppercase tracking-wider font-ui">Bates Prefix</label>
             <input
               type="text"
               value={prefix}
               onChange={(e) => setPrefix(e.target.value)}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-nexus-emerald outline-none font-mono"
+              className="w-full bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-3.5 py-2.5 text-sm text-[#0F1B2A] focus:border-[#123B5C] outline-none font-mono"
               placeholder="e.g. PLTF-, CONF-"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Start Number</label>
+            <label className="block text-[11px] font-bold text-[#5A6B7A] mb-1.5 uppercase tracking-wider font-ui">Start Number</label>
             <input
               type="number"
               min="1"
               value={startNum}
               onChange={(e) => setStartNum(Number(e.target.value))}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-nexus-emerald outline-none font-mono"
+              className="w-full bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-3.5 py-2.5 text-sm text-[#0F1B2A] focus:border-[#123B5C] outline-none font-mono"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Digit Padding</label>
+            <label className="block text-[11px] font-bold text-[#5A6B7A] mb-1.5 uppercase tracking-wider font-ui">Digit Padding</label>
             <select
               value={padLength}
               onChange={(e) => setPadLength(Number(e.target.value))}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-nexus-emerald outline-none"
+              className="w-full bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-3.5 py-2.5 text-sm text-[#0F1B2A] focus:border-[#123B5C] outline-none font-ui"
             >
               <option value={3}>3 Digits (e.g. 001)</option>
               <option value={4}>4 Digits (e.g. 0001)</option>
@@ -3315,11 +3319,11 @@ function BatesStamperView() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Stamp Position</label>
+            <label className="block text-[11px] font-bold text-[#5A6B7A] mb-1.5 uppercase tracking-wider font-ui">Stamp Position</label>
             <select
               value={position}
               onChange={(e) => setPosition(e.target.value)}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-nexus-emerald outline-none"
+              className="w-full bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-3.5 py-2.5 text-sm text-[#0F1B2A] focus:border-[#123B5C] outline-none font-ui"
             >
               <option value="bottom-right">Bottom Right (Standard)</option>
               <option value="bottom-center">Bottom Center</option>
@@ -3331,13 +3335,13 @@ function BatesStamperView() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-3 border-t border-white/5 items-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-3 border-t border-[#D9E1E7] items-center">
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Font Size</label>
+            <label className="block text-[11px] font-bold text-[#5A6B7A] mb-1.5 uppercase tracking-wider font-ui">Font Size</label>
             <select
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-nexus-emerald outline-none"
+              className="w-full bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-3.5 py-2 text-xs text-[#0F1B2A] focus:border-[#123B5C] outline-none font-ui"
             >
               <option value={8}>8 pt (Compact)</option>
               <option value={9}>9 pt</option>
@@ -3349,11 +3353,11 @@ function BatesStamperView() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Ink Color</label>
+            <label className="block text-[11px] font-bold text-[#5A6B7A] mb-1.5 uppercase tracking-wider font-ui">Ink Color</label>
             <select
               value={color}
               onChange={(e) => setColor(e.target.value)}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-nexus-emerald outline-none"
+              className="w-full bg-[#FFFFFF] border border-[#D9E1E7] rounded-xl px-3.5 py-2 text-xs text-[#0F1B2A] focus:border-[#123B5C] outline-none font-ui"
             >
               <option value="black">Black Ink</option>
               <option value="red">Red Ink (Urgent/Confidential)</option>
@@ -3363,12 +3367,12 @@ function BatesStamperView() {
           </div>
 
           <div className="flex items-center gap-2 pt-4">
-            <label className="cursor-pointer flex items-center gap-2 text-xs text-gray-300 select-none">
+            <label className="cursor-pointer flex items-center gap-2 text-xs text-[#0F1B2A] select-none font-ui">
               <input
                 type="checkbox"
                 checked={drawPill}
                 onChange={(e) => setDrawPill(e.target.checked)}
-                className="w-4 h-4 accent-nexus-emerald rounded bg-black/60 border-white/10"
+                className="w-4 h-4 accent-[#123B5C] rounded border-[#D9E1E7]"
               />
               <span className="font-medium">Draw High-Contrast Backing Pill</span>
             </label>
@@ -3381,41 +3385,41 @@ function BatesStamperView() {
         onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
         onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
         onDrop={handleFileDrop}
-        className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all relative cursor-pointer ${
+        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-all relative cursor-pointer ${
           isDragging 
-            ? 'border-nexus-emerald bg-nexus-emerald/15 shadow-[0_0_30px_rgba(0,255,157,0.3)] scale-[1.01]' 
-            : 'border-white/10 hover:border-nexus-emerald/40 bg-black/20 hover:bg-black/40'
+            ? 'border-[#123B5C] bg-[#EFF6FF] scale-[1.01]' 
+            : 'border-[#D9E1E7] hover:border-[#123B5C] bg-[#FFFFFF] hover:bg-[#F7F9FA] shadow-xs'
         }`}
       >
-        <Layers className={`mb-3 transition-transform duration-300 ${isDragging ? 'text-nexus-emerald scale-125 animate-bounce' : 'text-nexus-emerald'}`} size={40} />
-        <p className="font-bold text-sm text-white">
+        <Layers className={`mb-3 transition-transform duration-300 ${isDragging ? 'text-[#123B5C] scale-125' : 'text-[#123B5C]'}`} size={40} />
+        <p className="font-bold text-sm text-[#0F1B2A] font-ui">
           {isDragging ? 'Release to Add Exhibit PDFs' : 'Drop Exhibit PDFs Here'}
         </p>
-        <p className="text-xs text-gray-500 mb-4">Click to browse multiple documents for sequential stamping</p>
+        <p className="text-xs text-[#5A6B7A] mb-4 font-ui">Click to browse multiple documents for sequential stamping</p>
         <input type="file" multiple accept=".pdf" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAddFiles} />
-        <span className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-semibold text-gray-300">
+        <span className="px-4 py-2 bg-[#F7F9FA] border border-[#D9E1E7] rounded-xl text-xs font-semibold text-[#0F1B2A] font-ui">
           Browse PDF Files
         </span>
       </div>
 
       {/* Selected Files List & Reorder */}
       {files.length > 0 && (
-        <div className="p-4 rounded-2xl liquid-glass border border-white/5 flex flex-col gap-2">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-gray-300">Stamping Queue ({files.length} documents)</span>
-            <span className="text-[11px] font-mono text-gray-500">Preview: {prefix}{String(startNum).padStart(padLength, '0')}</span>
+        <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs flex flex-col gap-2">
+          <div className="flex items-center justify-between mb-2 font-ui">
+            <span className="text-xs font-bold text-[#0F1B2A]">Stamping Queue ({files.length} documents)</span>
+            <span className="text-[11px] font-mono text-[#5A6B7A]">Preview: {prefix}{String(startNum).padStart(padLength, '0')}</span>
           </div>
 
           <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1">
             {files.map((f, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5 text-xs font-mono">
-                <span className="truncate max-w-[340px] text-gray-200">
+              <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-[#F7F9FA] border border-[#D9E1E7] text-xs font-mono">
+                <span className="truncate max-w-[340px] text-[#0F1B2A]">
                   {idx + 1}. {f.name} ({(f.size / 1024).toFixed(0)} KB)
                 </span>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => moveFile(idx, -1)} disabled={idx === 0} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded disabled:opacity-20 text-[10px]">▲</button>
-                  <button onClick={() => moveFile(idx, 1)} disabled={idx === files.length - 1} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded disabled:opacity-20 text-[10px]">▼</button>
-                  <button onClick={() => removeFile(idx)} className="p-1 text-red-400 hover:text-red-300 ml-2"><X size={14} /></button>
+                  <button onClick={() => moveFile(idx, -1)} disabled={idx === 0} className="px-2 py-1 bg-[#FFFFFF] border border-[#D9E1E7] hover:bg-[#E5EAEF] rounded disabled:opacity-20 text-[10px] cursor-pointer">▲</button>
+                  <button onClick={() => moveFile(idx, 1)} disabled={idx === files.length - 1} className="px-2 py-1 bg-[#FFFFFF] border border-[#D9E1E7] hover:bg-[#E5EAEF] rounded disabled:opacity-20 text-[10px] cursor-pointer">▼</button>
+                  <button onClick={() => removeFile(idx)} className="p-1 text-[#B3261E] hover:text-[#991B1B] ml-2 cursor-pointer"><X size={14} /></button>
                 </div>
               </div>
             ))}
@@ -3424,14 +3428,14 @@ function BatesStamperView() {
       )}
 
       {/* Progress & Submit */}
-      <div className="p-4 rounded-2xl liquid-glass border border-white/5 flex items-center justify-between">
-        <div className="text-xs text-gray-400">
+      <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs flex items-center justify-between font-ui">
+        <div className="text-xs text-[#5A6B7A]">
           {isProcessing ? (
-            <span className="text-nexus-cyan font-mono animate-pulse">
+            <span className="text-[#123B5C] font-mono font-bold animate-pulse">
               Stamping in progress: {progress.current} pages written...
             </span>
           ) : lastBundle ? (
-            <span className="text-nexus-emerald font-mono">
+            <span className="text-[#0E6B52] font-mono font-bold">
               Completed! Range: {lastBundle.batesRange} ({lastBundle.totalPages} pages)
             </span>
           ) : (
@@ -3442,7 +3446,7 @@ function BatesStamperView() {
         <button
           onClick={handleProcessPdfs}
           disabled={isProcessing || files.length === 0}
-          className="px-8 py-3.5 bg-nexus-emerald text-black font-extrabold text-sm rounded-xl hover:bg-white transition-all flex items-center gap-2 disabled:opacity-40 shadow-[0_0_20px_rgba(0,255,157,0.3)]"
+          className="px-8 py-3.5 bg-[#123B5C] hover:bg-[#0C2A42] text-white font-bold text-sm rounded-xl transition-all flex items-center gap-2 disabled:opacity-40 shadow-xs cursor-pointer font-ui"
         >
           {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Download size={16} />}
           {isProcessing ? 'Stamping...' : 'Merge, Stamp & Download Bundle'}
@@ -3493,23 +3497,23 @@ function AuditVaultView({ onSelectDiff }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
-      <div className="flex items-center justify-between border-b border-white/5 pb-4">
+    <div className="max-w-5xl mx-auto h-full flex flex-col gap-6 font-ui text-[#0F1B2A]">
+      <div className="flex items-center justify-between border-b border-[#D9E1E7] pb-4">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
+          <h2 className="text-2xl font-bold text-[#0F1B2A] flex items-center gap-3 tracking-tight">
             <span>Air-Gapped Audit Vault</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30">
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#F0FDF4] text-[#0E6B52] border border-[#BBF7D0] font-bold">
               IndexedDB Storage
             </span>
           </h2>
-          <p className="text-gray-400 text-xs mt-1">
+          <p className="text-[#5A6B7A] text-xs mt-1">
             All audits, diff sessions, and redaction records are retained 100% locally in your browser sandbox. Survives tab refresh without cloud syncing.
           </p>
         </div>
 
         <button
           onClick={handleClearAll}
-          className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 transition-colors flex items-center gap-1.5"
+          className="px-3.5 py-2 bg-[#FDF2F2] hover:bg-[#FEE2E2] border border-[#FCA5A5] rounded-xl text-xs font-bold text-[#B3261E] transition-colors flex items-center gap-1.5 cursor-pointer font-ui"
         >
           <Trash2 size={14} /> Clear Local Vault
         </button>
@@ -3519,50 +3523,50 @@ function AuditVaultView({ onSelectDiff }) {
       <div className="flex gap-2">
         <button
           onClick={() => setActiveSection('diffs')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeSection === 'diffs' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeSection === 'diffs' ? 'bg-[#123B5C] text-white shadow-xs' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#FFFFFF] border border-[#D9E1E7]'}`}
         >
           Saved Audits ({diffSessions.length})
         </button>
         <button
           onClick={() => setActiveSection('redacts')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeSection === 'redacts' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeSection === 'redacts' ? 'bg-[#123B5C] text-white shadow-xs' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#FFFFFF] border border-[#D9E1E7]'}`}
         >
           Redaction Logs ({redactionLogs.length})
         </button>
         <button
           onClick={() => setActiveSection('bates')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeSection === 'bates' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeSection === 'bates' ? 'bg-[#123B5C] text-white shadow-xs' : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#FFFFFF] border border-[#D9E1E7]'}`}
         >
           Bates Jobs ({batesJobs.length})
         </button>
       </div>
 
       {/* Section Content */}
-      <div className="p-4 rounded-2xl liquid-glass-strong border border-white/5 flex-1 overflow-y-auto custom-scrollbar">
+      <div className="p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs flex-1 overflow-y-auto custom-scrollbar">
         {activeSection === 'diffs' && (
           <div className="space-y-3">
             {diffSessions.length === 0 ? (
-              <p className="text-center text-gray-500 text-xs py-8">No saved diff sessions yet. Run an audit to record history.</p>
+              <p className="text-center text-[#5A6B7A] text-xs py-8">No saved diff sessions yet. Run an audit to record history.</p>
             ) : (
               diffSessions.map(session => (
-                <div key={session.id} className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between">
+                <div key={session.id} className="p-4 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] flex items-center justify-between">
                   <div>
-                    <h4 className="text-sm font-bold text-white">{session.title}</h4>
-                    <p className="text-[11px] font-mono text-gray-400 mt-1">
+                    <h4 className="text-sm font-bold text-[#0F1B2A]">{session.title}</h4>
+                    <p className="text-[11px] font-mono text-[#5A6B7A] mt-1">
                       {new Date(session.updatedAt).toLocaleString()} | +{session.stats?.additions || 0} / -{session.stats?.deletions || 0} words | {session.risksCount || 0} liabilities {typeof session.overallRiskScore === 'number' ? `| Score: ${session.overallRiskScore}/100` : ''}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onSelectDiff && onSelectDiff(session)}
-                      className="px-3 py-1.5 text-xs font-semibold text-nexus-emerald hover:text-white bg-nexus-emerald/10 hover:bg-nexus-emerald/20 border border-nexus-emerald/30 rounded-lg flex items-center gap-1.5 transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold text-[#123B5C] hover:bg-[#123B5C] hover:text-white bg-[#EFF6FF] border border-[#BFDBFE] rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
                       title="Open / Restore Session"
                     >
                       <RotateCcw size={13} /> Open Session
                     </button>
                     <button
                       onClick={() => handleDeleteDiff(session.id)}
-                      className="p-1.5 text-red-400 hover:text-red-300 rounded bg-red-500/10"
+                      className="p-1.5 text-[#B3261E] hover:bg-[#FEE2E2] rounded bg-[#FDF2F2] border border-[#FCA5A5] cursor-pointer"
                       title="Delete Session"
                     >
                       <Trash2 size={14} />
@@ -3577,13 +3581,13 @@ function AuditVaultView({ onSelectDiff }) {
         {activeSection === 'redacts' && (
           <div className="space-y-3">
             {redactionLogs.length === 0 ? (
-              <p className="text-center text-gray-500 text-xs py-8">No redaction logs recorded.</p>
+              <p className="text-center text-[#5A6B7A] text-xs py-8">No redaction logs recorded.</p>
             ) : (
               redactionLogs.map(log => (
-                <div key={log.id} className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between">
+                <div key={log.id} className="p-4 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] flex items-center justify-between">
                   <div>
-                    <h4 className="text-sm font-bold text-white">{log.title}</h4>
-                    <p className="text-[11px] font-mono text-gray-400 mt-1">
+                    <h4 className="text-sm font-bold text-[#0F1B2A]">{log.title}</h4>
+                    <p className="text-[11px] font-mono text-[#5A6B7A] mt-1">
                       {new Date(log.createdAt).toLocaleString()} | Total Redactions: {log.totalRedactions} items
                     </p>
                   </div>
@@ -3596,13 +3600,13 @@ function AuditVaultView({ onSelectDiff }) {
         {activeSection === 'bates' && (
           <div className="space-y-3">
             {batesJobs.length === 0 ? (
-              <p className="text-center text-gray-500 text-xs py-8">No Bates stamping jobs recorded.</p>
+              <p className="text-center text-[#5A6B7A] text-xs py-8">No Bates stamping jobs recorded.</p>
             ) : (
               batesJobs.map(job => (
-                <div key={job.id} className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between">
+                <div key={job.id} className="p-4 rounded-xl bg-[#F7F9FA] border border-[#D9E1E7] flex items-center justify-between">
                   <div>
-                    <h4 className="text-sm font-bold text-white">Range: {job.batesRange}</h4>
-                    <p className="text-[11px] font-mono text-gray-400 mt-1">
+                    <h4 className="text-sm font-bold text-[#0F1B2A]">Range: {job.batesRange}</h4>
+                    <p className="text-[11px] font-mono text-[#5A6B7A] mt-1">
                       {new Date(job.createdAt).toLocaleString()} | {job.totalPages} pages stamped
                     </p>
                   </div>
