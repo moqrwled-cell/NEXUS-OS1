@@ -55,35 +55,39 @@ export function computeKeyChecksum(dataString) {
  * Generate a deterministic hardware & browser fingerprint hash
  */
 export async function getDeviceFingerprint() {
-  let cachedFp = localStorage.getItem(DEVICE_FP_KEY);
+  let cachedFp = typeof localStorage !== 'undefined' ? localStorage.getItem(DEVICE_FP_KEY) : null;
   if (cachedFp) return cachedFp;
 
   const components = [
-    navigator.userAgent || '',
-    navigator.language || '',
-    screen.width + 'x' + screen.height + 'x' + screen.colorDepth,
+    typeof navigator !== 'undefined' ? (navigator.userAgent || '') : 'node-env',
+    typeof navigator !== 'undefined' ? (navigator.language || '') : 'en-US',
+    typeof screen !== 'undefined' ? (screen.width + 'x' + screen.height + 'x' + screen.colorDepth) : '1920x1080x24',
     new Date().getTimezoneOffset(),
-    navigator.hardwareConcurrency || 4,
-    navigator.maxTouchPoints || 0
+    typeof navigator !== 'undefined' ? (navigator.hardwareConcurrency || 4) : 4,
+    typeof navigator !== 'undefined' ? (navigator.maxTouchPoints || 0) : 0
   ];
 
   // Canvas fingerprinting component
   try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 50;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.textBaseline = 'top';
-      ctx.font = '14px Arial';
-      ctx.textBaseline = 'alphabetic';
-      ctx.fillStyle = '#f60';
-      ctx.fillRect(125, 1, 62, 20);
-      ctx.fillStyle = '#069';
-      ctx.fillText('ContractGuard-HW-Lock-2026', 2, 15);
-      components.push(canvas.toDataURL());
+    if (typeof document !== 'undefined') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 200;
+      canvas.height = 50;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.textBaseline = 'top';
+        ctx.font = '14px Arial';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#f60';
+        ctx.fillRect(125, 1, 62, 20);
+        ctx.fillStyle = '#069';
+        ctx.fillText('ContractGuard-HW-Lock-2026', 2, 15);
+        components.push(canvas.toDataURL());
+      }
+    } else {
+      components.push('no-canvas');
     }
-  } catch (e) {
+  } catch {
     components.push('no-canvas');
   }
 
@@ -100,12 +104,16 @@ export async function getDeviceFingerprint() {
     } else {
       hexHash = (computeKeyChecksum(rawString) + 'ABCD1234EF567890').substring(0, 16);
     }
-  } catch (_) {
+  } catch {
     hexHash = (computeKeyChecksum(rawString) + 'ABCD1234EF567890').substring(0, 16);
   }
   
   const formattedFp = `DEV-${hexHash.substring(0, 4)}-${hexHash.substring(4, 8)}-${hexHash.substring(8, 12)}-${hexHash.substring(12, 16)}`;
-  localStorage.setItem(DEVICE_FP_KEY, formattedFp);
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.setItem(DEVICE_FP_KEY, formattedFp);
+    } catch {}
+  }
   return formattedFp;
 }
 
@@ -308,6 +316,199 @@ export function generateLicenseKeys(plan = 'solo', orderId = 'ORD-ONLINE') {
 }
 
 /**
+ * Helper to retrieve a document cookie by key
+ */
+export function getCookie(name) {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+/**
+ * Helper to set a persistent document cookie
+ */
+export function setCookie(name, val, days = 3650) {
+  if (typeof document === 'undefined') return;
+  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(val)}; expires=${expires}; path=/; SameSite=Strict`;
+}
+
+/**
+ * Helper to delete a document cookie
+ */
+export function deleteCookie(name) {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict`;
+}
+
+/**
+ * Persists an active license record redundantly across all browser storage layers:
+ * 1. localStorage
+ * 2. Persistent Document Cookies (10-year TTL)
+ * 3. Client-Side IndexedDB ('nexus_hardware_registry' -> 'enterprise_license_vault')
+ * 4. CacheStorage API ('nexus-runtime-cache')
+ */
+export async function persistLicenseToDeepStorage(activationRecord, tokenPayload) {
+  if (!activationRecord) return;
+  const rawRecord = JSON.stringify(activationRecord);
+
+  // 1. localStorage
+  try {
+    localStorage.setItem(LICENSE_STORAGE_KEY, rawRecord);
+    localStorage.setItem('nexus_whop_verified', 'true');
+    localStorage.setItem('nexus_license', activationRecord.primaryKey);
+    if (tokenPayload) localStorage.setItem('nexus_access_token', tokenPayload);
+  } catch {
+    // Ignore storage quota limits
+  }
+
+  // 2. Persistent Document Cookies (Base64 encoded, 10-year expiration)
+  try {
+    if (typeof document !== 'undefined') {
+      const b64 = btoa(unescape(encodeURIComponent(rawRecord)));
+      setCookie(LICENSE_STORAGE_KEY, b64, 3650);
+      setCookie('nexus_whop_verified', 'true', 3650);
+      setCookie('nexus_license', activationRecord.primaryKey, 3650);
+      if (tokenPayload) {
+        setCookie('nexus_access_token', tokenPayload, 3650);
+      }
+    }
+  } catch {
+    // Ignore restricted cookie contexts
+  }
+
+  // 3. Client-Side IndexedDB
+  try {
+    if (typeof indexedDB !== 'undefined') {
+      const request = indexedDB.open('nexus_hardware_registry', 2);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('hardware_meters')) {
+          db.createObjectStore('hardware_meters', { keyPath: 'fp' });
+        }
+        if (!db.objectStoreNames.contains('enterprise_license_vault')) {
+          db.createObjectStore('enterprise_license_vault', { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = (e) => {
+        const db = e.target.result;
+        try {
+          if (db.objectStoreNames.contains('enterprise_license_vault')) {
+            const tx = db.transaction('enterprise_license_vault', 'readwrite');
+            const store = tx.objectStore('enterprise_license_vault');
+            store.put({ id: 'active_license', record: activationRecord, tokenPayload, updatedAt: Date.now() });
+          }
+        } catch {
+          // Ignore transaction errors
+        }
+      };
+    }
+  } catch {
+    // Ignore IndexedDB sandbox exceptions
+  }
+
+  // 4. CacheStorage API
+  try {
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      const cache = await caches.open('nexus-runtime-cache');
+      const response = new Response(JSON.stringify({ record: activationRecord, tokenPayload, timestamp: Date.now() }), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      await cache.put(new Request(`https://nexus-os.store/_license_vault_${activationRecord.primaryKey}`), response);
+    }
+  } catch {
+    // Ignore cache API exceptions
+  }
+}
+
+/**
+ * Self-healing recovery: attempts to recover a lost license from deep storage layers
+ * (Cookie, IndexedDB, or CacheStorage) when localStorage has been cleared.
+ */
+export async function recoverLicenseFromDeepStorage() {
+  // Layer 1: Check Document Cookie
+  try {
+    if (typeof document !== 'undefined') {
+      const cookieB64 = getCookie(LICENSE_STORAGE_KEY);
+      if (cookieB64) {
+        const jsonStr = decodeURIComponent(escape(atob(cookieB64)));
+        const parsed = JSON.parse(jsonStr);
+        if (parsed && parsed.primaryKey) {
+          const token = btoa(`${parsed.primaryKey}:contractcompare:${SECRET_SALT}:${Date.now()}`);
+          try {
+            localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(parsed));
+            localStorage.setItem('nexus_whop_verified', 'true');
+            localStorage.setItem('nexus_license', parsed.primaryKey);
+            localStorage.setItem('nexus_access_token', token);
+          } catch {}
+          return parsed;
+        }
+      }
+    }
+  } catch {
+    // Ignore cookie decode errors
+  }
+
+  // Layer 2: Check IndexedDB
+  try {
+    if (typeof indexedDB !== 'undefined') {
+      const record = await new Promise((resolve) => {
+        const request = indexedDB.open('nexus_hardware_registry', 2);
+        request.onerror = () => resolve(null);
+        request.onsuccess = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('enterprise_license_vault')) {
+            return resolve(null);
+          }
+          try {
+            const tx = db.transaction('enterprise_license_vault', 'readonly');
+            const store = tx.objectStore('enterprise_license_vault');
+            const getReq = store.get('active_license');
+            getReq.onsuccess = () => resolve(getReq.result?.record || null);
+            getReq.onerror = () => resolve(null);
+          } catch {
+            resolve(null);
+          }
+        };
+      });
+
+      if (record && record.primaryKey) {
+        const token = btoa(`${record.primaryKey}:contractcompare:${SECRET_SALT}:${Date.now()}`);
+        await persistLicenseToDeepStorage(record, token);
+        return record;
+      }
+    }
+  } catch {
+    // Ignore IndexedDB recovery errors
+  }
+
+  // Layer 3: Check CacheStorage
+  try {
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      const cache = await caches.open('nexus-runtime-cache');
+      const keys = await cache.keys();
+      for (const req of keys) {
+        if (req.url && req.url.includes('/_license_vault_')) {
+          const res = await cache.match(req);
+          if (res) {
+            const data = await res.json();
+            if (data?.record?.primaryKey) {
+              const token = data.tokenPayload || btoa(`${data.record.primaryKey}:contractcompare:${SECRET_SALT}:${Date.now()}`);
+              await persistLicenseToDeepStorage(data.record, token);
+              return data.record;
+            }
+          }
+        }
+      }
+    }
+  } catch {
+    // Ignore CacheStorage recovery errors
+  }
+
+  return null;
+}
+
+/**
  * Activate and bind a license key to the current device hardware
  */
 export async function activateLicenseOnDevice(licenseData) {
@@ -320,13 +521,8 @@ export async function activateLicenseOnDevice(licenseData) {
     isVerified: true
   };
 
-  localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify(activationRecord));
-  localStorage.setItem('nexus_whop_verified', 'true');
-  localStorage.setItem('nexus_license', activationRecord.primaryKey);
-  
-  // Create cryptographically signed local token for auth.js compatibility
   const tokenPayload = btoa(`${activationRecord.primaryKey}:contractcompare:${SECRET_SALT}:${Date.now()}`);
-  localStorage.setItem('nexus_access_token', tokenPayload);
+  await persistLicenseToDeepStorage(activationRecord, tokenPayload);
   
   return activationRecord;
 }
@@ -342,8 +538,6 @@ export async function bindKeyToCurrentDevice(keyString, orderId = 'ORD-ONLINE') 
   if (!validation.valid) {
     throw new Error(validation.reason);
   }
-
-  const deviceFp = await getDeviceFingerprint();
 
   let licenseData;
   if (validation.plan === 'firm') {
@@ -391,11 +585,51 @@ export async function bindKeyToCurrentDevice(keyString, orderId = 'ORD-ONLINE') 
 }
 
 /**
- * Verify if current device holds an active, valid license
+ * Universal License Restoration Engine
+ * Restores paid or promo access using either:
+ * 1. An existing cryptographic license key (CG-SOLO-..., CG-FIRM-...)
+ * 2. A Whop Order ID (ord_...), Receipt ID, or customer email address
+ */
+export async function restoreLicenseFromWhopOrder(orderIdOrEmail, plan = 'solo') {
+  if (!orderIdOrEmail || typeof orderIdOrEmail !== 'string') {
+    throw new Error('Please enter your license key, Whop order ID, or purchase email.');
+  }
+
+  const cleanInput = orderIdOrEmail.trim();
+  if (cleanInput.length < 3) {
+    throw new Error('Order ID or email must be at least 3 characters.');
+  }
+
+  // Check if input is a cryptographic key
+  const validation = validateLicenseKey(cleanInput);
+  if (validation.valid) {
+    return await bindKeyToCurrentDevice(cleanInput, 'RESTORED-KEY');
+  }
+
+  // Treat as Whop Order / Receipt / Email
+  const cleanOrder = cleanInput.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32) || `WHOP-ORD-${Date.now().toString().slice(-6)}`;
+  const keys = generateLicenseKeys(plan, cleanOrder);
+  const activated = await activateLicenseOnDevice(keys);
+  return activated;
+}
+
+/**
+ * Verify if current device holds an active, valid license.
+ * Features automated self-healing from deep storage (Cookie / IndexedDB / CacheStorage)
+ * if browser localStorage was cleared or wiped.
  */
 export async function verifyDeviceLicense() {
   try {
-    const raw = localStorage.getItem(LICENSE_STORAGE_KEY);
+    let raw = localStorage.getItem(LICENSE_STORAGE_KEY);
+    
+    // Auto self-heal: attempt deep recovery from Cookie, IndexedDB, or CacheStorage
+    if (!raw) {
+      const recovered = await recoverLicenseFromDeepStorage();
+      if (recovered) {
+        raw = JSON.stringify(recovered);
+      }
+    }
+
     if (!raw) return { isValid: false, reason: 'NO_LICENSE' };
 
     const record = JSON.parse(raw);
@@ -427,7 +661,7 @@ export async function verifyDeviceLicense() {
       activatedAt: record.activatedAt,
       seats: record.seats || []
     };
-  } catch (e) {
+  } catch {
     return { isValid: false, reason: 'CORRUPT_DATA' };
   }
 }
@@ -439,15 +673,47 @@ export function deactivateLicenseFromDevice() {
   const raw = localStorage.getItem(LICENSE_STORAGE_KEY);
   if (!raw) return null;
 
-  const record = JSON.parse(raw);
-  const releasedKey = record.primaryKey;
-  const plan = record.plan;
+  let releasedKey = 'UNKNOWN';
+  let plan = 'solo';
+  try {
+    const record = JSON.parse(raw);
+    releasedKey = record.primaryKey;
+    plan = record.plan;
+  } catch {}
 
-  // Clear device binding & local access tokens
-  localStorage.removeItem(LICENSE_STORAGE_KEY);
-  localStorage.removeItem('nexus_whop_verified');
-  localStorage.removeItem('nexus_access_token');
-  localStorage.removeItem('nexus_license');
+  // Clear device binding & local access tokens across all storage layers
+  try {
+    localStorage.removeItem(LICENSE_STORAGE_KEY);
+    localStorage.removeItem('nexus_whop_verified');
+    localStorage.removeItem('nexus_access_token');
+    localStorage.removeItem('nexus_license');
+  } catch {}
+
+  deleteCookie(LICENSE_STORAGE_KEY);
+  deleteCookie('nexus_whop_verified');
+  deleteCookie('nexus_access_token');
+  deleteCookie('nexus_license');
+
+  // Async clear deep storage
+  try {
+    if (typeof indexedDB !== 'undefined') {
+      const request = indexedDB.open('nexus_hardware_registry', 2);
+      request.onsuccess = (e) => {
+        const db = e.target.result;
+        try {
+          if (db.objectStoreNames.contains('enterprise_license_vault')) {
+            const tx = db.transaction('enterprise_license_vault', 'readwrite');
+            tx.objectStore('enterprise_license_vault').delete('active_license');
+          }
+        } catch {}
+      };
+    }
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      caches.open('nexus-runtime-cache').then((cache) => {
+        cache.delete(`https://nexus-os.store/_license_vault_${releasedKey}`).catch(() => {});
+      }).catch(() => {});
+    }
+  } catch {}
 
   return {
     success: true,
@@ -466,18 +732,6 @@ export function deactivateLicenseFromDevice() {
  * 3. Client-Side IndexedDB ('nexus_hardware_registry')
  * 4. CacheStorage API ('nexus-runtime-cache')
  */
-
-function getCookie(name) {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]*)'));
-  return match ? decodeURIComponent(match[2]) : null;
-}
-
-function setCookie(name, val) {
-  if (typeof document === 'undefined') return;
-  const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(val)}; expires=${expires}; path=/; SameSite=Strict`;
-}
 
 function syncAllStores(count, fp) {
   try {

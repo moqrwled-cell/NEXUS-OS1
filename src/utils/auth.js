@@ -97,7 +97,23 @@ export const grantToolAccess = (licenseKey, toolName = 'contractcompare') => {
 export const verifyToolAccess = (toolName = 'contractcompare') => {
   // Check ContractGuard hardware-locked license record first
   try {
-    const rawLic = localStorage.getItem('contractguard_active_license');
+    let rawLic = typeof localStorage !== 'undefined' ? localStorage.getItem('contractguard_active_license') : null;
+
+    // Auto-heal from persistent cookie if localStorage was cleared
+    if (!rawLic && typeof document !== 'undefined') {
+      const match = document.cookie.match(/(^|;\s*)contractguard_active_license=([^;]*)/);
+      if (match && match[2]) {
+        try {
+          const decoded = decodeURIComponent(escape(atob(decodeURIComponent(match[2]))));
+          rawLic = decoded;
+          localStorage.setItem('contractguard_active_license', decoded);
+          localStorage.setItem('nexus_whop_verified', 'true');
+        } catch {
+          // Ignore decode errors
+        }
+      }
+    }
+
     if (rawLic) {
       const parsed = JSON.parse(rawLic);
       if (parsed && parsed.isVerified && parsed.boundDeviceId && parsed.primaryKey) {
@@ -109,12 +125,26 @@ export const verifyToolAccess = (toolName = 'contractcompare') => {
         }
       }
     }
-  } catch (e) {
+  } catch {
     // Continue fallback check
   }
 
-  const token = localStorage.getItem('nexus_access_token');
-  const storedKey = (localStorage.getItem('nexus_license') || '').toUpperCase().trim();
+  let token = typeof localStorage !== 'undefined' ? localStorage.getItem('nexus_access_token') : null;
+  let storedKey = (typeof localStorage !== 'undefined' ? (localStorage.getItem('nexus_license') || '') : '').toUpperCase().trim();
+
+  // Auto-heal token and key from persistent cookie if missing in localStorage
+  if ((!token || !storedKey) && typeof document !== 'undefined') {
+    const tokenMatch = document.cookie.match(/(^|;\s*)nexus_access_token=([^;]*)/);
+    const keyMatch = document.cookie.match(/(^|;\s*)nexus_license=([^;]*)/);
+    if (tokenMatch && tokenMatch[2]) {
+      token = decodeURIComponent(tokenMatch[2]);
+      try { localStorage.setItem('nexus_access_token', token); } catch { /* ignore */ }
+    }
+    if (keyMatch && keyMatch[2]) {
+      storedKey = decodeURIComponent(keyMatch[2]).toUpperCase().trim();
+      try { localStorage.setItem('nexus_license', storedKey); } catch { /* ignore */ }
+    }
+  }
 
   // Block any prohibited backdoor keys
   if (PROHIBITED_KEYS.has(storedKey) || PROHIBITED_KEYS.has(storedKey.toLowerCase())) {

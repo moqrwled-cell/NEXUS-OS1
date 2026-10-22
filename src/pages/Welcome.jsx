@@ -619,6 +619,24 @@ export default function Welcome() {
               </div>
             </div>
 
+            {/* Backup & Persistence Notice */}
+            <div className="p-3.5 rounded-xl bg-cyan-500/[0.04] border border-cyan-500/20 text-xs text-zinc-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck size={18} className="text-cyan-400 shrink-0" />
+                <span>
+                  <strong className="text-white">Multi-Store Persistent Protection:</strong> Your license is preserved across deep browser storage. Save your backup text file to restore anytime if you ever clear browser history.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleDownloadBundle}
+                className="px-3 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-xs transition-colors shrink-0 flex items-center gap-1 cursor-pointer"
+              >
+                <Download size={12} />
+                <span>Save Backup (.txt)</span>
+              </button>
+            </div>
+
             {/* SEAMLESS 1-CLICK LAUNCH BUTTON (Requirement 5) */}
             <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-zinc-950 to-[#08121A] border border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.15)] flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
               <div>

@@ -18,7 +18,8 @@ import {
   Download, 
   CheckCircle, 
   XCircle,
-  FileDown
+  FileDown,
+  Key
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import Nexus3DNode from './components/Nexus3DNode';
@@ -142,7 +143,18 @@ Article I (Definitions) of the Agreement is hereby supplemented by inserting the
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Restore License for existing buyers */}
+          <button 
+            type="button"
+            onClick={() => navigate('/login')}
+            className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-colors cursor-pointer font-body"
+            title="Restore an existing license using your key or Whop order ID"
+          >
+            <Key size={12} className="text-nexus-emerald" />
+            <span>Restore License</span>
+          </button>
+
           {/* Interactive Demo CTA */}
           <button 
             onClick={() => navigate('/demo')}

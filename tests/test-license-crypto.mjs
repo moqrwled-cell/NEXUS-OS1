@@ -1,4 +1,4 @@
-import { validateLicenseKey, generateLicenseKeys } from '../src/utils/licenseManager.js';
+import { validateLicenseKey, generateLicenseKeys, restoreLicenseFromWhopOrder } from '../src/utils/licenseManager.js';
 import { validateEnterpriseKey } from '../src/utils/auth.js';
 
 console.log('========================================================');
@@ -78,6 +78,19 @@ const flippedChar = charToFlip[0] === 'A' ? 'B' : 'A';
 const tamperedBodyKey = parts.slice(0, 3).join('-') + '-' + flippedChar + charToFlip.slice(1) + '-' + parts.slice(4).join('-');
 const resAttack6 = validateLicenseKey(tamperedBodyKey);
 assert(resAttack6.valid === false, 'Attack 6: Single character bit-flip in body is BLOCKED');
+
+// 4. Universal License Restoration from Whop Order / Email
+console.log('\n[TEST GROUP 4] Universal Whop Order Restoration & Recovery');
+const restoredByOrder = await restoreLicenseFromWhopOrder('ord_test_884129', 'solo');
+assert(restoredByOrder && restoredByOrder.isVerified === true, 'Restoration via Whop order ID returns verified record');
+assert(validateLicenseKey(restoredByOrder.primaryKey).valid === true, 'Restored key from Whop order is cryptographically valid');
+
+const restoredByEmail = await restoreLicenseFromWhopOrder('managing_partner@apexlegal.com', 'firm');
+assert(restoredByEmail && restoredByEmail.plan === 'firm', 'Restoration via email returns valid firm license');
+assert(restoredByEmail.seats.length === 5, 'Restored firm license generates 5 distinct seat keys');
+
+const restoredByKey = await restoreLicenseFromWhopOrder(soloBundle.primaryKey, 'solo');
+assert(restoredByKey.primaryKey === soloBundle.primaryKey, 'Restoration via direct key rebinds original key');
 
 console.log('\n========================================================');
 console.log(`TOTAL TESTS: ${passCount + failCount} | PASSED: ${passCount} | FAILED: ${failCount}`);

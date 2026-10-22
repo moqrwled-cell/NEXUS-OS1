@@ -7,7 +7,7 @@ import {
   AlertTriangle, AlertCircle, X, Download, HardDriveDownload,
   Users, User, Briefcase, FileCheck, Check, Sparkles, ExternalLink,
   ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play,
-  Copy
+  Copy, Key
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
 import { isImageFile, recognizeImage } from '../utils/ocrEngine';
@@ -2100,6 +2100,22 @@ export default function ContractGuardDemo() {
                       <span>ABA Rule 1.6 Safe</span>
                     </span>
                   </div>
+                </div>
+
+                {/* Already Purchased / Restore License */}
+                <div className="pt-2 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-400 gap-2">
+                  <span className="text-[11px] text-zinc-500 font-mono">Already purchased on Whop or cleared browser data?</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowUpgradeModal(false);
+                      navigate('/login?redirect=contractcompare');
+                    }}
+                    className="text-xs font-mono text-emerald-400 hover:text-emerald-300 underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Key size={12} />
+                    <span>Restore Workstation License</span>
+                  </button>
                 </div>
               </div>
             </motion.div>
