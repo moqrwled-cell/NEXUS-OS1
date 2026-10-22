@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  BookOpen, Copy, Check, Download, FileDown, 
+  BookOpen, Copy, Check, FileDown, 
   Sparkles, ArrowRight, RefreshCw, CheckCircle2,
-  AlertTriangle, ShieldCheck, Scale, FileText,
+  ShieldCheck, Scale, FileText,
   ChevronDown, ChevronUp, SlidersHorizontal, Lock
 } from 'lucide-react';
 import { LEGAL_TEMPLATES, TEMPLATE_CATEGORIES, compileTemplateText } from '../utils/legalTemplatesVault';
@@ -173,19 +173,6 @@ export default function LegalTemplatesView({
     } finally {
       setIsGeneratingDocx(false);
     }
-  };
-
-  const handleDownloadTxt = () => {
-    if (!compiledText || !selectedTemplate) return;
-    const blob = new Blob([compiledText], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${selectedTemplate.id}_${Date.now()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const currentStatute = selectedTemplate ? STATUTORY_GUIDANCE_MAP[selectedTemplate.id] : null;
@@ -409,10 +396,11 @@ export default function LegalTemplatesView({
                 <span>Standard AmLaw 100 model. Download as Word (.docx) to customize freely with counsel before execution.</span>
               </div>
               <button
-                onClick={handleDownloadDocx}
-                className="text-cyan-400 hover:text-cyan-300 text-xs font-mono font-bold flex items-center gap-1 shrink-0"
+                onClick={() => isDemoMode ? (onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Template Word DOCX export requires an active license.')) : handleDownloadDocx()}
+                className="text-cyan-400 hover:text-cyan-300 text-xs font-mono font-bold flex items-center gap-1 shrink-0 cursor-pointer"
               >
-                <span>Export .docx</span>
+                {isDemoMode && <Lock size={12} className="text-amber-400" />}
+                <span>{isDemoMode ? 'Unlock .docx' : 'Export .docx'}</span>
                 <ArrowRight size={12} />
               </button>
             </div>
@@ -630,9 +618,14 @@ export default function LegalTemplatesView({
                 </span>
                 <button
                   onClick={() => handleOpenTemplate(tpl)}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm ${
+                    isDemoMode
+                      ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700'
+                      : 'bg-emerald-500 hover:bg-emerald-400 text-black'
+                  }`}
                 >
-                  <span>Customize & Generate</span>
+                  {isDemoMode && <Lock size={12} className="text-amber-400" />}
+                  <span>{isDemoMode ? 'Preview Agreement' : 'Customize & Generate'}</span>
                   <ArrowRight size={13} />
                 </button>
               </div>

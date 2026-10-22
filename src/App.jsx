@@ -14,15 +14,8 @@ import {
   FileCheck,
   Layers,
   FolderLock,
-  Scale,
-  ShieldAlert,
   ShieldCheck,
-  Cpu,
-  FileCode,
-  SlidersHorizontal,
-  XCircle,
-  CheckCircle,
-  FileText
+  CheckCircle
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
