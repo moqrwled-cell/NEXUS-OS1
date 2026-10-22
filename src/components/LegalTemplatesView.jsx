@@ -91,24 +91,24 @@ export default function LegalTemplatesView({ onSendToAudit }) {
   // If a template is actively selected: render Split-Screen Quick-Fill Editor
   if (selectedTemplate) {
     return (
-      <div className="max-w-7xl mx-auto h-full flex flex-col gap-4 font-ui text-[#0F1B2A]">
+      <div className="max-w-7xl mx-auto h-full flex flex-col gap-4">
         {/* Top Header & Actions Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl liquid-glass border border-white/5">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSelectedTemplateId(null)}
-              className="px-3.5 py-1.5 rounded-xl bg-[#F7F9FA] hover:bg-[#E5EAEF] border border-[#D9E1E7] text-xs font-bold text-[#0F1B2A] transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               ← Back to Catalog
             </button>
             <div>
-              <h3 className="text-base font-bold text-[#0F1B2A] flex items-center gap-2">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <span>{selectedTemplate.title}</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFF6FF] text-[#123B5C] border border-[#BFDBFE] font-bold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                   AmLaw 100 Standard
                 </span>
               </h3>
-              <p className="text-xs text-[#5A6B7A] mt-0.5">
+              <p className="text-xs text-zinc-400 font-sans mt-0.5">
                 {selectedTemplate.jurisdiction}
               </p>
             </div>
@@ -117,16 +117,16 @@ export default function LegalTemplatesView({ onSendToAudit }) {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={handleCopyText}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#FFFFFF] hover:bg-[#F7F9FA] text-[#0F1B2A] border border-[#D9E1E7] transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-200 border border-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              {copiedContract ? <Check size={14} className="text-[#0E6B52]" /> : <Copy size={14} />}
+              {copiedContract ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
               <span>{copiedContract ? 'Copied to Clipboard! ✓' : 'Copy Full Agreement'}</span>
             </button>
 
             <button
               onClick={handleDownloadPdf}
               disabled={isGeneratingPdf}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#123B5C] hover:bg-[#0C2A42] text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
             >
               {isGeneratingPdf ? <RefreshCw className="animate-spin" size={14} /> : <FileDown size={14} />}
               <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Legal PDF'}</span>
@@ -134,7 +134,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
 
             <button
               onClick={handleDownloadTxt}
-              className="px-3 py-2 rounded-xl text-xs font-bold bg-[#FFFFFF] hover:bg-[#F7F9FA] text-[#0F1B2A] border border-[#D9E1E7] transition-all cursor-pointer shadow-xs"
+              className="px-3 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 transition-all cursor-pointer"
               title="Download Plain Text"
             >
               <Download size={14} />
@@ -142,7 +142,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
 
             <button
               onClick={() => onSendToAudit && onSendToAudit(compiledText, selectedTemplate.title)}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-[#0E6B52] hover:bg-[#0A4D3B] text-white transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-90 text-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
             >
               <Sparkles size={14} />
               <span>Audit in ContractGuard →</span>
@@ -153,15 +153,15 @@ export default function LegalTemplatesView({ onSendToAudit }) {
         {/* Split Screen Workspace */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[580px]">
           {/* Left Column: Quick-Fill Variables Form */}
-          <div className="lg:col-span-5 flex flex-col rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] p-4 overflow-y-auto custom-scrollbar shadow-xs">
-            <div className="mb-4 pb-3 border-b border-[#D9E1E7]">
-              <h4 className="text-sm font-bold text-[#0F1B2A] flex items-center justify-between">
+          <div className="lg:col-span-5 flex flex-col rounded-2xl liquid-glass-strong border border-white/5 p-4 overflow-y-auto custom-scrollbar">
+            <div className="mb-4 pb-3 border-b border-zinc-800">
+              <h4 className="text-sm font-bold text-white flex items-center justify-between">
                 <span>Contract Variables (Quick-Fill)</span>
-                <span className="text-[11px] font-mono text-[#5A6B7A]">
+                <span className="text-[11px] font-mono text-zinc-400">
                   {selectedTemplate.variables?.length || 0} Fields
                 </span>
               </h4>
-              <p className="text-xs text-[#5A6B7A] mt-1">
+              <p className="text-xs text-zinc-400 mt-1">
                 Edit variables below to update the agreement in real-time.
               </p>
             </div>
@@ -169,7 +169,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             <div className="space-y-3.5 flex-1 pr-1">
               {(selectedTemplate.variables || []).map(v => (
                 <div key={v.key} className="flex flex-col gap-1">
-                  <label className="text-[11px] font-mono uppercase font-semibold text-[#5A6B7A]">
+                  <label className="text-[11px] font-mono uppercase font-semibold text-zinc-400">
                     {v.label}
                   </label>
                   <input
@@ -177,27 +177,27 @@ export default function LegalTemplatesView({ onSendToAudit }) {
                     value={templateValues[v.key] ?? ''}
                     onChange={(e) => handleVariableChange(v.key, e.target.value)}
                     placeholder={v.defaultVal}
-                    className="w-full bg-[#F7F9FA] border border-[#D9E1E7] focus:border-[#123B5C] focus:bg-[#FFFFFF] rounded-xl px-3 py-2 text-xs font-mono text-[#0F1B2A] placeholder-[#5A6B7A] outline-none transition-all"
+                    className="w-full bg-black/60 border border-zinc-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-zinc-600 outline-none transition-all"
                   />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right Column: Live Compiled Legal Document Preview (Georgia/Source Serif 4 on white paper) */}
-          <div className="lg:col-span-7 flex flex-col rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs overflow-hidden">
-            <div className="p-3 bg-[#F7F9FA] border-b border-[#D9E1E7] flex items-center justify-between">
-              <span className="text-xs font-bold text-[#0E6B52] font-ui flex items-center gap-1.5">
-                <CheckCircle2 size={13} className="text-[#0E6B52]" />
+          {/* Right Column: Live Compiled Legal Document Preview */}
+          <div className="lg:col-span-7 flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
+            <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
+              <span className="text-xs font-bold text-emerald-400 font-mono flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-emerald-400" />
                 COMPILED CONTRACT PREVIEW (READY FOR EXECUTION)
               </span>
-              <span className="text-[11px] font-mono text-[#5A6B7A]">
+              <span className="text-[11px] font-mono text-zinc-400">
                 {compiledText.split(/\s+/).filter(Boolean).length} Words
               </span>
             </div>
 
-            <div className="flex-1 bg-[#FFFFFF] p-6 text-sm font-serif leading-relaxed text-[#0F1B2A] overflow-y-auto custom-scrollbar select-text">
-              <pre className="whitespace-pre-wrap font-serif text-[13px] leading-relaxed text-[#0F1B2A]">
+            <div className="flex-1 bg-black/50 p-6 text-sm font-legal leading-relaxed text-zinc-200 overflow-y-auto custom-scrollbar select-text">
+              <pre className="whitespace-pre-wrap font-legal text-[13.5px] leading-relaxed text-zinc-200">
                 {compiledText}
               </pre>
             </div>
@@ -209,30 +209,30 @@ export default function LegalTemplatesView({ onSendToAudit }) {
 
   // Otherwise: render Template Catalog & Selection Gallery
   return (
-    <div className="max-w-6xl mx-auto h-full flex flex-col gap-6 font-ui text-[#0F1B2A]">
+    <div className="max-w-6xl mx-auto h-full flex flex-col gap-6 font-ui">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-zinc-900/60 border border-white/10">
         <div>
-          <h2 className="text-2xl font-bold text-[#0F1B2A] flex items-center gap-3 tracking-tight">
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
             <span>AmLaw 100 Legal Drafting Vault</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-[#EFF6FF] text-[#123B5C] border border-[#BFDBFE] font-bold">
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
               U.S. Commercial Law
             </span>
           </h2>
-          <p className="text-[#5A6B7A] text-xs mt-1 max-w-2xl">
+          <p className="text-gray-400 text-xs mt-1 max-w-2xl">
             Pre-assembled, battle-tested contract templates complying with Delaware General Corporation Law, the Uniform Commercial Code (UCC), and American real estate jurisprudence. Select a template to customize and auto-populate variables.
           </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-[#EFF6FF] text-[#123B5C] border border-[#BFDBFE]">
+          <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
             {LEGAL_TEMPLATES.length} Institutional Templates
           </span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-3 p-3.5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] shadow-xs">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl liquid-glass border border-white/5">
         <div className="flex flex-wrap items-center gap-2">
           {TEMPLATE_CATEGORIES.map(cat => (
             <button
@@ -240,8 +240,8 @@ export default function LegalTemplatesView({ onSendToAudit }) {
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 selectedCategory === cat.id
-                  ? 'bg-[#123B5C] text-white shadow-xs'
-                  : 'text-[#5A6B7A] hover:text-[#0F1B2A] bg-[#F7F9FA] border border-[#D9E1E7] hover:bg-[#E5EAEF]'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.25)]'
+                  : 'text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10'
               }`}
             >
               <span>{cat.label}</span>
@@ -255,7 +255,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search templates (e.g. Land, NDA)..."
-            className="w-full bg-[#FFFFFF] border border-[#D9E1E7] focus:border-[#123B5C] rounded-xl px-3 py-1.5 text-xs text-[#0F1B2A] placeholder-[#5A6B7A] outline-none transition-all"
+            className="w-full bg-black/60 border border-zinc-700 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-xs font-mono text-white placeholder-zinc-500 outline-none transition-all"
           />
         </div>
       </div>
@@ -265,33 +265,33 @@ export default function LegalTemplatesView({ onSendToAudit }) {
         {filteredTemplates.map(tpl => (
           <div
             key={tpl.id}
-            className="p-5 rounded-xl bg-[#FFFFFF] border border-[#D9E1E7] hover:border-[#123B5C]/40 shadow-xs transition-all flex flex-col justify-between gap-4 group"
+            className="p-5 rounded-2xl bg-zinc-900/60 border border-white/5 hover:border-emerald-500/40 hover:bg-zinc-900/80 transition-all flex flex-col justify-between gap-4 group"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#F0FDF4] text-[#0E6B52] border border-[#BBF7D0]">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   {tpl.category.toUpperCase().replace('_', ' ')}
                 </span>
-                <span className="text-[10px] font-mono text-[#5A6B7A]">
+                <span className="text-[10px] font-mono text-zinc-500">
                   {tpl.variables?.length || 0} Dynamic Fields
                 </span>
               </div>
 
-              <h3 className="text-base font-bold text-[#0F1B2A] group-hover:text-[#123B5C] transition-colors">
+              <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
                 {tpl.title}
               </h3>
-              <p className="text-xs text-[#5A6B7A] mt-2 leading-relaxed line-clamp-3">
+              <p className="text-xs text-zinc-400 mt-2 leading-relaxed line-clamp-3">
                 {tpl.summary}
               </p>
             </div>
 
-            <div className="pt-3 border-t border-[#D9E1E7] flex items-center justify-between">
-              <span className="text-[11px] font-mono text-[#5A6B7A]">
+            <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
+              <span className="text-[11px] font-mono text-zinc-500">
                 {tpl.jurisdiction}
               </span>
               <button
                 onClick={() => handleOpenTemplate(tpl)}
-                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#123B5C] hover:bg-[#0C2A42] text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs font-ui"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
               >
                 <span>Customize & Generate</span>
                 <ArrowRight size={13} />

@@ -325,7 +325,7 @@ export default function App() {
             <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[460px]">
               
               {/* Document Text Editor Panel (Left 7 cols) */}
-              <div className="lg:col-span-7 p-6 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#050A0E] text-zinc-300 text-xs sm:text-sm font-sans leading-relaxed space-y-4">
+              <div className="lg:col-span-7 p-6 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#050A0E] text-zinc-300 text-xs sm:text-sm font-ui leading-relaxed space-y-4">
                 
                 <div className="pb-3 border-b border-white/5 flex items-center justify-between text-[11px] font-mono text-zinc-400">
                   <span>DOCUMENT INSPECTOR • 12,450 WORDS</span>
@@ -334,7 +334,7 @@ export default function App() {
 
                 <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
                   <span className="font-bold text-white block mb-1">SECTION 3.2 — PAYMENT CONSIDERATION</span>
-                  <p className="text-zinc-300">
+                  <p className="text-zinc-200 font-legal text-[13.5px] leading-relaxed">
                     Client shall pay the Contractor a fixed fee of <span className="text-amber-300 font-bold bg-amber-500/20 px-1 py-0.5 rounded border border-amber-500/40">Ten Thousand Dollars ($100,000)</span> payable in monthly increments upon deliverables submission.
                   </p>
                   <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
@@ -345,7 +345,7 @@ export default function App() {
 
                 <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
                   <span className="font-bold text-white block mb-1">SECTION 8.4 — LIMITATION OF LIABILITY</span>
-                  <p className="text-zinc-300">
+                  <p className="text-zinc-200 font-legal text-[13.5px] leading-relaxed">
                     Except as expressly provided under <span className="text-rose-400 font-bold bg-rose-500/20 px-1 py-0.5 rounded border border-rose-500/40">Section 14.3(b)</span> and <span className="text-rose-400 font-bold bg-rose-500/20 px-1 py-0.5 rounded border border-rose-500/40">Exhibit D (Cyber Indemnity)</span>, neither party shall be liable for indirect damages.
                   </p>
                   <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">
@@ -356,7 +356,7 @@ export default function App() {
 
                 <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
                   <span className="font-bold text-white block mb-1">SECTION 12.1 — GOVERNING LAW & SEVERABILITY</span>
-                  <p className="text-zinc-300">
+                  <p className="text-zinc-200 font-legal text-[13.5px] leading-relaxed">
                     This Agreement shall be governed by the laws of <span className="text-purple-300 font-bold bg-purple-500/20 px-1 py-0.5 rounded border border-purple-500/40">[Insert Governing Jurisdiction Here]</span> without regard to conflict of laws principles.
                   </p>
                   <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/30">
@@ -416,9 +416,9 @@ export default function App() {
                 <div className="pt-4 border-t border-white/10">
                   <button 
                     onClick={() => navigate('/app/contractcompare')}
-                    className="w-full bg-nexus-emerald text-black py-3 px-4 rounded-xl font-black text-xs hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center justify-center gap-2"
+                    className="w-full bg-nexus-emerald text-black py-3 px-4 rounded-xl font-black text-xs hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center justify-center gap-2 cursor-pointer font-ui"
                   >
-                    <span>{isRtl ? 'تجربة بيئة العمل وفحص عقدك الآن' : 'Test Studio with Sample Contract Now'}</span>
+                    <span>{isRtl ? 'فتح بيئة العمل والبدء في فحص العقود' : 'Launch Air-Gapped Legal Studio Now'}</span>
                     <ArrowRight size={14} className={isRtl ? 'rotate-180' : ''} />
                   </button>
                 </div>

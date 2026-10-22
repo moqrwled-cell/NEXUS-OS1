@@ -1,16 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  --primary: #123B5C;      /* أزرق كحلي */
-  --primary-dark: #0C2A42;
-  --accent: #0E6B52;       /* أخضر زمردي داكن */
-  --success: #0E6B52;
-  --text: #0F1B2A;
-  --muted-text: #5A6B7A;
-  --background: #F7F9FA;
-  --surface: #FFFFFF;
-  --border: #D9E1E7;
-  --danger: #B3261E;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-legal: 'Source Serif 4', Georgia, Cambria, serif;
 }
 
 @tailwind base;
@@ -25,32 +17,33 @@
     font-family: 'Source Serif 4', Georgia, Cambria, serif;
   }
   .legal-paper {
-    background-color: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
-    box-shadow: 0 1px 3px rgba(15, 27, 42, 0.04), 0 6px 20px rgba(15, 27, 42, 0.03);
+    background-color: #070D14;
+    color: #F1F5F9;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
   .legal-textarea {
     font-family: 'Source Serif 4', Georgia, serif;
-    background-color: var(--surface);
-    color: var(--text);
-    border: 1px solid var(--border);
+    background-color: #070D14;
+    color: #F1F5F9;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     line-height: 1.75;
   }
   .legal-textarea:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(18, 59, 92, 0.15);
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
   }
   .btn-legal-primary {
-    background-color: var(--primary);
-    color: #FFFFFF;
+    background-color: #10B981;
+    color: #020608;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    transition: all 0.15s ease;
+    transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .btn-legal-primary:hover {
-    background-color: var(--primary-dark);
+    background-color: #059669;
+    color: #FFFFFF;
   }
 }
 
