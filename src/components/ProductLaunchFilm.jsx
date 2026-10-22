@@ -179,7 +179,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
           className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-nexus-emerald/10 border border-nexus-emerald/30 text-nexus-emerald text-[11px] font-mono uppercase tracking-wider mb-3.5 shadow-[0_0_15px_rgba(0,255,157,0.15)]"
         >
           <span className="w-2 h-2 rounded-full bg-nexus-emerald animate-ping"></span>
-          <span>{isRtl ? 'العرض التشويقي الرسمي • جولة حية بدقة 4K' : 'OFFICIAL KEYNOTE FILM • 4K 60FPS PRODUCT TOUR'}</span>
+          <span>'OFFICIAL KEYNOTE FILM • 4K 60FPS PRODUCT TOUR'</span>
         </motion.div>
         
         <motion.h2 
@@ -189,15 +189,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
           transition={{ delay: 0.1 }}
           className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight"
         >
-          {isRtl ? (
-            <>
-              شاهد كيف يقضي <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white">ContractGuard</span> على المخاطر في 79ms
-            </>
-          ) : (
-            <>
-              See How <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white">ContractGuard</span> Eliminates Liabilities in 79ms
-            </>
-          )}
+          See How <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white">ContractGuard</span> Eliminates Liabilities in 79ms
         </motion.h2>
 
         <motion.p 
@@ -207,10 +199,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
           transition={{ delay: 0.2 }}
           className="text-sm md:text-base text-zinc-300 mt-3.5 leading-relaxed"
         >
-          {isRtl 
-            ? 'شاهد محركات التدقيق الخماسية المعزولة هوائياً أثناء العمل: فحص محلي 100% داخل المتصفح، كشف فوري لتضارب المبالغ والأرقام، وتوليد مذكرات التدقيق دون أن تغادر كلمة واحدة جهازك.'
-            : 'Experience the zero-cloud, 5-engine audit studio in motion: 100% client-side RAM execution, instant financial mismatch reconciliation, and one-click court-ready executive memo generation with zero bytes leaving your machine.'
-          }
+          Experience the zero-cloud, 5-engine audit studio in motion: 100% client-side RAM execution, instant financial mismatch reconciliation, and one-click court-ready executive memo generation with zero bytes leaving your machine.
         </motion.p>
       </div>
 
@@ -284,10 +273,10 @@ export default function ProductLaunchFilm({ isRtl = false }) {
 
                   <div className="mt-5 text-center">
                     <p className="text-white font-extrabold text-base md:text-lg tracking-tight drop-shadow-md">
-                      {isRtl ? 'تشغيل العرض الترويجي الرسمي (48 ثانية)' : 'Play Official Product Launch Film (48s)'}
+                      Play Official Product Launch Film (48s)
                     </p>
                     <p className="text-xs text-zinc-300 mt-1 font-mono">
-                      {isRtl ? 'صوت فويس أوفر نقي + مؤثرات الحركات + موسيقى هادئة' : 'Full Audio Bed • English Voiceover • High-Tech SFX'}
+                      Full Audio Bed • English Voiceover • High-Tech SFX
                     </p>
                   </div>
                 </motion.div>
@@ -411,10 +400,10 @@ export default function ProductLaunchFilm({ isRtl = false }) {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white">
-                  {isRtl ? 'عزل هوائي 100%' : '100% In-RAM Air-Gap'}
+                  100% In-RAM Air-Gap
                 </h4>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  {isRtl ? 'متوافق مع معيار ABA 1.6' : 'ABA Rule 1.6 Privilege'}
+                  ABA Rule 1.6 Privilege
                 </p>
               </div>
             </div>
@@ -425,10 +414,10 @@ export default function ProductLaunchFilm({ isRtl = false }) {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white">
-                  {isRtl ? 'فحص خماسي في 79ms' : '5-Engine Audit in ~79ms'}
+                  5-Engine Audit in ~79ms
                 </h4>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  {isRtl ? 'كشف فوري للأخطاء والمراجع' : 'Zero Latency Web Worker'}
+                  Zero Latency Web Worker
                 </p>
               </div>
             </div>
@@ -439,10 +428,10 @@ export default function ProductLaunchFilm({ isRtl = false }) {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white">
-                  {isRtl ? 'مطابقة ومقارنة Redline' : 'Dual Mode LCS Diff'}
+                  Dual Mode LCS Diff
                 </h4>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  {isRtl ? 'كشف الفروق بين المسودات' : 'Single Draft + Redline'}
+                  Single Draft + Redline
                 </p>
               </div>
             </div>
@@ -453,10 +442,10 @@ export default function ProductLaunchFilm({ isRtl = false }) {
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white">
-                  {isRtl ? 'ترخيص دائم مدى الحياة' : 'Perpetual License ($199)'}
+                  Perpetual License ($199)
                 </h4>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  {isRtl ? 'بلا اشتراكات شهرية مفرطة' : 'Zero Recurring SaaS Fees'}
+                  Zero Recurring SaaS Fees
                 </p>
               </div>
             </div>
@@ -468,9 +457,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
             <div className="flex items-center gap-2 text-xs text-zinc-300 text-center sm:text-left">
               <Sparkles size={15} className="text-nexus-emerald shrink-0" />
               <span>
-                {isRtl 
-                  ? 'جرب تدقيق مسودة حقيقية بنفسك الآن وتأكد من سرعة الحصانة القانونية' 
-                  : 'Ready to audit your active contracts in real-time before execution?'}
+                Ready to audit your active contracts in real-time before execution?
               </span>
             </div>
 
@@ -479,8 +466,8 @@ export default function ProductLaunchFilm({ isRtl = false }) {
                 onClick={() => navigate('/demo')}
                 className="flex-1 sm:flex-initial bg-nexus-emerald text-black px-5 py-2.5 rounded-xl font-black text-xs hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.35)] flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>{isRtl ? '⚡ تجربة الديمو التفاعلي (79ms)' : '⚡ Try Interactive Live Demo'}</span>
-                <ArrowRight size={13} className={isRtl ? 'rotate-180' : ''} />
+                <span>⚡ Try Interactive Live Demo</span>
+                <ArrowRight size={13} />
               </button>
 
               <button
@@ -488,7 +475,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
                 className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] border border-white/15 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Lock size={13} className="text-nexus-cyan" />
-                <span>{isRtl ? 'شراء الترخيص الدائم ($199)' : 'Get Perpetual License ($199)'}</span>
+                <span>Get Perpetual License ($199)</span>
               </button>
             </div>
           </div>

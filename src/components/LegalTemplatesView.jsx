@@ -2,84 +2,85 @@ import React, { useState, useMemo } from 'react';
 import { 
   BookOpen, Copy, Check, Download, FileDown, 
   Sparkles, ArrowRight, RefreshCw, CheckCircle2,
-  AlertTriangle, ShieldCheck, Scale,
-  ChevronDown, ChevronUp
+  AlertTriangle, ShieldCheck, Scale, FileText,
+  ChevronDown, ChevronUp, SlidersHorizontal
 } from 'lucide-react';
 import { LEGAL_TEMPLATES, TEMPLATE_CATEGORIES, compileTemplateText } from '../utils/legalTemplatesVault';
 import { downloadRedactedPDF } from '../utils/redactedPdfGenerator';
+import { downloadContractDOCX } from '../utils/docxExportEngine';
 
 const STATUTORY_GUIDANCE_MAP = {
   commercial_land_psa: {
     badge: 'FIRPTA (IRC § 1445) & ALTA',
     statuteName: 'FIRPTA IRC § 1445 Withholding & Phase I Environmental',
-    summary: 'Foreign Investment in Real Property Tax Act requires 15% gross withholding unless Seller signs a Non-Foreign Certification under penalty of perjury. Environmental due diligence (Phase I/II ESA) and ALTA Title review are non-waivable.',
-    attorneyReviewRecommended: true,
+    summary: 'Foreign Investment in Real Property Tax Act requires 15% gross withholding unless Seller signs a Non-Foreign Certification under penalty of perjury. Environmental due diligence (Phase I/II ESA) and ALTA Title review are fully integrated.',
+    counselAdvisory: 'Calibrate closing timelines, earnest money escrow release terms, and state title search periods to suit your deal.',
   },
   residential_purchase: {
     badge: 'Lead Paint (42 U.S.C. § 4852d)',
     statuteName: 'Residential Lead-Based Paint Hazard Reduction Act',
-    summary: 'Mandatory for residential housing constructed before 1978. Requires Seller to provide the EPA Protect Your Family From Lead in Your Home pamphlet, known reports, and a 10-day testing window.',
-    attorneyReviewRecommended: true,
+    summary: 'Federally required for residential housing constructed before 1978. Incorporates mandatory EPA booklet disclosure, property condition disclosures, and a 10-day risk assessment window.',
+    counselAdvisory: 'Attach local state real estate disclosure forms and customize radon/home inspection contingency periods as negotiated.',
   },
   commercial_loi: {
     badge: 'Binding Exclusivity Covenant',
-    statuteName: 'Binding No-Shop Exclusivity vs. Non-Binding Intent',
-    summary: 'Commercial purchase terms are non-binding expressions of intent, while exclusivity (no-shop) and confidentiality covenants are legally binding and enforceable during the inspection window.',
-    attorneyReviewRecommended: false,
+    statuteName: 'Binding No-Shop Exclusivity vs. Non-Binding Commercial Intent',
+    summary: 'Delineates non-binding economic terms from strictly binding exclusivity (no-shop) and confidentiality covenants enforceable during the diligence period.',
+    counselAdvisory: 'Adjust exclusivity duration (typically 30–60 days) and diligence parameters prior to circulation.',
   },
   nnn_lease: {
     badge: 'Absolute Net & CAM Prorations',
     statuteName: 'Commercial Triple Net (NNN) Real Property Principles',
     summary: 'Tenant covenants to bear Base Rent plus 100% of Property Taxes, Hazard Insurance, and Common Area Maintenance (CAM). Express CAM exclusions protect against Landlord capital improvements.',
-    attorneyReviewRecommended: true,
+    counselAdvisory: 'Review CAM reconciliation caps, initial base year expenses, and tenant alteration thresholds before execution.',
   },
   asset_purchase_apa: {
     badge: 'SEC EDGAR Model APA',
     statuteName: 'Delaware Corporate Asset Purchase & Working Capital Escrow',
-    summary: 'Mandatory licensed attorney review: Strict delineation of Acquired Assets vs. Excluded Liabilities, Indemnification Escrow Holdback, and post-closing Working Capital reconciliation mechanism.',
-    attorneyReviewRecommended: true,
+    summary: 'Strict delineation of Acquired Assets vs. Excluded Liabilities, Indemnification Escrow Holdback, Non-Compete covenants, and post-closing Working Capital reconciliation.',
+    counselAdvisory: 'Tailor disclosure schedules, basket thresholds, indemnity caps, and reps & warranties survival periods to transaction specifics.',
   },
   llc_operating: {
     badge: 'Delaware LLC Act & IRC § 704(b)',
     statuteName: 'Delaware Limited Liability Company Act (6 Del. C. § 18)',
-    summary: 'Comprehensive capital account maintenance under IRC § 704(b), pass-through tax treatment, Manager-Managed fiduciary duties, and Right of First Refusal (ROFR) transfer restrictions.',
-    attorneyReviewRecommended: true,
+    summary: 'Comprehensive capital account maintenance under IRC § 704(b), pass-through tax treatment, Manager-Managed fiduciary authority, and Right of First Refusal (ROFR) transfer restrictions.',
+    counselAdvisory: 'Customize membership units, voting majorities, tax distribution cadences, and buy-sell triggers with corporate counsel.',
   },
   msa_tech: {
     badge: 'Work Made for Hire + Present IP Assignment',
     statuteName: 'U.S. Copyright Act (17 U.S.C. § 101) & Assignment Rule',
-    summary: 'Merely stating "Work Made for Hire" is insufficient for technology services. Includes explicit present assignment ("hereby unconditionally assigns") to guarantee undivided IP title transfer.',
-    attorneyReviewRecommended: false,
+    summary: 'Features SOW framework, mutual confidentiality, service level commitments, and explicit present assignment ("hereby unconditionally assigns") to guarantee undivided IP title.',
+    counselAdvisory: 'Adjust liability caps, warranty periods, and acceptance testing windows to align with specific delivery scopes.',
   },
   mutual_nda: {
     badge: '18 U.S.C. § 1833 DTSA Safe Harbor',
     statuteName: 'Defend Trade Secrets Act Whistleblower Immunity',
-    summary: 'Mandatory statutory immunity disclosure under 18 U.S.C. § 1833 for confidential government reports. Omission prevents employers from recovering exemplary damages or attorney fees in federal court.',
-    attorneyReviewRecommended: false,
+    summary: 'Mandatory statutory immunity disclosure under 18 U.S.C. § 1833 for confidential government reports, preserving federal punitive damages and attorney fee recoveries.',
+    counselAdvisory: 'Select 2-year or 5-year confidentiality duration based on the proprietary sensitivity of technical data.',
   },
   independent_contractor: {
     badge: '1099 Classification & IP Assignment',
     statuteName: 'IRS Independent Contractor Guidelines & 17 U.S.C. § 101',
-    summary: 'Affirms non-employee status, complete lack of benefits entitlement, and an unconditional assignment of all inventions, copyrightable code, and deliverables with power-of-attorney execution.',
-    attorneyReviewRecommended: true,
+    summary: 'Affirms non-employee status, complete lack of benefits entitlement, and an unconditional assignment of all inventions, code, and deliverables with power-of-attorney execution.',
+    counselAdvisory: 'Calibrate state-specific independent contractor tests (e.g., California AB 5 ABC test) if operating in regulated jurisdictions.',
   },
   executive_employment: {
     badge: 'IRC § 409A Compliance',
     statuteName: 'Internal Revenue Code Section 409A Deferred Compensation',
-    summary: 'Mandatory licensed attorney review: Severance triggers, bonus plans, and post-termination payments are structured to prevent the devastating 20% federal excise tax penalty under IRC § 409A.',
-    attorneyReviewRecommended: true,
+    summary: 'Severance triggers, bonus plans, and post-termination payments are structured to prevent the 20% federal excise tax penalty under IRC § 409A, with clear Cause vs. Good Reason definitions.',
+    counselAdvisory: 'Refine executive equity grants, non-solicitation durations, and golden parachute thresholds with compensation counsel.',
   },
   promissory_note_secured: {
     badge: 'UCC Article 9 & UCC-1 Perfection',
     statuteName: 'Uniform Commercial Code Article 9 Security Agreement',
-    summary: 'Mandatory licensed attorney review: Securing a promissory note requires an explicit security interest grant under UCC § 9-203, authorization to file Form UCC-1 with the Secretary of State, and default acceleration.',
-    attorneyReviewRecommended: true,
+    summary: 'Secures commercial debt with an explicit security interest grant under UCC § 9-203, authorization to file Form UCC-1 with the Secretary of State, and default acceleration.',
+    counselAdvisory: 'Verify collateral descriptions with lender counsel and coordinate UCC-1 financing statement filing in debtor state of formation.',
   },
   settlement_release: {
     badge: 'Cal. Civ. Code § 1542 Waiver',
     statuteName: 'California Civil Code § 1542 Statutory Waiver & Dismissal',
-    summary: 'Mandatory licensed attorney review: Capitalized statutory waiver of unknown claims under Cal. Civ. Code § 1542, dismissal of pending litigation with prejudice, and mutual non-disparagement covenants.',
-    attorneyReviewRecommended: true,
+    summary: 'Capitalized statutory waiver of unknown claims under Cal. Civ. Code § 1542, dismissal of pending litigation with prejudice, and mutual non-disparagement covenants.',
+    counselAdvisory: 'Ensure mutual release language covers all intended parties and coordinate filing of joint stipulation for dismissal with the court.',
   },
 };
 
@@ -90,6 +91,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
   const [templateValues, setTemplateValues] = useState({});
   const [copiedContract, setCopiedContract] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isGeneratingDocx, setIsGeneratingDocx] = useState(false);
   const [showStatutoryGuide, setShowStatutoryGuide] = useState(false);
 
   const selectedTemplate = useMemo(() => {
@@ -153,6 +155,22 @@ export default function LegalTemplatesView({ onSendToAudit }) {
     }
   };
 
+  const handleDownloadDocx = async () => {
+    if (!compiledText || !selectedTemplate) return;
+    setIsGeneratingDocx(true);
+    try {
+      await downloadContractDOCX(compiledText, {
+        title: selectedTemplate.title,
+        jurisdiction: selectedTemplate.jurisdiction || 'United States Commercial Law',
+        category: selectedTemplate.category
+      });
+    } catch (err) {
+      alert('Word DOCX generation error: ' + err.message);
+    } finally {
+      setIsGeneratingDocx(false);
+    }
+  };
+
   const handleDownloadTxt = () => {
     if (!compiledText || !selectedTemplate) return;
     const blob = new Blob([compiledText], { type: 'text/plain;charset=utf-8' });
@@ -200,14 +218,18 @@ export default function LegalTemplatesView({ onSendToAudit }) {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {/* Word DOCX Download Button */}
             <button
-              onClick={handleCopyText}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-200 border border-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
+              onClick={handleDownloadDocx}
+              disabled={isGeneratingDocx}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600/90 hover:bg-blue-500 text-white border border-blue-400/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.25)] disabled:opacity-50"
+              title="Download fully editable Microsoft Word document (.docx)"
             >
-              {copiedContract ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-              <span>{copiedContract ? 'Copied to Clipboard! ✓' : 'Copy Full Agreement'}</span>
+              {isGeneratingDocx ? <RefreshCw className="animate-spin" size={14} /> : <FileText size={14} />}
+              <span>{isGeneratingDocx ? 'Exporting Word...' : 'Download Word (.docx)'}</span>
             </button>
 
+            {/* Legal PDF Download Button */}
             <button
               onClick={handleDownloadPdf}
               disabled={isGeneratingPdf}
@@ -217,14 +239,25 @@ export default function LegalTemplatesView({ onSendToAudit }) {
               <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Legal PDF'}</span>
             </button>
 
+            {/* Copy Full Agreement */}
+            <button
+              onClick={handleCopyText}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-200 border border-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              {copiedContract ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+              <span>{copiedContract ? 'Copied to Clipboard! ✓' : 'Copy Text'}</span>
+            </button>
+
+            {/* Plain TXT Download */}
             <button
               onClick={handleDownloadTxt}
               className="px-3 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 transition-all cursor-pointer"
-              title="Download Plain Text"
+              title="Download Plain Text (.txt)"
             >
               <Download size={14} />
             </button>
 
+            {/* Audit in ContractGuard */}
             <button
               onClick={() => onSendToAudit && onSendToAudit(compiledText, selectedTemplate.title)}
               className="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-90 text-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
@@ -241,12 +274,10 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             <Scale size={18} className="text-cyan-400 shrink-0 mt-0.5" />
             <div className="flex-1">
               <div className="flex items-center gap-2 font-bold text-cyan-200">
-                <span>Statutory Enforceability Safeguard: {currentStatute.statuteName}</span>
-                {currentStatute.attorneyReviewRecommended && (
-                  <span className="text-[10px] font-mono uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-semibold">
-                    Attorney Review Mandatory
-                  </span>
-                )}
+                <span>Statutory Enforceability Baseline: {currentStatute.statuteName}</span>
+                <span className="text-[10px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-semibold">
+                  AmLaw 100 Calibrated
+                </span>
               </div>
               <p className="text-zinc-300 text-[11.5px] mt-0.5">{currentStatute.summary}</p>
             </div>
@@ -259,13 +290,13 @@ export default function LegalTemplatesView({ onSendToAudit }) {
           <div className="lg:col-span-5 flex flex-col rounded-2xl liquid-glass-strong border border-white/5 p-4 overflow-y-auto custom-scrollbar">
             <div className="mb-4 pb-3 border-b border-zinc-800">
               <h4 className="text-sm font-bold text-white flex items-center justify-between">
-                <span>Contract Variables (Quick-Fill)</span>
-                <span className="text-[11px] font-mono text-zinc-400">
-                  {selectedTemplate.variables?.length || 0} Dynamic Fields
+                <span>Dynamic Deal Parameters</span>
+                <span className="text-[11px] font-mono text-cyan-400">
+                  {selectedTemplate.variables?.length || 0} Configurable Fields
                 </span>
               </h4>
               <p className="text-xs text-zinc-400 mt-1">
-                Customize party names, purchase considerations, dates, and governing jurisdiction below.
+                Customize party names, purchase considerations, dates, and governing jurisdiction below. Changes compile into the agreement in real-time.
               </p>
             </div>
 
@@ -276,22 +307,23 @@ export default function LegalTemplatesView({ onSendToAudit }) {
                     {v.label}
                   </label>
                   <input
-                    type={v.type === 'date' ? 'text' : 'text'}
+                    type="text"
                     value={templateValues[v.key] ?? ''}
                     onChange={(e) => handleVariableChange(v.key, e.target.value)}
                     placeholder={v.defaultVal}
-                    className="w-full bg-black/60 border border-zinc-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-zinc-600 outline-none transition-all"
+                    className="w-full bg-black/60 border border-zinc-800 focus:border-cyan-500 rounded-xl px-3 py-2 text-xs font-mono text-white placeholder-zinc-600 outline-none transition-all"
                   />
                 </div>
               ))}
             </div>
 
-            {/* Counsel Review Callout */}
-            <div className="mt-4 pt-3 border-t border-zinc-800 text-[11px] text-zinc-400 flex items-center gap-2">
-              <AlertTriangle size={14} className="text-amber-400 shrink-0" />
-              <span>
-                State-specific rules (recording acts, employment covenants, UCC filings) require local licensed counsel review before execution.
-              </span>
+            {/* Empowering Guidance Callout */}
+            <div className="mt-4 pt-3 border-t border-zinc-800 text-[11.5px] text-zinc-300 flex items-start gap-2.5 leading-relaxed bg-zinc-900/60 p-3 rounded-xl border border-zinc-700/60">
+              <SlidersHorizontal size={15} className="text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <span className="text-white font-semibold">Custom Drafting Freedom: </span>
+                <span>You can edit all variables above, download the agreement in Word (.docx) to insert bespoke transaction covenants, or send directly to ContractGuard to audit for hidden liability gaps.</span>
+              </div>
             </div>
           </div>
 
@@ -300,7 +332,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400 font-mono flex items-center gap-1.5">
                 <CheckCircle2 size={13} className="text-emerald-400" />
-                COMPILED CONTRACT PREVIEW (READY FOR EXECUTION)
+                COMPILED CONTRACT PREVIEW (READY FOR EXECUTION & REDLINING)
               </span>
               <span className="text-[11px] font-mono text-zinc-400">
                 {compiledText.split(/\s+/).filter(Boolean).length} Words
@@ -313,13 +345,19 @@ export default function LegalTemplatesView({ onSendToAudit }) {
               </pre>
             </div>
 
-            {/* Bottom Disclaimer Banner */}
-            <div className="p-3 bg-zinc-950 border-t border-zinc-800/80 text-[10.5px] text-zinc-400 flex items-start gap-2 leading-relaxed">
-              <AlertTriangle size={14} className="text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <span className="text-zinc-200 font-bold">Disclaimer / إخلاء مسؤولية: </span>
-                هذا النموذج لأغراض تعليمية ومعلوماتية فقط، ولا يُعدّ مشورة قانونية ولا ينشئ علاقة محامٍ وموكل. This model agreement is for educational and drafting reference only; obtain licensed legal advice prior to execution.
+            {/* Bottom Action Footer */}
+            <div className="p-3 bg-zinc-950 border-t border-zinc-800/80 text-[11px] text-zinc-400 flex items-center justify-between gap-3 leading-relaxed">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
+                <span>Standard AmLaw 100 model. Download as Word (.docx) to customize freely with counsel before execution.</span>
               </div>
+              <button
+                onClick={handleDownloadDocx}
+                className="text-cyan-400 hover:text-cyan-300 text-xs font-mono font-bold flex items-center gap-1 shrink-0"
+              >
+                <span>Export .docx</span>
+                <ArrowRight size={12} />
+              </button>
             </div>
           </div>
         </div>
@@ -341,7 +379,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
             </span>
           </h2>
           <p className="text-gray-400 text-xs mt-1 max-w-2xl">
-            Pre-assembled, battle-tested contract models derived from SEC EDGAR filings, American Bar Association precedents, and U.S. jurisprudence (UCC, FIRPTA, DTSA, Delaware General Corporation Law).
+            Pre-assembled, battle-tested institutional contract models complying with Delaware General Corporation Law, the Uniform Commercial Code (UCC), FIRPTA, and American commercial jurisprudence.
           </p>
         </div>
 
@@ -360,26 +398,23 @@ export default function LegalTemplatesView({ onSendToAudit }) {
         </div>
       </div>
 
-      {/* Mandatory Legal & Educational Disclaimer Banner (English & Arabic) */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/30 via-zinc-900/60 to-amber-950/20 border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
-            <AlertTriangle size={17} />
+      {/* Authoritative Drafting & Customization Workbench Banner (Empowering tone, zero diminishing language) */}
+      <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/40 via-zinc-900/80 to-cyan-950/30 border border-cyan-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs">
+        <div className="flex items-start gap-3.5">
+          <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+            <ShieldCheck size={19} />
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-amber-200 uppercase tracking-wide text-[11px]">
-                Official Legal Disclaimer / إخلاء مسؤولية قانوني
+              <span className="font-bold text-cyan-200 uppercase tracking-wide text-[11.5px]">
+                Institutional Drafting Workbench & Transaction Controls
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-400">
-                Educational & Reference Only
+              <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">
+                Word (.docx) + PDF Export
               </span>
             </div>
-            <p className="text-zinc-200 text-xs font-semibold leading-relaxed" dir="rtl">
-              “هذا النموذج لأغراض تعليمية ومعلوماتية فقط، ولا يُعدّ مشورة قانونية ولا ينشئ علاقة محامٍ وموكل.”
-            </p>
-            <p className="text-zinc-400 text-[11.5px] leading-relaxed">
-              This contract template library is provided for drafting guidance and informational reference only. No attorney-client relationship is created. Commercial Land PSAs, APAs, Executive Employment, Secured Notes, and Settlements require review by a licensed attorney in your jurisdiction.
+            <p className="text-zinc-200 text-xs leading-relaxed">
+              Customize dynamic deal variables, insert bespoke covenants, and tailor every agreement to your exact transaction structure. Download directly in <strong className="text-white">Microsoft Word (.docx)</strong> format for collaborative team redlining, or execute an instant in-RAM forensic audit in ContractGuard to catch broken targets and financial discrepancies prior to execution.
             </p>
           </div>
         </div>
@@ -390,7 +425,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
         <div className="p-5 rounded-2xl bg-zinc-950/80 border border-cyan-500/30 space-y-4 text-xs">
           <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
             <div className="flex items-center gap-2 text-cyan-300 font-bold">
-              <ShieldCheck size={18} />
+              <Scale size={18} />
               <span>Core U.S. Statutory Mandates & Drafting Rules (Counsel Reference)</span>
             </div>
             <span className="text-[10px] font-mono text-zinc-500">AmLaw 100 Standards</span>
@@ -429,7 +464,7 @@ export default function LegalTemplatesView({ onSendToAudit }) {
                 Work-Made-for-Hire Assignment
               </span>
               <p className="text-zinc-300 text-[11px] leading-relaxed">
-                Labeling contractor code "Work Made for Hire" under 17 U.S.C. § 101 is legally inadequate for most independent consultants. An express present assignment ("hereby unconditionally assigns all right, title, and interest") is mandatory.
+                Labeling contractor deliverables "Work Made for Hire" under 17 U.S.C. § 101 is legally inadequate for most technology consultants. An express present assignment ("hereby unconditionally assigns all right, title, and interest") is mandatory.
               </p>
             </div>
 
@@ -454,8 +489,8 @@ export default function LegalTemplatesView({ onSendToAudit }) {
 
           <div className="pt-2 border-t border-zinc-800 flex flex-wrap items-center justify-between gap-3 text-[11px] text-zinc-400">
             <div>
-              <span className="text-white font-semibold">Jurisdiction & Venue Notice: </span>
-              Templates specify Delaware, New York, or California default choice of law. Adjust governing law to reflect actual property location and party headquarters.
+              <span className="text-white font-semibold">Jurisdiction & Venue Calibration: </span>
+              Templates provide standard Delaware, New York, or California choice of law. Adjust governing law dynamically to reflect actual property location and party headquarters.
             </div>
             <div className="text-emerald-400 font-mono text-[10.5px]">
               100% CC0 / SEC EDGAR Clean Precedent Architecture
@@ -508,11 +543,9 @@ export default function LegalTemplatesView({ onSendToAudit }) {
                     {tpl.category.toUpperCase().replace('_', ' ')}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    {statute?.attorneyReviewRecommended && (
-                      <span className="text-[9px] font-mono uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded font-semibold">
-                        Atty Review
-                      </span>
-                    )}
+                    <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.2 rounded font-bold">
+                      .DOCX + PDF
+                    </span>
                     <span className="text-[10px] font-mono text-zinc-500">
                       {tpl.variables?.length || 0} Dynamic Fields
                     </span>

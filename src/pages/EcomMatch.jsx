@@ -47,7 +47,7 @@ export default function EcomMatch() {
         setDeferredPrompt(null);
       }
     } else {
-      alert("التطبيق مثبت بالفعل، أو متصفحك لا يدعم التثبيت المباشر (PWA).");
+      alert("Application is already installed, or your browser does not support PWA installation.");
     }
   };
 

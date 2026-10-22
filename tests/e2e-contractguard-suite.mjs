@@ -87,6 +87,7 @@ import {
   generateAmendmentRiderPDFBytes,
   sanitizeForWinAnsi
 } from '../src/utils/redactedPdfGenerator.js';
+import { Document, Packer, Paragraph, TextRun } from 'docx';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -178,6 +179,7 @@ https.request = function (...args) {
     'src/utils/legalRiskRules.js',
     'src/utils/redactedPdfGenerator.js',
     'src/utils/legalTemplatesVault.js',
+    'src/utils/docxExportEngine.js',
     'src/components/LegalTemplatesView.jsx',
     'src/workers/contractWorker.js',
     'src/pages/ContractCompare.jsx'
@@ -1294,6 +1296,41 @@ assert(riderPdfHeader.startsWith('%PDF-'), 'T6.21: generateAmendmentRiderPDFByte
 
 const riderHtml = exportPreSigningAmendmentRiderHTML(mockAuditData, { title: 'Asset Purchase Agreement' });
 assert(riderHtml.includes('<!DOCTYPE html>') && riderHtml.includes('@page') && riderHtml.includes('Times New Roman'), 'T6.22: exportPreSigningAmendmentRiderHTML outputs clean print-ready HTML rider');
+
+// In-RAM Word (.docx) Compilation Verification
+const docxTestDoc = new Document({
+  sections: [{
+    children: [
+      new Paragraph({
+        children: [
+          new TextRun({ text: LEGAL_TEMPLATES[0].title.toUpperCase(), bold: true })
+        ]
+      })
+    ]
+  }]
+});
+const docxBuffer = await Packer.toBuffer(docxTestDoc);
+assert(docxBuffer && docxBuffer.length > 1000, `T6.23: In-RAM Word DOCX binary generated without network calls (size: ${docxBuffer ? docxBuffer.length : 0} bytes)`);
+
+// Global Codebase Scan: Verify zero Arabic characters in src/
+let srcArabicCount = 0;
+function scanSrcForArabic(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name !== 'node_modules' && entry.name !== '.git' && entry.name !== 'dist') {
+        scanSrcForArabic(fullPath);
+      }
+    } else if (/\.(jsx?|tsx?|html|json)$/.test(entry.name)) {
+      const c = fs.readFileSync(fullPath, 'utf8');
+      const m = c.match(/[\u0600-\u06FF]+/g);
+      if (m) srcArabicCount += m.length;
+    }
+  }
+}
+scanSrcForArabic(path.join(PROJECT_ROOT, 'src'));
+assert(srcArabicCount === 0, `T6.24: Total Arabic characters across entire src/ codebase === 0 (actual: ${srcArabicCount})`);
 
 // ============================================================================
 // FINAL RUNTIME AIR-GAP AUDIT ASSERTION

@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { KeyRound, ShieldCheck, ArrowLeft, Loader2, ExternalLink } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { validateEnterpriseKey, grantToolAccess } from '../utils/auth';
 import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 
 export default function AuthLogin() {
-  const { t, i18n } = useTranslation();
-  const isRtl = i18n.dir() === 'rtl';
   const navigate = useNavigate();
 
   const [licenseKey, setLicenseKey] = useState('');
@@ -27,23 +24,23 @@ export default function AuthLogin() {
       if (validation.valid) {
         try {
           await bindKeyToCurrentDevice(validation.key || licenseKey);
-        } catch (bindErr) {
+        } catch {
           // Continue for non-hardware bound keys
         }
         grantToolAccess(licenseKey, 'all');
         navigate('/hub');
         return;
       }
-      setError(validation.reason || (isRtl ? 'الكود غير صالح أو منتهي الصلاحية' : 'Invalid or expired license key'));
+      setError(validation.reason || 'Invalid or expired license key');
     } catch {
-      setError(isRtl ? 'حدث خطأ في التحقق من المفتاح' : 'Error validating license key');
+      setError('Error validating license key');
     } finally {
       setIsVerifying(false);
     }
   };
 
   return (
-    <div className={`min-h-screen bg-[#020608] flex items-center justify-center p-6 ${isRtl ? 'rtl' : 'ltr'}`}>
+    <div className="min-h-screen bg-[#020608] flex items-center justify-center p-6 ltr">
       
       {/* Background Gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -57,60 +54,80 @@ export default function AuthLogin() {
         className="w-full max-w-md relative z-10"
       >
         <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
-          <ArrowLeft size={20} className={isRtl ? 'rotate-180' : ''} />
-          <span>{isRtl ? 'العودة للصفحة الرئيسية' : 'Back to Home'}</span>
+          <ArrowLeft size={20} />
+          <span>Back to Home</span>
         </Link>
 
-        <div className="liquid-glass-strong border border-nexus-emerald/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(0,255,157,0.1)] relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-nexus-mint to-blue-500"></div>
-          
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-nexus-emerald/10 border border-nexus-emerald/30 rounded-full flex items-center justify-center mx-auto mb-4 text-nexus-mint">
-              <ShieldCheck size={32} />
-            </div>
-            <h1 className="text-2xl font-bold text-white font-heading tracking-wide mb-2">
-              {isRtl ? 'بوابة التحقق' : 'License Verification'}
-            </h1>
-            <p className="text-gray-400 text-sm">
-              {isRtl ? 'الرجاء إدخال كود الشراء الخاص بك من منصة Whop' : 'Please enter your Whop License Key'}
-            </p>
+        <div className="bg-[#050B0E]/80 border border-white/10 rounded-2xl p-8 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-nexus-emerald/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div className="w-12 h-12 rounded-xl bg-nexus-emerald/10 border border-nexus-emerald/30 flex items-center justify-center text-nexus-emerald mb-6">
+            <KeyRound size={24} />
           </div>
+
+          <h1 className="text-2xl font-bold text-white mb-2">License Authentication</h1>
+          <p className="text-gray-400 text-sm mb-8">
+            Enter your 16-character license key to access your local tools.
+          </p>
 
           <form onSubmit={handleVerify} className="space-y-6">
             <div>
-              <div className="relative">
-                <KeyRound size={20} className={`absolute top-1/2 -translate-y-1/2 text-gray-500 ${isRtl ? 'right-4' : 'left-4'}`} />
-                <input 
-                  type="text" 
-                  required
-                  placeholder="e.g. pass_abc123..."
-                  value={licenseKey}
-                  onChange={e => setLicenseKey(e.target.value)}
-                  className={`w-full bg-black/50 border border-white/10 rounded-xl py-4 text-white focus:outline-none focus:border-nexus-mint/50 transition-colors ${isRtl ? 'pr-12 pl-4' : 'pl-12 pr-4'}`}
-                />
-              </div>
-              {error && <p className="text-red-400 text-sm mt-2 font-semibold">{error}</p>}
+              <label className="block text-xs font-mono uppercase text-gray-400 mb-2">
+                License Key (Format: NX-XXXX-XXXX-XXXX)
+              </label>
+              <input 
+                type="text" 
+                value={licenseKey}
+                onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
+                placeholder="NX-XXXX-XXXX-XXXX"
+                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-mono placeholder-gray-600 focus:outline-none focus:border-nexus-emerald focus:ring-1 focus:ring-nexus-emerald transition-all text-center tracking-widest text-lg"
+                required
+              />
             </div>
 
-            <button 
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center"
+              >
+                {error}
+              </motion.div>
+            )}
+
+            <button
               type="submit"
               disabled={isVerifying}
-              className="w-full py-4 bg-nexus-emerald text-black rounded-xl font-bold text-lg hover:bg-nexus-mint hover:shadow-[0_0_20px_rgba(0,255,157,0.3)] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full py-4 rounded-xl bg-nexus-emerald hover:bg-nexus-mint text-black font-bold transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] hover:shadow-[0_0_25px_rgba(0,255,157,0.5)] flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isVerifying ? (
-                <><Loader2 size={20} className="animate-spin" /> {isRtl ? 'جاري التحقق...' : 'Verifying...'}</>
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  <span>Verifying Key...</span>
+                </>
               ) : (
-                <>{isRtl ? 'تفعيل الدخول' : 'Unlock Access'}</>
+                <span>Activate License</span>
               )}
             </button>
           </form>
 
-          <div className="mt-8 text-center pt-6 border-t border-white/10">
-            <p className="text-gray-400 text-sm mb-2">{isRtl ? 'ليس لديك كود؟' : "Don't have a license?"}</p>
-            <a href="https://whop.com/nexus-os-85c8" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-nexus-mint hover:underline font-bold text-sm">
-              {isRtl ? 'اشترِ النظام الآن من Whop' : 'Purchase from Whop'} <ExternalLink size={14} />
+          <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center gap-4 text-xs text-gray-400">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={16} className="text-nexus-emerald" />
+              <span>100% In-RAM Local Cryptographic Verification</span>
+            </div>
+            
+            <a 
+              href="https://whop.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
+            >
+              <span>Don't have a license? Buy one on Whop</span>
+              <ExternalLink size={12} />
             </a>
           </div>
+
         </div>
       </motion.div>
     </div>

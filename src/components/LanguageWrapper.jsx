@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 export const languages = [
   { code: 'en', name: 'English', fontBody: 'font-body', fontHeading: 'font-heading' },
-  { code: 'ar', name: 'العربية', fontBody: 'font-["Almarai"]', fontHeading: 'font-["Almarai"]', dir: 'rtl' },
   { code: 'es', name: 'Español', fontBody: 'font-body', fontHeading: 'font-heading' },
   { code: 'fr', name: 'Français', fontBody: 'font-body', fontHeading: 'font-heading' },
   { code: 'tr', name: 'Türkçe', fontBody: 'font-body', fontHeading: 'font-heading' },

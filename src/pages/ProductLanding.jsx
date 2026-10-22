@@ -15,8 +15,7 @@ const productsData = {
 export default function ProductLanding() {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-  const isRtl = i18n.dir() === 'rtl';
+  const { t } = useTranslation();
   
   const product = productsData[productId];
   const [isContactOpen, setIsContactOpen] = React.useState(false);
@@ -35,11 +34,8 @@ export default function ProductLanding() {
     );
   }
 
-  const fontBody = isRtl ? 'font-arabic' : 'font-sans';
-  const fontHeading = isRtl ? 'font-arabic-heading' : 'font-display';
-
   return (
-    <div className={`min-h-screen bg-black text-white selection:bg-nexus-emerald/30 overflow-x-hidden ${fontBody} ${isRtl ? 'rtl' : 'ltr'}`}>
+    <div className="min-h-screen bg-black text-white selection:bg-nexus-emerald/30 overflow-x-hidden font-sans ltr">
       {/* Background Effects */}
       <div className="fixed inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-nexus-emerald blur-[150px] rounded-full mix-blend-screen" />
@@ -52,12 +48,12 @@ export default function ProductLanding() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
-            {isRtl ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}
-            <span>{isRtl ? 'العودة للرئيسية' : 'Back to Home'}</span>
+            <ArrowLeft size={20} />
+            <span>Back to Home</span>
           </button>
-          <div className={`${fontHeading} text-2xl font-bold text-white tracking-tighter`}>
+          <div className="font-display text-2xl font-bold text-white tracking-tighter">
             Nexus<span className="text-nexus-emerald">OS</span>
           </div>
         </div>
@@ -73,42 +69,44 @@ export default function ProductLanding() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl liquid-glass text-nexus-emerald mb-6">
             <product.icon size={40} />
           </div>
-          <h1 className={`${fontHeading} text-4xl md:text-6xl font-bold mb-6 bg-emerald-gradient bg-clip-text text-transparent`}>
+          <h1 className="font-display text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
             {t(product.titleKey)}
           </h1>
+          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            {t(product.painKey)}
+          </p>
         </motion.div>
-        
-        {/* Product Image Gallery */}
+
+        {/* Product Visual Mockup Showcase */}
         <div className="mb-20">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="w-full aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative bg-black/50"
-          >
+          <div className="w-full h-[320px] md:h-[480px] rounded-3xl overflow-hidden border border-white/10 bg-[#060D12] relative shadow-[0_20px_50px_rgba(0,0,0,0.8)] group">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
             <img 
-              src={`/images/products/${productId}/${activeImage}.jpg`} 
-              alt={`${productId} Screenshot ${activeImage}`}
-              className="w-full h-full object-contain"
+              src={`/assets/products/${productId}_preview_${activeImage}.png`} 
+              alt={t(product.titleKey)}
+              className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.classList.add('flex', 'items-center', 'justify-center');
+                const placeholder = document.createElement('div');
+                placeholder.className = 'text-center p-8';
+                placeholder.innerHTML = `<div class="text-nexus-emerald mb-2 font-mono text-sm">INTERACTIVE SYSTEM VIEW</div><div class="text-gray-500 text-xs">High-Precision Local Engine Active</div>`;
+                e.target.parentElement.appendChild(placeholder);
+              }}
             />
-          </motion.div>
-          <div className="flex justify-center gap-4 mt-6">
+          </div>
+
+          <div className="flex justify-center gap-3 mt-4">
             {[1, 2, 3].map((num) => (
               <button
                 key={num}
                 onClick={() => setActiveImage(num)}
-                className={`w-24 h-16 rounded-xl overflow-hidden border-2 transition-all ${activeImage === num ? "border-nexus-emerald scale-110 shadow-[0_0_20px_rgba(28,215,129,0.3)]" : "border-white/10 opacity-50 hover:opacity-100"}`}
-              >
-                <img 
-                  src={`/images/products/${productId}/${num}.jpg`} 
-                  alt={`Thumbnail ${num}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
+                className={`w-3 h-3 rounded-full transition-all cursor-pointer ${activeImage === num ? 'bg-nexus-emerald scale-125 shadow-[0_0_10px_rgba(0,255,157,0.8)]' : 'bg-white/20 hover:bg-white/40'}`}
+                aria-label={`View screenshot ${num}`}
+              />
             ))}
           </div>
         </div>
-
 
         {/* Psychological Copywriting Section (PAS Formula) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
@@ -117,10 +115,10 @@ export default function ProductLanding() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className={`border-l-4 border-red-500/80 bg-red-500/5 py-4 ${isRtl ? 'border-r-4 border-l-0 pr-6' : 'pl-6'} rounded-r-2xl`}
+              className="border-l-4 border-red-500/80 bg-red-500/5 py-4 pl-6 rounded-r-2xl"
             >
               <h3 className="text-red-400 font-bold mb-2 uppercase tracking-wider text-sm">
-                {isRtl ? 'المشكلة (The Pain)' : 'The Pain'}
+                The Pain
               </h3>
               <p className="text-white text-xl leading-relaxed font-medium">
                 {t(product.painKey)}
@@ -131,10 +129,10 @@ export default function ProductLanding() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className={`${isRtl ? 'pr-6' : 'pl-6'}`}
+              className="pl-6"
             >
               <h3 className="text-gray-500 font-bold mb-2 uppercase tracking-wider text-sm">
-                {isRtl ? 'التصعيد (The Agitation)' : 'The Agitation'}
+                The Agitation
               </h3>
               <p className="text-gray-300 text-lg leading-relaxed">
                 {t(product.agitateKey)}
@@ -150,7 +148,7 @@ export default function ProductLanding() {
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-nexus-mint to-nexus-emerald"></div>
               <h3 className="text-nexus-emerald font-bold mb-3 uppercase tracking-wider text-sm flex items-center gap-2">
                 <Zap size={16} />
-                {isRtl ? 'الحل الجذري (The Solution)' : 'The Solution'}
+                The Solution
               </h3>
               <p className="text-white text-xl leading-relaxed font-semibold">
                 {t(product.solveKey)}
@@ -168,27 +166,27 @@ export default function ProductLanding() {
             >
               <div className="mb-8 border-b border-white/10 pb-8">
                 <h2 className="text-gray-400 mb-2 uppercase text-sm font-bold tracking-widest">
-                  {isRtl ? 'رخصة الاستخدام (بدون حدود)' : 'UNLIMITED ENTERPRISE LICENSE'}
+                  UNLIMITED ENTERPRISE LICENSE
                 </h2>
                 <div className="flex items-baseline gap-2">
-                  <span className={`${fontHeading} text-5xl font-bold text-white`}>
+                  <span className="font-display text-5xl font-bold text-white">
                     {t(product.priceKey)}
                   </span>
-                  {!product.isCustom && <span className="text-gray-500 text-sm mx-2">{isRtl ? '(دفع لمرة واحدة)' : '(One-Time Payment)'}</span>}
+                  {!product.isCustom && <span className="text-gray-500 text-sm mx-2">(One-Time Payment)</span>}
                 </div>
                 {!product.isCustom && (
                   <div className="mt-4 bg-nexus-emerald/10 text-nexus-emerald px-4 py-2 rounded-lg text-sm font-medium border border-nexus-emerald/20 inline-block">
-                    {isRtl ? '✓ يتم المعالجة محلياً - 0% رفع للسحابة' : '✓ Processed Locally - 0% Cloud Uploads'}
+                    ✓ Processed Locally - 0% Cloud Uploads
                   </div>
                 )}
               </div>
 
               <ul className="space-y-4 mb-8">
                 {[
-                  isRtl ? 'رخصة استخدام غير محدودة' : 'Unlimited Lifetime License',
-                  isRtl ? 'وصول فوري للنظام' : 'Instant System Access',
-                  isRtl ? 'دعم فني مخصص للعملاء' : 'Priority VIP Support',
-                  isRtl ? 'تحديثات مجانية مستمرة' : 'Free Continuous Updates'
+                  'Unlimited Lifetime License',
+                  'Instant System Access',
+                  'Priority VIP Support',
+                  'Free Continuous Updates'
                 ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-gray-300">
                     <CheckCircle2 className="text-nexus-emerald shrink-0" size={20} />
@@ -200,10 +198,10 @@ export default function ProductLanding() {
               {product.isService ? (
                   <button 
                     onClick={() => setIsContactOpen(true)}
-                    className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
+                    className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4 cursor-pointer"
                   >
                     <span className="relative z-10 flex items-center gap-2">
-                      {isRtl ? 'تواصل معنا للحصول على عرض سعر' : 'Contact Us for a Quote'}
+                      Contact Us for a Quote
                     </span>
                   </button>
                 ) : (
@@ -211,30 +209,24 @@ export default function ProductLanding() {
                     href={product.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4"
+                    className="group relative w-full flex items-center justify-center gap-3 bg-nexus-emerald text-black py-4 rounded-2xl font-bold text-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-[0_0_30px_rgba(0,255,157,0.4)] mb-4 cursor-pointer"
                   >
                     <span className="relative z-10 flex items-center gap-2">
-                      {isRtl ? 'احصل على الترخيص الآن' : 'Get Full Lifetime Access'}
+                      Get Full Lifetime Access
                     </span>
+                    <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
                   </a>
                 )}
 
-              <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
-                <Shield size={16} />
-                <span>{isRtl ? 'دفع آمن ومشفر 100%' : '100% Secure & Encrypted Checkout'}</span>
-              </div>
+              <p className="text-xs text-center text-gray-500">
+                100% Secure Checkout via Whop • Instant Key Delivery
+              </p>
             </motion.div>
           </div>
         </div>
       </main>
 
-      {product.isService && (
-        <ContactModal 
-          isOpen={isContactOpen} 
-          onClose={() => setIsContactOpen(false)} 
-          services={[t(product.titleKey)]} 
-        />
-      )}
+      <ContactModal isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </div>
   );
 }

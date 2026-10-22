@@ -31,15 +31,15 @@ import { openSeamlessCheckout } from './utils/checkoutPopup';
 export default function App() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const [lang, setLang] = useState('en');
-  const isRtl = lang === 'ar';
+  const [lang] = useState('en');
+  const isRtl = false;
 
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
 
   useEffect(() => {
-    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    document.documentElement.dir = 'ltr';
     i18n.changeLanguage(lang);
   }, [lang, isRtl, i18n]);
 
@@ -53,7 +53,7 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-[#020608] text-zinc-100 selection:bg-nexus-emerald selection:text-black antialiased ${isRtl ? 'font-cairo rtl' : 'font-heading ltr'}`}>
+    <div className={`min-h-screen bg-[#020608] text-zinc-100 selection:bg-nexus-emerald selection:text-black antialiased $'font-heading ltr'`}>
       
       {/* Background Architectural Grid & Subtle Radial Glow */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
@@ -81,59 +81,30 @@ export default function App() {
         <div className="hidden lg:flex items-center gap-7 text-xs font-semibold text-zinc-400">
           <button onClick={() => scrollToSection('launch-film')} className="hover:text-nexus-emerald transition-colors flex items-center gap-1.5 text-zinc-200">
             <span className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse"></span>
-            <span>{isRtl ? 'العرض الرسمي (48s)' : 'Launch Film (48s)'}</span>
+            <span>'Launch Film (48s)'</span>
           </button>
           <button onClick={() => scrollToSection('studio-preview')} className="hover:text-white transition-colors">
-            {isRtl ? 'بيئة العمل الحية' : 'Live Studio'}
+            'Live Studio'
           </button>
           <button onClick={() => scrollToSection('comparison')} className="hover:text-white transition-colors">
-            {isRtl ? 'مقارنة المخاطر' : 'Risk Comparison'}
+            'Risk Comparison'
           </button>
           <button onClick={() => scrollToSection('engines')} className="hover:text-white transition-colors">
-            {isRtl ? 'المحركات الخماسية' : '5-in-1 Engines'}
+            '5-in-1 Engines'
           </button>
           <button onClick={() => scrollToSection('security')} className="hover:text-white transition-colors">
-            {isRtl ? 'معيار السرية ABA 1.6' : 'ABA Rule 1.6'}
+            'ABA Rule 1.6'
           </button>
           <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition-colors">
-            {isRtl ? 'التراخيص والتسعير' : 'Licensing & Pricing'}
+            'Licensing & Pricing'
           </button>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Language Toggle */}
-          <div className="relative">
-            <button 
-              onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] transition-colors border border-white/10 text-xs font-semibold text-zinc-300"
-            >
-              <Globe size={14} className="text-nexus-emerald" />
-              <span>{lang === 'ar' ? 'العربية' : 'EN'}</span>
-            </button>
-            
-            <AnimatePresence>
-              {isLangMenuOpen && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  className="absolute right-0 mt-2 w-28 bg-[#091116] border border-white/15 rounded-xl overflow-hidden flex flex-col z-50 shadow-2xl"
-                >
-                  <button
-                    onClick={() => { setLang('ar'); setIsLangMenuOpen(false); }}
-                    className="text-right px-4 py-2 text-xs text-zinc-200 hover:bg-nexus-emerald/20 hover:text-white transition-colors"
-                  >
-                    العربية
-                  </button>
-                  <button
-                    onClick={() => { setLang('en'); setIsLangMenuOpen(false); }}
-                    className="text-left px-4 py-2 text-xs text-zinc-200 hover:bg-nexus-emerald/20 hover:text-white transition-colors"
-                  >
-                    English
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* Language Indicator */}
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 text-xs font-semibold text-zinc-300">
+            <Globe size={14} className="text-nexus-emerald" />
+            <span>EN</span>
           </div>
 
           {/* Interactive Demo CTA */}
@@ -142,7 +113,7 @@ export default function App() {
             className="px-3.5 py-2 rounded-xl text-xs font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/25 hover:bg-cyan-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles size={13} className="text-cyan-400" />
-            <span>{isRtl ? 'تجربة الديمو التفاعلي' : 'Live Demo'}</span>
+            <span>'Live Demo'</span>
           </button>
 
           {/* Launch Studio CTA in Nav */}
@@ -150,8 +121,8 @@ export default function App() {
             onClick={() => navigate('/app/contractcompare')}
             className="bg-nexus-emerald text-black px-4 py-2 rounded-xl text-xs font-black hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center gap-1.5 cursor-pointer"
           >
-            <span>{isRtl ? 'فتح الاستوديو الكامل' : 'Launch Studio'}</span>
-            <ArrowRight size={13} className={isRtl ? 'rotate-180' : ''} />
+            <span>'Launch Studio'</span>
+            <ArrowRight size={13} className='' />
           </button>
         </div>
       </nav>
@@ -173,7 +144,7 @@ export default function App() {
                 className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-nexus-emerald/10 border border-nexus-emerald/30 text-nexus-emerald text-[11px] font-mono uppercase tracking-wider mb-6"
               >
                 <span className="w-2 h-2 rounded-full bg-nexus-emerald animate-pulse"></span>
-                <span>{isRtl ? 'معزول هوائياً 100% • متوافق مع معيار ABA Model Rule 1.6' : '100% AIR-GAPPED • ABA MODEL RULE 1.6 COMPLIANT'}</span>
+                <span>'100% AIR-GAPPED • ABA MODEL RULE 1.6 COMPLIANT'</span>
               </motion.div>
 
               {/* Master Headline */}
@@ -183,21 +154,12 @@ export default function App() {
                 transition={{ delay: 0.1 }}
                 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-[-0.03em] apple-display-heading text-white leading-[1.12] mb-6"
               >
-                {isRtl ? (
-                  <>
-                    اكشف الأخطاء الكارثية في العقود <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white">
-                      قبل التوقيع — محلياً في ثوانٍ.
-                    </span>
-                  </>
-                ) : (
-                  <>
+                <>
                     Pre-Signing Legal Defense. <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white">
                       Never Sign a Defective Contract.
                     </span>
                   </>
-                )}
               </motion.h1>
               
               {/* Subheadline with Precise Legal Value Proposition */}
@@ -207,10 +169,7 @@ export default function App() {
                 transition={{ delay: 0.2 }}
                 className="text-base md:text-lg text-zinc-300 leading-relaxed mb-8"
               >
-                {isRtl 
-                  ? 'محرك التدقيق الآلي الأقوى للمحامين والمستشارين القانونيين. يكشف تلقائياً المراجع المكسورة (Section 8.2)، تضارب المبالغ المكتوبة بالأرقام والكلمات، المصطلحات العائمة غير المعرفة، وبقايا المسودات السابقة [TBD] في ذاكرة متصفحك مباشرة دون رفع كلمة واحدة لأي سيرفر خارجي.'
-                  : 'Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Catches broken section cross-references, word-to-number financial mismatches, undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.'
-                }
+                'Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Catches broken section cross-references, word-to-number financial mismatches, undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.'
               </motion.p>
 
               {/* Action Buttons */}
@@ -225,8 +184,8 @@ export default function App() {
                   className="bg-nexus-emerald text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] flex items-center gap-2.5 cursor-pointer"
                 >
                   <Sparkles size={16} />
-                  <span>{isRtl ? '⚡ تجربة الديمو التفاعلي الفوري (79ms Demo)' : '⚡ Try Interactive Live Demo'}</span>
-                  <ArrowRight size={16} className={isRtl ? 'rotate-180' : ''} />
+                  <span>'⚡ Try Interactive Live Demo'</span>
+                  <ArrowRight size={16} className='' />
                 </button>
 
                 <button 
@@ -236,14 +195,14 @@ export default function App() {
                   <div className="w-5 h-5 rounded-full bg-nexus-emerald/20 flex items-center justify-center text-nexus-emerald group-hover:scale-110 transition-transform">
                     <Play size={11} className="ml-0.5 fill-nexus-emerald" />
                   </div>
-                  <span>{isRtl ? 'عرض الفيديو الترويجي (48s)' : 'Watch Launch Film (48s)'}</span>
+                  <span>'Watch Launch Film (48s)'</span>
                 </button>
                 
                 <button 
                   onClick={() => navigate('/app/contractcompare')}
                   className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <span>{isRtl ? 'بيئة العمل الكاملة' : 'Full Studio'}</span>
+                  <span>'Full Studio'</span>
                 </button>
 
                 <button 
@@ -251,7 +210,7 @@ export default function App() {
                   className="px-6 py-3.5 rounded-xl bg-nexus-cyan/10 hover:bg-nexus-cyan/20 border border-nexus-cyan/30 text-nexus-cyan font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Lock size={15} />
-                  <span>{isRtl ? 'التراخيص الدائمة ($199 / $299)' : 'Lifetime Licenses ($199 / $299)'}</span>
+                  <span>'Lifetime Licenses ($199 / $299)'</span>
                 </button>
               </motion.div>
 
@@ -259,15 +218,15 @@ export default function App() {
               <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/[0.08]">
                 <div>
                   <div className="text-2xl font-black text-white font-mono">0ms</div>
-                  <div className="text-xs text-zinc-400 mt-0.5">{isRtl ? 'زمن النقل (معالجة بالمتصفح)' : 'Network Latency (In-Browser)'}</div>
+                  <div className="text-xs text-zinc-400 mt-0.5">'Network Latency (In-Browser)'</div>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-nexus-emerald font-mono">100%</div>
-                  <div className="text-xs text-zinc-400 mt-0.5">{isRtl ? 'عزل هوائي وسرية مهنية' : 'Air-Gapped Client Privilege'}</div>
+                  <div className="text-xs text-zinc-400 mt-0.5">'Air-Gapped Client Privilege'</div>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-nexus-cyan font-mono">5 in 1</div>
-                  <div className="text-xs text-zinc-400 mt-0.5">{isRtl ? 'محركات تدقيق شاملة' : 'Integrated Audit Engines'}</div>
+                  <div className="text-xs text-zinc-400 mt-0.5">'Integrated Audit Engines'</div>
                 </div>
               </div>
 
@@ -293,10 +252,10 @@ export default function App() {
         <section id="studio-preview" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-8">
             <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3 py-1 rounded-full">
-              {isRtl ? 'معاينة الواجهة الحقيقية' : 'LIVE STUDIO TELEMETRY'}
+              'LIVE STUDIO TELEMETRY'
             </span>
             <h2 className="text-2xl md:text-4xl font-extrabold text-white mt-3">
-              {isRtl ? 'شاهد كيف يبدو التدقيق الفعلي داخل جهازك' : 'What Modern Legal Integrity Looks Like in Action'}
+              'What Modern Legal Integrity Looks Like in Action'
             </h2>
           </div>
 
@@ -372,7 +331,7 @@ export default function App() {
                 <div>
                   <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
                     <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider">
-                      {isRtl ? 'مؤشر النزاهة القانونية' : 'INTEGRITY AUDIT REPORT'}
+                      'INTEGRITY AUDIT REPORT'
                     </span>
                     <span className="text-xs font-bold font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
                       HIGH RISK (62/100)
@@ -382,19 +341,19 @@ export default function App() {
                   {/* Summary Metric Cards */}
                   <div className="grid grid-cols-2 gap-2.5 mb-5">
                     <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">{isRtl ? 'المراجع المكسورة' : 'Broken Citations'}</div>
+                      <div className="text-[11px] text-zinc-400">'Broken Citations'</div>
                       <div className="text-xl font-black text-rose-400 font-mono">2 Flagged</div>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">{isRtl ? 'التضارب المالي' : 'Financial Mismatch'}</div>
+                      <div className="text-[11px] text-zinc-400">'Financial Mismatch'</div>
                       <div className="text-xl font-black text-amber-400 font-mono">1 Contradiction</div>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">{isRtl ? 'فراغات [TBD]' : 'Boilerplate Residue'}</div>
+                      <div className="text-[11px] text-zinc-400">'Boilerplate Residue'</div>
                       <div className="text-xl font-black text-purple-400 font-mono">3 Unresolved</div>
                     </div>
                     <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">{isRtl ? 'التزامات ملزمة' : 'Obligations Extracted'}</div>
+                      <div className="text-[11px] text-zinc-400">'Obligations Extracted'</div>
                       <div className="text-xl font-black text-nexus-emerald font-mono">18 Covenants</div>
                     </div>
                   </div>
@@ -403,11 +362,11 @@ export default function App() {
                   <div className="space-y-2 text-xs text-zinc-300 mb-6">
                     <div className="flex items-start gap-2">
                       <CheckCircle2 size={14} className="text-nexus-emerald mt-0.5 shrink-0" />
-                      <span>{isRtl ? 'تم عزل وحصر مصفوفة التزامات الطرفين (Client vs Contractor)' : 'Extracted distinct duty matrix for Client vs Contractor'}</span>
+                      <span>'Extracted distinct duty matrix for Client vs Contractor'</span>
                     </div>
                     <div className="flex items-start gap-2">
                       <CheckCircle2 size={14} className="text-nexus-emerald mt-0.5 shrink-0" />
-                      <span>{isRtl ? 'مذكرة العميل التنفيذية جاهزة للتصدير والطباعة الرسمية' : 'Executive Client Memo ready for court/partner presentation'}</span>
+                      <span>'Executive Client Memo ready for court/partner presentation'</span>
                     </div>
                   </div>
                 </div>
@@ -418,8 +377,8 @@ export default function App() {
                     onClick={() => navigate('/app/contractcompare')}
                     className="w-full bg-nexus-emerald text-black py-3 px-4 rounded-xl font-black text-xs hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center justify-center gap-2 cursor-pointer font-ui"
                   >
-                    <span>{isRtl ? 'فتح بيئة العمل والبدء في فحص العقود' : 'Launch Air-Gapped Legal Studio Now'}</span>
-                    <ArrowRight size={14} className={isRtl ? 'rotate-180' : ''} />
+                    <span>'Launch Air-Gapped Legal Studio Now'</span>
+                    <ArrowRight size={14} className='' />
                   </button>
                 </div>
               </div>
@@ -435,10 +394,10 @@ export default function App() {
         <section id="comparison" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="font-mono text-xs font-bold text-rose-400 uppercase tracking-wider bg-rose-500/10 border border-rose-500/20 px-3.5 py-1 rounded-full">
-              {isRtl ? 'تحليل المخاطر المباشرة' : 'THE LIABILITY REALITY'}
+              'THE LIABILITY REALITY'
             </span>
             <h2 className="text-3xl md:text-5xl font-black tracking-[-0.03em] apple-display-heading text-white mt-4">
-              {isRtl ? 'التدقيق اليدوي المرهق مقابل الحصانة الآلية المحلية' : 'Manual Proofreading vs. Air-Gapped Precision'}
+              'Manual Proofreading vs. Air-Gapped Precision'
             </h2>
           </div>
 
@@ -452,10 +411,10 @@ export default function App() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">
-                    {isRtl ? 'التدقيق اليدوي والسحابي التقليدي' : 'Traditional Manual & Cloud AI Proofreading'}
+                    'Traditional Manual & Cloud AI Proofreading'
                   </h3>
                   <span className="text-xs text-red-400 font-mono">
-                    {isRtl ? 'إجهاد بشري + خرق للسرية المهنية' : 'Human Fatigue + Malpractice & Privilege Breaches'}
+                    'Human Fatigue + Malpractice & Privilege Breaches'
                   </span>
                 </div>
               </div>
@@ -463,19 +422,19 @@ export default function App() {
               <ul className="space-y-4 text-xs md:text-sm text-zinc-400">
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>{isRtl ? 'استغراق 4 إلى 8 ساعات من وقت المحامي لكل اتفاقية لمراجعة الإحالات يدوياً.' : '4 to 8 billable hours lost per contract searching for cross-references.'}</span>
+                  <span>'4 to 8 billable hours lost per contract searching for cross-references.'</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>{isRtl ? 'إغفال تضارب الأرقام ($10,000 مقابل $100,000) مما يؤدي لنزاعات تحكيم مكلفة.' : 'Overlooking numbers-to-words typos ($10k vs $100k) sparking litigation.'}</span>
+                  <span>'Overlooking numbers-to-words typos ($10k vs $100k) sparking litigation.'</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>{isRtl ? 'رفع مسودات صفقات الاستحواذ السرية لخوادم سحابية ينتهك قواعد السلوك المهني.' : 'Uploading sensitive client M&A drafts to cloud AI violates ABA Rule 1.6.'}</span>
+                  <span>'Uploading sensitive client M&A drafts to cloud AI violates ABA Rule 1.6.'</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>{isRtl ? 'نسيان فراغات [TBD] في المسودة النهائية يمنح الخصم ثغرات تعاقدية.' : 'Leftover [TBD] brackets in executed versions create exploitable loopholes.'}</span>
+                  <span>'Leftover [TBD] brackets in executed versions create exploitable loopholes.'</span>
                 </li>
               </ul>
             </div>
@@ -488,10 +447,10 @@ export default function App() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">
-                    {isRtl ? 'مع Nexus ContractGuard Enterprise' : 'With Nexus ContractGuard Enterprise 2.0'}
+                    'With Nexus ContractGuard Enterprise 2.0'
                   </h3>
                   <span className="text-xs text-nexus-emerald font-mono">
-                    {isRtl ? 'تدقيق فوري في 400ms + عزل هوائي كامل' : '400ms Audit In-Memory + 100% Air-Gapped Confidentiality'}
+                    '400ms Audit In-Memory + 100% Air-Gapped Confidentiality'
                   </span>
                 </div>
               </div>
@@ -499,19 +458,19 @@ export default function App() {
               <ul className="space-y-4 text-xs md:text-sm text-zinc-200">
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>{isRtl ? 'كشف حتمي وتلقائي بنسبة 100% لكافة المراجع المكسورة والملاحق المفقودة.' : '100% deterministic scan of all broken citations & missing exhibits.'}</span>
+                  <span>'100% deterministic scan of all broken citations & missing exhibits.'</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>{isRtl ? 'مطابقة رياضية وفورية بين المبالغ المكتوبة بالأرقام وتلك المكتوبة بالكلمات.' : 'Instant mathematical verification between written words & parenthetical numbers.'}</span>
+                  <span>'Instant mathematical verification between written words & parenthetical numbers.'</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>{isRtl ? 'أمان كامل طبقاً لـ ABA Model Rule 1.6: لا يغادر حرف واحد ذاكرة جهازك.' : 'Zero server telemetry: complete compliance with ABA Model Rule 1.6.'}</span>
+                  <span>'Zero server telemetry: complete compliance with ABA Model Rule 1.6.'</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>{isRtl ? 'توليد مذكرة العميل التنفيذية بضغطة زر بصيغة PDF وطباعة معتمدة للمحكمة.' : '1-Click Executive Client Memorandum generated in court-ready PDF format.'}</span>
+                  <span>'1-Click Executive Client Memorandum generated in court-ready PDF format.'</span>
                 </li>
               </ul>
             </div>
@@ -525,15 +484,13 @@ export default function App() {
         <section id="engines" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="font-mono text-xs font-bold text-nexus-cyan uppercase tracking-wider bg-nexus-cyan/10 border border-nexus-cyan/20 px-3.5 py-1 rounded-full">
-              {isRtl ? 'المعمارية التقنية الخماسية' : 'THE 5-IN-1 INTEGRITY ENGINES'}
+              'THE 5-IN-1 INTEGRITY ENGINES'
             </span>
             <h2 className="text-3xl md:text-5xl font-black tracking-[-0.03em] apple-display-heading text-white mt-4">
-              {isRtl ? 'خمسة محركات فحص مستقلة تعمل في آن واحد' : 'Five Synchronous Engines Running Client-Side'}
+              'Five Synchronous Engines Running Client-Side'
             </h2>
             <p className="text-zinc-400 text-sm md:text-base mt-2.5">
-              {isRtl 
-                ? 'مدعومة بتقنية Web Worker غير المعطلة لواجهة المستخدم لفحص العقود الطويلة دون أي تباطؤ.'
-                : 'Powered by dedicated non-blocking Web Workers capable of parsing 15,000+ words in milliseconds.'
+              {'Powered by dedicated non-blocking Web Workers capable of parsing 15,000+ words in milliseconds.'
               }
             </p>
           </div>
@@ -548,17 +505,15 @@ export default function App() {
                 </div>
                 <div className="text-[11px] font-mono text-nexus-emerald mb-1 font-bold">ENGINE 01</div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {isRtl ? 'كاشف المراجع والملاحق المفقودة' : 'Cross-Reference & Exhibit Hunter'}
+                  'Cross-Reference & Exhibit Hunter'
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                  {isRtl 
-                    ? 'يمسح نصوص العقد لكشف كل إحالة لبند (Section 4.2 أو Exhibit B) ويتأكد من وجودها ومطابقتها داخل المستند.'
-                    : 'Scans all internal section citations and schedules, flagging deleted clauses or orphaned attachments.'
+                  {'Scans all internal section citations and schedules, flagging deleted clauses or orphaned attachments.'
                   }
                 </p>
               </div>
               <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
-                {isRtl ? '✓ استخراج وفهرسة الملاحق A-Z' : '✓ Full A-Z Exhibit & Section index'}
+                '✓ Full A-Z Exhibit & Section index'
               </div>
             </div>
 
@@ -570,17 +525,15 @@ export default function App() {
                 </div>
                 <div className="text-[11px] font-mono text-amber-400 mb-1 font-bold">ENGINE 02</div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {isRtl ? 'مدقق المبالغ والتواريخ المتعارضة' : 'Financial & Chronology Auditor'}
+                  'Financial & Chronology Auditor'
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                  {isRtl 
-                    ? 'يطابق الكلمات بالأرقام ويكتشف المفارقات الزمنية مثل فترات الإشعار المتناقضة وتواريخ السريان المستحيلة.'
-                    : 'Reconciles spelled-out currency with parenthetical numbers, and detects chronological timeline paradoxes.'
+                  {'Reconciles spelled-out currency with parenthetical numbers, and detects chronological timeline paradoxes.'
                   }
                 </p>
               </div>
               <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
-                {isRtl ? '✓ مطابقة الكلمات والرموز المالية' : '✓ Word-to-numeral mathematical check'}
+                '✓ Word-to-numeral mathematical check'
               </div>
             </div>
 
@@ -592,17 +545,15 @@ export default function App() {
                 </div>
                 <div className="text-[11px] font-mono text-purple-400 mb-1 font-bold">ENGINE 03</div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {isRtl ? 'صياد المصطلحات وفراغات المسودات' : 'Defined Terms & Boilerplate Hunter'}
+                  'Defined Terms & Boilerplate Hunter'
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                  {isRtl 
-                    ? 'يصطاد المصطلحات المكتوبة بحرف كبير دون تعريف في المادة 1، ويكتشف علامات [TBD] وفراغات العقود السابقة.'
-                    : 'Catches capitalized terms used without formal definition, alongside placeholder brackets like [TBD].'
+                  {'Catches capitalized terms used without formal definition, alongside placeholder brackets like [TBD].'
                   }
                 </p>
               </div>
               <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
-                {isRtl ? '✓ فحص ميثاق التعريفات والمسودات' : '✓ Full definitions registry audit'}
+                '✓ Full definitions registry audit'
               </div>
             </div>
 
@@ -614,17 +565,15 @@ export default function App() {
                 </div>
                 <div className="text-[11px] font-mono text-nexus-cyan mb-1 font-bold">ENGINE 04</div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {isRtl ? 'مصفوفة الالتزامات والحقوق التعاقدية' : 'Obligations & Rights Matrix'}
+                  'Obligations & Rights Matrix'
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                  {isRtl 
-                    ? 'يصنف بنود العقد حسب الطرف الملزم ودرجة الإلزام (Shall / Must / Agrees to / May) لتسليم العميل خلاصة واضحة.'
-                    : 'Extracts and classifies covenants by contracting party and legal weight (Shall / Must / May).'
+                  {'Extracts and classifies covenants by contracting party and legal weight (Shall / Must / May).'
                   }
                 </p>
               </div>
               <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
-                {isRtl ? '✓ فرز التزامات الطرف الأول والثاني' : '✓ Party-by-party covenant sorting'}
+                '✓ Party-by-party covenant sorting'
               </div>
             </div>
 
@@ -636,12 +585,10 @@ export default function App() {
                 </div>
                 <div className="text-[11px] font-mono text-nexus-emerald mb-1 font-bold">ENGINE 05 • WHITE-LABEL</div>
                 <h3 className="text-lg font-bold text-white mb-2">
-                  {isRtl ? 'توليد مذكرة العميل التنفيذية المعتمدة (1-Click Client Memo)' : '1-Click Executive Client Memorandum (PDF & HTML)'}
+                  '1-Click Executive Client Memorandum (PDF & HTML)'
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                  {isRtl 
-                    ? 'يحول نتائج التدقيق المعقدة إلى مذكرة قانونية تنفيذية فخمة جاهزة للتقديم للعميل أو الشركاء بصيغة PDF رسمية، تتضمن مؤشرات الخطورة وتفاصيل الملاحظات مع إمكانية وضع شعار واسم مكتبك.'
-                    : 'Converts technical audit findings into an executive-ready legal memorandum for clients or senior partners, complete with risk matrices, findings breakdowns, and printable court-grade styling.'
+                  {'Converts technical audit findings into an executive-ready legal memorandum for clients or senior partners, complete with risk matrices, findings breakdowns, and printable court-grade styling.'
                   }
                 </p>
               </div>
@@ -665,15 +612,13 @@ export default function App() {
 
             <div className="max-w-3xl mb-10 relative z-10">
               <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-                {isRtl ? 'الامتثال وأخلاقيات المحاماة' : 'LEGAL ETHICS & PRIVILEGE'}
+                'LEGAL ETHICS & PRIVILEGE'
               </span>
               <h2 className="text-2xl md:text-4xl font-black tracking-[-0.03em] apple-display-heading text-white mt-4 mb-3">
-                {isRtl ? 'لماذا يرفض كبار المحامين أدوات الذكاء الاصطناعي السحابية؟' : 'Why Boutique Law Firms Trust Nexus ContractGuard'}
+                'Why Boutique Law Firms Trust Nexus ContractGuard'
               </h2>
               <p className="text-zinc-300 text-xs md:text-sm leading-relaxed">
-                {isRtl 
-                  ? 'بموجب القاعدة 1.6 من قواعد السلوك المهني لنقابة المحامين الأمريكية (ABA Model Rule 1.6)، يلتزم المحامي قانونياً باتخاذ تدابير صارمة لمنع الكشف غير المقصود عن بيانات الموكلين. إدخال بنود العقود في روبوتات الدردشة أو السيرفرات السحابية يعرضك لمخاطر شطب السرية المهنية ومسؤولية التقصير.'
-                  : 'Under ABA Model Rule 1.6(c), attorneys have an affirmative duty to make reasonable efforts to prevent inadvertent disclosure of confidential client data. Feeding confidential transaction drafts into multi-tenant cloud APIs waives attorney-client privilege.'
+                {'Under ABA Model Rule 1.6(c), attorneys have an affirmative duty to make reasonable efforts to prevent inadvertent disclosure of confidential client data. Feeding confidential transaction drafts into multi-tenant cloud APIs waives attorney-client privilege.'
                 }
               </p>
             </div>
@@ -682,30 +627,30 @@ export default function App() {
               <div className="p-6 rounded-2xl bg-black/60 border border-white/10 border-t-white/20 shadow-lg hover:border-nexus-emerald/40 transition-all">
                 <Shield size={22} className="text-nexus-emerald mb-3.5" />
                 <h4 className="text-sm font-bold text-white mb-2">
-                  {isRtl ? 'معالجة محلية بنسبة 100%' : '100% In-Browser Execution'}
+                  '100% In-Browser Execution'
                 </h4>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  {isRtl ? 'تتم كافة العمليات في ذاكرة المتصفح عبر Web Worker مشفر دون أي تواصل مع سيرفرات.' : 'All grammatical, chronological, and citation algorithms execute in client memory.'}
+                  'All grammatical, chronological, and citation algorithms execute in client memory.'
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-black/60 border border-white/10 border-t-white/20 shadow-lg hover:border-nexus-cyan/40 transition-all">
                 <EyeOff size={22} className="text-nexus-cyan mb-3.5" />
                 <h4 className="text-sm font-bold text-white mb-2">
-                  {isRtl ? 'صفر تتبع وتخزين للبيانات' : 'Zero Telemetry & Storage'}
+                  'Zero Telemetry & Storage'
                 </h4>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  {isRtl ? 'لا يتم تسجيل أو تخزين أو الاحتفاظ بأي كلمة من عقودك أو ملاحقك في أي مكان.' : 'Zero analytics, no remote logging, and no persistent cloud caching.'}
+                  'Zero analytics, no remote logging, and no persistent cloud caching.'
                 </p>
               </div>
 
               <div className="p-6 rounded-2xl bg-black/60 border border-white/10 border-t-white/20 shadow-lg hover:border-purple-400/40 transition-all">
                 <Lock size={22} className="text-purple-400 mb-3.5" />
                 <h4 className="text-sm font-bold text-white mb-2">
-                  {isRtl ? 'لا تدريب لنماذج الذكاء' : 'Zero AI Model Training'}
+                  'Zero AI Model Training'
                 </h4>
                 <p className="text-xs text-zinc-400 leading-relaxed">
-                  {isRtl ? 'أسرار صفقاتك ومفاوضاتك لن تتحول أبداً إلى بيانات تدريبية لأي نموذج لغوي خارجي.' : 'Your proprietary deal structures and negotiation redlines are never used for model training.'}
+                  'Your proprietary deal structures and negotiation redlines are never used for model training.'
                 </p>
               </div>
             </div>
@@ -718,15 +663,13 @@ export default function App() {
         <section id="pricing" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-              {isRtl ? 'تسعير مباشر وشفاف' : 'PERPETUAL B2B LICENSING'}
+              'PERPETUAL B2B LICENSING'
             </span>
             <h2 className="text-3xl md:text-5xl font-black tracking-[-0.03em] apple-display-heading text-white mt-4">
-              {isRtl ? 'رخصة دائمة لمدى الحياة. بدون اشتراكات شهرية.' : 'One-Time Investment. Lifetime Ownership.'}
+              'One-Time Investment. Lifetime Ownership.'
             </h2>
             <p className="text-zinc-400 text-sm md:text-base mt-2.5">
-              {isRtl 
-                ? 'تخلص من استنزاف الاشتراكات السحابية الشهرية ($1,500/شهر) وامتلك أداتك القانونية محلياً.'
-                : 'Eliminate recurring SaaS subscription drains ($1,500/yr) with clean offline cryptographic ownership.'
+              {'Eliminate recurring SaaS subscription drains ($1,500/yr) with clean offline cryptographic ownership.'
               }
             </p>
           </div>
@@ -739,10 +682,10 @@ export default function App() {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="text-2xl font-black text-white">
-                      {isRtl ? 'رخصة المستشار الفردي (Solo Counsel)' : 'Solo Counsel License'}
+                      'Solo Counsel License'
                     </h3>
                     <p className="text-xs text-zinc-400 mt-1">
-                      {isRtl ? 'مثالية للمحامي المستقل والمستشارين القانونيين الداخليين.' : 'Ideal for solo attorneys, general counsels, and boutique dealmakers.'}
+                      'Ideal for solo attorneys, general counsels, and boutique dealmakers.'
                     </p>
                   </div>
                 </div>
@@ -752,34 +695,34 @@ export default function App() {
                     <span className="text-5xl font-black text-white font-mono tabular-nums">$199</span>
                     <span className="text-base text-zinc-500 line-through font-mono tabular-nums">$499</span>
                     <span className="text-xs text-nexus-emerald font-mono font-bold uppercase tracking-wider">
-                      {isRtl ? 'دفعة واحدة للأبد' : 'LIFETIME ACCESS'}
+                      'LIFETIME ACCESS'
                     </span>
                   </div>
                   <p className="text-xs text-zinc-400 mt-2">
-                    {isRtl ? 'صفر رسوم دورية • مفتاح أوفلاين مشفر وفوري' : 'Zero monthly fees • Instant offline cryptographic activation'}
+                    'Zero monthly fees • Instant offline cryptographic activation'
                   </p>
                 </div>
 
                 <div className="space-y-3 text-xs md:text-sm text-zinc-300">
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'مقعد محامي دائم لمدى الحياة (1 Seat)' : '1 Lifetime Attorney Seat'}</span>
+                    <span>'1 Lifetime Attorney Seat'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'فحص غير محدود للعقود ومسودات الـ NDA' : 'Unlimited Contract & NDA Audits'}</span>
+                    <span>'Unlimited Contract & NDA Audits'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'كاشف المراجع المكسورة وتضارب المبالغ المكتوبة' : 'Broken Cross-Ref & Financial Words Reconciler'}</span>
+                    <span>'Broken Cross-Ref & Financial Words Reconciler'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'تصدير مذكرة العميل التنفيذية (HTML & PDF)' : 'Executive Client Memorandum Export (HTML & PDF)'}</span>
+                    <span>'Executive Client Memorandum Export (HTML & PDF)'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'معالجة محلية 100% بدون خوادم خارجية' : '100% In-Browser Execution (Zero Telemetry)'}</span>
+                    <span>'100% In-Browser Execution (Zero Telemetry)'</span>
                   </div>
                 </div>
               </div>
@@ -795,7 +738,7 @@ export default function App() {
                   className="w-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all text-xs md:text-sm cursor-pointer shadow-sm active:scale-[0.98]"
                 >
                   <Lock size={15} className="text-emerald-400" />
-                  <span>{isRtl ? 'شراء رخصة المستشار الفردي ($199)' : 'Purchase Solo License ($199)'}</span>
+                  <span>'Purchase Solo License ($199)'</span>
                 </button>
               </div>
             </div>
@@ -803,17 +746,17 @@ export default function App() {
             {/* Law Firm Suite (Most Popular) */}
             <div className="p-8 md:p-10 rounded-3xl bg-[#06141A] border-2 border-nexus-emerald border-t-white/30 relative shadow-[0_0_50px_rgba(0,255,157,0.15)] flex flex-col justify-between">
               <div className="absolute top-0 right-8 -translate-y-1/2 bg-nexus-emerald text-black text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-lg">
-                {isRtl ? 'الأكثر طلباً للشركات والمكاتب' : 'MOST POPULAR FOR FIRMS'}
+                'MOST POPULAR FOR FIRMS'
               </div>
 
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="text-2xl font-black text-white">
-                      {isRtl ? 'رخصة مكاتب المحاماة (Law Firm Suite)' : 'Law Firm & Team Suite'}
+                      'Law Firm & Team Suite'
                     </h3>
                     <p className="text-xs text-zinc-400 mt-1">
-                      {isRtl ? 'مصممة لمكاتب المحاماة والفرق القانونية متعددة المستشارين.' : 'Engineered for law firms, advisory departments, and multi-user teams.'}
+                      'Engineered for law firms, advisory departments, and multi-user teams.'
                     </p>
                   </div>
                 </div>
@@ -823,34 +766,34 @@ export default function App() {
                     <span className="text-5xl font-black text-nexus-emerald font-mono tabular-nums">$299</span>
                     <span className="text-base text-zinc-500 line-through font-mono tabular-nums">$799</span>
                     <span className="text-xs text-nexus-emerald font-mono font-bold uppercase tracking-wider">
-                      {isRtl ? 'دفعة واحدة للأبد' : 'LIFETIME FIRM LICENSE'}
+                      'LIFETIME FIRM LICENSE'
                     </span>
                   </div>
                   <p className="text-xs text-zinc-400 mt-2">
-                    {isRtl ? 'ترخيص كامل لفريق العمل • يوفر أكثر من $1,800 سنوياً' : 'Replaces $1,800/yr per-seat cloud proofreading subscriptions'}
+                    'Replaces $1,800/yr per-seat cloud proofreading subscriptions'
                   </p>
                 </div>
 
                 <div className="space-y-3 text-xs md:text-sm text-zinc-200">
                   <div className="flex items-center gap-2.5 font-semibold">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'حتى 5 مقاعد للمحامين والمساعدين القانونيين' : 'Up to 5 Attorney & Paralegal Seats'}</span>
+                    <span>'Up to 5 Attorney & Paralegal Seats'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'كافة المحركات الخماسية المتقدمة بما فيها مصفوفة الالتزامات' : 'All 5 Advanced Integrity Engines + Obligations Matrix'}</span>
+                    <span>'All 5 Advanced Integrity Engines + Obligations Matrix'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'تخصيص المذكرات القانونية بهوية وشعار مكتبك (White-Label)' : 'White-Label Branding on Executive Client Memorandums'}</span>
+                    <span>'White-Label Branding on Executive Client Memorandums'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'ترقيم Bates القضائي وطمس البيانات الحساسة (PII Redaction)' : 'Court Bates Stamping & Sensitive PII Redactor'}</span>
+                    <span>'Court Bates Stamping & Sensitive PII Redactor'</span>
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>{isRtl ? 'أولوية في الدعم الفني وتحديثات المحرك الدائمة' : 'Priority Enterprise Support & Engine Updates'}</span>
+                    <span>'Priority Enterprise Support & Engine Updates'</span>
                   </div>
                 </div>
               </div>
@@ -866,7 +809,7 @@ export default function App() {
                   className="w-full bg-nexus-emerald text-black hover:bg-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] text-xs md:text-sm cursor-pointer active:scale-[0.98]"
                 >
                   <Lock size={15} />
-                  <span>{isRtl ? 'شراء رخصة مكاتب المحاماة ($299)' : 'Purchase Law Firm Suite ($299)'}</span>
+                  <span>'Purchase Law Firm Suite ($299)'</span>
                 </button>
               </div>
             </div>
@@ -883,41 +826,41 @@ export default function App() {
               FAQ
             </span>
             <h2 className="text-2xl md:text-4xl font-extrabold text-white mt-3">
-              {isRtl ? 'الأسئلة الشائعة حول الأداة والترخيص' : 'Frequently Asked Questions'}
+              'Frequently Asked Questions'
             </h2>
           </div>
 
           <div className="space-y-3">
             {[
               {
-                q: isRtl ? 'كيف تضمن الأداة سرية العقود 100% وتوافقها مع معيار ABA Model Rule 1.6؟' : 'How does ContractGuard guarantee 100% privacy and ABA Model Rule 1.6 compliance?',
-                a: isRtl ? 'الأداة مبنية بمعمارية In-RAM Local-First بالكامل؛ حيث تُعالج النصوص داخل خيوط الذاكرة المؤقتة (Web Worker) في متصفحك دون إرسال بايت واحد إلى أي خادم خارجي أو ذكاء اصطناعي سحابي، مما يحمي السرية المهنية وحصانة المحامي وموكله بشكل مطلق.' : 'The software executes 100% client-side inside non-blocking Web Workers in local browser RAM. Zero bytes are uploaded to external servers or cloud AI models, perfectly preserving attorney-client privilege under ABA Model Rule 1.6.'
+                q: 'How does ContractGuard guarantee 100% privacy and ABA Model Rule 1.6 compliance?',
+                a: 'The software executes 100% client-side inside non-blocking Web Workers in local browser RAM. Zero bytes are uploaded to external servers or cloud AI models, perfectly preserving attorney-client privilege under ABA Model Rule 1.6.'
               },
               {
-                q: isRtl ? 'هل يمكنني فحص مسودات عقودي الحقيقية مجاناً قبل الشراء؟' : 'Can I audit my own active contract drafts for free before purchasing?',
-                a: isRtl ? 'نعم! نمنح كل ممارس قانوني 3 محاولات تدقيق كاملة مجانية (3 Full Evaluation Passes) بدون أي حجب للنتائج. يمكنك لصق أو رفع عقودك الخاصة ومشاهدة كشف التضارب المالي والمراجع المكسورة بنفسك.' : 'Yes. We provide 3 full, unrestricted evaluation passes with zero paywalls. You can upload or paste your real transaction drafts and experience all 5 detection engines before deciding to buy.'
+                q: 'Can I audit my own active contract drafts for free before purchasing?',
+                a: 'Yes. We provide 3 full, unrestricted evaluation passes with zero paywalls. You can upload or paste your real transaction drafts and experience all 5 detection engines before deciding to buy.'
               },
               {
-                q: isRtl ? 'كيف يعمل قفل الجهاز (Hardware Binding) وهل يمكنني نقل الترخيص لكمبيوتر جديد؟' : 'How does hardware-locked licensing work, and can I transfer my seat to a new computer?',
-                a: isRtl ? 'يرتبط الترخيص ببصمة عتاد جهازك (Hardware Fingerprint) لمنع القرصنة. وإذا اشتريت حاسوباً جديداً، يمكنك بضغطة زر واحدة (Deactivate from this Device) تحرير المفتاح وإعادة تفعيله على جهازك الجديد بكل سهولة.' : 'Each license binds cryptographically to your device hardware fingerprint. If you upgrade laptops or switch workstations, a single click on "Deactivate from this Device" releases the key for immediate activation on your new machine.'
+                q: 'How does hardware-locked licensing work, and can I transfer my seat to a new computer?',
+                a: 'Each license binds cryptographically to your device hardware fingerprint. If you upgrade laptops or switch workstations, a single click on "Deactivate from this Device" releases the key for immediate activation on your new machine.'
               },
               {
-                q: isRtl ? 'كيف تعمل رخصة مكاتب المحاماة (Law Firm Suite - 5 مقاعد)؟' : 'How does the Law Firm Suite (5 Users) license distribute across our team?',
-                a: isRtl ? 'تستلم فوراً حزمة تراخيص مشفرة تتضمن 5 مفاتيح مستقلة: مفتاح لمحطتك الرئيسية، و4 مفاتيح يمكنك نسخها أو إرسالها لزملائك المحامين والمساعدين، مع إمكانية تصدير الحزمة بملف نصي منظم.' : 'You instantly receive 5 unique cryptographic seat keys: one activates your primary workstation, and 4 standalone keys can be shared with associates and paralegals via 1-click copy or text bundle export.'
+                q: 'How does the Law Firm Suite (5 Users) license distribute across our team?',
+                a: 'You instantly receive 5 unique cryptographic seat keys: one activates your primary workstation, and 4 standalone keys can be shared with associates and paralegals via 1-click copy or text bundle export.'
               },
               {
-                q: isRtl ? 'ما هي صيغ الملفات المدعومة للتدقيق؟' : 'Which contract formats and document types are supported?',
-                a: isRtl ? 'تدعم الأداة ملفات Microsoft Word (.docx)، ملفات PDF الرقمية، لصق النصوص المباشر، ومسح الصور والمستندات الورقية عبر محرك التعرف الضوئي المحلي (In-RAM OCR).' : 'ContractGuard natively audits Microsoft Word (.docx), digital PDF contracts, raw text paste, and scanned paper agreements via integrated client-side In-RAM OCR.'
+                q: 'Which contract formats and document types are supported?',
+                a: 'ContractGuard natively audits Microsoft Word (.docx), digital PDF contracts, raw text paste, and scanned paper agreements via integrated client-side In-RAM OCR.'
               },
               {
-                q: isRtl ? 'هل توجد أي رسوم أو اشتراكات شهرية متكررة مستقبلاً؟' : 'Are there any recurring monthly subscriptions or hidden renewal fees?',
-                a: isRtl ? 'لا على الإطلاق. الشراء لمرة واحدة فقط بترخيص دائم مدى الحياة ($199 للمستشار الفردي / $299 لمكاتب المحاماة)، مما يوفر أكثر من 1,800 دولار سنوياً مقارنة باشتراكات البرامج السحابية التقليدية.' : 'Zero recurring fees. You pay a single one-time fee ($199 Solo / $299 Firm) for permanent perpetual access, saving $1,800+ annually over legacy recurring cloud tools.'
+                q: 'Are there any recurring monthly subscriptions or hidden renewal fees?',
+                a: 'Zero recurring fees. You pay a single one-time fee ($199 Solo / $299 Firm) for permanent perpetual access, saving $1,800+ annually over legacy recurring cloud tools.'
               }
             ].map((item, idx) => (
               <div key={idx} className="rounded-xl border border-white/10 bg-[#060D12] overflow-hidden">
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className={`w-full p-5 text-left ${isRtl ? 'text-right' : 'text-left'} flex items-center justify-between text-sm md:text-base font-bold text-white hover:text-nexus-emerald transition-colors`}
+                  className={`w-full p-5 text-left $'text-left' flex items-center justify-between text-sm md:text-base font-bold text-white hover:text-nexus-emerald transition-colors`}
                 >
                   <span>{item.q}</span>
                   <ChevronDown size={18} className={`transform transition-transform text-zinc-400 ${activeFaq === idx ? 'rotate-180 text-nexus-emerald' : ''}`} />
@@ -949,19 +892,15 @@ export default function App() {
             
             <div className="relative z-10 max-w-3xl mx-auto">
               <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full mb-6 inline-block">
-                {isRtl ? 'حماية شاملة للمكتب والموكل' : 'PRE-SIGNING CONTRACT CERTAINTY'}
+                'PRE-SIGNING CONTRACT CERTAINTY'
               </span>
               
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-[-0.03em] apple-display-heading leading-tight mb-5">
-                {isRtl 
-                  ? 'لا توقع عقداً يحتوي ثغرة كارثية بعد اليوم.' 
-                  : 'Never Sign a Defective Contract Again.'}
+                'Never Sign a Defective Contract Again.'
               </h2>
               
               <p className="text-sm md:text-base text-zinc-300 leading-relaxed mb-8 max-w-2xl mx-auto">
-                {isRtl 
-                  ? 'انضم للمحامين والمستشارين الذين حوّلوا مراجعة العقود من ساعات من الإجهاد إلى تدقيق آلي فوري في أقل من نصف ثانية وبسرية مطلقة 100% داخل المتصفح.' 
-                  : 'Join modern boutique firms and counsel who transformed contract integrity audits from 6 hours of fatigue into 167 milliseconds of local in-RAM certainty.'}
+                'Join modern boutique firms and counsel who transformed contract integrity audits from 6 hours of fatigue into 167 milliseconds of local in-RAM certainty.'
               </p>
               
               <div className="flex flex-wrap items-center justify-center gap-4">
@@ -970,8 +909,8 @@ export default function App() {
                   className="bg-nexus-emerald text-black px-8 py-4 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(0,255,157,0.4)] flex items-center gap-2 cursor-pointer"
                 >
                   <Sparkles size={16} />
-                  <span>{isRtl ? '⚡ تجربة الديمو التفاعلي مجاناً' : '⚡ Start Free Interactive Audit'}</span>
-                  <ArrowRight size={16} className={isRtl ? 'rotate-180' : ''} />
+                  <span>'⚡ Start Free Interactive Audit'</span>
+                  <ArrowRight size={16} className='' />
                 </button>
                 
                 <button
@@ -979,22 +918,22 @@ export default function App() {
                   className="px-8 py-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer active:scale-[0.98]"
                 >
                   <Lock size={15} className="text-nexus-cyan" />
-                  <span>{isRtl ? 'عرض باقات التراخيص ($199 / $299)' : 'View Perpetual Plans ($199 / $299)'}</span>
+                  <span>'View Perpetual Plans ($199 / $299)'</span>
                 </button>
               </div>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[11px] font-mono text-zinc-400">
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 size={13} className="text-nexus-emerald" />
-                  {isRtl ? 'معالجة محلية 100%' : '100% In-RAM Audit'}
+                  '100% In-RAM Audit'
                 </span>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 size={13} className="text-nexus-emerald" />
-                  {isRtl ? 'ترخيص دائم مدى الحياة' : 'Perpetual Lifetime Key'}
+                  'Perpetual Lifetime Key'
                 </span>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 size={13} className="text-nexus-emerald" />
-                  {isRtl ? 'متوافق مع ABA Model Rule 1.6' : 'ABA Rule 1.6 Compliant'}
+                  'ABA Rule 1.6 Compliant'
                 </span>
               </div>
             </div>
@@ -1011,7 +950,7 @@ export default function App() {
               <span className="font-bold text-white">Nexus ContractGuard Enterprise 2.0</span>
             </div>
             <div>
-              {isRtl ? '© 2026 NexusOS Enterprise. مرخصة ومحمية بأنظمة التشفير المحلية.' : '© 2026 NexusOS Enterprise. Air-gapped and protected by offline local cryptography.'}
+              '© 2026 NexusOS Enterprise. Air-gapped and protected by offline local cryptography.'
             </div>
             <button 
               onClick={() => setIsContactModalOpen(true)}
@@ -1024,9 +963,7 @@ export default function App() {
           {/* Legal Protection Shield / Malpractice Disclaimer Banner */}
           <div className="mt-8 pt-6 border-t border-white/5 text-[11px] text-zinc-400 leading-relaxed text-center max-w-4xl mx-auto font-mono">
             <p>
-              <strong className="text-zinc-300">LEGAL NOTICE & DISCLAIMER:</strong> {isRtl 
-                ? 'ContractGuard هو مساعد آلي لتدقيق ومراجعة المستندات، ولا يقدم تمثيلاً قانونياً ولا يُعد بديلاً عن المراجعة القانونية المهنية للمحامي. يتحمل المستخدم المسؤولية المهنية الكاملة عن اعتماد ومراجعة كافة بنود العقود قبل توقيعها رسمياً.'
-                : 'ContractGuard is an automated document proofreading assistant. It does not provide legal representation or substitute professional attorney review. Users retain sole professional responsibility for verifying all contract terms prior to legal execution.'
+              <strong className="text-zinc-300">LEGAL NOTICE & DISCLAIMER:</strong> {'ContractGuard is an automated document proofreading assistant. It does not provide legal representation or substitute professional attorney review. Users retain sole professional responsibility for verifying all contract terms prior to legal execution.'
               }
             </p>
           </div>

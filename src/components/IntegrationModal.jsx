@@ -39,21 +39,16 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
       icon: <MessageCircle size={32} />,
       color: 'bg-green-500/20 text-green-400',
       titleEn: 'Connect WhatsApp',
-      titleAr: 'ربط واتساب (SaaS Local)',
-      subtitle: 'Scan QR to start 24/7 Bot',
+            subtitle: 'Scan QR to start 24/7 Bot',
       steps: [
         {
           titleEn: 'Open WhatsApp',
-          titleAr: 'افتح تطبيق واتساب',
-          descEn: 'Open WhatsApp on your phone, go to Settings -> Linked Devices.',
-          descAr: 'افتح واتساب على هاتفك، اذهب إلى الإعدادات ثم الأجهزة المرتبطة (Linked Devices).'
-        },
+                    descEn: 'Open WhatsApp on your phone, go to Settings -> Linked Devices.',
+                  },
         {
           titleEn: 'Scan QR Code',
-          titleAr: 'امسح رمز الـ QR',
-          descEn: 'Scan the QR code below to connect your AI Agent.',
-          descAr: 'قم بمسح رمز الـ QR أدناه لربط وكيل الذكاء الاصطناعي الخاص بك.',
-          customContent: true
+                    descEn: 'Scan the QR code below to connect your AI Agent.',
+                    customContent: true
         }
       ]
     },
@@ -61,126 +56,92 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
       icon: <Smartphone size={32} />,
       color: 'bg-purple-500/20 text-purple-400',
       titleEn: 'Connect Instagram',
-      titleAr: 'ربط إنستغرام',
-      subtitle: 'Instagram Graph API Setup',
+            subtitle: 'Instagram Graph API Setup',
       steps: [
         {
           titleEn: 'Connect FB Page',
-          titleAr: 'ربط صفحة الفيسبوك',
-          descEn: 'Ensure your Instagram Professional account is linked to a Facebook Page.',
-          descAr: 'تأكد من أن حساب إنستغرام الاحترافي الخاص بك مربوط بصفحة فيسبوك.'
-        },
+                    descEn: 'Ensure your Instagram Professional account is linked to a Facebook Page.',
+                  },
         {
           titleEn: 'Configure Webhook',
-          titleAr: 'إعداد الـ Webhook',
-          descEn: <>In your <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">Meta App</a>, add Instagram Graph API and set this Webhook URL:</>,
-          descAr: <>في <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">تطبيق Meta الخاص بك</a>، أضف Instagram Graph API وضع هذا الرابط:</>,
-          copyData: 'https://api.nexusos.com/v1/webhook/ig/85c8',
+                    descEn: <>In your <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">Meta App</a>, add Instagram Graph API and set this Webhook URL:</>,
+                    copyData: 'https://api.nexusos.com/v1/webhook/ig/85c8',
           labelEn: 'Webhook URL',
-          labelAr: 'رابط Webhook'
-        },
+                  },
         {
           titleEn: 'Subscribe to Messages',
-          titleAr: 'الاشتراك في الرسائل',
-          descEn: 'Subscribe your app to the "messages" field using this Verify Token:',
-          descAr: 'اشترك في حقل "messages" باستخدام هذا الرمز السري:',
-          copyData: 'nexus_verify_9982x',
+                    descEn: 'Subscribe your app to the "messages" field using this Verify Token:',
+                    copyData: 'nexus_verify_9982x',
           labelEn: 'Verify Token',
-          labelAr: 'الرمز السري'
-        }
+                  }
       ]
     },
     fb: {
       icon: <MessageSquare size={32} />,
       color: 'bg-blue-500/20 text-blue-400',
       titleEn: 'Connect Facebook Messenger',
-      titleAr: 'ربط ماسنجر الفيسبوك',
-      subtitle: 'Messenger Platform Setup',
+            subtitle: 'Messenger Platform Setup',
       steps: [
         {
           titleEn: 'Select Page',
-          titleAr: 'اختيار الصفحة',
-          descEn: <>Go to your <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">Meta App dashboard</a> and add the Messenger product. Select your Facebook Page to generate an Access Token.</>,
-          descAr: <>اذهب إلى <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">لوحة تحكم Meta App</a> وأضف منتج Messenger. اختر صفحتك لاستخراج الـ Access Token.</>
-        },
+                    descEn: <>Go to your <a href="https://developers.facebook.com/apps" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">Meta App dashboard</a> and add the Messenger product. Select your Facebook Page to generate an Access Token.</>,
+                  },
         {
           titleEn: 'Configure Webhook',
-          titleAr: 'إعداد الـ Webhook',
-          descEn: 'Set up the Webhook for Messenger using this URL:',
-          descAr: 'قم بإعداد الـ Webhook الخاص بـ Messenger باستخدام هذا الرابط:',
-          copyData: 'https://api.nexusos.com/v1/webhook/fb/85c8',
+                    descEn: 'Set up the Webhook for Messenger using this URL:',
+                    copyData: 'https://api.nexusos.com/v1/webhook/fb/85c8',
           labelEn: 'Webhook URL',
-          labelAr: 'رابط Webhook'
-        },
+                  },
         {
           titleEn: 'Verify Token',
-          titleAr: 'تأكيد الرمز السري',
-          descEn: 'Paste this token to verify your webhook connection:',
-          descAr: 'انسخ هذا الرمز لتأكيد اتصال الـ Webhook:',
-          copyData: 'nexus_verify_9982x',
+                    descEn: 'Paste this token to verify your webhook connection:',
+                    copyData: 'nexus_verify_9982x',
           labelEn: 'Verify Token',
-          labelAr: 'الرمز السري'
-        }
+                  }
       ]
     },
     x: {
       icon: <Hash size={32} />,
       color: 'bg-gray-500/20 text-gray-200',
       titleEn: 'Connect X (Twitter)',
-      titleAr: 'ربط منصة X (تويتر)',
-      subtitle: 'X Developer API V2',
+            subtitle: 'X Developer API V2',
       steps: [
         {
           titleEn: 'Developer Portal',
-          titleAr: 'بوابة المطورين',
-          descEn: <>Create a Project and App in the <a href="https://developer.x.com/en/portal/dashboard" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">X Developer Portal</a>. Get your API Key and Secret.</>,
-          descAr: <>أنشئ مشروعاً وتطبيقاً في <a href="https://developer.x.com/en/portal/dashboard" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">بوابة مطوري X</a>. استخرج الـ API Key و Secret.</>
-        },
+                    descEn: <>Create a Project and App in the <a href="https://developer.x.com/en/portal/dashboard" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">X Developer Portal</a>. Get your API Key and Secret.</>,
+                  },
         {
           titleEn: 'Enable DMs',
-          titleAr: 'تفعيل الرسائل الخاصة (DMs)',
-          descEn: 'In App Settings, set User Authentication Settings to "Read, Write, and Direct Messages".',
-          descAr: 'في إعدادات التطبيق، اجعل الصلاحيات "Read, Write, and Direct Messages".'
-        },
+                    descEn: 'In App Settings, set User Authentication Settings to "Read, Write, and Direct Messages".',
+                  },
         {
           titleEn: 'Set Webhook (Account Activity)',
-          titleAr: 'ربط الـ Webhook',
-          descEn: 'Register this webhook URL to receive incoming DMs automatically:',
-          descAr: 'قم بتسجيل هذا الرابط لاستقبال الرسائل الخاصة (DMs) تلقائياً:',
-          copyData: 'https://api.nexusos.com/v1/webhook/x/85c8',
+                    descEn: 'Register this webhook URL to receive incoming DMs automatically:',
+                    copyData: 'https://api.nexusos.com/v1/webhook/x/85c8',
           labelEn: 'Environment Webhook URL',
-          labelAr: 'رابط بيئة الـ Webhook'
-        }
+                  }
       ]
     },
     tg: {
       icon: <Send size={32} />,
       color: 'bg-sky-500/20 text-sky-400',
       titleEn: 'Connect Telegram',
-      titleAr: 'ربط تليجرام',
-      subtitle: 'Telegram Bot API',
+            subtitle: 'Telegram Bot API',
       steps: [
         {
           titleEn: 'Talk to BotFather',
-          titleAr: 'التحدث مع BotFather',
-          descEn: <>Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">@BotFather</a>. Send /newbot to create a new bot and get your Bot Token.</>,
-          descAr: <>افتح تليجرام وابحث عن <a href="https://t.me/BotFather" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">@BotFather</a>. أرسل /newbot لإنشاء بوت جديد واحصل على الـ Bot Token.</>
-        },
+                    descEn: <>Open Telegram and search for <a href="https://t.me/BotFather" target="_blank" rel="noreferrer" className="text-nexus-mint hover:underline font-bold">@BotFather</a>. Send /newbot to create a new bot and get your Bot Token.</>,
+                  },
         {
           titleEn: 'Set Webhook URL',
-          titleAr: 'تحديد رابط הـ Webhook',
-          descEn: 'We will automatically set the webhook for you. Just copy your Bot Token from BotFather.',
-          descAr: 'سنقوم نحن ببرمجة الـ Webhook تلقائياً. فقط احصل على الـ Token من BotFather.'
-        },
+                    descEn: 'We will automatically set the webhook for you. Just copy your Bot Token from BotFather.',
+                  },
         {
           titleEn: 'Paste Bot Token',
-          titleAr: 'لصق الـ Bot Token',
-          descEn: 'Paste the HTTP API Token you received from BotFather below:',
-          descAr: 'انسخ رمز HTTP API Token الذي حصلت عليه والصقه هنا (لأغراض العرض فقط):',
-          copyData: '7192837:AAH_EXAMPLE_TOKEN_xyz',
+                    descEn: 'Paste the HTTP API Token you received from BotFather below:',
+                    copyData: '7192837:AAH_EXAMPLE_TOKEN_xyz',
           labelEn: 'Your Bot Token',
-          labelAr: 'رمز البوت الخاص بك'
-        }
+                  }
       ]
     }
   };
@@ -191,13 +152,13 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
   const currentStep = platform.steps[step - 1];
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 ${isRtl ? 'rtl text-right' : 'ltr text-left'}`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 ${'ltr text-left'}`}>
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-[#050B0E] border border-nexus-emerald/30 rounded-3xl p-6 md:p-8 max-w-xl w-full relative overflow-hidden"
       >
-        <button onClick={onClose} className={`absolute top-6 ${isRtl ? 'left-6' : 'right-6'} text-gray-400 hover:text-white z-10`}>
+        <button onClick={onClose} className={`absolute top-6 ${'right-6'} text-gray-400 hover:text-white z-10`}>
           <X size={24} />
         </button>
         
@@ -207,7 +168,7 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
           </div>
           <div>
             <h3 className="text-2xl font-bold text-white">
-              {isRtl ? platform.titleAr : platform.titleEn}
+              {platform.titleEn}
             </h3>
             <p className="text-sm text-gray-400">{platform.subtitle}</p>
           </div>
@@ -255,10 +216,10 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
                   ) : waStatus === 'ready' ? (
                     <div className="flex flex-col items-center text-nexus-emerald">
                       <CheckCircle size={64} className="mb-4" />
-                      <p className="text-xl font-bold">{isRtl ? 'تم الربط بنجاح!' : 'Connected Successfully!'}</p>
+                      <p className="text-xl font-bold">'Connected Successfully!'</p>
                     </div>
                   ) : waStatus === 'disconnected' ? (
-                     <p className="text-red-400">{isRtl ? 'لا يوجد اتصال بالسيرفر الخلفي. الرجاء تشغيل السيرفر.' : 'No connection to local backend.'}</p>
+                     <p className="text-red-400">'No connection to local backend.'</p>
                   ) : (
                     <div className="animate-pulse flex space-x-4">
                       <div className="rounded-full bg-gray-700 h-10 w-10"></div>
@@ -309,15 +270,15 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
             className={`flex items-center gap-1 px-4 py-2 rounded-xl font-semibold transition-colors ${step === 1 ? 'text-gray-600 cursor-not-allowed' : 'text-gray-300 hover:bg-white/10'}`}
           >
             {isRtl ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-            {isRtl ? 'السابق' : 'Back'}
+            'Back'
           </button>
           
           {step < platform.steps.length ? (
             <button
               onClick={() => setStep(prev => prev + 1)}
-              className={`flex items-center gap-1 px-6 py-2 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-colors ${isRtl ? 'flex-row-reverse' : ''}`}
+              className={`flex items-center gap-1 px-6 py-2 bg-white/10 text-white rounded-xl font-semibold hover:bg-white/20 transition-colors ${''}`}
             >
-              {isRtl ? 'التالي' : 'Next'}
+              {'Next'}
               {isRtl ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
             </button>
           ) : (
@@ -325,7 +286,7 @@ export default function IntegrationModal({ type, onClose, onConnect, isRtl }) {
               onClick={onConnect}
               className="px-6 py-2 bg-nexus-emerald text-black rounded-xl font-bold hover:bg-nexus-mint transition-colors shadow-[0_0_15px_rgba(0,255,157,0.3)]"
             >
-              {isRtl ? 'إتمام الربط' : 'Finish Connection'}
+              'Finish Connection'
             </button>
           )}
         </div>

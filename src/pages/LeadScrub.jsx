@@ -61,7 +61,7 @@ export default function LeadScrub() {
         setDeferredPrompt(null);
       }
     } else {
-       alert("التطبيق مثبت بالفعل أو أن متصفحك لا يدعم هذه الميزة مؤقتاً.");
+       alert("Application is already installed or your browser does not support PWA installation.");
     }
   };
 
@@ -376,7 +376,7 @@ export default function LeadScrub() {
               <button 
                 onClick={handleInstallApp}
                 className="flex items-center gap-2 bg-white text-black font-bold text-sm px-4 py-2 rounded-full hover:bg-gray-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:scale-105"
-                title="تثبيت التطبيق على سطح المكتب"
+                title="Install Desktop PWA Application"
               >
                 <HardDriveDownload size={16} />
                 Install Desktop App

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Key, ShieldCheck, Loader2 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
 import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 
@@ -10,15 +9,13 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
-  const isRtl = i18n.dir() === 'rtl';
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     
     if (!licenseKey.trim()) {
-      setError(isRtl ? "الرجاء إدخال كود التفعيل أولاً" : "Please enter your license key");
+      setError("Please enter your license key");
       return;
     }
 
@@ -29,7 +26,7 @@ export default function Login() {
     if (validation.valid) {
       try {
         await bindKeyToCurrentDevice(validation.key || licenseKey);
-      } catch (bindErr) {
+      } catch {
         // Fallback for non-hardware bound keys
       }
 
@@ -48,59 +45,68 @@ export default function Login() {
     }
 
     // If key format didn't pass local validation
-    setError(validation.reason || (isRtl ? "كود التفعيل غير صالح. الصيغة المتوقعة: NX-XXXX-XXXX-XXXX" : "Invalid license key format. Expected: NX-XXXX-XXXX-XXXX"));
+    setError(validation.reason || "Invalid license key format. Expected: NX-XXXX-XXXX-XXXX");
     setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen flex items-center justify-center bg-black p-4 ltr" dir="ltr">
       <div className="w-full max-w-md p-8 rounded-2xl liquid-glass-strong border border-white/10 backdrop-blur-xl relative overflow-hidden shadow-[0_0_50px_rgba(0,255,157,0.1)]">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-nexus-emerald to-transparent"></div>
         <div className="text-center mb-8 flex flex-col items-center">
           <div className="w-20 h-20 rounded-2xl liquid-glass flex items-center justify-center mb-4 border border-nexus-emerald/30 shadow-[0_0_30px_rgba(0,255,157,0.2)]">
-            <ShieldCheck size={40} className="text-nexus-emerald" />
+            <Key className="text-nexus-emerald" size={36} />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {isRtl ? 'بوابة الدخول (Nexus.OS)' : 'Nexus.OS Gateway'}
+          <h1 className="text-2xl font-black text-white tracking-wider flex items-center gap-2">
+            NEXUS <span className="text-nexus-emerald">ENTERPRISE</span>
           </h1>
-          <p className="text-gray-400">
-            {isRtl ? 'أدخل كود التفعيل الخاص بك للدخول إلى الأدوات' : 'Enter your license key to access the tools'}
+          <p className="text-sm text-gray-400 mt-2 font-mono">
+            AIR-GAPPED LICENSE ACTIVATION
           </p>
         </div>
-        
+
+        {error && (
+          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              {isRtl ? 'كود التفعيل (License Key)' : 'License Key'}
+            <label className="block text-xs font-mono text-gray-400 uppercase tracking-widest mb-2">
+              Hardware-Bound License Key
             </label>
-            <div className="relative">
-              <Key className={`absolute ${isRtl ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-gray-500`} size={20} />
-              <input 
-                type="text" 
-                value={licenseKey}
-                onChange={(e) => setLicenseKey(e.target.value)}
-                className={`w-full ${isRtl ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-3 bg-black/50 border border-white/10 rounded-xl focus:outline-none focus:border-nexus-cyan text-white transition-all duration-300 placeholder-gray-600 text-left`}
-                placeholder="WHOP-XXXX-XXXX" 
-                dir="ltr"
-              />
-            </div>
-            {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
+            <input
+              type="text"
+              value={licenseKey}
+              onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
+              placeholder="NX-XXXX-XXXX-XXXX"
+              className="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3.5 text-center font-mono text-lg text-white placeholder-gray-600 focus:outline-none focus:border-nexus-emerald transition-colors"
+              required
+            />
           </div>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-nexus-emerald to-nexus-cyan text-black font-bold rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,157,0.4)] disabled:opacity-50"
+            className="w-full bg-nexus-emerald text-black font-extrabold py-4 rounded-xl hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,157,0.4)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="animate-spin" size={20} />
             ) : (
               <>
-                {isRtl ? 'تحقق ودخول' : 'Verify & Enter'} <ArrowRight className={`w-5 h-5 ${isRtl ? 'rotate-180' : ''}`} />
+                <span>Authenticate Workstation</span>
+                <ArrowRight size={18} />
               </>
             )}
           </button>
         </form>
+
+        <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center gap-2 text-xs font-mono text-gray-500">
+          <ShieldCheck size={14} className="text-nexus-emerald" />
+          <span>100% In-RAM Local Cryptographic Verification</span>
+        </div>
       </div>
     </div>
   );
