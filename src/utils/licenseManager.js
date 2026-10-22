@@ -87,13 +87,22 @@ export async function getDeviceFingerprint() {
     components.push('no-canvas');
   }
 
-  // Hash the components with SHA-256
+  // Hash the components safely
   const rawString = components.join('###');
-  const encoder = new TextEncoder();
-  const data = encoder.encode(rawString);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hexHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 16).toUpperCase();
+  let hexHash = '';
+  try {
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(rawString);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      hexHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 16).toUpperCase();
+    } else {
+      hexHash = (computeKeyChecksum(rawString) + 'ABCD1234EF567890').substring(0, 16);
+    }
+  } catch (_) {
+    hexHash = (computeKeyChecksum(rawString) + 'ABCD1234EF567890').substring(0, 16);
+  }
   
   const formattedFp = `DEV-${hexHash.substring(0, 4)}-${hexHash.substring(4, 8)}-${hexHash.substring(8, 12)}-${hexHash.substring(12, 16)}`;
   localStorage.setItem(DEVICE_FP_KEY, formattedFp);

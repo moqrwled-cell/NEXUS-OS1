@@ -176,6 +176,15 @@ export default function ContractGuardDemo() {
     }
   };
 
+  // Quick Sample Loader
+  const handleLoadSample = () => {
+    setContractText(HAZARDOUS_SAMPLE_CONTRACT);
+    setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
+    setDocumentTitle('Master Asset Purchase Agreement');
+    setClientParty('Acme Holdings LLC');
+    setCounterparty('Globex International Corp');
+  };
+
   // Local Vault Purge State
   const [vaultPurged, setVaultPurged] = useState(false);
   const handlePurgeVault = () => {
