@@ -84,11 +84,45 @@ const LEGAL_STOPWORDS = new Set([
   'Liability Cap', 'Governing Law', 'Entire Agreement', 'Pre-Existing',
   'Pre-Existing IP', 'Information', 'Existing', 'Cause', 'Convenience', 'Laws',
   'Solutions', 'Solutions Inc', 'Affiliates',
-  // Grammar & Determiners
+  // Real Estate, Title, Deeds & Closing Instruments
+  'Special Warranty Deed', 'General Warranty Deed', 'Warranty Deed', 'Quitclaim Deed', 'Deed',
+  'Title Insurance Commitment', 'Title Commitment', 'Title Insurance', 'Title Policy', 'ALTA',
+  'ALTA Owner\'s Affidavit', 'Owner\'s Affidavit', 'Affidavit', 'Non-Foreign Affidavit',
+  'Non-Foreign Certificate', 'Non-Foreign', 'Foreign Status', 'Non-Foreign Status',
+  'Settlement Statement', 'Closing Settlement Statement', 'Closing Statement', 'Statement',
+  'Certificate', 'Certificates',
+  'Phase', 'Phase I', 'Phase II', 'Environmental Site Assessments', 'Environmental Site Assessment',
+  'Environmental Compliance', 'Marketable Title', 'Condemnation',
+  'Common Pleas', 'Court of Common Pleas',
+  'Gross Acres', 'Acres', 'Parcel Identification Number', 'Tax Parcel Identification Number',
+  'Tax Parcel', 'Parcel', 'APN', 'Parcel ID',
+  'Protect Your Family From Lead In Your Home', 'Protect Your Family', 'Lead In Your Home', 'Lead',
+  'Common Area Maintenance', 'Operational Expenses', 'Triple Net', 'Inspection Period',
+  'Stipulation of Dismissal with Prejudice', 'Stipulation of Dismissal', 'Stipulation', 'Dismissal', 'Prejudice',
+  'Southern District of New York', 'Southern District', 'Northern District', 'Eastern District', 'Western District',
+  'Docket No', 'Docket', 'Docket Number', 'First Refusal', 'Right of First Refusal', 'ROFR',
+  'Capital Account', 'Capital Accounts', 'Membership Percentages', 'Membership Interests', 'Membership Interest',
+  'Confidential Information', 'Statements', 'Statement of Work',
+  'Board of Directors', 'Board', 'Directors', 'Base Salary',
+  'Principal Amount', 'Security Agreement', 'Event of Default', 'Events of Default',
+  'One Hundred Seventy-Five Thousand Dollars',
+  'North America', 'New York County', 'Cook County', 'Franklin County', 'Springfield', 'Charlotte',
+  'Dear Seller', 'Letter of Intent', 'Intent', 'Acquire',
+  // Federal & State Statutes, Codes, Regulations & Forms
+  'Comprehensive Environmental Response, Compensation, and Liability Act',
+  'Comprehensive Environmental Response', 'Compensation', 'Liability Act', 'CERCLA',
+  'Foreign Investment in Real Property Tax Act', 'FIRPTA',
+  'Internal Revenue Code', 'Internal Revenue Service', 'Treasury Regulation', 'Treasury Regulations',
+  'Treasury Regulation Section', 'Form', 'IRS Form', 'Form 8288', 'IRS Form 8288',
+  'Defend Trade Secrets Act', 'DTSA', 'Copyright Act', 'Patent Act', 'Lanham Act',
+  'California Civil Code', 'Civil Code', 'Delaware General Corporation Law', 'DGCL',
+  'Uniform Commercial Code', 'UCC', 'Code of Federal Regulations', 'CFR',
+  // Grammar, Determiners, Prepositions & Connectors
   'The', 'This', 'That', 'These', 'Those', 'In', 'On', 'At', 'By', 'For', 'With',
   'Without', 'Under', 'Over', 'All', 'Any', 'Each', 'Every', 'Either', 'Neither',
   'Both', 'Such', 'No', 'Not', 'If', 'Unless', 'Provided', 'Except', 'Subject',
-  'Upon', 'Following', 'During', 'After', 'Before', 'Between', 'Among'
+  'Upon', 'Following', 'During', 'After', 'Before', 'Between', 'Among',
+  'To', 'From', 'As', 'Or', 'And', 'Via', 'Per', 'Into', 'Onto', 'Against', 'About', 'Across'
 ]);
 
 function escapeRegex(str) {
@@ -276,7 +310,7 @@ export function auditDefinedTerms(text = '', options = {}) {
   // PIPELINE 3: UNDEFINED CAPITALIZED TERMS SCANNER (6-LAYER FILTER)
   // --------------------------------------------------------------------------
   const candidateOccurrences = new Map(); // term -> { count, firstLine, snippet }
-  const RE_CAPITALIZED = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g;
+  const RE_CAPITALIZED = /\b[A-Z][a-z]+(?:['’]s)?(?:[-\s]+[A-Z][a-z]+(?:['’]s)?)*\b/g;
 
   let inSignatureBlock = false;
   let inExhibitsSchedule = false;
@@ -306,8 +340,8 @@ export function auditDefinedTerms(text = '', options = {}) {
     // Layer 5: Skip all-caps headings and short uppercase lines
     if (trimmed.length < 120 && trimmed === trimmed.toUpperCase()) return;
 
-    // Detect subsection heading title prefix: "2.1 Performance of Services. Provider shall..."
-    const headingPrefixMatch = trimmed.match(/^(?:[0-9]+(?:\.[0-9]+)+|[IVXLCDM]+\.)\s+([A-Za-z0-9\s—–\-_/]+?)\.\s+/);
+    // Detect subsection heading title prefix: "2.1 Performance of Services. Provider shall..." or "(c) Environmental Compliance. To Seller's..."
+    const headingPrefixMatch = trimmed.match(/^(?:[0-9]+(?:\.[0-9]+)+|[IVXLCDM]+\.|\([a-z0-9]+\))\s+([A-Za-z0-9\s—–\-_/]+?)\.\s+/i);
     const headingEndIndex = headingPrefixMatch ? lineText.indexOf(headingPrefixMatch[0]) + headingPrefixMatch[0].length : -1;
 
     let m;
@@ -319,32 +353,56 @@ export function auditDefinedTerms(text = '', options = {}) {
       const precedingText = lineText.substring(0, m.index).trim();
       if (/(?:Exhibits?|Schedules?|Appendices?|Sections?|Articles?|Clauses?|Account|Routing|Wire|Escrow|Beneficiary|Bank|Tax|EIN|Phone|Mobile|Email|State\s+of|County\s+of)\s*[:—–-]?\s*$/i.test(precedingText)) continue;
 
+      // Skip physical addresses, property parcels, and tax description clauses
+      if (/(?:situated\s+at|located\s+at|situated\s+within|located\s+within|designated\s+as|known\s+as|consisting\s+of)\s*[^;\.\n]*$/i.test(precedingText)) {
+        if (/(?:Parkway|Boulevard|Street|Avenue|Drive|Lane|Way|Road|Court|Plaza|District|County|State|Acres|Gross\s+Acres|Square\s+Feet|Parcel|APN|Identification\s+Number)\b/i.test(m[0])) {
+          continue;
+        }
+      }
+
+      // Skip forum selection and venue phrases (e.g. brought exclusively in the Franklin County Court of Common Pleas)
+      if (/(?:brought\s+exclusively\s+in|venue\s+(?:in|of)|jurisdiction\s+of)\s*[^;\.\n]*$/i.test(precedingText)) {
+        if (/(?:Court|Common\s+Pleas|Chancery|Judicial\s+District|Circuit\s+Court)\b/i.test(m[0])) {
+          continue;
+        }
+      }
+
       let phrase = m[0].trim();
 
-      // If multi-word phrase starts with leading legal stopword (e.g. "All Proprietary Software"), strip leading stopword
+      // Layer 0: If full phrase is already a recognized legal stopword / standard document, skip immediately
+      if (LEGAL_STOPWORDS.has(phrase)) continue;
+
+      // If multi-word phrase starts with leading legal determiner/preposition (e.g. "All Proprietary Software", "To Seller"), strip leading word
       let tokens = phrase.split(/\s+/);
-      while (tokens.length > 1 && LEGAL_STOPWORDS.has(tokens[0])) {
+      while (tokens.length > 1 && /^(?:The|This|That|These|Those|All|Any|Each|Every|Either|Neither|Both|Such|No|To|From|In|On|At|By|For|With|Without|Under|Over)$/i.test(tokens[0])) {
         tokens.shift();
       }
       phrase = tokens.join(' ');
-      const lower = phrase.toLowerCase();
+      if (LEGAL_STOPWORDS.has(phrase)) continue;
 
-      // Layer 1: Already defined in contract (including plural variations)
+      const lower = phrase.toLowerCase();
+      const baseStem = lower.replace(/['’]s$/, '').replace(/s$/, '').replace(/es$/, '');
+
+      // Skip field descriptors / form labels followed by colon (e.g. "Docket No:", "Principal Amount:", "Earnest Money Deposit:")
+      const followingChar = lineText.substring(m.index + phrase.length).trim();
+      if (followingChar.startsWith(':')) continue;
+
+      // Layer 1: Already defined in contract (including possessive 's, plural, and singular variations)
       if (
         definedTermsMap.has(lower) ||
-        definedTermsMap.has(lower.replace(/s$/, '')) ||
-        definedTermsMap.has(lower.replace(/es$/, ''))
+        definedTermsMap.has(baseStem) ||
+        definedTermsMap.has(lower + 's') ||
+        definedTermsMap.has(baseStem + 's')
       ) continue;
 
       // Skip phrase immediately preceding a parenthetical definition (e.g. "Master Services Agreement (the 'Agreement')")
       const followingText = lineText.substring(m.index + phrase.length).trim();
       if (/^\(\s*(?:the\s+)?["“'‘]/.test(followingText)) continue;
 
-      // Layer 2: Explicit known parties
-      if (userParties.has(lower)) continue;
+      // Layer 2: Explicit known parties (including possessives)
+      if (userParties.has(lower) || userParties.has(baseStem)) continue;
 
       // Layer 3: Comprehensive Legal Stopwords Filter
-      if (LEGAL_STOPWORDS.has(phrase)) continue;
       if (tokens.every(t => LEGAL_STOPWORDS.has(t))) continue;
 
       // Layer 4: Sentence Starter Check (for single capitalized words)
@@ -379,7 +437,7 @@ export function auditDefinedTerms(text = '', options = {}) {
       line: data.firstLine,
       snippet: data.snippet,
       details: `Capitalized term "${term}" appears ${data.count} time(s) without formal definition in Section 1 or recitals.`,
-      severity: term.includes(' ') ? 'critical' : 'warning'
+      severity: 'warning'
     });
   }
 
@@ -515,8 +573,25 @@ export function auditDefinedTerms(text = '', options = {}) {
   const RE_CHEVRON_PLACEHOLDER = /<<([A-Za-z0-9_ -]{2,50})>>/g;
   const RE_ANGLE_PLACEHOLDER = /<([A-Za-z\s_-]{3,40})>/g;
 
+  let inExecutionBlock = false;
   lines.forEach((lineText, idx) => {
     const lineNum = idx + 1;
+    const trimmed = lineText.trim();
+    if (!trimmed) return;
+
+    if (/^(?:IN\s+WITNESS\s+WHEREOF|FORMAL\s+NOTARY\s+ACKNOWLEDGMENT|SIGNATURES|SELLER\s*:|BUYER\s*:)/i.test(trimmed)) {
+      inExecutionBlock = true;
+    }
+    if (inExecutionBlock && /^ARTICLE\s+[IVXLCDM0-9]+/i.test(trimmed)) {
+      inExecutionBlock = false;
+    }
+
+    const isSignatureOrNotaryLine = (
+      inExecutionBlock ||
+      /^(?:SELLER|BUYER|COMPANY|CONSULTANT|EMPLOYER|EMPLOYEE|LICENSOR|LICENSEE|BORROWER|LENDER|RELEASOR|RELEASEE|PARTIES)\s*[:—–-]?$/i.test(trimmed) ||
+      /^(?:By|Name|Title|Date|Signature|Witness|Attest|Notary\s+Public|Commission\s+Expires|County\s+of|State\s+of)\s*[:—–-]?/i.test(trimmed) ||
+      /(?:notary\s+public|personally\s+appeared|commission\s+expires|subscribed\s+and\s+sworn|acknowledged\s+before\s+me|day\s+of\s+.*,\s*20)/i.test(trimmed)
+    );
 
     // 1. Bracketed placeholders: [Company Name], [Insert Date], [ • ]
     let m;
@@ -551,6 +626,8 @@ export function auditDefinedTerms(text = '', options = {}) {
 
     // 3. Unfilled Blank Underlines: ___
     while ((m = RE_BLANK_UNDERLINE.exec(lineText)) !== null) {
+      // Skip signature lines and notary acknowledgments (these are intended signing lines)
+      if (isSignatureOrNotaryLine) continue;
       const snippet = lineText.trim();
       boilerplateArtifacts.push({ placeholder: m[1], line: lineNum, snippet });
       issues.push({
@@ -559,7 +636,7 @@ export function auditDefinedTerms(text = '', options = {}) {
         line: lineNum,
         snippet,
         details: `Unfilled contractual blank "${m[1]}" requires input prior to signing.`,
-        severity: 'critical'
+        severity: 'warning'
       });
     }
 

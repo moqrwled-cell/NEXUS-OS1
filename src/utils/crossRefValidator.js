@@ -243,7 +243,8 @@ export function validateCrossReferences(text = '') {
   const citationsFound = [];
   const RE_SEC_CIT = /\b(Sections?|Articles?|Clauses?|Paragraphs?|§+|§§?)\s+([0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*(?:\s*(?:,|and|or|through|to)\s*(?!(?:Sections?|Articles?|Clauses?|Paragraphs?|§+)\b)[0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*)*|[IVXLCDM]+(?:\s*(?:,|and|or|through|to)\s*(?!(?:Sections?|Articles?|Clauses?|Paragraphs?|§+)\b)[IVXLCDM]+)*)\b/gi;
   const RE_EXH_CIT = /\b(Exhibits?|Schedules?|Appendix(?:es)?|Appendices|Annex(?:es)?|Attachments?)\s+([A-Za-z0-9]+(?:[\.\-_][A-Za-z0-9]+)*(?:\s*(?:,|\b(?:and|or|through|to)\b)\s*(?!(?:Exhibits?|Schedules?|Appendix|Annex|Attachment)\b)[A-Za-z0-9]+(?:[\.\-_][A-Za-z0-9]+)*)*)\b/gi;
-  const RE_STATUTE = /^\s+of\s+the\s+(?:Internal\s+Revenue\s+Code|Securities(?:\s+Exchange)?\s+Act|Uniform\s+Commercial\s+Code|UCC|Bankruptcy\s+Code|Delaware\s+General\s+Corporation\s+Law|DGCL|Code|Act|Statutes?|Regulations?|Rules?)\b/i;
+  const RE_PRECEDING_STATUTE = /\b(?:IRC|I\.R\.C\.|U\.?S\.?C\.?|U\.?S\.?C\.?A\.?|Treasury\s+Regulations?|Treas\.?\s*Reg\.?|C\.?F\.?R\.?|U\.?C\.?C\.?|D\.?G\.?C\.?L\.?|Del\.?\s*C\.?|(?:California|Delaware|New\s+York|Texas|Ohio|Virginia|Illinois|Florida|Pennsylvania)\s+(?:Civil|Commercial|Corporations?|General\s+Corporation|Labor|Penal|Business\s+and\s+Professions)\s+Code|(?:Civil|Commercial|Corporations?|Labor|Penal)\s+Code|Rev\.?\s*Stat\.?|Statutes?|Public\s+Law|P\.?L\.?|FIRPTA|CERCLA|ERISA|DTSA|HIPAA)\s*$/i;
+  const RE_FOLLOWING_STATUTE = /^\s*(?:\([a-z0-9]+\))*\s*(?:of\s+the\s+|under\s+(?:the\s+)?)(?:Internal\s+Revenue\s+Code|Code|Securities(?:\s+Exchange)?\s+Act|Uniform\s+Commercial\s+Code|UCC|Bankruptcy\s+Code|Delaware\s+General\s+Corporation\s+Law|DGCL|Act|Statutes?|Regulations?|Rules?|Treasury\s+Regulations?|California\s+Civil\s+Code|Civil\s+Code|DTSA|Defend\s+Trade\s+Secrets\s+Act|Copyright\s+Act|Patent\s+Act|Trademark\s+Act|Lanham\s+Act)\b/i;
   const RE_AMBIGUOUS_CIT = /\b(the\s+(?:preceding|following|prior|above|subsequent)\s+(?:Section|Article|Clause|Paragraph))\b/gi;
 
   const issues = [];
@@ -275,8 +276,10 @@ export function validateCrossReferences(text = '') {
     let secMatch;
     while ((secMatch = RE_SEC_CIT.exec(lineText)) !== null) {
       const afterCitation = lineText.substring(secMatch.index + secMatch[0].length);
-      // Disqualify statutory references (e.g. "Section 409A of the Internal Revenue Code")
-      if (RE_STATUTE.test(afterCitation)) continue;
+      const precedingText = lineText.substring(Math.max(0, secMatch.index - 60), secMatch.index).trim();
+      // Disqualify statutory and regulatory citations (e.g. "Section 409A of the Code", "IRC Section 1445", "Treasury Regulation Section 1.1445-2(b)")
+      if (RE_PRECEDING_STATUTE.test(precedingText) || RE_FOLLOWING_STATUTE.test(afterCitation)) continue;
+      if (/^[0-9]+\.[0-9]+-[0-9]+/i.test(secMatch[2]) || /^[0-9]+\.[0-9]+-[0-9]+/i.test(afterCitation)) continue;
 
       const prefix = secMatch[1];
       const targetGroup = secMatch[2];

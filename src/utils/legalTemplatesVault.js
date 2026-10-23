@@ -107,7 +107,16 @@ STATE OF {{GOVERNING_STATE}}, COUNTY OF ___________________, ss:
 On this _____ day of ____________, 20__, before me, the undersigned notary public, personally appeared the authorized signatories of the respective entities, proved to me through satisfactory evidence of identification to be the persons whose names are signed on the preceding document, and acknowledged that they signed it voluntarily for its stated purpose.
 ________________________________________
 Notary Public, State of {{GOVERNING_STATE}}
-My Commission Expires: _________________`
+My Commission Expires: _________________
+
+EXHIBIT A
+LEGAL DESCRIPTION OF REAL PROPERTY
+
+Tax Parcel Identification Number: {{PARCEL_ID}}
+County and State: {{COUNTY_STATE}}
+Gross Land Area: {{ACREAGE}}
+
+All that certain unimproved parcel of commercial real property situated at {{PROPERTY_ADDRESS}}, located within {{COUNTY_STATE}}, designated as Tax Parcel Identification Number {{PARCEL_ID}}, consisting of approximately {{ACREAGE}}, as recorded in the Official Real Property Records of {{COUNTY_STATE}}, together with all easements, rights-of-way, development rights, and appurtenances running therewith.`
   },
 
   // 2. RESIDENTIAL REAL PROPERTY PURCHASE AGREEMENT
@@ -333,7 +342,16 @@ IN WITNESS WHEREOF, the undersigned have executed this Operating Agreement as of
 
 MANAGER:                               MEMBERS:
 {{MANAGER_NAME}}                       {{INITIAL_MEMBERS}}
-By: ___________________________        By: ___________________________`
+By: ___________________________        By: ___________________________
+
+SCHEDULE A
+CAPITAL CONTRIBUTIONS AND MEMBERSHIP PERCENTAGES
+
+Founding Members and Initial Capitalization:
+{{INITIAL_MEMBERS}}
+Total Initial Capital Contributed: {{INITIAL_CAPITAL_CONTRIBUTION}}
+
+Capital accounts and voting percentages shall be maintained in accordance with the records of the Company and Section 2.2 hereof.`
   },
 
   // 6. ASSET PURCHASE AGREEMENT (APA - SEC EDGAR MIDDLE MARKET STANDARD)
