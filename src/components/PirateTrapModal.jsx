@@ -70,24 +70,6 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
     }
   };
 
-  const handleInstantAutoRestore = async () => {
-    setStatus('activating');
-    setErrorMessage('');
-    try {
-      const activated = await restoreLicenseFromWhopOrder('WHOP-AUTO-RESTORE', whopPlan);
-      grantToolAccess(activated.primaryKey, toolName);
-      setTimeout(() => {
-        setStatus('success');
-        setTimeout(() => {
-          onSuccess();
-        }, 700);
-      }, 500);
-    } catch {
-      setStatus('idle');
-      setErrorMessage('Unable to auto-restore. Please enter your Whop order ID or email.');
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl font-sans" dir="ltr">
       <div className="w-full max-w-lg p-8 rounded-3xl bg-[#060D12] border border-emerald-500/40 shadow-[0_0_80px_rgba(16,185,129,0.2)] relative overflow-hidden text-center">
@@ -239,15 +221,10 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                   )}
                 </button>
 
-                <div className="text-center pt-1">
-                  <button
-                    type="button"
-                    disabled={status === 'activating'}
-                    onClick={handleInstantAutoRestore}
-                    className="text-xs text-emerald-400 hover:text-emerald-300 font-mono underline transition-colors cursor-pointer"
-                  >
-                    ⚡ Completed 100% coupon checkout? Click here to auto-restore
-                  </button>
+                <div className="text-center pt-2">
+                  <span className="text-[11px] text-zinc-500 font-mono">
+                    Check your purchase confirmation email for your Whop Order ID or License Key.
+                  </span>
                 </div>
               </form>
             )}

@@ -50,7 +50,8 @@ export async function getOcrWorker(onStatus) {
     try {
       if (onStatus) onStatus({ status: 'initializing', progress: 0.1 });
       
-      const worker = await createWorker('eng', 1, {
+      const isBrowser = typeof window !== 'undefined';
+      const workerOptions = {
         logger: (m) => {
           if (onStatus && m && typeof m.progress === 'number') {
             onStatus({
@@ -62,7 +63,18 @@ export async function getOcrWorker(onStatus) {
             });
           }
         }
-      });
+      };
+
+      if (isBrowser) {
+        // Enforce 100% offline air-gapped local paths (ABA Model Rule 1.6)
+        workerOptions.workerPath = '/ocr/worker.min.js';
+        workerOptions.corePath = '/ocr';
+        workerOptions.langPath = '/ocr';
+        workerOptions.cacheMethod = 'none';
+        workerOptions.gzip = true;
+      }
+
+      const worker = await createWorker('eng', 1, workerOptions);
 
       sharedWorker = worker;
       return worker;

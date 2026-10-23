@@ -3,9 +3,8 @@ import {
   Mail, ExternalLink, Copy, Check, Search, Filter, Shield, Star, 
   Download, Lock, Unlock, Send, Users, Building2, Sparkles, 
   RefreshCw, CheckCircle2, AlertCircle, ArrowUpRight, Flame,
-  ChevronLeft, ChevronRight, Eye, HelpCircle
+  ChevronLeft, ChevronRight, Eye, HelpCircle, Loader2
 } from 'lucide-react';
-import { ATTORNEYS_DATA, FIRMS_DATA } from '../data/warRoomLeads';
 
 const MASTER_PIN = '2026';
 const STORAGE_AUTH_KEY = 'nexus_war_room_auth_v1';
@@ -38,6 +37,10 @@ export default function WarRoom() {
   // UI Toasts
   const [toastMessage, setToastMessage] = useState(null);
   const [previewModalLead, setPreviewModalLead] = useState(null);
+
+  // Dynamic Leads Intelligence Database (Loaded in-memory ONLY after clearance)
+  const [leadsData, setLeadsData] = useState({ attorneys: [], firms: [] });
+  const [isLeadsLoading, setIsLeadsLoading] = useState(false);
 
   // 1. Initial Load & URL Key Check
   useEffect(() => {
@@ -74,6 +77,25 @@ export default function WarRoom() {
       console.error('Failed to parse stars', e);
     }
   }, []);
+
+  // 1.1 Lazy-load 20,012 leads dataset ONLY when authenticated
+  useEffect(() => {
+    if (isAuthenticated && leadsData.attorneys.length === 0) {
+      setIsLeadsLoading(true);
+      import('../data/warRoomLeads')
+        .then((mod) => {
+          setLeadsData({
+            attorneys: mod.ATTORNEYS_DATA || [],
+            firms: mod.FIRMS_DATA || []
+          });
+          setIsLeadsLoading(false);
+        })
+        .catch((err) => {
+          console.error('Failed to load War Room leads:', err);
+          setIsLeadsLoading(false);
+        });
+    }
+  }, [isAuthenticated, leadsData.attorneys.length]);
 
   // Show Toast Helper
   const showToast = (msg) => {
@@ -225,14 +247,14 @@ ${LRM}office@nexus-os.store`;
 
   // Locations Extract
   const locationsList = useMemo(() => {
-    const data = activeTab === 'attorneys' ? ATTORNEYS_DATA : FIRMS_DATA;
+    const data = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
     const states = new Set(data.map(d => d.state || 'Other'));
     return ['ALL', ...Array.from(states).sort()];
-  }, [activeTab]);
+  }, [activeTab, leadsData]);
 
   // Filtered Leads
   const filteredLeads = useMemo(() => {
-    const dataset = activeTab === 'attorneys' ? ATTORNEYS_DATA : FIRMS_DATA;
+    const dataset = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
     const q = searchQuery.toLowerCase().trim();
 
     return dataset.filter(item => {
@@ -260,7 +282,7 @@ ${LRM}office@nexus-os.store`;
 
       return matchesSearch && matchesLoc && matchesStatus;
     });
-  }, [activeTab, searchQuery, selectedLocation, statusFilter, contactedMap, starredSet]);
+  }, [activeTab, searchQuery, selectedLocation, statusFilter, contactedMap, starredSet, leadsData]);
 
   // Pagination Slice
   const totalPages = Math.ceil(filteredLeads.length / pageSize) || 1;
@@ -276,7 +298,7 @@ ${LRM}office@nexus-os.store`;
 
   // Export CSV
   const handleExportCSV = () => {
-    const dataset = activeTab === 'attorneys' ? ATTORNEYS_DATA : FIRMS_DATA;
+    const dataset = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
     const headers = activeTab === 'attorneys' 
       ? ['ID', 'Name', 'Title', 'Firm', 'Email', 'City', 'State', 'Specialty', 'Status', 'ContactedAt', 'Website']
       : ['ID', 'Firm Name', 'Managing Partner', 'Email', 'City', 'State', 'Specialty', 'Status', 'ContactedAt', 'Website'];
@@ -393,6 +415,21 @@ ${LRM}office@nexus-os.store`;
             OPERATOR CLEARANCE ID: MOHAMMED-CHIEF-EXEC
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // LOADING STATE WHILE PARSING LEADS IN RAM
+  // ----------------------------------------------------
+  if (isLeadsLoading) {
+    return (
+      <div dir="ltr" className="min-h-screen bg-[#030712] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+        <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 animate-pulse">
+          <Loader2 className="w-8 h-8 animate-spin" />
+        </div>
+        <h2 className="text-xl font-bold tracking-tight text-white mb-2">Decrypting War Room Intelligence</h2>
+        <p className="text-sm text-slate-400 font-mono">Loading 20,012 Law Firm Contacts into Local Memory...</p>
       </div>
     );
   }

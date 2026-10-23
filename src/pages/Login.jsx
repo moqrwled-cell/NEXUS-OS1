@@ -77,26 +77,6 @@ export default function Login() {
     setIsLoading(false);
   };
 
-  const handleInstantAutoRestore = async () => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const activated = await restoreLicenseFromWhopOrder('WHOP-AUTO-RESTORE', selectedPlan);
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirectPath = urlParams.get('redirect') || 'contractcompare';
-      grantToolAccess(activated.primaryKey, redirectPath === 'hub' ? 'all' : redirectPath);
-      setIsLoading(false);
-      if (redirectPath === 'hub') {
-        navigate('/hub');
-      } else {
-        navigate(`/app/${redirectPath}`);
-      }
-    } catch {
-      setIsLoading(false);
-      setError('Unable to auto-restore. Please enter your Whop order ID or email.');
-    }
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#020608] p-4 font-sans text-zinc-100 antialiased" dir="ltr">
       <div className="w-full max-w-md p-8 rounded-2xl bg-[#060D12] border border-white/10 relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)]">
@@ -243,14 +223,9 @@ export default function Login() {
             </button>
 
             <div className="pt-2 text-center">
-              <button
-                type="button"
-                disabled={isLoading}
-                onClick={handleInstantAutoRestore}
-                className="text-xs text-emerald-400 hover:text-emerald-300 font-mono underline transition-colors cursor-pointer"
-              >
-                ⚡ Completed 100% coupon checkout? Click to auto-restore
-              </button>
+              <span className="text-[11px] text-zinc-500 font-mono">
+                Order confirmation and cryptographic keys are delivered instantly to your purchase email.
+              </span>
             </div>
           </form>
         )}
