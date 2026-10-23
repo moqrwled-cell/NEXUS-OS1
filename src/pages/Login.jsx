@@ -89,7 +89,7 @@ export default function Login() {
               className="w-full bg-black/70 border border-zinc-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-center font-mono text-sm text-white placeholder:text-zinc-600 outline-none transition-colors"
               required
             />
-            <p className="text-[10px] text-zinc-500 mt-1.5 text-center">
+            <p className="text-[10px] text-zinc-400 mt-1.5 text-center">
               Enter the cryptographic key from your Whop purchase receipt or email.
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function Login() {
         </div>
 
         {/* Footer Navigation */}
-        <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-zinc-500">
+        <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-zinc-400">
           <button
             type="button"
             onClick={() => navigate('/')}

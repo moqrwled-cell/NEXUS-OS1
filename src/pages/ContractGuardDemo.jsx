@@ -495,7 +495,7 @@ export default function ContractGuardDemo() {
                 <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-zinc-500 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
+            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
           </div>
 
           {/* Security Badge */}
@@ -510,7 +510,7 @@ export default function ContractGuardDemo() {
           
           {/* Section 1: Forensic Auditing */}
           <div>
-            <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase px-2 mb-1.5">
+            <p className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase px-2 mb-1.5">
               Forensic Auditing
             </p>
             <div className="space-y-1">
@@ -530,13 +530,13 @@ export default function ContractGuardDemo() {
                     <p className="text-[13px] font-semibold leading-tight truncate">Integrity & Diff Audit</p>
                     {activeTool === 'analyzer' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
                   </div>
-                  <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Pre-signing review & redline</p>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Pre-signing review & redline</p>
                 </div>
               </button>
 
               {activeTool === 'analyzer' && (
                 <div className="mx-1 mt-1 mb-1 px-3 py-2.5 rounded-xl bg-zinc-900/80 border border-zinc-800/80 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
-                  <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-1.5">Interactive Evaluation Guide</p>
+                  <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-1.5">Interactive Evaluation Guide</p>
                   <div className="space-y-1.5 text-[10.5px] leading-relaxed text-zinc-400">
                     <p><span className="text-emerald-400 font-semibold">1. Unrestricted Sandbox:</span> Paste any client draft or import your transactional agreement.</p>
                     <p><span className="text-cyan-400 font-semibold">2. In-RAM Speed:</span> Executes 5 detection engines locally in &lt;100ms without cloud transmission.</p>
@@ -549,7 +549,7 @@ export default function ContractGuardDemo() {
 
           {/* Section 2: Privacy & Remediation */}
           <div>
-            <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase px-2 mb-1.5">
+            <p className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase px-2 mb-1.5">
               Client Privacy
             </p>
             <div className="space-y-1">
@@ -569,7 +569,7 @@ export default function ContractGuardDemo() {
                     <p className="text-[13px] font-semibold leading-tight truncate">Smart PII Redactor</p>
                     <span className="text-[8.5px] font-mono uppercase bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.2 rounded font-bold">Preview</span>
                   </div>
-                  <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Identity & financial scrub</p>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Identity & financial scrub</p>
                 </div>
               </button>
             </div>
@@ -577,7 +577,7 @@ export default function ContractGuardDemo() {
 
           {/* Section 3: Court Evidence Controls */}
           <div>
-            <p className="text-[10px] font-bold tracking-wider text-zinc-500 uppercase px-2 mb-1.5">
+            <p className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase px-2 mb-1.5">
               Court Controls
             </p>
             <div className="space-y-1">
@@ -597,7 +597,7 @@ export default function ContractGuardDemo() {
                     <p className="text-[13px] font-semibold leading-tight truncate">Bates Stamping Suite</p>
                     <span className="text-[8.5px] font-mono uppercase bg-amber-500/15 text-amber-300 border border-amber-500/30 px-1.5 py-0.2 rounded font-bold">Firm Only</span>
                   </div>
-                  <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Court evidence numbering</p>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Court evidence numbering</p>
                 </div>
               </button>
 
@@ -617,7 +617,7 @@ export default function ContractGuardDemo() {
                     <p className="text-[13px] font-semibold leading-tight truncate">AmLaw 100 Vault</p>
                     <span className="text-[8.5px] font-mono uppercase bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 px-1 py-0.2 rounded font-bold">12 Models</span>
                   </div>
-                  <p className="text-[10px] text-zinc-500 mt-0.5 truncate">US commercial contract library</p>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 truncate">US commercial contract library</p>
                 </div>
                 {activeTool === 'templates' && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />}
               </button>
@@ -638,7 +638,7 @@ export default function ContractGuardDemo() {
                     <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
                     <span className="text-[8.5px] font-mono uppercase bg-purple-500/15 text-purple-300 border border-purple-500/30 px-1.5 py-0.2 rounded font-bold">PWA Only</span>
                   </div>
-                  <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Encrypted local persistence</p>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Encrypted local persistence</p>
                 </div>
               </button>
             </div>
@@ -680,7 +680,7 @@ export default function ContractGuardDemo() {
           >
             ← Nexus OS Portal
           </button>
-          <span className="font-mono text-[10px] text-zinc-500">Evaluation Mode</span>
+          <span className="font-mono text-[10px] text-zinc-400">Evaluation Mode</span>
         </div>
       </aside>
 
@@ -1062,7 +1062,7 @@ export default function ContractGuardDemo() {
                           <span>Paste from Clipboard</span>
                         </button>
                       </div>
-                      <div className="mt-4 text-[10.5px] font-mono text-zinc-500">
+                      <div className="mt-4 text-[10.5px] font-mono text-zinc-400">
                         Or paste raw contract clauses directly below:
                       </div>
                       <textarea
@@ -1123,9 +1123,9 @@ export default function ContractGuardDemo() {
                     <span className="text-2xl font-black text-emerald-400 font-mono tabular-nums">
                       {processingMs !== null ? processingMs : '--'}
                     </span>
-                    <span className="text-xs font-mono text-zinc-500">ms</span>
+                    <span className="text-xs font-mono text-zinc-400">ms</span>
                   </div>
-                  <span className="text-[10px] text-zinc-500 font-mono">
+                  <span className="text-[10px] text-zinc-400 font-mono">
                     {processingMs !== null ? 'Single pass · 0 network latency' : 'Awaiting document buffer'}
                   </span>
                 </div>
@@ -1142,10 +1142,10 @@ export default function ContractGuardDemo() {
                     }`}>
                       {riskScore !== null ? riskScore : '--'}
                     </span>
-                    <span className="text-xs font-mono text-zinc-500">/ 100</span>
+                    <span className="text-xs font-mono text-zinc-400">/ 100</span>
                   </div>
                   <span className={`text-[10px] font-bold font-mono uppercase ${
-                    riskScore !== null && riskScore > 50 ? 'text-rose-400' : 'text-zinc-500'
+                    riskScore !== null && riskScore > 50 ? 'text-rose-400' : 'text-zinc-400'
                   }`}>
                     {auditResults ? `${(riskLevel || 'audited').toUpperCase()} · ${findingsList.length} Deficiencies Found` : 'Awaiting Audit Execution'}
                   </span>
@@ -1157,7 +1157,7 @@ export default function ContractGuardDemo() {
                     <span className="text-2xl font-black text-cyan-400 font-mono tabular-nums">
                       {auditResults ? (auditResults?.crossRefs?.stats?.totalReferencesFound ?? 0) : '--'}
                     </span>
-                    <span className="text-xs font-mono text-zinc-500">targets</span>
+                    <span className="text-xs font-mono text-zinc-400">targets</span>
                   </div>
                   <span className="text-[10px] text-zinc-400 font-mono">
                     {auditResults 
@@ -1348,7 +1348,7 @@ export default function ContractGuardDemo() {
                         {/* Statutory Authority */}
                         {finding.statutoryCitation && (
                           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-mono">
-                            <span className="text-zinc-500 font-semibold text-[11px]">Governing Doctrine:</span>
+                            <span className="text-zinc-400 font-semibold text-[11px]">Governing Doctrine:</span>
                             <span className="px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/30 text-sky-300 text-[11px] font-bold">
                               ⚖️ {finding.statutoryCitation}
                             </span>
@@ -1526,7 +1526,7 @@ export default function ContractGuardDemo() {
                               className="hidden" 
                             />
                           </label>
-                          <span className="text-[10px] font-mono text-zinc-500">
+                          <span className="text-[10px] font-mono text-zinc-400">
                             {redactInputText.trim().split(/\s+/).filter(Boolean).length} words
                           </span>
                         </div>
@@ -1579,8 +1579,8 @@ export default function ContractGuardDemo() {
 
                       <div className="w-full bg-zinc-950/80 p-3.5 rounded-xl border border-emerald-500/30 text-xs font-mono leading-relaxed text-emerald-300 min-h-[220px] whitespace-pre-wrap select-all">
                         {redactResult ? redactResult.sanitizedText : (
-                          <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 py-12">
-                            <EyeOff size={24} className="mb-2 text-zinc-600" />
+                          <div className="h-full flex flex-col items-center justify-center text-center text-zinc-400 py-12">
+                            <EyeOff size={24} className="mb-2 text-zinc-500" />
                             <span>Click "Scrub Privileged Data In-RAM" to execute client-side masking.</span>
                           </div>
                         )}
@@ -1761,8 +1761,8 @@ export default function ContractGuardDemo() {
                       <p className="text-[11px] font-serif tracking-widest text-zinc-400 font-bold uppercase">
                         IN THE UNITED STATES DISTRICT COURT
                       </p>
-                      <p className="text-[10px] font-serif text-zinc-500">SOUTHERN DISTRICT OF NEW YORK</p>
-                      <p className="text-[10px] font-mono text-zinc-500">CIVIL DOCKET NO. 26-CV-04891 (RA)</p>
+                      <p className="text-[10px] font-serif text-zinc-400">SOUTHERN DISTRICT OF NEW YORK</p>
+                      <p className="text-[10px] font-mono text-zinc-400">CIVIL DOCKET NO. 26-CV-04891 (RA)</p>
                     </div>
 
                     {/* Simulated Body Content */}
@@ -1849,19 +1849,19 @@ export default function ContractGuardDemo() {
                   <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
                     <span className="text-[10px] font-mono uppercase text-zinc-400">RAM Allocated</span>
                     <div className="text-xl font-bold font-mono text-emerald-400 mt-1">~4.8 MB</div>
-                    <p className="text-[11px] text-zinc-500 mt-1">In-Memory Heap Space</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">In-Memory Heap Space</p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
                     <span className="text-[10px] font-mono uppercase text-zinc-400">Cloud Data Transmitted</span>
                     <div className="text-xl font-bold font-mono text-cyan-400 mt-1">0.00 KB</div>
-                    <p className="text-[11px] text-zinc-500 mt-1">Zero External Telemetry</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">Zero External Telemetry</p>
                   </div>
 
                   <div className="p-4 rounded-xl bg-black/50 border border-zinc-800">
                     <span className="text-[10px] font-mono uppercase text-zinc-400">ABA Rule 1.6 Status</span>
                     <div className="text-xl font-bold font-mono text-purple-400 mt-1">100% Compliant</div>
-                    <p className="text-[11px] text-zinc-500 mt-1">Strict Confidentiality Guard</p>
+                    <p className="text-[11px] text-zinc-400 mt-1">Strict Confidentiality Guard</p>
                   </div>
                 </div>
 
@@ -2104,7 +2104,7 @@ export default function ContractGuardDemo() {
 
                 {/* Already Purchased / Restore License */}
                 <div className="pt-2 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-400 gap-2">
-                  <span className="text-[11px] text-zinc-500 font-mono">Already purchased on Whop or cleared browser data?</span>
+                  <span className="text-[11px] text-zinc-400 font-mono">Already purchased on Whop or cleared browser data?</span>
                   <button
                     type="button"
                     onClick={() => {

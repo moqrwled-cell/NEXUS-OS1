@@ -354,7 +354,7 @@ export default function Welcome() {
                   <Monitor size={20} />
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 block">
                     Workstation Hardware ID
                   </span>
                   <span className="text-xs md:text-sm font-mono font-bold text-white tracking-wide">

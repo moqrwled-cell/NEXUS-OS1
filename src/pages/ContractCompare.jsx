@@ -132,7 +132,7 @@ export default function ContractCompare() {
                 <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-zinc-500 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
+            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
           </div>
 
           {/* Security Badge */}
@@ -144,7 +144,7 @@ export default function ContractCompare() {
 
         {/* Navigation Modules */}
         <nav className="flex-1 px-3 py-3 flex flex-col gap-1 overflow-y-auto custom-scrollbar">
-          <p className="text-[9px] uppercase tracking-[0.15em] text-zinc-500 font-semibold px-2 mb-1">Modules</p>
+          <p className="text-[9px] uppercase tracking-[0.15em] text-zinc-400 font-semibold px-2 mb-1">Modules</p>
 
           {/* Module 1: Deterministic Fact-Checking Engine */}
           <button
@@ -155,10 +155,10 @@ export default function ContractCompare() {
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
-            <ShieldCheck size={16} className={activeTool === 'analyzer' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <ShieldCheck size={16} className={activeTool === 'analyzer' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Deterministic Fact-Checking Engine</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">0% Hallucination · Mathematical Audit</p>
+              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">0% Hallucination · Mathematical Audit</p>
             </div>
             {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
@@ -194,16 +194,16 @@ export default function ContractCompare() {
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
-            <EyeOff size={16} className={activeTool === 'redact' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <EyeOff size={16} className={activeTool === 'redact' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Smart PII Redactor</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Identity & financial scrub</p>
+              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Identity & financial scrub</p>
             </div>
             {activeTool === 'redact' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'redact' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
                 <div className="flex gap-2">
                   <span className="text-emerald-400 font-bold shrink-0">①</span>
@@ -230,16 +230,16 @@ export default function ContractCompare() {
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
-            <Layers size={16} className={activeTool === 'bates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <Layers size={16} className={activeTool === 'bates' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Bates Stamping Suite</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Court evidence numbering</p>
+              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Court evidence numbering</p>
             </div>
             {activeTool === 'bates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'bates' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
                 <div className="flex gap-2">
                   <span className="text-emerald-400 font-bold shrink-0">①</span>
@@ -266,19 +266,19 @@ export default function ContractCompare() {
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
-            <BookOpen size={16} className={activeTool === 'templates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <BookOpen size={16} className={activeTool === 'templates' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
                 <p className="text-[13px] font-semibold leading-tight truncate">Template Vault</p>
                 <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">AmLaw 100</span>
               </div>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">US commercial contract library</p>
+              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">US commercial contract library</p>
             </div>
             {activeTool === 'templates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'templates' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
                 <div className="flex gap-2">
                   <span className="text-emerald-400 font-bold shrink-0">①</span>
@@ -305,16 +305,16 @@ export default function ContractCompare() {
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
-            <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+            <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
             <div className="text-left flex-1 min-w-0">
               <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5 truncate">Encrypted local persistence</p>
+              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Encrypted local persistence</p>
             </div>
             {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
           {activeTool === 'history' && (
             <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500 font-bold mb-2">How To Use (For Counsel)</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
               <div className="space-y-2 text-[11px] leading-relaxed">
                 <div className="flex gap-2">
                   <span className="text-emerald-400 font-bold shrink-0">①</span>
@@ -1152,7 +1152,7 @@ function ContractAnalyzerView({ initialSession }) {
           <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
           <span><strong>ZERO-CLOUD PRIVILEGE SHIELD:</strong> 100% In-Memory RAM execution. Client contracts, confidential party covenants, and financial terms never touch an external cloud server or LLM API.</span>
         </div>
-        <span className="text-zinc-500 text-[11px] shrink-0 font-bold uppercase tracking-wider">ABA Model Rule 1.6 Certified</span>
+        <span className="text-zinc-400 text-[11px] shrink-0 font-bold uppercase tracking-wider">ABA Model Rule 1.6 Certified</span>
       </div>
 
       {/* Clean Horizontal Matter Metadata Bar */}
@@ -1638,132 +1638,147 @@ function ContractAnalyzerView({ initialSession }) {
             </div>
           </div>
 
-          {/* Complete HUD Sub-Tabs Navigation */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-800 custom-scrollbar">
-            <button
-              onClick={() => setActiveHudTab('dealBreakers')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'dealBreakers'
-                  ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.35)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <ShieldAlert size={14} />
-              <span>Deal Breakers</span>
-              {(enrichedAudit?.dealBreakers?.length || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-red-950 text-red-200 border border-red-500/50 font-mono font-bold">
-                  {enrichedAudit.dealBreakers.length}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveHudTab('enforceability')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'enforceability'
-                  ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <AlertTriangle size={14} />
-              <span>Enforceability Hazards</span>
-              {(enrichedAudit?.enforceabilityHazards?.length || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-amber-950 text-amber-200 border border-amber-500/50 font-mono font-bold">
-                  {enrichedAudit.enforceabilityHazards.length}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveHudTab('crossRefs')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'crossRefs'
-                  ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Bookmark size={14} />
-              <span>Citations & Exhibits</span>
-              {((auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-cyan-950 text-cyan-200 border border-cyan-500/50 font-mono font-bold">
-                  {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveHudTab('financialDates')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'financialDates'
-                  ? 'bg-orange-500 text-black shadow-[0_0_15px_rgba(249,115,22,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <DollarSign size={14} />
-              <span>Financial & Dates</span>
-              {((auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-orange-950 text-orange-200 border border-orange-500/50 font-mono font-bold">
-                  {(auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveHudTab('definedTerms')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'definedTerms'
-                  ? 'bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Tag size={14} />
-              <span>Defined Terms & Entities</span>
-              {(auditResults.definedTerms?.stats?.undefinedCount || 0) > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-purple-950 text-purple-200 border border-purple-500/50 font-mono font-bold">
-                  {auditResults.definedTerms?.stats?.undefinedCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setActiveHudTab('obligations')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                activeHudTab === 'obligations'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
-                  : 'text-zinc-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <CheckSquare size={14} />
-              <span>Obligations ({auditResults.obligations?.stats?.totalObligations || 0})</span>
-            </button>
-
-            {auditResults.diff && (
+          {/* Complete HUD Sub-Tabs Navigation — Clustered by Forensic Domain */}
+          <div className="flex items-center gap-3 overflow-x-auto pb-3 pt-1 border-b border-zinc-800/80 custom-scrollbar text-xs">
+            {/* Cluster 1: Malpractice & Liabilities */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-red-950/20 border border-red-500/20 shrink-0">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-red-400 font-bold px-2 flex items-center gap-1">
+                <ShieldAlert size={12} className="text-red-400" /> Hazards:
+              </span>
               <button
-                onClick={() => setActiveHudTab('diff')}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'diff'
-                    ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.25)]'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                onClick={() => setActiveHudTab('dealBreakers')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'dealBreakers'
+                    ? 'bg-red-500 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)]'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Search size={14} />
-                <span>Redline Diff ({auditResults.diff.stats?.similarity}% Sim)</span>
+                <span>Deal Breakers</span>
+                {(enrichedAudit?.dealBreakers?.length || 0) > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-red-950 text-red-200 border border-red-500/50 font-mono font-bold">
+                    {enrichedAudit.dealBreakers.length}
+                  </span>
+                )}
               </button>
-            )}
 
-            {(auditResults.risks?.length || 0) > 0 && (
               <button
-                onClick={() => setActiveHudTab('risks')}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'risks'
-                    ? 'bg-red-500/80 text-white shadow-[0_0_15px_rgba(239,68,68,0.25)]'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                onClick={() => setActiveHudTab('enforceability')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'enforceability'
+                    ? 'bg-amber-500 text-black shadow-[0_0_12px_rgba(245,158,11,0.3)]'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <ShieldAlert size={14} />
-                <span>Risk Radar ({auditResults.risks.length})</span>
+                <AlertTriangle size={13} />
+                <span>Enforceability Hazards</span>
+                {(enrichedAudit?.enforceabilityHazards?.length || 0) > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-950 text-amber-200 border border-amber-500/50 font-mono font-bold">
+                    {enrichedAudit.enforceabilityHazards.length}
+                  </span>
+                )}
               </button>
-            )}
+
+              {(auditResults.risks?.length || 0) > 0 && (
+                <button
+                  onClick={() => setActiveHudTab('risks')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                    activeHudTab === 'risks'
+                      ? 'bg-rose-500 text-white shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <AlertCircle size={13} />
+                  <span>Risk Radar ({auditResults.risks.length})</span>
+                </button>
+              )}
+            </div>
+
+            {/* Cluster 2: Clerical & Cross-Verification */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-cyan-950/20 border border-cyan-500/20 shrink-0">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold px-2 flex items-center gap-1">
+                <Bookmark size={12} className="text-cyan-400" /> Verification:
+              </span>
+              <button
+                onClick={() => setActiveHudTab('crossRefs')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'crossRefs'
+                    ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span>Citations & Exhibits</span>
+                {((auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)) > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-cyan-950 text-cyan-200 border border-cyan-500/50 font-mono font-bold">
+                    {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setActiveHudTab('financialDates')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'financialDates'
+                    ? 'bg-orange-500 text-black shadow-[0_0_12px_rgba(249,115,22,0.3)]'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <DollarSign size={13} />
+                <span>Financial & Dates</span>
+                {((auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)) > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-orange-950 text-orange-200 border border-orange-500/50 font-mono font-bold">
+                    {(auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setActiveHudTab('definedTerms')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'definedTerms'
+                    ? 'bg-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.3)]'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Tag size={13} />
+                <span>Defined Terms</span>
+                {(auditResults.definedTerms?.stats?.undefinedCount || 0) > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-purple-950 text-purple-200 border border-purple-500/50 font-mono font-bold">
+                    {auditResults.definedTerms?.stats?.undefinedCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Cluster 3: Execution & Review */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-emerald-950/20 border border-emerald-500/20 shrink-0">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold px-2 flex items-center gap-1">
+                <CheckSquare size={12} className="text-emerald-400" /> Review:
+              </span>
+              <button
+                onClick={() => setActiveHudTab('obligations')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'obligations'
+                    ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <span>Obligations ({auditResults.obligations?.stats?.totalObligations || 0})</span>
+              </button>
+
+              {auditResults.diff && (
+                <button
+                  onClick={() => setActiveHudTab('diff')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                    activeHudTab === 'diff'
+                      ? 'bg-teal-500 text-black shadow-[0_0_12px_rgba(20,184,166,0.3)]'
+                      : 'text-zinc-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <Search size={13} />
+                  <span>Redline Diff ({auditResults.diff.stats?.similarity}% Sim)</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* TAB: CRITICAL DEAL BREAKERS */}
@@ -1830,7 +1845,7 @@ function ContractAnalyzerView({ initialSession }) {
 
                       {/* Statutory Authority */}
                       <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                        <span className="text-zinc-500 font-semibold">Governing Doctrine:</span>
+                        <span className="text-zinc-400 font-semibold">Governing Doctrine:</span>
                         <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
                           ⚖️ {item.statutoryCitation}
                         </span>
@@ -1844,9 +1859,9 @@ function ContractAnalyzerView({ initialSession }) {
                       {/* Defective Snippet */}
                       {item.snippet && (
                         <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
-                          <span className="text-zinc-500 text-[10px] uppercase font-bold block mb-1">Defective Draft Language:</span>
+                          <span className="text-zinc-400 text-[10px] uppercase font-bold block mb-1">Defective Draft Language:</span>
                           <span className="italic text-zinc-300">"{item.snippet}"</span>
-                          {item.line && <span className="text-zinc-500 ml-2">(Line {item.line})</span>}
+                          {item.line && <span className="text-zinc-400 ml-2">(Line {item.line})</span>}
                         </div>
                       )}
 
@@ -1957,7 +1972,7 @@ function ContractAnalyzerView({ initialSession }) {
 
                       {/* Statutory Authority */}
                       <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                        <span className="text-zinc-500 font-semibold">Governing Rule:</span>
+                        <span className="text-zinc-400 font-semibold">Governing Rule:</span>
                         <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
                           ⚖️ {item.statutoryCitation}
                         </span>
@@ -1971,9 +1986,9 @@ function ContractAnalyzerView({ initialSession }) {
                       {/* Defective Snippet */}
                       {item.snippet && (
                         <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
-                          <span className="text-zinc-500 text-[10px] uppercase font-bold block mb-1">Operative Draft Context:</span>
+                          <span className="text-zinc-400 text-[10px] uppercase font-bold block mb-1">Operative Draft Context:</span>
                           <span className="italic text-zinc-300">"{item.snippet}"</span>
-                          {item.line && <span className="text-zinc-500 ml-2">(Line {item.line})</span>}
+                          {item.line && <span className="text-zinc-400 ml-2">(Line {item.line})</span>}
                         </div>
                       )}
 

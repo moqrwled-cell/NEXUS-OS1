@@ -90,7 +90,7 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
             {/* Clean Single Form: License Key */}
             <form onSubmit={handleLicenseSubmit} className="space-y-4">
               <div className="relative">
-                <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
+                <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input
                   type="text"
                   required
@@ -133,7 +133,7 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                     }
                   });
                 }}
-                className="w-full py-3.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                className="w-full py-3.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer"
               >
                 <Lock size={14} />
                 <span>Instant Checkout ($199 Solo / $299 Firm) — Apple Pay & Cards</span>
@@ -147,7 +147,7 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1.5 mt-0.5 cursor-pointer"
+                className="text-xs text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1.5 mt-0.5 cursor-pointer"
               >
                 <ArrowLeft size={13} />
                 <span>Return to Overview</span>

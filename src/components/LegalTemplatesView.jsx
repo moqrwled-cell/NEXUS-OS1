@@ -473,7 +473,7 @@ export default function LegalTemplatesView({
               <Scale size={18} />
               <span>Core U.S. Statutory Mandates & Drafting Rules (Counsel Reference)</span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-500">AmLaw 100 Standards</span>
+            <span className="text-[10px] font-mono text-zinc-400">AmLaw 100 Standards</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -591,7 +591,7 @@ export default function LegalTemplatesView({
                     <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.2 rounded font-bold">
                       .DOCX + PDF
                     </span>
-                    <span className="text-[10px] font-mono text-zinc-500">
+                    <span className="text-[10px] font-mono text-zinc-400">
                       {tpl.variables?.length || 0} Dynamic Fields
                     </span>
                   </div>
@@ -613,7 +613,7 @@ export default function LegalTemplatesView({
               </div>
 
               <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
-                <span className="text-[11px] font-mono text-zinc-500">
+                <span className="text-[11px] font-mono text-zinc-400">
                   {tpl.jurisdiction}
                 </span>
                 <button
