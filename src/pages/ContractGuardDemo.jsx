@@ -7,7 +7,7 @@ import {
   AlertTriangle, AlertCircle, X, Download, HardDriveDownload,
   Users, User, Briefcase, FileCheck, Check, Sparkles, ExternalLink,
   ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play,
-  Copy, Key
+  Copy, Key, FileDown
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
 import { isImageFile, recognizeImage } from '../utils/ocrEngine';
@@ -1428,27 +1428,34 @@ export default function ContractGuardDemo() {
 
                 </div>
 
-                {/* Export Client Memo Gate Bar */}
+                {/* Export Client Memo & Word Rider Gate Bar */}
                 <div className="px-4 py-3 bg-[#08121A] border-t border-zinc-800 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-xs text-zinc-400">
                     <FileCheck size={15} className="text-emerald-400" />
-                    <span>Client Memo Generation & White-Label Exports</span>
+                    <span>Court-Grade Pre-Signing Amendment Rider & Export Engine</span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => openUpgrade('export')}
+                      className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+                    >
+                      <FileDown size={14} className="stroke-[2.5]" />
+                      <span>Download Editable Word Rider (.docx)</span>
+                    </button>
                     <button
                       onClick={() => openUpgrade('export')}
                       className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                       <Download size={13} className="text-cyan-400" />
-                      <span>Export Executive Client Memo (PDF)</span>
+                      <span>Client Memo (PDF)</span>
                     </button>
                     <button
                       onClick={() => openUpgrade('export')}
                       className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                       <FileSpreadsheet size={13} className="text-emerald-400" />
-                      <span>Export Obligations Matrix (CSV)</span>
+                      <span>Obligations (CSV)</span>
                     </button>
                   </div>
                 </div>

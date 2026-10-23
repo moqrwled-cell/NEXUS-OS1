@@ -12,6 +12,7 @@ import {
   BookOpen, FileDown
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
+import { downloadAmendmentRiderDOCX } from '../utils/docxExportEngine';
 
 // Flagship Engines & Utilities
 import { sanitizeDocumentPII, PII_RULES } from '../utils/piiEngine';
@@ -876,6 +877,24 @@ function ContractAnalyzerView({ initialSession }) {
     setTimeout(() => setCopiedRedlineId(null), 2500);
   };
 
+  const [isDownloadingWordRider, setIsDownloadingWordRider] = useState(false);
+
+  const handleDownloadWordRider = async () => {
+    if (!auditResults) return;
+    setIsDownloadingWordRider(true);
+    try {
+      await downloadAmendmentRiderDOCX(auditResults, {
+        contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+        clientName: clientParty.trim() || 'Client',
+        counterpartyName: counterparty.trim() || 'Counterparty'
+      });
+    } catch (err) {
+      console.error('Failed to download Word rider:', err);
+    } finally {
+      setIsDownloadingWordRider(false);
+    }
+  };
+
   const handleCopyFullRider = () => {
     if (!auditResults) return;
     const riderText = generatePreSigningAmendmentRiderText(auditResults, {
@@ -1489,93 +1508,126 @@ function ContractAnalyzerView({ initialSession }) {
               </div>
             </div>
 
-            {/* Quick Export Actions */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <button
-                onClick={() => downloadAmendmentRiderPDF(auditResults, {
-                  contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
-                  clientName: clientParty.trim() || 'Client',
-                  counterpartyName: counterparty.trim() || 'Counterparty'
-                })}
-                className="px-4 py-2.5 bg-gradient-to-r from-emerald-400 to-cyan-400 hover:opacity-95 text-black font-extrabold rounded-xl text-xs transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
-                title="Download court-grade Pre-Signing Amendment Rider & Revisions Schedule (PDF)"
-              >
-                <FileText size={14} />
-                Court Rider (PDF)
-              </button>
-
-              <button
-                onClick={() => exportPreSigningAmendmentRiderHTML(auditResults, {
-                  contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
-                  clientName: clientParty.trim() || 'Client',
-                  counterpartyName: counterparty.trim() || 'Counterparty'
-                })}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer"
-                title="Open print-ready Court Amendment Rider (HTML/Print)"
-              >
-                <FileCode size={14} className="text-emerald-400" />
-                Rider (HTML)
-              </button>
-
-              <button
-                onClick={handleCopyFullRider}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
-                title="Copy full pre-signing court amendment schedule to clipboard"
-              >
-                {copiedRiderSuccess ? (
-                  <>
-                    <Check size={14} className="text-emerald-400" />
-                    <span className="text-emerald-300">Rider Copied! ✓</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} className="text-cyan-400" />
-                    <span>Copy Rider</span>
-                  </>
-                )}
-              </button>
-
-              <button
-                onClick={() => exportExecutiveClientMemoHTML({
-                  contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
-                  clientName: clientParty.trim() || 'Client',
-                  counterpartyName: counterparty.trim() || 'Counterparty',
-                  auditData: auditResults
-                })}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
-                title="Generate executive legal memorandum with print CSS for 1-click PDF"
-              >
-                <Download size={14} />
-                Client Memo (PDF)
-              </button>
-
-              <button
-                onClick={() => exportObligationsCSV(auditResults.obligations)}
-                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 border border-zinc-700 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-2 cursor-pointer"
-                title="Export contractual obligations schedule to CSV spreadsheet"
-              >
-                <FileSpreadsheet size={14} className="text-cyan-400" />
-                Obligations CSV
-              </button>
-
-              {auditResults.diff && (
+            {/* Counsel Redline & Amendment Export Control Center */}
+            <div className="flex flex-col gap-3 w-full lg:w-auto">
+              {/* PRIMARY ACTION: EDITABLE WORD RIDER (.DOCX) */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <button
-                  onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' })}
-                  className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center gap-2 cursor-pointer"
-                  title="Export interactive HTML redline with insertions & deletions"
+                  onClick={handleDownloadWordRider}
+                  disabled={isDownloadingWordRider}
+                  className="px-5 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:opacity-95 text-black font-black rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(16,185,129,0.35)] cursor-pointer disabled:opacity-50 shrink-0"
+                  title="Download editable Microsoft Word Pre-Signing Amendment Rider (.docx) for counsel customization"
                 >
-                  <FileCode size={14} />
-                  Redline HTML
+                  {isDownloadingWordRider ? (
+                    <RefreshCw size={16} className="animate-spin" />
+                  ) : (
+                    <FileDown size={17} className="stroke-[2.5]" />
+                  )}
+                  <span>Download Editable Word Rider (.docx)</span>
                 </button>
-              )}
 
-              <button
-                onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' })}
-                className="px-3 py-2.5 bg-white/5 hover:bg-white/10 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-300 transition-all cursor-pointer"
-                title="Export compliance JSON verification record"
-              >
-                JSON
-              </button>
+                {/* Secondary Fast Action: Copy Text */}
+                <button
+                  onClick={handleCopyFullRider}
+                  className="px-3.5 py-3 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                  title="Copy full pre-signing court amendment schedule to clipboard"
+                >
+                  {copiedRiderSuccess ? (
+                    <>
+                      <Check size={14} className="text-emerald-400" />
+                      <span className="text-emerald-300">Rider Copied! ✓</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={14} className="text-cyan-400" />
+                      <span>Copy Rider</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Legal Disclaimer / Counsel Review Mandate */}
+              <div className="p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/25 text-[11px] text-amber-200/90 leading-relaxed font-sans flex items-start gap-2">
+                <AlertCircle size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Practitioner Working Draft Notice:</strong> This schedule is generated in editable .docx format as a preliminary draft for reviewing legal counsel. Counsel must independently review, verify, and tailor all statutory remedies and covenants to match client instructions and specific transaction terms prior to execution or circulation to opposing counsel.
+                </span>
+              </div>
+
+              {/* SECONDARY UTILITY EXPORTS (CLEAN, COMPACT ROW) */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold mr-1">
+                  Alternative Formats:
+                </span>
+
+                <button
+                  onClick={() => downloadAmendmentRiderPDF(auditResults, {
+                    contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+                    clientName: clientParty.trim() || 'Client',
+                    counterpartyName: counterparty.trim() || 'Counterparty'
+                  })}
+                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Download court-grade Pre-Signing Amendment Rider & Revisions Schedule (PDF)"
+                >
+                  <FileText size={13} className="text-rose-400" />
+                  <span>Court Rider (PDF)</span>
+                </button>
+
+                <button
+                  onClick={() => exportPreSigningAmendmentRiderHTML(auditResults, {
+                    contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+                    clientName: clientParty.trim() || 'Client',
+                    counterpartyName: counterparty.trim() || 'Counterparty'
+                  })}
+                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Open print-ready Court Amendment Rider (HTML/Print)"
+                >
+                  <FileCode size={13} className="text-emerald-400" />
+                  <span>Rider (HTML)</span>
+                </button>
+
+                <button
+                  onClick={() => exportExecutiveClientMemoHTML({
+                    contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
+                    clientName: clientParty.trim() || 'Client',
+                    counterpartyName: counterparty.trim() || 'Counterparty',
+                    auditData: auditResults
+                  })}
+                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Generate executive legal memorandum with print CSS for 1-click PDF"
+                >
+                  <Download size={13} className="text-purple-400" />
+                  <span>Client Memo (PDF)</span>
+                </button>
+
+                <button
+                  onClick={() => exportObligationsCSV(auditResults.obligations)}
+                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Export contractual obligations schedule to CSV spreadsheet"
+                >
+                  <FileSpreadsheet size={13} className="text-cyan-400" />
+                  <span>Obligations (CSV)</span>
+                </button>
+
+                {auditResults.diff && (
+                  <button
+                    onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' })}
+                    className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                    title="Export interactive HTML redline with insertions & deletions"
+                  >
+                    <FileCode size={13} />
+                    <span>Redline HTML</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' })}
+                  className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-[11px] font-mono text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer"
+                  title="Export compliance JSON verification record"
+                >
+                  <span>JSON Data</span>
+                </button>
+              </div>
             </div>
           </div>
 
