@@ -158,7 +158,7 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
       legalDoctrine: STATUTORY_DOCTRINES.CONDITION_PRECEDENT_FAILURE.doctrine,
       precedent: STATUTORY_DOCTRINES.CONDITION_PRECEDENT_FAILURE.precedent,
       malpracticeRisk: `Failure of Closing Condition: Because ${exhName} is expressly incorporated as a condition precedent to closing, its omission grants counterparty an unfettered walk-away right without liability.`,
-      courtGradeRedline: `[ATTACH TO DOCUMENT]\n${exhName.toUpperCase()}\n[SCHEDULE OF TERMS / DESCRIPTION]\n\nThe contents of this ${exhName} are hereby incorporated into and made an integral part of this Agreement for all purposes.`,
+      courtGradeRedline: `Delivery and Incorporation of ${exhName}. The Parties stipulate and agree that ${exhName} is hereby incorporated into and made an integral part of this Agreement for all purposes. Seller shall deliver all finalized schedules set forth in ${exhName} prior to Closing.`,
       actionableAdvice: `Ensure ${exhName} is physically attached to the final execution copy, or if the relevant terms are already fully described in the agreement body, strike the reference to "${exhName} attached hereto".`
     };
   }
@@ -395,9 +395,8 @@ export function generatePreSigningAmendmentRiderText(auditData, meta = {}) {
     let secText = `SECTION ${sectionsCount}. DISCLOSURE SCHEDULES AND EXHIBITS STIPULATION\n\n`;
     secText += `The parties hereby acknowledge that certain disclosure schedules and exhibits referenced in the Agreement were omitted from the initial draft bundle. The parties hereby covenant and agree:\n\n`;
     missingExhibits.forEach((ex, idx) => {
-      const enriched = enrichFindingWithStatutoryRemedy(ex);
-      secText += `${sectionsCount}.${idx + 1} Delivery of ${ex.targetName || ex.referenceText} (Line ${ex.line}). `;
-      secText += `${enriched.courtGradeRedline}\n\n`;
+      secText += `${sectionsCount}.${idx + 1} Delivery and Finalization of ${ex.targetName || ex.referenceText} (Line ${ex.line}). `;
+      secText += `The Parties hereby agree that ${ex.targetName || ex.referenceText} shall be finalized and physically bound to the execution copy prior to Closing, and all references thereto in the Agreement shall incorporate such schedule as if set forth in full therein.\n\n`;
     });
     sections.push(secText);
   }
@@ -466,7 +465,7 @@ export function generatePreSigningAmendmentRiderText(auditData, meta = {}) {
   if (boilerplateArtifacts.length > 0) {
     sectionsCount++;
     let secText = `SECTION ${sectionsCount}. DELETION OF UNFILLED DRAFTING PLACEHOLDERS\n\n`;
-    secText += `All square-bracketed placeholders and blank lines identified in the preliminary draft (including ${boilerplateArtifacts.map(b => b.placeholder).slice(0, 5).join(', ')}) are hereby superseded and replaced with the negotiated terms set forth herein.\n\n`;
+    secText += `All preliminary drafting brackets, drafting directives, and unfilled blanks appearing in prior working drafts are hereby deleted, satisfied, and superseded in their entirety by the definitive terms of this Agreement.\n\n`;
     sections.push(secText);
   }
 
@@ -507,5 +506,18 @@ export function generatePreSigningAmendmentRiderText(auditData, meta = {}) {
   }
 
   fullRider += '\n' + closingSec;
+
+  if (missingExhibits.length > 0) {
+    fullRider += `\n\n================================================================================\n`;
+    fullRider += `ATTACHED EXHIBITS AND SCHEDULES\n`;
+    fullRider += `================================================================================\n\n`;
+    missingExhibits.forEach((ex) => {
+      const exhTitle = (ex.targetName || ex.referenceText).toUpperCase();
+      fullRider += `${exhTitle}\n`;
+      fullRider += `SCHEDULE OF INCORPORATED TERMS\n\n`;
+      fullRider += `The terms and conditions set forth in this ${ex.targetName || ex.referenceText} are hereby formally attached to, incorporated into, and made an integral operative part of this Rider and the underlying Agreement for all purposes.\n\n`;
+    });
+  }
+
   return fullRider;
 }

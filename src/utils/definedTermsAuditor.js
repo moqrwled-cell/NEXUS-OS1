@@ -108,6 +108,11 @@ const LEGAL_STOPWORDS = new Set([
   'One Hundred Seventy-Five Thousand Dollars',
   'North America', 'New York County', 'Cook County', 'Franklin County', 'Springfield', 'Charlotte',
   'Dear Seller', 'Letter of Intent', 'Intent', 'Acquire',
+  'Restatement', 'Second', 'Contracts', 'Restatement (Second) of Contracts',
+  'Rider', 'Amendment Rider', 'Pre-Signing Amendment Rider',
+  'Line', 'Lines', 'Page', 'Pages',
+  'Commercial Land Purchase', 'Commercial Land Purchase and Sale Agreement',
+  'Finalization', 'Discrepancy', 'Financial Amount Discrepancy',
   // Federal & State Statutes, Codes, Regulations & Forms
   'Comprehensive Environmental Response, Compensation, and Liability Act',
   'Comprehensive Environmental Response', 'Compensation', 'Liability Act', 'CERCLA',
@@ -395,9 +400,9 @@ export function auditDefinedTerms(text = '', options = {}) {
         definedTermsMap.has(baseStem + 's')
       ) continue;
 
-      // Skip phrase immediately preceding a parenthetical definition (e.g. "Master Services Agreement (the 'Agreement')")
+      // Skip phrase immediately preceding a parenthetical definition (e.g. "Master Services Agreement" (the 'Agreement'))
       const followingText = lineText.substring(m.index + phrase.length).trim();
-      if (/^\(\s*(?:the\s+)?["“'‘]/.test(followingText)) continue;
+      if (/^["”'’]?\s*\(\s*(?:the\s+)?["“'‘]/.test(followingText)) continue;
 
       // Layer 2: Explicit known parties (including possessives)
       if (userParties.has(lower) || userParties.has(baseStem)) continue;
@@ -569,7 +574,7 @@ export function auditDefinedTerms(text = '', options = {}) {
   const boilerplateArtifacts = [];
   const RE_BRACKET_PLACEHOLDER = /\[([A-Za-z0-9\s/_\-–—\$\.,\*\?•]{1,60})\]/g;
   const RE_BLANK_UNDERLINE = /(?:^|\s)(_{3,})(?:\s|$|[,\.])/g;
-  const RE_DRAFTING_TAG = /\b(TODO|TBD|CONFIRM|INSERT\s+[A-Z\s]+|DELETE\s+IF\s+NOT\s+APPLICABLE|NOTE\s+TO\s+DRAFT|DRAFT\s+NOTE)\b/gi;
+  const RE_DRAFTING_TAG = /\b(TODO|TBD|NOTE\s+TO\s+DRAFT|DRAFT\s+NOTE|DELETE\s+IF\s+NOT\s+APPLICABLE|INSERT\s+[A-Z\s]+)\b|\[(?:CONFIRM|TODO|TBD)[^\]]*\]|\bCONFIRM\s*:\s*[A-Z]/g;
   const RE_CHEVRON_PLACEHOLDER = /<<([A-Za-z0-9_ -]{2,50})>>/g;
   const RE_ANGLE_PLACEHOLDER = /<([A-Za-z\s_-]{3,40})>/g;
 

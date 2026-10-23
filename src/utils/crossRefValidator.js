@@ -309,10 +309,10 @@ export function validateCrossReferences(text = '') {
       for (let t of individualTargets) {
         t = t.replace(/^(?:Exhibits?|Schedules?|Appendices|Appendix|Annexes?|Attachments?)\s+/i, '').trim();
         if (!t) continue;
-        // Target must start with alphanumeric character
-        if (!/^[A-Za-z0-9]/i.test(t)) continue;
-        // Exclude common transitional English words that are not exhibit/schedule identifiers
-        if (/^(?:here|hereto|hereof|herein|hereunder|unless|referenced|attached|provided|constitutes|described|specified|such|all|any|each|both|neither|either)\b/i.test(t)) continue;
+        // Target identifier must start with uppercase letter or digit (e.g. "Exhibit A", "Schedule 1", "Schedule IV")
+        if (!/^[A-Z0-9]/.test(t)) continue;
+        // Exclude common non-identifier English words, verbs, prepositions, or editorial terms
+        if (/^(?:set|forth|to|of|for|in|on|by|with|from|and|or|as|at|attached|referenced|described|delivered|provided|listed|required|identified|agreed|prepared|executed|incorporated|included|governed|contained|completed|annexed|appended|here|hereto|hereof|herein|hereunder|thereof|therein|unless|constitutes|specified|such|all|any|each|both|neither|either|terms|provisions|conditions|covenants|agreements|obligations)\b/i.test(t)) continue;
         citationsFound.push({
           target: t,
           prefix,

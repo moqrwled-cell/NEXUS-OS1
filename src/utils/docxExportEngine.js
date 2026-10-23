@@ -43,7 +43,7 @@ export async function downloadContractDOCX(contractText, options = {}) {
       spacing: { before: 0, after: 360 },
       children: [
         new TextRun({
-          text: `[AmLaw 100 Model Form — ${jurisdiction}]`,
+          text: `AmLaw 100 Model Form — ${jurisdiction}`,
           italics: true,
           size: 19, // 9.5pt
           font: 'Times New Roman',
@@ -202,7 +202,7 @@ export async function downloadAmendmentRiderDOCX(auditData, meta = {}) {
       spacing: { before: 0, after: 360 },
       children: [
         new TextRun({
-          text: '[PRACTITIONER WORKING DRAFT — FOR REVIEWING COUNSEL VERIFICATION AND CUSTOMIZATION PRIOR TO EXECUTION]',
+          text: 'PRACTITIONER WORKING DRAFT — FOR REVIEWING COUNSEL VERIFICATION AND CUSTOMIZATION PRIOR TO EXECUTION',
           italics: true,
           bold: true,
           size: 19, // 9.5pt
