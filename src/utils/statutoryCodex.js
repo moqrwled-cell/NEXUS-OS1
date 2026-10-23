@@ -87,7 +87,7 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
       precedent: STATUTORY_DOCTRINES.UCC_WORDS_PREVAIL.precedent,
       malpracticeRisk: `Severe Financial Exposure: Under UCC § 3-114, words prevail over numbers. Your client faces an unhedged discrepancy between ${writtenWords} and ${numericStr} if executed without mathematical parity.`,
       courtGradeRedline: `Buyer shall pay to Seller an aggregate cash purchase price of ${writtenWords} (${correctedNum}) (the "Purchase Price"), payable in immediately available wire funds at Closing; provided, that in the event of any typographical or arithmetic discrepancy between words and numerals, the corrected numerical amount shall control for all settlement calculations.`,
-      actionableAdvice: `Amend Section 3.1 immediately to align the written words and numerical figures prior to circulation to counterparty.`
+      actionableAdvice: `Amend the operative payment clause immediately to align the written words and numerical figures prior to circulation to counterparty.`
     };
   }
 
@@ -158,8 +158,8 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
       legalDoctrine: STATUTORY_DOCTRINES.CONDITION_PRECEDENT_FAILURE.doctrine,
       precedent: STATUTORY_DOCTRINES.CONDITION_PRECEDENT_FAILURE.precedent,
       malpracticeRisk: `Failure of Closing Condition: Because ${exhName} is expressly incorporated as a condition precedent to closing, its omission grants counterparty an unfettered walk-away right without liability.`,
-      courtGradeRedline: `Delivery of Disclosure Schedules. Seller shall deliver all required disclosure schedules set forth in ${exhName} (the "${exhName} Disclosures") at least five (5) business days prior to Closing for Buyer's reasonable approval. If Buyer disapproves any material disclosure, Buyer may elect in writing to waive such condition or terminate this Agreement pursuant to Section 8.1.`,
-      actionableAdvice: `Ensure ${exhName} is physically bound to the final execution copy or insert a pre-closing delivery and review covenant.`
+      courtGradeRedline: `[ATTACH TO DOCUMENT]\n${exhName.toUpperCase()}\n[SCHEDULE OF TERMS / DESCRIPTION]\n\nThe contents of this ${exhName} are hereby incorporated into and made an integral part of this Agreement for all purposes.`,
+      actionableAdvice: `Ensure ${exhName} is physically attached to the final execution copy, or if the relevant terms are already fully described in the agreement body, strike the reference to "${exhName} attached hereto".`
     };
   }
 
@@ -176,7 +176,7 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
       precedent: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.precedent,
       malpracticeRisk: `Veil-Piercing Exposure: Mismatched entity designation (Delaware LLC vs. California Inc) threatens limited liability partitioning and creates acute signatory authority disputes.`,
       courtGradeRedline: `This Agreement shall be binding upon and inure to the benefit of the Parties hereto and their respective successors and permitted assigns; provided, that all affirmative covenants, representations, and liabilities of Buyer hereunder shall be the exclusive obligation of Apex Technologies Group LLC, a Delaware limited liability company, and no individual member, manager, officer, or corporate affiliate shall incur personal or secondary liability hereunder.`,
-      actionableAdvice: `Harmonize entity name and state of organization across Preamble, Section 10.3, and Signature Blocks.`
+      actionableAdvice: `Harmonize entity name and state of organization across Preamble, Covenants, and Signature Blocks.`
     };
   }
 
@@ -275,7 +275,7 @@ export function enrichAllAuditFindings(auditData) {
     const enriched = enrichFindingWithStatutoryRemedy({
       ...issue,
       category: 'FINANCIAL CONTRADICTION',
-      clauseRef: issue.clause || 'Section 3.1',
+      clauseRef: issue.clause || (issue.line ? `Line ${issue.line}` : 'Operative Payment Terms'),
       title: 'Written Words Do Not Match Numeric Parenthetical'
     });
     if (enriched.severityTier === 'critical_deal_breaker') {
@@ -292,7 +292,7 @@ export function enrichAllAuditFindings(auditData) {
     const enriched = enrichFindingWithStatutoryRemedy({
       ...issue,
       category: isExh ? 'MISSING EXHIBIT SCHEDULE' : 'CROSS-REFERENCE FAILURE',
-      clauseRef: issue.clause || (isExh ? 'Section 4.2' : `Section ${issue.targetName || ''}`),
+      clauseRef: issue.clause || (issue.line ? `Line ${issue.line}` : (isExh ? 'Exhibits Schedule' : `Section ${issue.targetName || ''}`)),
       title: isExh 
         ? `Missing Condition Precedent: ${issue.targetName || issue.referenceText}` 
         : `Broken Target Citation: ${issue.targetName || issue.referenceText}`
@@ -313,7 +313,7 @@ export function enrichAllAuditFindings(auditData) {
     const enriched = enrichFindingWithStatutoryRemedy({
       ...issue,
       category: isEntity ? 'CORPORATE ENTITY MUTATION' : isBoilerplate ? 'TEMPLATE DRAFTING ARTIFACT' : 'UNDEFINED OPERATIVE TERM',
-      clauseRef: issue.clause || (isEntity ? 'Section 10.3' : isBoilerplate ? `Line ${issue.line}` : (issue.line ? `Line ${issue.line}` : 'Section 6.1')),
+      clauseRef: issue.clause || (issue.line ? `Line ${issue.line}` : (isEntity ? 'Entity Designation' : 'Definitions')),
       title: isEntity 
         ? `Corporate Entity Mismatch (${issue.entity || 'LLC vs Inc'})` 
         : isBoilerplate
@@ -334,7 +334,7 @@ export function enrichAllAuditFindings(auditData) {
       const enriched = enrichFindingWithStatutoryRemedy({
         ...risk,
         category: 'TIMELINE CONTRADICTION',
-        clauseRef: 'Recitals vs Section 2.3',
+        clauseRef: risk.clause || (risk.line ? `Line ${risk.line}` : 'Closing Timeline Schedule'),
         title: 'Chronological Impossibility: Outside Date Precedes Closing'
       });
       dealBreakers.push(enriched);
