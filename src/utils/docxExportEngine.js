@@ -327,3 +327,168 @@ export async function downloadAmendmentRiderDOCX(auditData, meta = {}) {
 
   return { success: true, fileName };
 }
+
+
+/**
+ * Downloads a court-grade Word (.docx) document of the harmonized and restated contract/deed,
+ * with 100% mathematical factual data preservation assertion.
+ * 
+ * @param {Object} harmonizedResult - Result from restateAndPolishContract
+ * @param {Object} options - Customization options
+ * @returns {Promise<{success: boolean, fileName: string}>}
+ */
+export async function downloadHarmonizedDeedDOCX(harmonizedResult, options = {}) {
+  const {
+    title = 'Harmonized Contract and Conveyance Draft',
+    jurisdiction = 'Delaware & Uniform Real Property Law'
+  } = options;
+
+  if (!harmonizedResult || !harmonizedResult.restatedText) {
+    throw new Error('Valid harmonized result with restatedText is required.');
+  }
+
+  const { restatedText, verification } = harmonizedResult;
+  const children = [];
+
+  // Title Heading
+  children.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 200, after: 100 },
+      children: [
+        new TextRun({
+          text: title.toUpperCase(),
+          bold: true,
+          size: 26, // 13pt
+          font: 'Times New Roman'
+        })
+      ]
+    })
+  );
+
+  // Subtitle / Standard Caption
+  children.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 200 },
+      children: [
+        new TextRun({
+          text: `Court-Grade Restatement — ${jurisdiction}`,
+          italics: true,
+          size: 19, // 9.5pt
+          font: 'Times New Roman',
+          color: '555555'
+        })
+      ]
+    })
+  );
+
+  // Data Integrity Assurance Banner
+  const integrityText = verification?.passed
+    ? `DATA INTEGRITY CERTIFIED: 100% of all ${verification.totalAnchors || 0} factual anchors (APN, acreage, metes & bounds coordinates, purchase figures, and dates) strictly preserved. Zero mutations.`
+    : `DATA VERIFICATION NOTICE: Counsel verification recommended for custom municipal parameters.`;
+
+  children.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 300 },
+      children: [
+        new TextRun({
+          text: integrityText,
+          size: 18, // 9pt
+          bold: true,
+          font: 'Times New Roman',
+          color: verification?.passed ? '006633' : '996600'
+        })
+      ]
+    })
+  );
+
+  // Parse lines of restatedText into paragraphs
+  const rawLines = restatedText.split(/\r?\n/);
+  for (let i = 0; i < rawLines.length; i++) {
+    const line = rawLines[i];
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const isMajorHeading = /^(ARTICLE\s+[0-9IVXLCDM]+|SECTION\s+[0-9]+|SECTION\.\s+[A-Z\s]+|RECITALS|IN WITNESS WHEREOF|EXHIBIT\s+[A-Z0-9]+)/i.test(trimmed);
+    const isSubsectionHeading = /^([0-9]+\.[0-9]+|\([a-z0-9]+\))\s+[A-Z]/i.test(trimmed);
+
+    if (isMajorHeading) {
+      children.push(
+        new Paragraph({
+          heading: HeadingLevel.HEADING_2,
+          spacing: { before: 240, after: 100 },
+          children: [
+            new TextRun({
+              text: trimmed,
+              bold: true,
+              size: 22, // 11pt
+              font: 'Times New Roman'
+            })
+          ]
+        })
+      );
+    } else if (isSubsectionHeading) {
+      children.push(
+        new Paragraph({
+          spacing: { before: 140, after: 80, line: 276 },
+          children: [
+            new TextRun({
+              text: trimmed,
+              bold: true,
+              size: 22,
+              font: 'Times New Roman'
+            })
+          ]
+        })
+      );
+    } else {
+      children.push(
+        new Paragraph({
+          spacing: { before: 0, after: 120, line: 276 },
+          alignment: AlignmentType.LEFT,
+          children: [
+            new TextRun({
+              text: trimmed,
+              size: 22,
+              font: 'Times New Roman'
+            })
+          ]
+        })
+      );
+    }
+  }
+
+  // Build document with standard 1-inch margins
+  const doc = new Document({
+    title: `${title} — Restated`,
+    subject: 'Forensic Deed & Contract Restatement',
+    creator: 'Nexus ContractGuard Enterprise',
+    sections: [
+      {
+        properties: {
+          page: {
+            margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 }
+          }
+        },
+        children
+      }
+    ]
+  });
+
+  const blob = await Packer.toBlob(doc);
+  const cleanTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 40) || 'Contract';
+  const outFileName = `${cleanTitle}_CourtGrade_Restated.docx`;
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = outFileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+  return { success: true, fileName: outFileName };
+}

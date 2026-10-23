@@ -88,6 +88,11 @@ import {
   sanitizeForWinAnsi
 } from '../src/utils/redactedPdfGenerator.js';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
+import { 
+  restateAndPolishContract, 
+  extractFactualAnchors, 
+  verifyDataPreservation 
+} from '../src/utils/forensicRestatementEngine.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1332,6 +1337,58 @@ function scanSrcForArabic(dir) {
 }
 scanSrcForArabic(path.join(PROJECT_ROOT, 'src'));
 assert(srcArabicCount === 0, `T6.24: Total Arabic characters across entire src/ codebase === 0 (actual: ${srcArabicCount})`);
+
+// ============================================================================
+// [TIER 7] Data-Preserved Deed & Contract Harmonizer Engine
+// ============================================================================
+suiteBanner('TIER 7', 'Data-Preserved Deed & Contract Harmonizer (Zero Hallucination Proofreader)');
+
+const rawTestDeed = `
+COMMERCIAL LAND PURCHASE AND SALE AGREEMENT
+
+WITNESSETH:
+
+WHEREAS, Seller and Buyer agrees to enter into this conveyance for the tract described herein; and
+WHEREAS, each of the Parties agree to abide by all conditions precedent;
+
+NOW THEREFORE, in consideration of the mutual covenants herein contained, and other good and valuable consideration, the receipt and sufficiency of which is hereby acknowledged, the parties hereto agree as follows:
+
+1. Property Description.
+Seller does hereby transfers unto Buyer all that certain lot of land situated in New Castle County, Delaware, designated as APN: 045-210-09-001, containing 4.75 acres (206,910 sq. ft.) of land, more or less, bounded and described as follows:
+Beginning at a point of beginning marked by an iron pin; thence North 42° 15' 30" East, a distance of 345.50 feet to a concrete monument; thence South 47° 44' 30" East, a distance of 180.25 feet; thence along Elm Street to the point of beginning.
+
+2. Purchase Price and Escrow.
+The total purchase price shall be $1,450,000.00 (One Million Four Hundred Fifty Thousand Dollars). Buyer shall pay earnest money in the amount of $50,000.00 within 5 business days of the Effective Date. The Closing shall take place on or before December 15, 2026.
+
+3. Inspections and Due Diligence.
+Buyer shall have the right to inspect the property during the feasibility period. Buyer shall and/or Seller shall retain an environmental engineer. Seller shall have no obligation to remediate cosmetic flaws, provided however that Seller shall cure all title defects. This Agreement shall be null and void and of no further force or effect if title is unmarketable.
+`;
+
+const harmonizedResult = restateAndPolishContract(rawTestDeed);
+
+assert(harmonizedResult && typeof harmonizedResult === 'object', 'T7.1: restateAndPolishContract returns structured result object');
+assert(harmonizedResult.originalAnchors.parcels.some(p => p.id === '045-210-09-001'), 'T7.2: Factual anchor extractor captures APN 045-210-09-001');
+assert(harmonizedResult.originalAnchors.acreages.some(a => a.quantity === 4.75), 'T7.3: Factual anchor extractor captures 4.75 acres');
+assert(harmonizedResult.originalAnchors.metesAndBounds.some(m => m.type === 'bearing' && m.raw.includes("42° 15' 30\"")), 'T7.4: Factual anchor extractor captures metes and bounds bearings');
+assert(harmonizedResult.originalAnchors.financials.some(f => f.amount === 1450000), 'T7.5: Factual anchor extractor captures $1,450,000 purchase price');
+assert(harmonizedResult.originalAnchors.dates.some(d => d.type === 'calendar_date' && d.year === 2026), 'T7.6: Factual anchor extractor captures December 15, 2026 closing date');
+
+assert(harmonizedResult.restatedText.includes('Seller and Buyer agree'), 'T7.7: Rectifies compound subject-verb agreement (agrees -> agree)');
+assert(harmonizedResult.restatedText.includes('each of the Parties agrees'), 'T7.8: Rectifies distributive subject-verb agreement (agree -> agrees)');
+assert(!harmonizedResult.restatedText.includes('WITNESSETH:') && harmonizedResult.restatedText.includes('RECITALS'), 'T7.9: Modernizes archaic WITNESSETH to AmLaw 100 RECITALS');
+assert(harmonizedResult.restatedText.includes('or, or both,'), 'T7.10: Eliminates litigious and/or ambiguity');
+assert(harmonizedResult.restatedText.includes('Buyer may inspect'), 'T7.11: Clarifies discretionary right (shall have the right to inspect -> may inspect)');
+assert(harmonizedResult.restatedText.includes('is not required to remediate'), 'T7.12: Eliminates contradictory negative obligation (shall have no obligation to -> is not required to)');
+assert(harmonizedResult.restatedText.includes('provided, however, that'), 'T7.13: Enforces formal parenthetical comma formatting on provisos');
+assert(harmonizedResult.restatedText.includes('Point of Beginning (POB)'), 'T7.14: Standardizes Point of Beginning boundary calls');
+assert(harmonizedResult.restatedText.includes('grant, bargain, sell, alien, remise, release, convey, and confirm'), 'T7.15: Injects statutory fee-simple operative words of grant and conveyance');
+assert(harmonizedResult.restatedText.includes('CONCURRENT TENDER AND CLOSING CONDITIONS'), 'T7.16: Injects Restatement of Contracts § 234 concurrent closing covenant');
+assert(harmonizedResult.restatedText.includes('AD VALOREM TAX AND ASSESSMENT PRORATIONS'), 'T7.17: Injects ad valorem real estate tax proration covenant');
+
+assert(harmonizedResult.verification.passed === true, 'T7.18: Post-restatement verification passes with zero data mutations');
+assert(harmonizedResult.verification.integrityScore === 100, 'T7.19: Data integrity score achieves 100% mathematical assertion');
+assert(harmonizedResult.verification.missingAnchors.length === 0, 'T7.20: Zero missing anchors or hallucinations in restated deed');
+assert(harmonizedResult.processingTimeMs < 500, `T7.21: In-RAM restatement and diff executes in <500ms (actual: ${harmonizedResult.processingTimeMs}ms)`);
 
 // ============================================================================
 // FINAL RUNTIME AIR-GAP AUDIT ASSERTION

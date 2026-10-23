@@ -9,10 +9,10 @@ import {
   Bookmark, HelpCircle, User, Users, StopCircle, Upload,
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
   Settings, Key, Laptop, Copy, Mail, LogOut,
-  BookOpen, FileDown
+  BookOpen, FileDown, Sparkles
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
-import { downloadAmendmentRiderDOCX } from '../utils/docxExportEngine';
+import { downloadAmendmentRiderDOCX, downloadHarmonizedDeedDOCX } from '../utils/docxExportEngine';
 
 // Flagship Engines & Utilities
 import { sanitizeDocumentPII, PII_RULES } from '../utils/piiEngine';
@@ -47,6 +47,8 @@ import {
 } from '../utils/redactedPdfGenerator';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 import PirateTrapModal from '../components/PirateTrapModal';
+import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
+import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 
 export default function ContractCompare() {
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
@@ -849,6 +851,8 @@ function ContractAnalyzerView({ initialSession }) {
   const [clientParty, setClientParty] = useState('');
   const [counterparty, setCounterparty] = useState('');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
+  const [harmonizedData, setHarmonizedData] = useState(null);
+  const [isHarmonizing, setIsHarmonizing] = useState(false);
 
   // File upload & Drag-and-Drop states
   const [uploadStatus, setUploadStatus] = useState({ target: '', baseline: '' });
@@ -917,6 +921,23 @@ function ContractAnalyzerView({ initialSession }) {
     navigator.clipboard.writeText(defsText);
     setCopiedDefsSuccess(true);
     setTimeout(() => setCopiedDefsSuccess(false), 3000);
+  };
+
+  const handleRunHarmonizer = (textOverride = null) => {
+    const rawInput = typeof textOverride === 'string' ? textOverride : text;
+    if (!rawInput || !rawInput.trim()) return;
+    setIsHarmonizing(true);
+    setTimeout(() => {
+      try {
+        const res = restateAndPolishContract(rawInput.trim());
+        setHarmonizedData(res);
+        setAnalysisMode('harmonizer');
+      } catch (err) {
+        console.error('Failed to harmonize document:', err);
+      } finally {
+        setIsHarmonizing(false);
+      }
+    }, 40);
   };
 
   const enrichedAudit = useMemo(() => {
@@ -1161,6 +1182,22 @@ function ContractAnalyzerView({ initialSession }) {
               <Search size={14} />
               Redline Diff Mode
             </button>
+            <button
+              onClick={() => {
+                setAnalysisMode('harmonizer');
+                if (!harmonizedData && text.trim()) {
+                  handleRunHarmonizer();
+                }
+              }}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                analysisMode === 'harmonizer'
+                  ? 'bg-emerald-500/15 border border-emerald-400/35 border-t-white/30 text-emerald-300 shadow-[0_2px_10px_rgba(0,255,157,0.15)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <Sparkles size={14} />
+              Deed & Contract Harmonizer
+            </button>
           </div>
         </div>
       </div>
@@ -1213,8 +1250,8 @@ function ContractAnalyzerView({ initialSession }) {
       </div>
 
       {/* Input Panes */}
-      {analysisMode === 'single' ? (
-        /* SINGLE DOCUMENT INTEGRITY AUDIT MODE */
+      {analysisMode === 'single' || analysisMode === 'harmonizer' ? (
+        /* SINGLE DOCUMENT INTEGRITY AUDIT / HARMONIZER MODE */
         <div 
           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
@@ -1237,8 +1274,17 @@ function ContractAnalyzerView({ initialSession }) {
 
           <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
             <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
-              <FileCheck size={15} className="text-emerald-400" />
-              CONTRACT DRAFT TO PROOFREAD (Drag & Drop or Import)
+              {analysisMode === 'harmonizer' ? (
+                <>
+                  <Sparkles size={15} className="text-emerald-400" />
+                  DEED / CONTRACT TO HARMONIZE & POLISH (Zero-Hallucination Data Lock)
+                </>
+              ) : (
+                <>
+                  <FileCheck size={15} className="text-emerald-400" />
+                  CONTRACT DRAFT TO PROOFREAD (Drag & Drop or Import)
+                </>
+              )}
             </span>
             <div className="flex items-center gap-2">
               {uploadStatus.target && (
@@ -1432,21 +1478,46 @@ function ContractAnalyzerView({ initialSession }) {
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => handleExecuteAudit()}
-            disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-            className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
-          >
-            {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
-            <span>
-              {isProcessing
-                ? 'Auditing in Local Memory...'
-                : analysisMode === 'single'
-                ? 'Run Integrity Audit'
-                : 'Execute Redline Diff & Audit'}
-            </span>
-          </button>
+          {analysisMode === 'harmonizer' ? (
+            <button
+              type="button"
+              onClick={() => handleRunHarmonizer()}
+              disabled={isHarmonizing || !text.trim()}
+              className="px-8 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+            >
+              {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
+              <span>{isHarmonizing ? 'Harmonizing in Local Memory...' : 'Harmonize & Polish Document'}</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => handleRunHarmonizer()}
+                disabled={isHarmonizing || !text.trim()}
+                className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-emerald-500/30 text-emerald-300 font-bold text-xs rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 disabled:opacity-40"
+                title="Polish and restate document with 100% data preservation"
+              >
+                {isHarmonizing ? <RefreshCw className="animate-spin" size={14} /> : <Sparkles size={14} />}
+                <span>Harmonize Draft</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleExecuteAudit()}
+                disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
+                className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+              >
+                {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
+                <span>
+                  {isProcessing
+                    ? 'Auditing in Local Memory...'
+                    : analysisMode === 'single'
+                    ? 'Run Integrity Audit'
+                    : 'Execute Redline Diff & Audit'}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -2885,6 +2956,27 @@ function ContractAnalyzerView({ initialSession }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Deed & Contract Harmonizer HUD */}
+      {analysisMode === 'harmonizer' && harmonizedData && (
+        <HarmonizerResultsHUD
+          harmonizedData={harmonizedData}
+          documentTitle={documentTitle}
+          onDownloadDocx={() => {
+            downloadHarmonizedDeedDOCX(harmonizedData, {
+              title: documentTitle.trim() || 'Harmonized Contract Draft'
+            });
+          }}
+          onCopyRestated={() => {
+            navigator.clipboard.writeText(harmonizedData.restatedText);
+          }}
+          onReAuditRestated={() => {
+            setText(harmonizedData.restatedText);
+            setAnalysisMode('single');
+            handleExecuteAudit({ text: harmonizedData.restatedText, mode: 'single' });
+          }}
+        />
       )}
     </div>
   );
