@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { KeyRound, ArrowRight, Loader2, ShieldCheck, CheckCircle2, Lock, ArrowLeft, Key } from 'lucide-react';
+import { KeyRound, ArrowRight, Loader2, ShieldCheck, CheckCircle2, Lock, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
-import { bindKeyToCurrentDevice, restoreLicenseFromWhopOrder } from '../utils/licenseManager';
+import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 import { openSeamlessCheckout } from '../utils/checkoutPopup';
 
 export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contractcompare' }) {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('key'); // 'key' | 'whop'
   const [licenseKey, setLicenseKey] = useState('');
-  const [whopInput, setWhopInput] = useState('');
-  const [whopPlan, setWhopPlan] = useState('solo');
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('idle'); // idle, activating, success
 
@@ -20,36 +17,15 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
   const handleLicenseSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-    const raw = (activeTab === 'key' ? licenseKey : whopInput).trim();
+    const raw = licenseKey.trim();
     if (!raw) {
-      setErrorMessage(activeTab === 'key' ? 'Please enter your license key.' : 'Please enter your Whop order ID or email.');
+      setErrorMessage('Please enter your cryptographic license key.');
       return;
-    }
-
-    // Check if input is a Whop Order ID or email
-    const isWhopOrder = activeTab === 'whop' || raw.toLowerCase().startsWith('ord_') || raw.toLowerCase().startsWith('whop') || raw.includes('@');
-    if (isWhopOrder) {
-      setStatus('activating');
-      try {
-        const activated = await restoreLicenseFromWhopOrder(raw, whopPlan);
-        grantToolAccess(activated.primaryKey, toolName);
-        setTimeout(() => {
-          setStatus('success');
-          setTimeout(() => {
-            onSuccess();
-          }, 700);
-        }, 500);
-        return;
-      } catch (err) {
-        setStatus('idle');
-        setErrorMessage(err.message || 'Failed to restore license with this Whop order.');
-        return;
-      }
     }
 
     const result = validateEnterpriseKey(raw);
     if (!result.valid) {
-      setErrorMessage(result.reason || 'Invalid license format. Expected: CG-SOLO-..., CG-FIRM-..., or NX-XXXX-XXXX-XXXX');
+      setErrorMessage(result.reason || 'Invalid license key format. Expected: CG-SOLO-..., CG-FIRM-..., or NX-XXXX-XXXX-XXXX');
       return;
     }
 
@@ -91,8 +67,8 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
         <h2 className="text-2xl font-black text-white tracking-tight mb-2">
           Nexus ContractGuard Studio
         </h2>
-        <p className="text-zinc-400 mb-5 text-xs md:text-sm max-w-md mx-auto leading-relaxed">
-          This studio is protected under air-gapped cryptographic DRM. Enter your license key or restore your Whop purchase below.
+        <p className="text-zinc-400 mb-6 text-xs md:text-sm max-w-md mx-auto leading-relaxed">
+          This studio is protected under air-gapped cryptographic DRM. Enter your license key from your Whop receipt below, or purchase a lifetime license.
         </p>
 
         {/* Success Banner */}
@@ -104,30 +80,6 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
           </div>
         ) : (
           <>
-            {/* Tab Selector: Key vs Whop Order */}
-            <div className="flex items-center gap-1.5 p-1 bg-black/60 border border-zinc-800 rounded-xl mb-4 text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => { setActiveTab('key'); setErrorMessage(''); }}
-                className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                  activeTab === 'key' ? 'bg-emerald-500 text-black font-extrabold shadow' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                <Key size={13} />
-                <span>License Key</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => { setActiveTab('whop'); setErrorMessage(''); }}
-                className={`flex-1 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                  activeTab === 'whop' ? 'bg-emerald-500 text-black font-extrabold shadow' : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                <CheckCircle2 size={13} />
-                <span>Restore via Whop</span>
-              </button>
-            </div>
-
             {/* Error Message */}
             {errorMessage && (
               <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-medium">
@@ -135,102 +87,37 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
               </div>
             )}
 
-            {/* Form for Key */}
-            {activeTab === 'key' && (
-              <form onSubmit={handleLicenseSubmit} className="space-y-4">
-                <div className="relative">
-                  <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
-                  <input
-                    type="text"
-                    required
-                    value={licenseKey}
-                    onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
-                    placeholder="CG-SOLO-..., CG-FIRM-..., or NX-XXXX"
-                    className="w-full pl-11 pr-4 py-3.5 bg-black/70 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-sm uppercase tracking-wider transition-colors placeholder:text-zinc-600"
-                  />
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={status === 'activating'}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all shadow-[0_0_25px_rgba(16,185,129,0.35)] disabled:opacity-50 text-sm cursor-pointer"
-                >
-                  {status === 'activating' ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      Verify & Unlock Studio <ArrowRight size={16} />
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-
-            {/* Form for Whop Restore */}
-            {activeTab === 'whop' && (
-              <form onSubmit={handleLicenseSubmit} className="space-y-3 text-left">
-                <div className="grid grid-cols-2 gap-2 mb-1">
-                  <button
-                    type="button"
-                    onClick={() => setWhopPlan('solo')}
-                    className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                      whopPlan === 'solo'
-                        ? 'border-emerald-500 bg-emerald-500/10 text-white'
-                        : 'border-zinc-800 bg-zinc-950/60 text-zinc-400'
-                    }`}
-                  >
-                    <span className="block text-xs font-bold">Solo Plan</span>
-                    <span className="block text-[10px] text-zinc-500 font-mono">1 Workstation</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setWhopPlan('firm')}
-                    className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                      whopPlan === 'firm'
-                        ? 'border-emerald-500 bg-emerald-500/10 text-white'
-                        : 'border-zinc-800 bg-zinc-950/60 text-zinc-400'
-                    }`}
-                  >
-                    <span className="block text-xs font-bold">Firm Suite</span>
-                    <span className="block text-[10px] text-zinc-500 font-mono">5 Seats</span>
-                  </button>
-                </div>
-
-                <div className="relative">
-                  <input
-                    type="text"
-                    required
-                    value={whopInput}
-                    onChange={(e) => setWhopInput(e.target.value)}
-                    placeholder="Whop Order ID (ord_...) or Email"
-                    className="w-full px-4 py-3 bg-black/70 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-xs transition-colors placeholder:text-zinc-600"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={status === 'activating'}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)] disabled:opacity-50 text-xs cursor-pointer"
-                >
-                  {status === 'activating' ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      Restore & Unlock Studio <ArrowRight size={14} />
-                    </>
-                  )}
-                </button>
-
-                <div className="text-center pt-2">
-                  <span className="text-[11px] text-zinc-500 font-mono">
-                    Check your purchase confirmation email for your Whop Order ID or License Key.
-                  </span>
-                </div>
-              </form>
-            )}
+            {/* Clean Single Form: License Key */}
+            <form onSubmit={handleLicenseSubmit} className="space-y-4">
+              <div className="relative">
+                <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
+                <input
+                  type="text"
+                  required
+                  value={licenseKey}
+                  onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
+                  placeholder="CG-SOLO-..., CG-FIRM-..., or NX-XXXX"
+                  className="w-full pl-11 pr-4 py-3.5 bg-black/70 border border-zinc-700 focus:border-emerald-500 rounded-xl outline-none text-white font-mono text-sm uppercase tracking-wider transition-colors placeholder:text-zinc-600"
+                />
+              </div>
+              
+              <button
+                type="submit"
+                disabled={status === 'activating'}
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all shadow-[0_0_25px_rgba(16,185,129,0.35)] disabled:opacity-50 text-sm cursor-pointer"
+              >
+                {status === 'activating' ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    Verify & Unlock Studio <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+            </form>
 
             {/* Whop Purchase CTA */}
-            <div className="mt-5 pt-4 border-t border-zinc-800 flex flex-col items-center gap-2.5">
+            <div className="mt-6 pt-5 border-t border-zinc-800 flex flex-col items-center gap-3">
               <span className="text-xs text-zinc-400 font-medium">Don't have an enterprise license yet?</span>
               <button
                 type="button"
@@ -246,7 +133,7 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                     }
                   });
                 }}
-                className="w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+                className="w-full py-3.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
               >
                 <Lock size={14} />
                 <span>Instant Checkout ($199 Solo / $299 Firm) — Apple Pay & Cards</span>

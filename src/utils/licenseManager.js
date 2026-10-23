@@ -600,17 +600,13 @@ export async function restoreLicenseFromWhopOrder(orderIdOrEmail, plan = 'solo')
     throw new Error('Order ID or email must be at least 3 characters.');
   }
 
-  // Check if input is a cryptographic key
+  // Strictly require a valid cryptographic key
   const validation = validateLicenseKey(cleanInput);
   if (validation.valid) {
     return await bindKeyToCurrentDevice(cleanInput, 'RESTORED-KEY');
   }
 
-  // Treat as Whop Order / Receipt / Email
-  const cleanOrder = cleanInput.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32) || `WHOP-ORD-${Date.now().toString().slice(-6)}`;
-  const keys = generateLicenseKeys(plan, cleanOrder);
-  const activated = await activateLicenseOnDevice(keys);
-  return activated;
+  throw new Error('Invalid license key format. Please enter your authentic cryptographic key from your Whop receipt (CG-SOLO-... or CG-FIRM-...).');
 }
 
 /**

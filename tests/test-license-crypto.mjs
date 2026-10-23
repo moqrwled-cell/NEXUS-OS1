@@ -79,18 +79,27 @@ const tamperedBodyKey = parts.slice(0, 3).join('-') + '-' + flippedChar + charTo
 const resAttack6 = validateLicenseKey(tamperedBodyKey);
 assert(resAttack6.valid === false, 'Attack 6: Single character bit-flip in body is BLOCKED');
 
-// 4. Universal License Restoration from Whop Order / Email
-console.log('\n[TEST GROUP 4] Universal Whop Order Restoration & Recovery');
-const restoredByOrder = await restoreLicenseFromWhopOrder('ord_test_884129', 'solo');
-assert(restoredByOrder && restoredByOrder.isVerified === true, 'Restoration via Whop order ID returns verified record');
-assert(validateLicenseKey(restoredByOrder.primaryKey).valid === true, 'Restored key from Whop order is cryptographically valid');
+// 4. Authenticated License Key Restoration & Fake Email Block
+console.log('\n[TEST GROUP 4] Authenticated Key Restoration & Fake Email Immunity');
 
-const restoredByEmail = await restoreLicenseFromWhopOrder('managing_partner@apexlegal.com', 'firm');
-assert(restoredByEmail && restoredByEmail.plan === 'firm', 'Restoration via email returns valid firm license');
-assert(restoredByEmail.seats.length === 5, 'Restored firm license generates 5 distinct seat keys');
+let emailAttackBlocked = false;
+try {
+  await restoreLicenseFromWhopOrder('fake_pirate@test.com', 'firm');
+} catch {
+  emailAttackBlocked = true;
+}
+assert(emailAttackBlocked === true, 'Attack 7: Arbitrary email bypass is strictly BLOCKED');
+
+let arbitraryOrderBlocked = false;
+try {
+  await restoreLicenseFromWhopOrder('fake_order_123', 'solo');
+} catch {
+  arbitraryOrderBlocked = true;
+}
+assert(arbitraryOrderBlocked === true, 'Attack 8: Arbitrary order string bypass is strictly BLOCKED');
 
 const restoredByKey = await restoreLicenseFromWhopOrder(soloBundle.primaryKey, 'solo');
-assert(restoredByKey.primaryKey === soloBundle.primaryKey, 'Restoration via direct key rebinds original key');
+assert(restoredByKey && restoredByKey.primaryKey === soloBundle.primaryKey, 'Restoration via authentic cryptographic key rebinds correctly');
 
 console.log('\n========================================================');
 console.log(`TOTAL TESTS: ${passCount + failCount} | PASSED: ${passCount} | FAILED: ${failCount}`);
