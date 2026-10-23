@@ -133,6 +133,15 @@ export default function Welcome() {
         setIsActivating(false);
         setIsUnauthorized(false);
 
+        // Clean URL in browser history to prevent link sharing/leakage
+        try {
+          if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        } catch {
+          // Ignore history API errors
+        }
+
         // Notify opener window if running in popup checkout
         if (window.opener) {
           try {

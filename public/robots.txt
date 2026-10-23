@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /welcome
+Disallow: /war-room
+Disallow: /nexus-hq
+Disallow: /secret-ops
+Disallow: /login
+
+Allow: /
+Allow: /demo
+Allow: /contractguard-demo

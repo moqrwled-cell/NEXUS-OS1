@@ -19,7 +19,7 @@ export default function AppContactModal({ isOpen, onClose }) {
     // 100% Local Air-Gapped Action: Launch default mail client via mailto
     const subject = encodeURIComponent(`Nexus App Support: ${formData.issue || 'General Support'}`);
     const body = encodeURIComponent(`Contact Email: ${formData.email}\nIssue Type: ${formData.issue || 'Not specified'}\n\nDetails:\n${formData.message}`);
-    const mailtoUrl = `mailto:support@nexus-enterprise.local?subject=${subject}&body=${body}`;
+    const mailtoUrl = `mailto:nexus.os.store@gmail.com?subject=${subject}&body=${body}`;
 
     try {
       window.location.href = mailtoUrl;
