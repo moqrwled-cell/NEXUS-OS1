@@ -158,6 +158,7 @@ export function validateCrossReferences(text = '') {
     while ((inlineExhMatch = RE_INLINE_EXH.exec(trimmed)) !== null) {
       const type = inlineExhMatch[1].toUpperCase();
       const rawId = inlineExhMatch[2].trim();
+      if (/^(?:set|forth|to|of|for|in|on|by|with|from|and|or|as|at|attached|referenced|described|delivered|provided|listed|required|identified|agreed|prepared|executed|incorporated|included|governed|contained|completed|annexed|appended|here|hereto|hereof|herein|hereunder|thereof|therein|unless|constitutes|specified|such|all|any|each|both|neither|either|terms|provisions|conditions|covenants|agreements|obligations)\b/i.test(rawId)) continue;
       const title = (inlineExhMatch[3] || '').trim();
       const fullId = `${type} ${rawId}`;
       if (!exhibitIndex.has(fullId)) {
