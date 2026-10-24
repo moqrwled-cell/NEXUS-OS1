@@ -9,7 +9,8 @@ import {
   Bookmark, HelpCircle, User, Users, StopCircle, Upload,
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
   Settings, Key, Laptop, Copy, Mail, LogOut,
-  BookOpen, FileDown, Sparkles
+  BookOpen, FileDown, Sparkles,
+  Columns, Maximize2, ChevronDown, ChevronUp, Eye, Edit3, Crosshair
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
 import { downloadAmendmentRiderDOCX, downloadHarmonizedDeedDOCX } from '../utils/docxExportEngine';
@@ -839,6 +840,152 @@ This Agreement is entered into on this 1st day of October, 2026, by and between 
 14.2 Either party may terminate upon thirty (30) days notice.`;
 
 // =========================================================================
+// INTERACTIVE CONTRACT GUTTER VIEWER (Live Line-Linked Workstation Component)
+// =========================================================================
+function InteractiveContractGutterViewer({ 
+  text, 
+  setText, 
+  highlightedLine, 
+  lineDefectMap, 
+  onLineClick,
+  editorMode,
+  setEditorMode,
+  onCopyText,
+  copiedContractSuccess
+}) {
+  const lines = useMemo(() => text.split('\n'), [text]);
+
+  return (
+    <div className="flex flex-col h-full rounded-2xl bg-zinc-900/70 border border-zinc-800 shadow-2xl overflow-hidden">
+      {/* Pane Header */}
+      <div className="px-4 py-3 bg-zinc-900/95 border-b border-zinc-800 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2">
+          <FileText size={15} className="text-emerald-400" />
+          <span className="text-xs font-mono font-bold text-zinc-200">
+            OPERATIVE CONTRACT DRAFT
+          </span>
+          <span className="text-[11px] font-mono text-zinc-500 hidden sm:inline">
+            ({lines.length} lines • {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words)
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Mode Switch: Interactive Inspector vs Raw Text */}
+          <div className="flex bg-black/60 p-0.5 rounded-lg border border-zinc-800">
+            <button
+              type="button"
+              onClick={() => setEditorMode('inspector')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                editorMode === 'inspector'
+                  ? 'bg-emerald-500 text-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <Eye size={12} />
+              <span>Inspector</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setEditorMode('raw')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                editorMode === 'raw'
+                  ? 'bg-emerald-500 text-black shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <Edit3 size={12} />
+              <span>Edit Raw</span>
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={onCopyText}
+            className="p-1.5 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs transition-colors cursor-pointer"
+            title="Copy contract text to clipboard"
+          >
+            {copiedContractSuccess ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Pane Body */}
+      {editorMode === 'raw' ? (
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Paste contract text..."
+          className="w-full h-full min-h-[520px] max-h-[780px] bg-black/40 p-4 text-[13.5px] font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar"
+        />
+      ) : (
+        <div className="h-full min-h-[520px] max-h-[780px] overflow-y-auto custom-scrollbar bg-black/40 font-mono text-[13px] leading-relaxed">
+          {lines.map((lineContent, idx) => {
+            const lineNum = idx + 1;
+            const defects = lineDefectMap?.get(lineNum) || [];
+            const isHighlighted = highlightedLine === lineNum;
+            const hasDealBreaker = defects.some(d => d.type === 'deal_breaker');
+            const hasHazard = defects.some(d => d.type === 'hazard');
+            const hasCitation = defects.some(d => d.type === 'citation');
+            const hasFinancial = defects.some(d => d.type === 'financial');
+
+            return (
+              <div
+                key={lineNum}
+                id={`contract-gutter-line-${lineNum}`}
+                onClick={() => onLineClick(lineNum, defects)}
+                className={`flex items-start transition-all duration-150 group cursor-pointer ${
+                  isHighlighted
+                    ? 'bg-red-500/15 border-l-4 border-red-500 text-white shadow-[inset_0_0_15px_rgba(239,68,68,0.25)]'
+                    : hasDealBreaker
+                    ? 'bg-red-950/20 hover:bg-red-950/30 border-l-2 border-red-500/60'
+                    : hasHazard
+                    ? 'bg-amber-950/15 hover:bg-amber-950/25 border-l-2 border-amber-500/50'
+                    : hasCitation
+                    ? 'bg-cyan-950/15 hover:bg-cyan-950/25 border-l-2 border-cyan-500/50'
+                    : hasFinancial
+                    ? 'bg-orange-950/15 hover:bg-orange-950/25 border-l-2 border-orange-500/50'
+                    : 'hover:bg-white/[0.02] border-l-2 border-transparent text-zinc-300'
+                }`}
+              >
+                {/* Gutter Line Number & Dot */}
+                <div className="w-12 py-0.5 pr-2.5 pl-1.5 text-right shrink-0 select-none flex items-center justify-end gap-1.5 text-zinc-600 group-hover:text-zinc-400 font-mono text-[11px]">
+                  {hasDealBreaker ? (
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" title="Critical Deal Breaker on this line" />
+                  ) : hasHazard ? (
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" title="Enforceability Hazard on this line" />
+                  ) : hasFinancial ? (
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" title="Financial Mismatch on this line" />
+                  ) : hasCitation ? (
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" title="Broken Citation on this line" />
+                  ) : null}
+                  <span>{lineNum}</span>
+                </div>
+
+                {/* Line Content */}
+                <div className="flex-1 py-0.5 px-3 break-all whitespace-pre-wrap font-legal text-[13.5px]">
+                  {lineContent || <span className="text-zinc-700 select-none">&nbsp;</span>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Pane Footer */}
+      <div className="px-4 py-2.5 border-t border-zinc-800 bg-zinc-950/80 text-[11px] font-mono text-zinc-400 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 text-red-400"><span className="w-2 h-2 rounded-full bg-red-500" /> Deal Breakers</span>
+          <span className="flex items-center gap-1.5 text-amber-300"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Hazards</span>
+          <span className="flex items-center gap-1.5 text-orange-400"><span className="w-1.5 h-1.5 rounded-full bg-orange-400" /> Financials</span>
+          <span className="flex items-center gap-1.5 text-cyan-400"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Citations</span>
+        </div>
+        <span className="text-zinc-500">Interactive line inspector</span>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + In-Memory Proofreader + Multi-Export)
 // =========================================================================
 function ContractAnalyzerView({ initialSession }) {
@@ -944,6 +1091,91 @@ function ContractAnalyzerView({ initialSession }) {
     if (!auditResults) return null;
     return enrichAllAuditFindings(auditResults);
   }, [auditResults]);
+
+  // Workstation Dual-Pane & Gutter Navigation States
+  const [highlightedLine, setHighlightedLine] = useState(null);
+  const [workstationView, setWorkstationView] = useState('split'); // 'split' | 'full-hud' | 'full-contract'
+  const [editorMode, setEditorMode] = useState('inspector'); // 'inspector' | 'raw'
+  const [showAltExports, setShowAltExports] = useState(false);
+  const [noticeExpanded, setNoticeExpanded] = useState(false);
+  const [copiedContractSuccess, setCopiedContractSuccess] = useState(false);
+  const [showSetupInputs, setShowSetupInputs] = useState(false);
+
+  const handleJumpToLine = (lineNum) => {
+    if (!lineNum) return;
+    setHighlightedLine(lineNum);
+    if (editorMode !== 'inspector') setEditorMode('inspector');
+    setTimeout(() => {
+      const el = document.getElementById(`contract-gutter-line-${lineNum}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 60);
+  };
+
+  const handleLineClick = (lineNum, defects) => {
+    setHighlightedLine(lineNum);
+    if (defects && defects.length > 0) {
+      if (defects.some(d => d.type === 'deal_breaker')) {
+        setActiveHudTab('dealBreakers');
+      } else if (defects.some(d => d.type === 'hazard')) {
+        setActiveHudTab('enforceability');
+      } else if (defects.some(d => d.type === 'financial')) {
+        setActiveHudTab('financialDates');
+      } else if (defects.some(d => d.type === 'citation')) {
+        setActiveHudTab('crossRefs');
+      }
+    }
+  };
+
+  const handleCopyContract = () => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedContractSuccess(true);
+    setTimeout(() => setCopiedContractSuccess(false), 2000);
+  };
+
+  const lineDefectMap = useMemo(() => {
+    const map = new Map();
+    if (!enrichedAudit) return map;
+
+    // 1. Deal Breakers (Red)
+    (enrichedAudit.dealBreakers || []).forEach(db => {
+      const targetLines = db.lines && db.lines.length > 0 ? db.lines : (db.line ? [db.line] : []);
+      targetLines.forEach(l => {
+        if (!map.has(l)) map.set(l, []);
+        map.get(l).push({ type: 'deal_breaker', title: db.title, severity: 'critical' });
+      });
+    });
+
+    // 2. Enforceability Hazards (Amber)
+    (enrichedAudit.enforceabilityHazards || []).forEach(eh => {
+      const targetLines = eh.lines && eh.lines.length > 0 ? eh.lines : (eh.line ? [eh.line] : []);
+      targetLines.forEach(l => {
+        if (!map.has(l)) map.set(l, []);
+        map.get(l).push({ type: 'hazard', title: eh.title, severity: 'warning' });
+      });
+    });
+
+    // 3. Citations & Exhibits (Cyan)
+    (auditResults?.crossRefs?.issues || []).forEach(cr => {
+      const targetLines = cr.lines && cr.lines.length > 0 ? cr.lines : (cr.line ? [cr.line] : []);
+      targetLines.forEach(l => {
+        if (!map.has(l)) map.set(l, []);
+        map.get(l).push({ type: 'citation', title: cr.targetName, severity: cr.severity || 'warning' });
+      });
+    });
+
+    // 4. Financial & Dates (Orange)
+    (auditResults?.financialDates?.issues || []).forEach(fd => {
+      if (fd.line) {
+        if (!map.has(fd.line)) map.set(fd.line, []);
+        map.get(fd.line).push({ type: 'financial', title: fd.title, severity: fd.severity || 'critical' });
+      }
+    });
+
+    return map;
+  }, [enrichedAudit, auditResults]);
 
   const [obligationPartyFilter, setObligationPartyFilter] = useState('all'); // all | Client | Counterparty | Mutual | Third Party
   const [obligationDutyFilter] = useState('all'); // all | affirmative | negative | conditional
@@ -1223,8 +1455,10 @@ function ContractAnalyzerView({ initialSession }) {
         <span className="text-zinc-400 text-[11px] shrink-0 font-bold uppercase tracking-wider">ABA Model Rule 1.6 Certified</span>
       </div>
 
-      {/* Clean Horizontal Matter Metadata Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
+      {/* Clean Horizontal Matter Metadata Bar & Setup Inputs (Collapsible when Audit is Active) */}
+      {(!auditResults || showSetupInputs) && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
         <div>
           <label className="text-xs font-semibold text-zinc-400 block mb-1">Matter / Agreement Title</label>
           <input
@@ -1519,6 +1753,8 @@ function ContractAnalyzerView({ initialSession }) {
           )}
         </div>
       </div>
+    </>
+  )}
 
       {/* Live In-Memory Progress Bar */}
       {isProcessing && (
@@ -1553,153 +1789,312 @@ function ContractAnalyzerView({ initialSession }) {
         </div>
       )}
 
-      {/* Analysis Results HUD */}
+      {/* Analysis Results HUD & Dual-Pane Workstation */}
       {auditResults && (
-        <div className="flex flex-col gap-6 animate-fade-in mt-2">
-          {/* Executive Risk Score & Metrics Banner */}
-          <div className="p-6 rounded-2xl bg-zinc-900/70 border border-zinc-800 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl">
-            <div className="flex items-center gap-6">
-              <div className={`px-6 py-4 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-lg shrink-0`}>
-                <span className="text-4xl font-black block font-mono tracking-tight">{riskScore}</span>
-                <span className="text-xs font-extrabold uppercase tracking-wider block mt-0.5">
-                  {riskLevel} RISK
+        <div className="flex flex-col gap-5 animate-fade-in mt-2">
+          {/* Workstation Command Toolbar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 shadow-xl backdrop-blur-md">
+            {/* Left: Document info & re-audit */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <FileText size={16} className="text-emerald-400" />
+                <span className="text-sm font-bold text-white tracking-tight">
+                  {documentTitle.trim() || 'Contract Draft'}
+                </span>
+                <span className="text-xs font-mono text-zinc-400 hidden sm:inline">
+                  ({text.split('\n').length} lines • {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words)
                 </span>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-white tracking-tight">
-                  {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
-                   riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
-                   riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
-                   'Clean Document Integrity Profile'}
-                </h3>
-                <p className="text-sm text-zinc-400 mt-1 max-w-xl leading-relaxed">
-                  {auditResults.meta?.wordCount || 0} words audited in {auditResults.meta?.processingTimeMs || 0}ms across 4 verification engines. 100% in-memory RAM processing.
-                </p>
-              </div>
+
+              <button
+                type="button"
+                onClick={() => handleExecuteAudit()}
+                disabled={isProcessing}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                title="Re-run audit with updated draft text"
+              >
+                <RefreshCw size={12} className={isProcessing ? 'animate-spin' : ''} />
+                <span>Re-Audit Draft</span>
+              </button>
             </div>
 
-            {/* Counsel Redline & Amendment Export Control Center */}
-            <div className="flex flex-col gap-3 w-full lg:w-auto">
-              {/* PRIMARY ACTION: EDITABLE WORD RIDER (.DOCX) */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {/* Right: View Modes & Setup Toggle */}
+            <div className="flex items-center gap-2">
+              <div className="flex bg-black/60 p-0.5 rounded-xl border border-zinc-800 text-xs font-semibold">
                 <button
-                  onClick={handleDownloadWordRider}
-                  disabled={isDownloadingWordRider}
-                  className="px-5 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:opacity-95 text-black font-black rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(16,185,129,0.35)] cursor-pointer disabled:opacity-50 shrink-0"
-                  title="Download editable Microsoft Word Pre-Signing Amendment Rider (.docx) for counsel customization"
+                  type="button"
+                  onClick={() => setWorkstationView('split')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    workstationView === 'split'
+                      ? 'bg-emerald-500 text-black font-bold shadow-sm'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                  title="Side-by-side contract viewer and forensic findings"
                 >
-                  {isDownloadingWordRider ? (
-                    <RefreshCw size={16} className="animate-spin" />
-                  ) : (
-                    <FileDown size={17} className="stroke-[2.5]" />
-                  )}
-                  <span>Download Editable Word Rider (.docx)</span>
-                </button>
-
-                {/* Secondary Fast Action: Copy Text */}
-                <button
-                  onClick={handleCopyFullRider}
-                  className="px-3.5 py-3 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
-                  title="Copy full pre-signing court amendment schedule to clipboard"
-                >
-                  {copiedRiderSuccess ? (
-                    <>
-                      <Check size={14} className="text-emerald-400" />
-                      <span className="text-emerald-300">Rider Copied! ✓</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy size={14} className="text-cyan-400" />
-                      <span>Copy Rider</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Legal Disclaimer / Counsel Review Mandate */}
-              <div className="p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/25 text-[11px] text-amber-200/90 leading-relaxed font-sans flex items-start gap-2">
-                <AlertCircle size={14} className="text-amber-400 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Practitioner Working Draft Notice:</strong> This schedule is generated in editable .docx format as a preliminary draft for reviewing legal counsel. Counsel must independently review, verify, and tailor all statutory remedies and covenants to match client instructions and specific transaction terms prior to execution or circulation to opposing counsel.
-                </span>
-              </div>
-
-              {/* SECONDARY UTILITY EXPORTS (CLEAN, COMPACT ROW) */}
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400 font-bold mr-1">
-                  Alternative Formats:
-                </span>
-
-                <button
-                  onClick={() => downloadAmendmentRiderPDF(auditResults, {
-                    contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
-                    clientName: clientParty.trim() || 'Client',
-                    counterpartyName: counterparty.trim() || 'Counterparty'
-                  })}
-                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Download court-grade Pre-Signing Amendment Rider & Revisions Schedule (PDF)"
-                >
-                  <FileText size={13} className="text-rose-400" />
-                  <span>Court Rider (PDF)</span>
+                  <Columns size={13} />
+                  <span className="hidden sm:inline">Split Workstation</span>
                 </button>
 
                 <button
-                  onClick={() => exportPreSigningAmendmentRiderHTML(auditResults, {
-                    contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
-                    clientName: clientParty.trim() || 'Client',
-                    counterpartyName: counterparty.trim() || 'Counterparty'
-                  })}
-                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Open print-ready Court Amendment Rider (HTML/Print)"
+                  type="button"
+                  onClick={() => setWorkstationView('full-hud')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    workstationView === 'full-hud'
+                      ? 'bg-emerald-500 text-black font-bold shadow-sm'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                  title="Full screen forensic audit inspection"
                 >
-                  <FileCode size={13} className="text-emerald-400" />
-                  <span>Rider (HTML)</span>
+                  <Maximize2 size={13} />
+                  <span className="hidden sm:inline">Full HUD</span>
                 </button>
 
                 <button
-                  onClick={() => exportExecutiveClientMemoHTML({
-                    contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
-                    clientName: clientParty.trim() || 'Client',
-                    counterpartyName: counterparty.trim() || 'Counterparty',
-                    auditData: auditResults
-                  })}
-                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Generate executive legal memorandum with print CSS for 1-click PDF"
+                  type="button"
+                  onClick={() => setWorkstationView('full-contract')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                    workstationView === 'full-contract'
+                      ? 'bg-emerald-500 text-black font-bold shadow-sm'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                  title="Full screen contract editor and line gutter"
                 >
-                  <Download size={13} className="text-purple-400" />
-                  <span>Client Memo (PDF)</span>
-                </button>
-
-                <button
-                  onClick={() => exportObligationsCSV(auditResults.obligations)}
-                  className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Export contractual obligations schedule to CSV spreadsheet"
-                >
-                  <FileSpreadsheet size={13} className="text-cyan-400" />
-                  <span>Obligations (CSV)</span>
-                </button>
-
-                {auditResults.diff && (
-                  <button
-                    onClick={() => exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' })}
-                    className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-xs font-semibold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
-                    title="Export interactive HTML redline with insertions & deletions"
-                  >
-                    <FileCode size={13} />
-                    <span>Redline HTML</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' })}
-                  className="px-2.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-lg text-[11px] font-mono text-zinc-400 hover:text-zinc-200 transition-all cursor-pointer"
-                  title="Export compliance JSON verification record"
-                >
-                  <span>JSON Data</span>
+                  <FileText size={13} />
+                  <span className="hidden sm:inline">Full Contract</span>
                 </button>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setShowSetupInputs(prev => !prev)}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 transition-colors flex items-center gap-1 cursor-pointer"
+                title="Toggle document metadata and baseline settings"
+              >
+                <Settings size={13} />
+                <span className="hidden md:inline">{showSetupInputs ? 'Hide Setup' : 'Draft Setup'}</span>
+                {showSetupInputs ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              </button>
             </div>
           </div>
+
+          {/* Workstation Panes Container */}
+          {workstationView === 'full-contract' ? (
+            <div className="w-full h-[850px]">
+              <InteractiveContractGutterViewer
+                text={text}
+                setText={setText}
+                highlightedLine={highlightedLine}
+                lineDefectMap={lineDefectMap}
+                onLineClick={handleLineClick}
+                editorMode={editorMode}
+                setEditorMode={setEditorMode}
+                onCopyText={handleCopyContract}
+                copiedContractSuccess={copiedContractSuccess}
+              />
+            </div>
+          ) : (
+            <div className={workstationView === 'split' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-start' : 'w-full'}>
+              {workstationView === 'split' && (
+                <div className="lg:col-span-5 sticky top-20 h-[850px]">
+                  <InteractiveContractGutterViewer
+                    text={text}
+                    setText={setText}
+                    highlightedLine={highlightedLine}
+                    lineDefectMap={lineDefectMap}
+                    onLineClick={handleLineClick}
+                    editorMode={editorMode}
+                    setEditorMode={setEditorMode}
+                    onCopyText={handleCopyContract}
+                    copiedContractSuccess={copiedContractSuccess}
+                  />
+                </div>
+              )}
+
+              <div className={workstationView === 'split' ? 'lg:col-span-7 flex flex-col gap-6' : 'flex flex-col gap-6'}>
+                {/* Executive Risk Score & Metrics Banner with Unified Action Dock */}
+                <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex flex-col xl:flex-row xl:items-center justify-between gap-5 shadow-2xl">
+                  <div className="flex items-center gap-5">
+                    <div className={`px-5 py-3 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-lg shrink-0`}>
+                      <span className="text-3xl font-black block font-mono tracking-tight">{riskScore}</span>
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider block mt-0.5">
+                        {riskLevel} RISK
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white tracking-tight">
+                        {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
+                         riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
+                         riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
+                         'Clean Document Integrity Profile'}
+                      </h3>
+                      <p className="text-xs text-zinc-400 mt-1 max-w-lg leading-relaxed">
+                        {auditResults.meta?.wordCount || 0} words audited in {auditResults.meta?.processingTimeMs || 0}ms across 4 verification engines. 100% in-memory RAM processing.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Counsel Unified Action Dock */}
+                  <div className="flex flex-col gap-2.5 w-full xl:w-auto">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      {/* PRIMARY ACTION: EDITABLE WORD RIDER (.DOCX) */}
+                      <button
+                        type="button"
+                        onClick={handleDownloadWordRider}
+                        disabled={isDownloadingWordRider}
+                        className="px-4 py-2.5 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:opacity-95 text-black font-black rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer disabled:opacity-50 shrink-0 active:scale-95"
+                        title="Download editable Microsoft Word Pre-Signing Amendment Rider (.docx) for counsel customization"
+                      >
+                        {isDownloadingWordRider ? (
+                          <RefreshCw size={15} className="animate-spin" />
+                        ) : (
+                          <FileDown size={16} className="stroke-[2.5]" />
+                        )}
+                        <span>Download Word Rider (.docx)</span>
+                      </button>
+
+                      {/* FAST ACTION: COPY RIDER */}
+                      <button
+                        type="button"
+                        onClick={handleCopyFullRider}
+                        className="px-3.5 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                        title="Copy full pre-signing court amendment schedule to clipboard"
+                      >
+                        {copiedRiderSuccess ? (
+                          <>
+                            <Check size={14} className="text-emerald-400" />
+                            <span className="text-emerald-300">Copied! ✓</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={14} className="text-cyan-400" />
+                            <span>Copy Rider</span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* ALTERNATIVE FORMATS DROPDOWN */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setShowAltExports(prev => !prev)}
+                          className="px-3 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-bold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <span>Formats</span>
+                          <ChevronDown size={13} className={`transition-transform duration-200 ${showAltExports ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {showAltExports && (
+                          <div className="absolute right-0 mt-1.5 w-56 rounded-xl bg-zinc-900 border border-zinc-700 shadow-2xl p-1.5 z-40 flex flex-col gap-1 text-xs animate-in fade-in slide-in-from-top-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAltExports(false);
+                                downloadAmendmentRiderPDF(auditResults, {
+                                  contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+                                  clientName: clientParty.trim() || 'Client',
+                                  counterpartyName: counterparty.trim() || 'Counterparty'
+                                });
+                              }}
+                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                            >
+                              <FileText size={14} className="text-rose-400" />
+                              <span>Court Rider (PDF)</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAltExports(false);
+                                exportExecutiveClientMemoHTML({
+                                  contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
+                                  clientName: clientParty.trim() || 'Client',
+                                  counterpartyName: counterparty.trim() || 'Counterparty',
+                                  auditData: auditResults
+                                });
+                              }}
+                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                            >
+                              <Download size={14} className="text-purple-400" />
+                              <span>Client Memo (PDF)</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAltExports(false);
+                                exportPreSigningAmendmentRiderHTML(auditResults, {
+                                  contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+                                  clientName: clientParty.trim() || 'Client',
+                                  counterpartyName: counterparty.trim() || 'Counterparty'
+                                });
+                              }}
+                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                            >
+                              <FileCode size={14} className="text-emerald-400" />
+                              <span>Rider (HTML)</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAltExports(false);
+                                exportObligationsCSV(auditResults.obligations);
+                              }}
+                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                            >
+                              <FileSpreadsheet size={14} className="text-cyan-400" />
+                              <span>Obligations (CSV)</span>
+                            </button>
+
+                            {auditResults.diff && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setShowAltExports(false);
+                                  exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' });
+                                }}
+                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                              >
+                                <FileCode size={14} />
+                                <span>Redline HTML</span>
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAltExports(false);
+                                exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' });
+                              }}
+                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors border-t border-zinc-800 mt-0.5 pt-1.5"
+                            >
+                              <span>JSON Compliance Data</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Collapsible Practitioner Working Draft Notice */}
+                    <div className="text-[11px] text-zinc-400">
+                      <button
+                        type="button"
+                        onClick={() => setNoticeExpanded(prev => !prev)}
+                        className="text-[11px] text-amber-400/90 hover:text-amber-300 flex items-center gap-1 font-mono cursor-pointer"
+                      >
+                        <AlertCircle size={12} className="text-amber-400" />
+                        <span>⚖️ Practitioner Working Draft Notice</span>
+                        <span className="text-[10px] text-zinc-500 font-sans">({noticeExpanded ? 'hide' : 'show'})</span>
+                      </button>
+
+                      {noticeExpanded && (
+                        <div className="mt-1.5 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/25 text-[11px] text-amber-200/90 leading-relaxed font-sans animate-in fade-in">
+                          This schedule is generated in editable .docx format as a preliminary draft for reviewing legal counsel. Counsel must independently review, verify, and tailor all statutory remedies and covenants to match client instructions and specific transaction terms prior to execution or circulation to opposing counsel.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
           {/* Key Metrics Banner */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
@@ -1996,9 +2391,21 @@ function ContractAnalyzerView({ initialSession }) {
                           <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-red-500 text-white shadow-sm">
                             {item.legalSeverityLabel || 'CRITICAL DEAL BREAKER'}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
-                            {item.clauseRef || item.clause || `Line ${item.line}`}
-                          </span>
+                          {item.line ? (
+                            <button
+                              type="button"
+                              onClick={() => handleJumpToLine(item.line)}
+                              className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-red-500/20 hover:bg-red-500/35 text-red-300 border border-red-500/40 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                              title={`Locate line ${item.line} in contract draft`}
+                            >
+                              <Crosshair size={12} className="text-red-400" />
+                              <span>Line {item.line}</span>
+                            </button>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
+                              {item.clauseRef || item.clause || 'Operative Clause'}
+                            </span>
+                          )}
                           {item.occurrences > 1 && (
                             <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
                               Cited {item.occurrences}x across document
@@ -2036,22 +2443,37 @@ function ContractAnalyzerView({ initialSession }) {
                         )}
                       </div>
 
-                      {/* Defective Snippet */}
+                      {/* Defective Snippet with Visual Redline Deletion */}
                       {item.snippet && (
-                        <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
-                          <span className="text-zinc-400 text-[10px] uppercase font-bold block mb-1">Defective Draft Language:</span>
-                          <span className="italic text-zinc-300">"{item.snippet}"</span>
-                          {item.line && <span className="text-zinc-400 ml-2">(Line {item.line})</span>}
+                        <div className="p-3.5 rounded-xl bg-black/60 border border-red-500/25 text-xs font-mono flex flex-col gap-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-red-400/90 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                              Defective Draft Language (Strikeout)
+                            </span>
+                            {item.line && (
+                              <button
+                                type="button"
+                                onClick={() => handleJumpToLine(item.line)}
+                                className="text-[10px] text-red-400 hover:text-red-300 font-mono font-bold underline cursor-pointer"
+                              >
+                                Locate Line {item.line} ↗
+                              </button>
+                            )}
+                          </div>
+                          <div className="p-2.5 bg-red-950/20 rounded-lg border border-red-500/20 text-red-300/90 leading-relaxed font-legal">
+                            <span className="line-through decoration-red-400 decoration-2">"{item.snippet}"</span>
+                          </div>
                         </div>
                       )}
 
-                      {/* Court-Grade Redline Replacement */}
+                      {/* Court-Grade Redline Replacement with Insertion */}
                       {item.courtGradeRedline && (
                         <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                               <CheckCircle2 size={14} className="text-emerald-400" />
-                              AmLaw 100 Court-Grade Replacement Language
+                              AmLaw 100 Court-Grade Replacement Language (Insertion)
                             </span>
                             <button
                               onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
@@ -2070,8 +2492,10 @@ function ContractAnalyzerView({ initialSession }) {
                               )}
                             </button>
                           </div>
-                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
-                            {item.courtGradeRedline}
+                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all font-legal">
+                            <ins className="no-underline text-emerald-300">
+                              {item.courtGradeRedline}
+                            </ins>
                           </div>
                           {item.actionableAdvice && (
                             <p className="text-[11px] text-zinc-400 font-sans italic">
@@ -2123,9 +2547,21 @@ function ContractAnalyzerView({ initialSession }) {
                           <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-amber-500 text-black shadow-sm">
                             {item.legalSeverityLabel || 'ENFORCEABILITY HAZARD'}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
-                            {item.clauseRef || item.clause || `Line ${item.line}`}
-                          </span>
+                          {item.line ? (
+                            <button
+                              type="button"
+                              onClick={() => handleJumpToLine(item.line)}
+                              className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                              title={`Locate line ${item.line} in contract draft`}
+                            >
+                              <Crosshair size={12} className="text-amber-400" />
+                              <span>Line {item.line}</span>
+                            </button>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
+                              {item.clauseRef || item.clause || 'Operative Clause'}
+                            </span>
+                          )}
                           {item.occurrences > 1 && (
                             <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
                               Referenced {item.occurrences}x
@@ -2163,12 +2599,27 @@ function ContractAnalyzerView({ initialSession }) {
                         )}
                       </div>
 
-                      {/* Defective Snippet */}
+                      {/* Operative Draft Context */}
                       {item.snippet && (
-                        <div className="p-3 rounded-xl bg-black/60 border border-zinc-800 text-xs font-mono text-zinc-400">
-                          <span className="text-zinc-400 text-[10px] uppercase font-bold block mb-1">Operative Draft Context:</span>
-                          <span className="italic text-zinc-300">"{item.snippet}"</span>
-                          {item.line && <span className="text-zinc-400 ml-2">(Line {item.line})</span>}
+                        <div className="p-3.5 rounded-xl bg-black/60 border border-amber-500/25 text-xs font-mono flex flex-col gap-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-amber-400/90 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                              Operative Draft Context
+                            </span>
+                            {item.line && (
+                              <button
+                                type="button"
+                                onClick={() => handleJumpToLine(item.line)}
+                                className="text-[10px] text-amber-400 hover:text-amber-300 font-mono font-bold underline cursor-pointer"
+                              >
+                                Locate Line {item.line} ↗
+                              </button>
+                            )}
+                          </div>
+                          <div className="p-2.5 bg-amber-950/20 rounded-lg border border-amber-500/20 text-amber-300/90 leading-relaxed font-legal">
+                            "{item.snippet}"
+                          </div>
                         </div>
                       )}
 
@@ -2178,7 +2629,7 @@ function ContractAnalyzerView({ initialSession }) {
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                               <CheckCircle2 size={14} className="text-emerald-400" />
-                              AmLaw 100 Court-Grade Replacement Language
+                              AmLaw 100 Court-Grade Replacement Language (Insertion)
                             </span>
                             <button
                               onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
@@ -2197,8 +2648,10 @@ function ContractAnalyzerView({ initialSession }) {
                               )}
                             </button>
                           </div>
-                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all">
-                            {item.courtGradeRedline}
+                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all font-legal">
+                            <ins className="no-underline text-emerald-300">
+                              {item.courtGradeRedline}
+                            </ins>
                           </div>
                           {item.actionableAdvice && (
                             <p className="text-[11px] text-zinc-400 font-sans italic">
@@ -2263,9 +2716,17 @@ function ContractAnalyzerView({ initialSession }) {
                               <span className="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
                                 Target Missing: {issue.targetName}
                               </span>
-                              <span className="font-mono text-gray-400 text-[11px]">
-                                Line {issue.line}
-                              </span>
+                              {issue.line && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleJumpToLine(issue.line)}
+                                  className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-red-500/20 hover:bg-red-500/35 text-red-300 border border-red-500/40 transition-colors flex items-center gap-1 cursor-pointer"
+                                  title={`Locate line ${issue.line} in contract draft`}
+                                >
+                                  <Crosshair size={11} className="text-red-400" />
+                                  <span>Line {issue.line}</span>
+                                </button>
+                              )}
                             </div>
                             <span className="text-[11px] text-red-400 font-mono font-bold">
                               Delaware Chancery Patent Ambiguity
@@ -2337,9 +2798,17 @@ function ContractAnalyzerView({ initialSession }) {
                               <span className="bg-amber-500 text-black font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
                                 Exhibit Missing
                               </span>
-                              <span className="font-mono text-gray-400 text-[11px]">
-                                Line {issue.line}
-                              </span>
+                              {issue.line && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleJumpToLine(issue.line)}
+                                  className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 transition-colors flex items-center gap-1 cursor-pointer"
+                                  title={`Locate line ${issue.line} in contract draft`}
+                                >
+                                  <Crosshair size={11} className="text-amber-400" />
+                                  <span>Line {issue.line}</span>
+                                </button>
+                              )}
                             </div>
                             <span className="text-[11px] text-amber-400 font-mono font-bold">
                               Failure of Condition Precedent (Restatement § 224)
@@ -2467,9 +2936,21 @@ function ContractAnalyzerView({ initialSession }) {
                         <div>
                           <div className="flex items-center justify-between mb-1">
                             <span className="font-bold text-amber-300 text-sm">"{termItem.term}"</span>
-                            <span className="text-[10px] text-gray-400 bg-white/5 px-2 py-0.5 rounded">
-                              {termItem.count || 1}x
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              {termItem.line && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleJumpToLine(termItem.line)}
+                                  className="text-[10px] font-mono text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                                  title={`Locate line ${termItem.line}`}
+                                >
+                                  Line {termItem.line}
+                                </button>
+                              )}
+                              <span className="text-[10px] text-gray-400 bg-white/5 px-2 py-0.5 rounded">
+                                {termItem.count || 1}x
+                              </span>
+                            </div>
                           </div>
                           <p className="text-[11px] text-gray-400">First referenced at line {termItem.line} without operative definition in Section 1.</p>
                         </div>
@@ -2548,11 +3029,21 @@ function ContractAnalyzerView({ initialSession }) {
                       const cardId = `ent_${idx}`;
                       return (
                         <div key={idx} className="p-4 rounded-xl bg-orange-950/20 border border-orange-500/40 text-xs font-mono flex flex-col gap-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-between flex-wrap gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-bold text-orange-300 text-sm">{ent.entity}: </span>
                               <span className="text-gray-300">{ent.discrepancy}</span>
-                              <span className="text-gray-500 text-[11px]">(Line {ent.line})</span>
+                              {ent.line && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleJumpToLine(ent.line)}
+                                  className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-orange-500/20 hover:bg-orange-500/35 text-orange-300 border border-orange-500/40 transition-colors flex items-center gap-1 cursor-pointer"
+                                  title={`Locate line ${ent.line} in contract draft`}
+                                >
+                                  <Crosshair size={11} className="text-orange-400" />
+                                  <span>Line {ent.line}</span>
+                                </button>
+                              )}
                             </div>
                             <span className="bg-orange-500 text-black text-[9px] font-extrabold uppercase px-2 py-0.5 rounded">
                               Veil-Piercing Exposure
@@ -2632,7 +3123,17 @@ function ContractAnalyzerView({ initialSession }) {
                               <span className="bg-red-500 text-white font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">
                                 Critical Mismatch
                               </span>
-                              <span className="text-gray-400 text-xs font-mono">(Line {mismatch.line})</span>
+                              {mismatch.line && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleJumpToLine(mismatch.line)}
+                                  className="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-red-500/20 hover:bg-red-500/35 text-red-300 border border-red-500/40 transition-colors flex items-center gap-1 cursor-pointer"
+                                  title={`Locate line ${mismatch.line} in contract draft`}
+                                >
+                                  <Crosshair size={11} className="text-red-400" />
+                                  <span>Line {mismatch.line}</span>
+                                </button>
+                              )}
                             </div>
                             <span className="text-xs font-mono text-red-400 font-bold">
                               UCC § 3-114 Words-Over-Numbers Rule
@@ -2819,7 +3320,21 @@ function ContractAnalyzerView({ initialSession }) {
                                   </span>
                                 )}
                               </td>
-                              <td className="p-3 text-gray-400">{obl.line}</td>
+                              <td className="p-3">
+                                {obl.line ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleJumpToLine(obl.line)}
+                                    className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-white/5 hover:bg-emerald-500/20 text-zinc-300 hover:text-emerald-300 border border-white/10 transition-colors flex items-center gap-1 cursor-pointer"
+                                    title={`Locate line ${obl.line}`}
+                                  >
+                                    <Crosshair size={10} className="text-emerald-400" />
+                                    <span>{obl.line}</span>
+                                  </button>
+                                ) : (
+                                  <span className="text-gray-500">-</span>
+                                )}
+                              </td>
                               <td className="p-3">
                                 <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${sevPill}`}>
                                   {obl.severity}
@@ -3012,6 +3527,9 @@ function ContractAnalyzerView({ initialSession }) {
               </span>
             </div>
           </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
