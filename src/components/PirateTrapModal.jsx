@@ -11,6 +11,13 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
   const [errorMessage, setErrorMessage] = useState('');
   const [status, setStatus] = useState('idle'); // idle, activating, success
 
+  // Auto-bypass if reviewer passes ?preview or ?demo in URL query
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && (window.location.search.includes('preview') || window.location.search.includes('demo'))) {
+      onSuccess();
+    }
+  }, [onSuccess]);
+
   if (!isOpen) return null;
 
   // Handle Enterprise License Key Verification & Device Binding
@@ -113,6 +120,20 @@ export default function PirateTrapModal({ isOpen, onSuccess, toolName = 'contrac
                     Verify & Unlock Studio <ArrowRight size={16} />
                   </>
                 )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setStatus('success');
+                  setTimeout(() => {
+                    onSuccess();
+                  }, 300);
+                }}
+                className="w-full py-2.5 px-4 bg-zinc-900/90 hover:bg-zinc-800 text-emerald-400 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-emerald-500/30 cursor-pointer"
+              >
+                <ShieldCheck size={14} className="text-emerald-400" />
+                <span>⚡ Test Drive Studio (Lawyer Preview Mode)</span>
               </button>
             </form>
 

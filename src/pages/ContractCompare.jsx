@@ -992,11 +992,11 @@ function ContractAnalyzerView({ initialSession }) {
   // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff)
   const [analysisMode, setAnalysisMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
 
-  const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || '');
-  const [baselineText, setBaselineText] = useState(initialSession?.originalText || '');
-  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || '');
-  const [clientParty, setClientParty] = useState('');
-  const [counterparty, setCounterparty] = useState('');
+  const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || HAZARDOUS_SAMPLE_CONTRACT);
+  const [baselineText, setBaselineText] = useState(initialSession?.originalText || HAZARDOUS_BASELINE_CONTRACT);
+  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || 'Master Asset Purchase & Services Agreement');
+  const [clientParty, setClientParty] = useState('Acme Holdings LLC');
+  const [counterparty, setCounterparty] = useState('Globex International Corp');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
   const [harmonizedData, setHarmonizedData] = useState(null);
   const [isHarmonizing, setIsHarmonizing] = useState(false);
@@ -1344,6 +1344,20 @@ function ContractAnalyzerView({ initialSession }) {
       console.error(err);
     }
   };
+
+  // Automatically execute benchmark audit on initial mount if no results exist
+  useEffect(() => {
+    if (!auditResults && !isProcessing) {
+      handleExecuteAudit({
+        text: initialSession?.modifiedText || initialSession?.originalText || HAZARDOUS_SAMPLE_CONTRACT,
+        baselineText: initialSession?.originalText || HAZARDOUS_BASELINE_CONTRACT,
+        title: initialSession?.title || 'Master Asset Purchase & Services Agreement',
+        clientParty: 'Acme Holdings LLC',
+        counterparty: 'Globex International Corp',
+        mode: analysisMode
+      });
+    }
+  }, []);
 
   // Obligations filter logic
   const filteredObligations = useMemo(() => {

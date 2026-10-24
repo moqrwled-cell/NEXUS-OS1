@@ -286,6 +286,26 @@ export default function ContractGuardDemo() {
     }
   };
 
+  // Automatically load benchmark draft and execute audit on initial mount so results are instant
+  useEffect(() => {
+    if (!contractText && !auditResults && !isProcessing) {
+      setContractText(HAZARDOUS_SAMPLE_CONTRACT);
+      setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
+      setDocumentTitle('Master Asset Purchase Agreement');
+      setClientParty('Acme Holdings LLC');
+      setCounterparty('Globex International Corp');
+      handleRunAnalysis({
+        text: HAZARDOUS_SAMPLE_CONTRACT,
+        baselineText: HAZARDOUS_BASELINE_CONTRACT,
+        title: 'Master Asset Purchase Agreement',
+        clientParty: 'Acme Holdings LLC',
+        counterparty: 'Globex International Corp',
+        mode: 'single',
+        isInitial: true
+      });
+    }
+  }, []);
+
 
 
   // Unified File Processor (DOCX, PDF with In-RAM OCR, images, TXT)
@@ -799,6 +819,23 @@ export default function ContractGuardDemo() {
           {activeTool === 'analyzer' && (
             <motion.div key="analyzer" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
               
+              {/* Studio Dual-Pane Workstation Banner */}
+              <div className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500/15 via-cyan-500/10 to-transparent border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                  <span className="text-xs text-zinc-200 font-medium font-mono">
+                    <strong className="text-emerald-400">AmLaw 100 Dual-Pane Split Workstation:</strong> Live interactive line gutter, visual redline diffs, and Word (.docx) export.
+                  </span>
+                </div>
+                <button
+                  onClick={() => navigate('/app/contractcompare')}
+                  className="px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs transition-all flex items-center gap-1.5 shrink-0 shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
+                >
+                  <span>Open Split Workstation ◫</span>
+                  <ArrowRight size={13} />
+                </button>
+              </div>
+
               {/* Matter Metadata Bar */}
               <div className="p-3.5 rounded-xl bg-[#050A0F] border border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-3">
