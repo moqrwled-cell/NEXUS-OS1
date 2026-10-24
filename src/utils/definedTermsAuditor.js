@@ -250,13 +250,26 @@ export function auditDefinedTerms(text = '', options = {}) {
 
   lines.forEach((lineText, idx) => {
     const lineNum = idx + 1;
-
     let m;
-    while ((m = RE_INLINE_DEF.exec(lineText)) !== null) {
-      const term = m[1].trim();
-      const key = term.toLowerCase();
-      if (!definedTermsMap.has(key)) {
-        definedTermsMap.set(key, { term, definition: lineText.trim(), line: lineNum, count: 0 });
+
+    // 1. Parenthetical inline definitions (single and multi-party: "each, an 'Executive' and collectively, the 'Executives'")
+    const RE_PAREN_BLOCK = /\(([^)]{2,250})\)/g;
+    let parenMatch;
+    while ((parenMatch = RE_PAREN_BLOCK.exec(lineText)) !== null) {
+      const inner = parenMatch[1];
+      if (
+        /^(?:the|hereinafter|collectively|individually|each|such|["“'‘])/i.test(inner.trim()) ||
+        /\b(?:collectively|individually|hereinafter|together\s+with|each)\b/i.test(inner)
+      ) {
+        const RE_QUOTED = /["“'‘]([A-Za-z0-9\s\-_,.'()]{2,40}?)["”'’]/g;
+        let q;
+        while ((q = RE_QUOTED.exec(inner)) !== null) {
+          const term = q[1].trim();
+          const key = term.toLowerCase();
+          if (!definedTermsMap.has(key)) {
+            definedTermsMap.set(key, { term, definition: lineText.trim(), line: lineNum, count: 0 });
+          }
+        }
       }
     }
 
@@ -349,8 +362,19 @@ export function auditDefinedTerms(text = '', options = {}) {
     const headingPrefixMatch = trimmed.match(/^(?:[0-9]+(?:\.[0-9]+)+|[IVXLCDM]+\.|\([a-z0-9]+\))\s+([A-Za-z0-9\s—–\-_/]+?)\.\s+/i);
     const headingEndIndex = headingPrefixMatch ? lineText.indexOf(headingPrefixMatch[0]) + headingPrefixMatch[0].length : -1;
 
+    // Detect judicial case citation spans: e.g. "Oppenheimer & Co. v. Oppenheim, Appel, Dixon & Co., 86 N.Y.2d 685" or "In re Caremark"
+    const caseSpans = [];
+    const RE_CASE_LAW = /\b(?:[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|ex\s+rel\.|[0-9]+|[A-Z]\.))*\s+(?:v\.|vs\.|v)\s+[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|ex\s+rel\.|[0-9]+|[A-Z]\.))*(?:,\s*\d+\s+[A-Za-z0-9\.\s]+(?:\s+\d+)?)?(?:\s*\(\s*(?:[A-Za-z\s]+)?\d{4}\s*\))?|In\s+re\s+[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|Litig\.|Corp\.|Inc\.|LLC|[0-9]+|[A-Z]\.))*)\b/g;
+    let cm;
+    while ((cm = RE_CASE_LAW.exec(lineText)) !== null) {
+      caseSpans.push({ start: cm.index, end: cm.index + cm[0].length });
+    }
+
     let m;
     while ((m = RE_CAPITALIZED.exec(lineText)) !== null) {
+      // Skip if token falls within a judicial case law citation
+      if (caseSpans.some(span => m.index >= span.start && m.index < span.end)) continue;
+
       // Skip if token is part of subsection heading title
       if (headingEndIndex !== -1 && m.index < headingEndIndex) continue;
 
@@ -400,9 +424,9 @@ export function auditDefinedTerms(text = '', options = {}) {
         definedTermsMap.has(baseStem + 's')
       ) continue;
 
-      // Skip phrase immediately preceding a parenthetical definition (e.g. "Master Services Agreement" (the 'Agreement'))
+      // Skip phrase immediately preceding a parenthetical definition (e.g. "Master Services Agreement" (the 'Agreement') or "Alpha Corp" ("Buyer"))
       const followingText = lineText.substring(m.index + phrase.length).trim();
-      if (/^["”'’]?\s*\(\s*(?:the\s+)?["“'‘]/.test(followingText)) continue;
+      if (/^["”'’]?\s*\(\s*(?:the|hereinafter|collectively|individually|each|such|["“'‘])/i.test(followingText)) continue;
 
       // Layer 2: Explicit known parties (including possessives)
       if (userParties.has(lower) || userParties.has(baseStem)) continue;

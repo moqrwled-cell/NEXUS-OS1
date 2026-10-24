@@ -1312,7 +1312,7 @@ function ContractAnalyzerView({ initialSession }) {
           <div className="px-5 py-2.5 border-t border-zinc-800/80 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
             <span>Air-gapped client RAM processing · Drag & Drop enabled</span>
             <span className="font-semibold text-zinc-300">
-              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words • {text.split('\n').length} lines
+              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words • {text.split('\n').length} lines
             </span>
           </div>
         </div>
@@ -1366,7 +1366,7 @@ function ContractAnalyzerView({ initialSession }) {
               className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
             <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
-              {baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString() : 0} words
+              {baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words
             </div>
           </div>
 
@@ -1416,7 +1416,7 @@ function ContractAnalyzerView({ initialSession }) {
               className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
             <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
-              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString() : 0} words
+              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words
             </div>
           </div>
         </div>
@@ -3669,7 +3669,7 @@ function AuditVaultView({ onSelectDiff }) {
                   <div>
                     <h4 className="text-sm font-bold text-white">{session.title}</h4>
                     <p className="text-[11px] font-mono text-gray-400 mt-1">
-                      {new Date(session.updatedAt).toLocaleString()} | +{session.stats?.additions || 0} / -{session.stats?.deletions || 0} words | {session.risksCount || 0} liabilities {typeof session.overallRiskScore === 'number' ? `| Score: ${session.overallRiskScore}/100` : ''}
+                      {new Date(session.updatedAt).toLocaleString('en-US')} | +{session.stats?.additions || 0} / -{session.stats?.deletions || 0} words | {session.risksCount || 0} liabilities {typeof session.overallRiskScore === 'number' ? `| Score: ${session.overallRiskScore}/100` : ''}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -3704,7 +3704,7 @@ function AuditVaultView({ onSelectDiff }) {
                   <div>
                     <h4 className="text-sm font-bold text-white">{log.title}</h4>
                     <p className="text-[11px] font-mono text-gray-400 mt-1">
-                      {new Date(log.createdAt).toLocaleString()} | Total Redactions: {log.totalRedactions} items
+                      {new Date(log.createdAt).toLocaleString('en-US')} | Total Redactions: {log.totalRedactions} items
                     </p>
                   </div>
                 </div>
@@ -3723,7 +3723,7 @@ function AuditVaultView({ onSelectDiff }) {
                   <div>
                     <h4 className="text-sm font-bold text-white">Range: {job.batesRange}</h4>
                     <p className="text-[11px] font-mono text-gray-400 mt-1">
-                      {new Date(job.createdAt).toLocaleString()} | {job.totalPages} pages stamped
+                      {new Date(job.createdAt).toLocaleString('en-US')} | {job.totalPages} pages stamped
                     </p>
                   </div>
                 </div>

@@ -114,7 +114,7 @@ export function validateCrossReferences(text = '') {
   // PASS 1: TARGET INDEXING (Headings, Articles, Sections, Exhibits, Schedules)
   // --------------------------------------------------------------------------
   // Regex 1: Exhibit / Schedule / Appendix / Annex / Attachment headings
-  const RE_EXHIBIT_HEADING = /^(?:#{1,6}\s+)?(EXHIBIT|SCHEDULE|APPENDIX|ANNEX|ATTACHMENT)\s+([A-Z0-9]+(?:\.[0-9]+)*)(?:\s*[:—–-]\s*(.*)|\s+(.*))?$/i;
+  const RE_EXHIBIT_HEADING = /^(?:#{1,6}\s+)?(EXHIBIT|SCHEDULE|APPENDIX|ANNEX|ATTACHMENT)\s+([A-Za-z0-9]+(?:(?:[\.\-_][A-Za-z0-9]+)|(?:\([A-Za-z0-9]+\)))*)(?:\s*[:—–-]\s*(.*)|\s+(.*))?$/i;
 
   // Regex 2: Explicit SECTION / ARTICLE / CLAUSE / PARAGRAPH / § headings
   const RE_EXPLICIT_SECTION = /^(?:#{1,6}\s+)?(?:SECTION|ARTICLE|CLAUSE|PARAGRAPH|§+)\s+([0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*|[IVXLCDM]+)(?:[\.\:\s—–-]+(.*))?$/i;
@@ -137,18 +137,23 @@ export function validateCrossReferences(text = '') {
       const entry = { id: fullId, title, line: lineNum };
       indexedExhibits.push(entry);
 
-      // Register variations
+      // Register variations (full ID, raw ID, and base ID without parenthetical subparts)
       const normType = type.toLowerCase();
       const normRaw = rawId.toLowerCase();
+      const baseRaw = rawId.replace(/\([A-Za-z0-9]+\)/g, '').trim().toLowerCase();
       exhibitIndex.set(fullId.toUpperCase(), entry);
       exhibitIndex.set(`${normType} ${normRaw}`, entry);
       exhibitIndex.set(normRaw, entry);
+      if (baseRaw && baseRaw !== normRaw) {
+        exhibitIndex.set(`${normType} ${baseRaw}`, entry);
+        exhibitIndex.set(baseRaw, entry);
+      }
       headingLines.add(lineNum);
       return;
     }
 
     // 1b. Support exhibits listed in schedules or signature exhibits summary
-    const RE_INLINE_EXH = /\b(EXHIBIT|SCHEDULE|APPENDIX|ANNEX|ATTACHMENT)\s+([A-Z0-9]+(?:[\.\-_][A-Z0-9]+)*)(?:\s*[:—–-]\s*([^\n\r(]+?))?(?:\s*\((?:Attached|Incorporated|Appended|enclosed)\)|\s*\[|$)/gi;
+    const RE_INLINE_EXH = /\b(EXHIBIT|SCHEDULE|APPENDIX|ANNEX|ATTACHMENT)\s+([A-Za-z0-9]+(?:(?:[\.\-_][A-Za-z0-9]+)|(?:\([A-Za-z0-9]+\)))*)(?:\s*[:—–-]\s*([^\n\r(]+?))?(?:\s*\((?:Attached|Incorporated|Appended|enclosed)\)|\s*\[|$)/gi;
     let inlineExhMatch;
     while ((inlineExhMatch = RE_INLINE_EXH.exec(trimmed)) !== null) {
       const type = inlineExhMatch[1].toUpperCase();
@@ -158,9 +163,16 @@ export function validateCrossReferences(text = '') {
       if (!exhibitIndex.has(fullId)) {
         const entry = { id: fullId, title, line: lineNum };
         indexedExhibits.push(entry);
+        const normType = type.toLowerCase();
+        const normRaw = rawId.toLowerCase();
+        const baseRaw = rawId.replace(/\([A-Za-z0-9]+\)/g, '').trim().toLowerCase();
         exhibitIndex.set(fullId, entry);
-        exhibitIndex.set(`${type.toLowerCase()} ${rawId.toLowerCase()}`, entry);
-        exhibitIndex.set(rawId.toLowerCase(), entry);
+        exhibitIndex.set(`${normType} ${normRaw}`, entry);
+        exhibitIndex.set(normRaw, entry);
+        if (baseRaw && baseRaw !== normRaw) {
+          exhibitIndex.set(`${normType} ${baseRaw}`, entry);
+          exhibitIndex.set(baseRaw, entry);
+        }
         headingLines.add(lineNum);
       }
     }
@@ -242,9 +254,10 @@ export function validateCrossReferences(text = '') {
   // --------------------------------------------------------------------------
   const citationsFound = [];
   const RE_SEC_CIT = /\b(Sections?|Articles?|Clauses?|Paragraphs?|§+|§§?)\s+([0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*(?:\s*(?:,|and|or|through|to)\s*(?!(?:Sections?|Articles?|Clauses?|Paragraphs?|§+)\b)[0-9]+(?:\.[0-9]+)*(?:\([a-z0-9]+\))*)*|[IVXLCDM]+(?:\s*(?:,|and|or|through|to)\s*(?!(?:Sections?|Articles?|Clauses?|Paragraphs?|§+)\b)[IVXLCDM]+)*)\b/gi;
-  const RE_EXH_CIT = /\b(Exhibits?|Schedules?|Appendix(?:es)?|Appendices|Annex(?:es)?|Attachments?)\s+([A-Za-z0-9]+(?:[\.\-_][A-Za-z0-9]+)*(?:\s*(?:,|\b(?:and|or|through|to)\b)\s*(?!(?:Exhibits?|Schedules?|Appendix|Annex|Attachment)\b)[A-Za-z0-9]+(?:[\.\-_][A-Za-z0-9]+)*)*)\b/gi;
+  const RE_EXH_CIT = /\b(Exhibits?|Schedules?|Appendix(?:es)?|Appendices|Annex(?:es)?|Attachments?)\s+([A-Za-z0-9]+(?:(?:[\.\-_][A-Za-z0-9]+)|(?:\([A-Za-z0-9]+\)))*(?:\s*(?:,|\b(?:and|or|through|to)\b)\s*(?!(?:Exhibits?|Schedules?|Appendix|Annex|Attachment)\b)[A-Za-z0-9]+(?:(?:[\.\-_][A-Za-z0-9]+)|(?:\([A-Za-z0-9]+\)))*)*)\b/gi;
   const RE_PRECEDING_STATUTE = /\b(?:IRC|I\.R\.C\.|U\.?S\.?C\.?|U\.?S\.?C\.?A\.?|Treasury\s+Regulations?|Treas\.?\s*Reg\.?|C\.?F\.?R\.?|U\.?C\.?C\.?|D\.?G\.?C\.?L\.?|Del\.?\s*C\.?|(?:California|Delaware|New\s+York|Texas|Ohio|Virginia|Illinois|Florida|Pennsylvania)\s+(?:Civil|Commercial|Corporations?|General\s+Corporation|Labor|Penal|Business\s+and\s+Professions)\s+Code|(?:Civil|Commercial|Corporations?|Labor|Penal)\s+Code|Rev\.?\s*Stat\.?|Statutes?|Public\s+Law|P\.?L\.?|FIRPTA|CERCLA|ERISA|DTSA|HIPAA)\s*$/i;
   const RE_FOLLOWING_STATUTE = /^\s*(?:\([a-z0-9]+\))*\s*(?:of\s+the\s+|under\s+(?:the\s+)?)(?:Internal\s+Revenue\s+Code|Code|Securities(?:\s+Exchange)?\s+Act|Uniform\s+Commercial\s+Code|UCC|Bankruptcy\s+Code|Delaware\s+General\s+Corporation\s+Law|DGCL|Act|Statutes?|Regulations?|Rules?|Treasury\s+Regulations?|California\s+Civil\s+Code|Civil\s+Code|DTSA|Defend\s+Trade\s+Secrets\s+Act|Copyright\s+Act|Patent\s+Act|Trademark\s+Act|Lanham\s+Act)\b/i;
+  const RE_STATUTORY_AUTHORITY = /\b(?:Internal\s+Revenue\s+Code|IRC|I\.R\.C\.|Treasury\s+Regulations?|Treas\.?\s*Reg\.?|C\.?F\.?R\.?|U\.?S\.?C\.?|Securities(?:\s+Exchange)?\s+Act|Regulation\s+[A-Z0-9]+|Reg\s+[A-Z0-9]+|Uniform\s+Commercial\s+Code|U\.?C\.?C\.?|Bankruptcy\s+Code|Delaware\s+General\s+Corporation\s+Law|D\.?G\.?C\.?L\.?|Del\.?\s*C\.?|(?:California|Delaware|New\s+York|Texas|Ohio|Virginia|Illinois|Florida|Pennsylvania)\s+(?:Civil|Commercial|Corporations?|General\s+Corporation|Labor|Penal|Business\s+and\s+Professions)\s+Code|Civil\s+Code|General\s+Obligations\s+Law|Rev\.?\s*Stat\.?|Public\s+Law|P\.?L\.?|FIRPTA|CERCLA|ERISA|DTSA|HIPAA|FCPA|HSR\s+Act|Hart-Scott-Rodino|Lanham\s+Act|Copyright\s+Act|Patent\s+Act|Williams\s+Act|Investment\s+Company\s+Act)\b/i;
   const RE_AMBIGUOUS_CIT = /\b(the\s+(?:preceding|following|prior|above|subsequent)\s+(?:Section|Article|Clause|Paragraph))\b/gi;
 
   const issues = [];
@@ -277,8 +290,30 @@ export function validateCrossReferences(text = '') {
     while ((secMatch = RE_SEC_CIT.exec(lineText)) !== null) {
       const afterCitation = lineText.substring(secMatch.index + secMatch[0].length);
       const precedingText = lineText.substring(Math.max(0, secMatch.index - 60), secMatch.index).trim();
-      // Disqualify statutory and regulatory citations (e.g. "Section 409A of the Code", "IRC Section 1445", "Treasury Regulation Section 1.1445-2(b)")
-      if (RE_PRECEDING_STATUTE.test(precedingText) || RE_FOLLOWING_STATUTE.test(afterCitation)) continue;
+
+      // Find surrounding clause boundaries (delimited by semicolon, period, or line edges)
+      const clauseStart = Math.max(
+        lineText.lastIndexOf(';', secMatch.index),
+        lineText.lastIndexOf('.', secMatch.index)
+      );
+      const clauseBefore = lineText.substring(clauseStart === -1 ? 0 : clauseStart + 1, secMatch.index);
+
+      let nextSemi = lineText.indexOf(';', secMatch.index + secMatch[0].length);
+      let nextPeriod = lineText.indexOf('.', secMatch.index + secMatch[0].length);
+      let clauseEnd = lineText.length;
+      if (nextSemi !== -1 && nextPeriod !== -1) clauseEnd = Math.min(nextSemi, nextPeriod);
+      else if (nextSemi !== -1) clauseEnd = nextSemi;
+      else if (nextPeriod !== -1) clauseEnd = nextPeriod;
+
+      const clauseAfter = lineText.substring(secMatch.index + secMatch[0].length, clauseEnd);
+
+      // Disqualify statutory and regulatory citations (e.g. "Section 409A of the Code", "IRC Section 1445", "Bankruptcy Code Section 363 or Section 365")
+      if (
+        RE_STATUTORY_AUTHORITY.test(clauseBefore) ||
+        RE_STATUTORY_AUTHORITY.test(clauseAfter) ||
+        RE_PRECEDING_STATUTE.test(precedingText) ||
+        RE_FOLLOWING_STATUTE.test(afterCitation)
+      ) continue;
       if (/^[0-9]+\.[0-9]+-[0-9]+/i.test(secMatch[2]) || /^[0-9]+\.[0-9]+-[0-9]+/i.test(afterCitation)) continue;
 
       const prefix = secMatch[1];
@@ -390,10 +425,17 @@ export function validateCrossReferences(text = '') {
       }
     } else if (cit.type === 'exhibit') {
       const fullExh = `${cit.prefix.toUpperCase()} ${cit.target.toUpperCase()}`;
+      const targetBase = cit.target.replace(/\([A-Za-z0-9]+\)/g, '').trim();
       const isResolved = exhibitIndex.has(fullExh) ||
                          exhibitIndex.has(`${cit.prefix.toLowerCase()} ${cit.target.toLowerCase()}`) ||
                          exhibitIndex.has(cit.target.toUpperCase()) ||
-                         exhibitIndex.has(cit.target.toLowerCase());
+                         exhibitIndex.has(cit.target.toLowerCase()) ||
+                         (targetBase && (
+                           exhibitIndex.has(`${cit.prefix.toUpperCase()} ${targetBase.toUpperCase()}`) ||
+                           exhibitIndex.has(`${cit.prefix.toLowerCase()} ${targetBase.toLowerCase()}`) ||
+                           exhibitIndex.has(targetBase.toUpperCase()) ||
+                           exhibitIndex.has(targetBase.toLowerCase())
+                         ));
 
       if (!isResolved) {
         const key = `${cit.prefix.toLowerCase()}_${cit.target.toLowerCase()}`;

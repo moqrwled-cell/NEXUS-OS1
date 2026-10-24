@@ -47,7 +47,7 @@ function csvEscape(val) {
  */
 export function exportRedlineToHTML(diffResult, risks = [], meta = {}) {
   const title = meta.title || 'Legal Contract Redline Audit';
-  const timestamp = new Date().toLocaleString();
+  const timestamp = new Date().toLocaleString('en-US');
   const stats = diffResult?.stats || { additions: 0, deletions: 0, unchanged: 0, similarity: 100 };
   const segments = diffResult?.segments || [];
 
@@ -1040,7 +1040,7 @@ export function exportRedlineSummaryTXT(diffResult, risks = [], meta = {}) {
   txt += `NEXUS CONTRACTGUARD ENTERPRISE — LEGAL REDLINE SUMMARY\n`;
   txt += `=================================================================\n`;
   txt += `Document: ${meta.title || 'Contract Audit'}\n`;
-  txt += `Audit Date: ${new Date().toLocaleString()}\n`;
+  txt += `Audit Date: ${new Date().toLocaleString('en-US')}\n`;
   txt += `Air-Gapped Status: 100% Local / Zero Server Transmission\n\n`;
   txt += `METRICS:\n`;
   txt += `- Additions: +${stats.additions || 0} words\n`;

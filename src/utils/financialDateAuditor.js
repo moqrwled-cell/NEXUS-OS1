@@ -270,7 +270,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
           issues.push({
             type: 'amount_mismatch',
             title: 'Financial Amount Discrepancy',
-            details: `Written words "${wordsPart}" ($${wordsVal.toLocaleString()}) conflict with numeric figure "${numPart}" ($${numVal.toLocaleString()}). Under legal drafting rules (UCC § 3-114), words govern over figures, posing immediate litigation risk.`,
+            details: `Written words "${wordsPart}" ($${wordsVal.toLocaleString('en-US')}) conflict with numeric figure "${numPart}" ($${numVal.toLocaleString('en-US')}). Under legal drafting rules (UCC § 3-114), words govern over figures, posing immediate litigation risk.`,
             numericValue: numVal,
             wordValue: wordsVal,
             line: lineNum,
@@ -311,7 +311,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
             issues.push({
               type: 'amount_mismatch',
               title: 'Financial Amount Discrepancy',
-              details: `Numeric figure "${numPart}" ($${numVal.toLocaleString()}) conflicts with parenthetical written words "${wordsPart}" ($${wordsVal.toLocaleString()}).`,
+              details: `Numeric figure "${numPart}" ($${numVal.toLocaleString('en-US')}) conflicts with parenthetical written words "${wordsPart}" ($${wordsVal.toLocaleString('en-US')}).`,
               numericValue: numVal,
               wordValue: wordsVal,
               line: lineNum,

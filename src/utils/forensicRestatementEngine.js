@@ -416,11 +416,22 @@ export function restateAndPolishContract(rawText = '', options = {}) {
   const isConveyanceDoc = hasGrantorGrantee || hasBuyerSeller || originalAnchors.parcels.length > 0;
 
   if (isConveyanceDoc) {
+    // Detect existing section numbering style if present
+    const secMatches = [...transformedText.matchAll(/\b(?:Section|Article)\s+([0-9]+)\b/gi)];
+    let nextSecNum = null;
+    if (secMatches.length > 0) {
+      const numbers = secMatches.map(m => parseInt(m[1], 10)).filter(n => !isNaN(n) && n > 0 && n < 100);
+      if (numbers.length > 0) {
+        nextSecNum = Math.max(...numbers) + 1;
+      }
+    }
+
     // Check for concurrent conditions closing clause
     const hasConcurrentCondition = /\bconcurrent\s+(?:conditions?|tender)\b/i.test(transformedText);
     if (!hasConcurrentCondition && options.enforceClosingMechanics !== false) {
-      // Find closing or execution section to inject concurrent closing covenant
-      const concurrentClause = `\n\nSECTION. CONCURRENT TENDER AND CLOSING CONDITIONS.\nThe delivery of the statutory Deed by ${hasGrantorGrantee ? 'Grantor' : 'Seller'} and the payment of the Purchase Price by ${hasGrantorGrantee ? 'Grantee' : 'Buyer'} constitute concurrent conditions under Restatement (Second) of Contracts § 234. Neither party shall be obligated to tender performance unless the other party simultaneously tenders its respective performance at Closing.`;
+      const heading = nextSecNum ? `Section ${nextSecNum}. Concurrent Tender and Closing Conditions.` : `CONCURRENT TENDER AND CLOSING CONDITIONS.`;
+      if (nextSecNum) nextSecNum++;
+      const concurrentClause = `\n\n${heading}\nThe delivery of the statutory Deed by ${hasGrantorGrantee ? 'Grantor' : 'Seller'} and the payment of the Purchase Price by ${hasGrantorGrantee ? 'Grantee' : 'Buyer'} constitute concurrent conditions under Restatement (Second) of Contracts § 234. Neither party shall be obligated to tender performance unless the other party simultaneously tenders its respective performance at Closing.`;
       
       // Inject before IN WITNESS WHEREOF or at end
       if (/IN WITNESS WHEREOF/i.test(transformedText)) {
@@ -441,7 +452,8 @@ export function restateAndPolishContract(rawText = '', options = {}) {
     // Check for tax proration covenant
     const hasProrations = /\bprorat(?:ed|ion)\b/i.test(transformedText);
     if (!hasProrations && options.enforceProrations !== false && originalAnchors.parcels.length > 0) {
-      const prorationClause = `\n\nSECTION. AD VALOREM TAX AND ASSESSMENT PRORATIONS.\nReal property ad valorem taxes, special assessments, and municipal utility charges shall be prorated between the Parties as of 11:59 P.M. on the date immediately preceding the Closing Date based upon the latest available tax billing and assessed valuation.`;
+      const heading = nextSecNum ? `Section ${nextSecNum}. Ad Valorem Tax and Assessment Prorations.` : `AD VALOREM TAX AND ASSESSMENT PRORATIONS.`;
+      const prorationClause = `\n\n${heading}\nReal property ad valorem taxes, special assessments, and municipal utility charges shall be prorated between the Parties as of 11:59 P.M. on the date immediately preceding the Closing Date based upon the latest available tax billing and assessed valuation.`;
       
       if (/IN WITNESS WHEREOF/i.test(transformedText)) {
         transformedText = transformedText.replace(/(\r?\n\s*IN WITNESS WHEREOF)/i, `${prorationClause}\n$1`);
