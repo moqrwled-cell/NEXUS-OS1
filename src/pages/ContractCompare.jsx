@@ -50,6 +50,26 @@ import PirateTrapModal from '../components/PirateTrapModal';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 
+const SAMPLE_UNPOLISHED_DEED = `COMMERCIAL CONVEYANCE AND PURCHASE AGREEMENT
+
+THIS INDENTURE, made and entered into this 15th day of October, 2026, by and between APEX REALTY HOLDINGS LLC ("Grantor"), and SUMMIT COMMERCIAL PARTNERS LLC ("Grantee").
+
+WITNESSETH:
+
+WHEREAS, Grantor is the sole legal and equitable owner of that certain real property situated in Franklin County, designated as Tax Parcel Identification Number (APN) 045-210-09-001, containing approximately 4.75 gross acres, and more particularly bounded and described as follows:
+
+BEGINNING at a concrete monument marking the Point of Beginning; thence North 45° 30' 15" East, a distance of 450.25 feet to an iron pin; thence South 89° 15' 00" East, a distance of 620.00 feet along the northerly right-of-way line; thence South 00° 44' 45" West, a distance of 450.00 feet to a point; thence South 89° 15' 00" West, a distance of 620.00 feet returning to the Point of Beginning (POB).
+
+NOW THEREFORE, for and in consideration of the sum of One Million Four Hundred Fifty Thousand Dollars ($1,450,000.00), the receipt and sufficiency of which is hereby acknowledged, the parties agree as follows:
+
+1. CONVEYANCE. Grantor does hereby transfer unto Grantee the above-described real property in fee simple, together with all tenements and hereditaments.
+
+2. MUTUAL COVENANTS. Seller and Buyer agrees that all ad valorem taxes shall be adjusted. Each of the Parties agree to execute and/or deliver all further assurances reasonably required.
+
+3. INSPECTION AND ACCESS. Grantee shall have the right to inspect the premises prior to Closing. Grantor shall have no obligation to make structural repairs.
+
+IN WITNESS WHEREOF, Grantor and Grantee have executed this Deed as of the date first written above.`;
+
 export default function ContractCompare() {
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
   const [showDeviceModal, setShowDeviceModal] = useState(true);
@@ -1079,6 +1099,17 @@ function ContractAnalyzerView({ initialSession }) {
       const auditData = await runAnalysis(payload);
 
       if (auditData) {
+        // Automatically compute forensic linguistic proofreading
+        try {
+          const harmonized = restateAndPolishContract(targetText.trim(), {
+            enforceClosingMechanics: true,
+            enforceProrations: true
+          });
+          setHarmonizedData(harmonized);
+        } catch (hErr) {
+          console.warn('Linguistic restatement notice:', hErr);
+        }
+
         // Auto-save session into local IndexedDB
         await saveDiffSession({
           title: targetTitle || 'Contract Integrity Audit',
@@ -1194,9 +1225,10 @@ function ContractAnalyzerView({ initialSession }) {
                   ? 'bg-emerald-500/15 border border-emerald-400/35 border-t-white/30 text-emerald-300 shadow-[0_2px_10px_rgba(0,255,157,0.15)]'
                   : 'text-zinc-400 hover:text-white'
               }`}
+              title="Forensic Linguistic & Legal Proofreading with 100% Data Preservation"
             >
-              <Sparkles size={14} />
-              Deed & Contract Harmonizer
+              <Sparkles size={14} className="text-emerald-400" />
+              Linguistic & Deed Proofreader
             </button>
           </div>
         </div>
@@ -1277,7 +1309,7 @@ function ContractAnalyzerView({ initialSession }) {
               {analysisMode === 'harmonizer' ? (
                 <>
                   <Sparkles size={15} className="text-emerald-400" />
-                  DEED / CONTRACT TO HARMONIZE & POLISH (Zero-Hallucination Data Lock)
+                  LINGUISTIC & LEGAL PROOFREADER (Preserving 100% of Land Boundaries, Acreages & Covenants)
                 </>
               ) : (
                 <>
@@ -1479,15 +1511,33 @@ function ContractAnalyzerView({ initialSession }) {
           )}
 
           {analysisMode === 'harmonizer' ? (
-            <button
-              type="button"
-              onClick={() => handleRunHarmonizer()}
-              disabled={isHarmonizing || !text.trim()}
-              className="px-8 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
-            >
-              {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
-              <span>{isHarmonizing ? 'Harmonizing in Local Memory...' : 'Harmonize & Polish Document'}</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setText(SAMPLE_UNPOLISHED_DEED);
+                  setDocumentTitle('Commercial Conveyance & Purchase Deed');
+                  setClientParty('Apex Realty Holdings LLC');
+                  setCounterparty('Summit Commercial Partners LLC');
+                  handleRunHarmonizer(SAMPLE_UNPOLISHED_DEED);
+                }}
+                className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 font-bold text-xs rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                title="Load a sample unpolished deed with land boundaries, APN, and drafting defects"
+              >
+                <RefreshCw size={14} className="text-emerald-400" />
+                <span>Load Sample Unpolished Deed</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleRunHarmonizer()}
+                disabled={isHarmonizing || !text.trim()}
+                className="px-8 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+              >
+                {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
+                <span>{isHarmonizing ? 'Proofreading in Local Memory...' : 'Execute Linguistic & Legal Proofreading'}</span>
+              </button>
+            </div>
           ) : (
             <div className="flex items-center gap-2.5">
               <button
@@ -1703,7 +1753,7 @@ function ContractAnalyzerView({ initialSession }) {
           </div>
 
           {/* Key Metrics Banner */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
             <div 
               onClick={() => setActiveHudTab('dealBreakers')}
               className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
@@ -1757,6 +1807,19 @@ function ContractAnalyzerView({ initialSession }) {
               <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Contract Obligations</p>
               <p className="text-3xl font-black text-emerald-400 mt-1 font-mono">
                 {auditResults.obligations?.stats?.totalObligations || 0}
+              </p>
+            </div>
+            <div 
+              onClick={() => setActiveHudTab('linguisticProofreader')}
+              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
+                activeHudTab === 'linguisticProofreader' ? 'border-emerald-400 bg-emerald-950/30 shadow-[0_0_15px_rgba(16,185,129,0.3)] ring-1 ring-emerald-400/50' : 'border-emerald-500/20 hover:border-emerald-500/40'
+              } text-center`}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center justify-center gap-1">
+                <Sparkles size={13} className="text-emerald-400" /> Proofreading
+              </p>
+              <p className="text-3xl font-black text-emerald-300 mt-1 font-mono">
+                {harmonizedData?.improvements?.length || (text.trim() ? restateAndPolishContract(text).improvements.length : 0)}
               </p>
             </div>
           </div>
@@ -1902,7 +1965,52 @@ function ContractAnalyzerView({ initialSession }) {
                 </button>
               )}
             </div>
+
+            {/* Cluster 4: Forensic Linguistic Proofreader */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-emerald-950/30 border border-emerald-500/40 shrink-0">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold px-2 flex items-center gap-1">
+                <Sparkles size={12} className="text-emerald-400" /> Proofreader:
+              </span>
+              <button
+                onClick={() => setActiveHudTab('linguisticProofreader')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'linguisticProofreader'
+                    ? 'bg-gradient-to-r from-emerald-400 to-cyan-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                    : 'text-emerald-300 hover:text-white hover:bg-emerald-500/10'
+                }`}
+              >
+                <Sparkles size={13} />
+                <span>Linguistic & Deed Proofreading</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-400/50 font-mono font-bold">
+                  {harmonizedData?.improvements?.length || (text.trim() ? restateAndPolishContract(text).improvements.length : 0)}
+                </span>
+              </button>
+            </div>
           </div>
+
+          {/* TAB: LINGUISTIC & DEED PROOFREADER */}
+          {activeHudTab === 'linguisticProofreader' && (
+            <div className="flex flex-col gap-5">
+              <HarmonizerResultsHUD
+                harmonizedData={harmonizedData || restateAndPolishContract(text)}
+                documentTitle={documentTitle}
+                onDownloadDocx={() => {
+                  downloadHarmonizedDeedDOCX(harmonizedData || restateAndPolishContract(text), {
+                    title: documentTitle.trim() || 'Harmonized Contract Draft'
+                  });
+                }}
+                onCopyRestated={() => {
+                  navigator.clipboard.writeText((harmonizedData || restateAndPolishContract(text)).restatedText);
+                }}
+                onReAuditRestated={() => {
+                  const restated = (harmonizedData || restateAndPolishContract(text)).restatedText;
+                  setText(restated);
+                  setActiveHudTab('dealBreakers');
+                  handleExecuteAudit({ text: restated, mode: analysisMode });
+                }}
+              />
+            </div>
+          )}
 
           {/* TAB: CRITICAL DEAL BREAKERS */}
           {activeHudTab === 'dealBreakers' && (

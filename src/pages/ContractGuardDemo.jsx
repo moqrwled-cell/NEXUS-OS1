@@ -858,6 +858,14 @@ export default function ContractGuardDemo() {
                   >
                     Comparative Redline Diff
                   </button>
+                  <button
+                    onClick={() => { navigate('/app/contractcompare'); }}
+                    className="px-3.5 py-1 text-xs font-semibold rounded-full transition-all cursor-pointer flex items-center gap-1.5 text-zinc-400 hover:text-emerald-300"
+                    title="Open Full Linguistic & Deed Proofreader Studio"
+                  >
+                    <Sparkles size={12} className="text-emerald-400" />
+                    <span>Linguistic & Deed Proofreader</span>
+                  </button>
                 </div>
               </div>
 
