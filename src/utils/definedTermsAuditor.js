@@ -477,12 +477,27 @@ export function auditDefinedTerms(text = '', options = {}) {
   const RE_ENTITY = /\b([A-Z][A-Za-z0-9&',.-]+(?:\s+[A-Z][A-Za-z0-9&',.-]+){0,4})\s+(LLC|L\.L\.C\.|Inc\.?|Incorporated|Corp\.?|Corporation|Ltd\.?|Limited|LLP|L\.L\.P\.|GmbH)\b/g;
   const entitiesFound = [];
 
+  // Determine preamble boundary (first line with SECTION, ARTICLE, WITNESSETH, RECITALS, or max 25 lines)
+  let preambleEndLine = lines.length;
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s*(?:SECTION|ARTICLE|CLAUSE|WITNESSETH|RECITALS|NOW,?\s+THEREFORE)\b/i.test(lines[i])) {
+      preambleEndLine = i + 1;
+      break;
+    }
+  }
+  if (preambleEndLine > 25) preambleEndLine = 25;
+
   lines.forEach((lineText, idx) => {
     let m;
     while ((m = RE_ENTITY.exec(lineText)) !== null) {
-      const raw = m[0].trim();
-      const stem = m[1].trim();
+      let raw = m[0].trim();
+      let stem = m[1].trim();
       const suffix = m[2].trim();
+
+      // Clean leading prepositions/conjunctions from title phrases (e.g. "BY AND BETWEEN APEX")
+      stem = stem.replace(/^(?:BY\s+AND\s+BETWEEN|AND\s+BETWEEN|BETWEEN|AND|BY|FOR|OF|TO|THE)\s+/i, '').trim();
+      raw = `${stem} ${suffix}`;
+
       let category = 'OTHER';
       if (/LLC|L\.L\.C\./i.test(suffix)) category = 'LLC';
       else if (/Corp|Corporation/i.test(suffix)) category = 'CORP';
@@ -494,76 +509,131 @@ export function auditDefinedTerms(text = '', options = {}) {
     }
   });
 
-  // Group entities by stem
-  const stemGroups = new Map();
-  entitiesFound.forEach(ent => {
+  // Group entities into clusters using hierarchical stem matching
+  const clusters = [];
+  for (const ent of entitiesFound) {
     const normStem = normalizeEntityStem(ent.stem);
-    if (!stemGroups.has(normStem)) stemGroups.set(normStem, []);
-    stemGroups.get(normStem).push(ent);
+    let matchedCluster = null;
+    for (const c of clusters) {
+      if (c.stems.some(s => s === normStem || (Math.min(s.length, normStem.length) >= 6 && (s.includes(normStem) || normStem.includes(s))))) {
+        matchedCluster = c;
+        break;
+      }
+    }
+    if (!matchedCluster) {
+      matchedCluster = { stems: [normStem], entities: [] };
+      clusters.push(matchedCluster);
+    } else {
+      if (!matchedCluster.stems.includes(normStem)) matchedCluster.stems.push(normStem);
+    }
+    matchedCluster.entities.push(ent);
+  }
+
+  // Maintain stemGroups for typo drift detection
+  const stemGroups = new Map();
+  clusters.forEach(c => {
+    c.entities.forEach(ent => {
+      const normStem = normalizeEntityStem(ent.stem);
+      if (!stemGroups.has(normStem)) stemGroups.set(normStem, []);
+      stemGroups.get(normStem).push(ent);
+    });
   });
 
-  // 1. Check entity type confusion or formatting within stem groups
-  for (const [, group] of stemGroups.entries()) {
+  // 1. Check entity type confusion or formatting within hierarchical clusters
+  for (const cluster of clusters) {
+    const group = cluster.entities;
     const categories = new Set(group.map(g => g.category));
     if (categories.size > 1) {
-      // Critical entity type confusion (e.g. Acme Corp vs Acme LLC)
+      // Find dominant category and identify conflicting forms
+      const catCounts = {};
+      group.forEach(g => { catCounts[g.category] = (catCounts[g.category] || 0) + 1; });
+      const dominantCategory = Object.keys(catCounts).reduce((a, b) => catCounts[a] >= catCounts[b] ? a : b);
+      const primaryEnt = group.find(g => g.category === dominantCategory) || group[0];
+      const conflictingEnt = group.find(g => g.category !== dominantCategory) || group[1];
+
+      const allLines = Array.from(new Set(group.map(g => g.line))).sort((a, b) => a - b);
       const names = Array.from(new Set(group.map(g => g.raw))).join(' vs ');
       const issueItem = {
-        entity: group[0].raw,
+        entity: primaryEnt.raw,
+        conflictingEntity: conflictingEnt.raw,
         discrepancy: `Entity structure confusion detected: ${names}`,
-        line: group[0].line
+        line: conflictingEnt.line,
+        lines: allLines
       };
       entityIssues.push(issueItem);
       issues.push({
         type: 'entity_inconsistency',
-        term: group[0].raw,
-        line: group[0].line,
-        snippet: lines[group[0].line - 1] || '',
+        term: primaryEnt.raw,
+        conflictingEntity: conflictingEnt.raw,
+        line: conflictingEnt.line,
+        lines: allLines,
+        snippet: lines[conflictingEnt.line - 1] || '',
         details: issueItem.discrepancy,
         severity: 'critical'
       });
     } else {
-      // Check spelling/formatting variations (e.g. Acme Corporation vs Acme Corp)
+      // Check spelling/formatting variations or stem drift
       const distinctForms = Array.from(new Set(group.map(g => g.raw)));
       if (distinctForms.length > 1) {
+        const distinctStems = new Set(group.map(g => normalizeEntityStem(g.stem)));
+        const hasStemMismatch = distinctStems.size > 1;
+        const allLines = Array.from(new Set(group.map(g => g.line))).sort((a, b) => a - b);
         const issueItem = {
           entity: distinctForms[0],
-          discrepancy: `Inconsistent entity spelling/formatting: ${distinctForms.join(' vs ')}`,
-          line: group[0].line
+          discrepancy: hasStemMismatch
+            ? `Entity name discrepancy detected: ${distinctForms.join(' vs ')}`
+            : `Inconsistent entity spelling/formatting: ${distinctForms.join(' vs ')}`,
+          line: group[0].line,
+          lines: allLines
         };
         entityIssues.push(issueItem);
         issues.push({
           type: 'entity_inconsistency',
           term: distinctForms[0],
           line: group[0].line,
+          lines: allLines,
           snippet: lines[group[0].line - 1] || '',
           details: issueItem.discrepancy,
-          severity: 'warning'
+          severity: hasStemMismatch ? 'critical' : 'warning'
         });
       }
     }
   }
 
-  // 2. Check for leftover/alien entities not matching user-provided parties
+  // 2. Check for leftover/alien entities not matching recognized parties
+  const preambleClusters = clusters.filter(c => c.entities.some(e => e.line <= preambleEndLine));
+  const recognizedStems = new Set();
+  preambleClusters.forEach(c => c.stems.forEach(s => recognizedStems.add(s)));
+
   if (options.parties && options.parties.length > 0) {
-    const normUserParties = options.parties.map(p => normalizeEntityStem(p));
-    for (const ent of entitiesFound) {
-      const entStemNorm = normalizeEntityStem(ent.stem);
-      const isKnownParty = normUserParties.some(p => p.includes(entStemNorm) || entStemNorm.includes(p));
-      if (!isKnownParty) {
-        const existingAlien = entityIssues.find(e => e.entity === ent.raw);
-        if (!existingAlien) {
-          const discrepancy = `Leftover legacy counterparty "${ent.raw}" does not match recognized agreement parties.`;
-          entityIssues.push({ entity: ent.raw, discrepancy, line: ent.line });
-          issues.push({
-            type: 'entity_inconsistency',
-            term: ent.raw,
-            line: ent.line,
-            snippet: lines[ent.line - 1] || '',
-            details: discrepancy,
-            severity: 'critical'
-          });
-        }
+    const userPartyStems = options.parties.map(p => normalizeEntityStem(p));
+    // Shield document from stale placeholder options if none match the document at all
+    const docStems = new Set();
+    clusters.forEach(c => c.stems.forEach(s => docStems.add(s)));
+    const optionsMatchDoc = userPartyStems.some(ups => Array.from(docStems).some(ds => ds.includes(ups) || ups.includes(ds)));
+    if (optionsMatchDoc) {
+      userPartyStems.forEach(s => recognizedStems.add(s));
+    }
+  }
+
+  for (const ent of entitiesFound) {
+    if (ent.line <= preambleEndLine) continue; // Preamble entities are authentic contract parties
+    const entStemNorm = normalizeEntityStem(ent.stem);
+    const isRecognized = Array.from(recognizedStems).some(s => s.includes(entStemNorm) || entStemNorm.includes(s));
+    if (!isRecognized) {
+      const existingAlien = entityIssues.find(e => e.entity === ent.raw);
+      if (!existingAlien) {
+        const discrepancy = `Leftover legacy counterparty "${ent.raw}" does not match recognized agreement parties.`;
+        entityIssues.push({ entity: ent.raw, discrepancy, line: ent.line, lines: [ent.line] });
+        issues.push({
+          type: 'entity_inconsistency',
+          term: ent.raw,
+          line: ent.line,
+          lines: [ent.line],
+          snippet: lines[ent.line - 1] || '',
+          details: discrepancy,
+          severity: 'critical'
+        });
       }
     }
   }
@@ -579,11 +649,12 @@ export function auditDefinedTerms(text = '', options = {}) {
         const g1 = stemGroups.get(s1)[0];
         const g2 = stemGroups.get(s2)[0];
         const discrepancy = `Possible typographical drift in counterparty name: "${g1.raw}" (line ${g1.line}) vs "${g2.raw}" (line ${g2.line})`;
-        entityIssues.push({ entity: g1.raw, discrepancy, line: g1.line });
+        entityIssues.push({ entity: g1.raw, discrepancy, line: g1.line, lines: [g1.line, g2.line] });
         issues.push({
           type: 'entity_inconsistency',
           term: g1.raw,
           line: g1.line,
+          lines: [g1.line, g2.line],
           snippet: lines[g1.line - 1] || '',
           details: discrepancy,
           severity: 'warning'

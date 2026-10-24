@@ -165,18 +165,38 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
 
   // 4. ENTITY MUTATION / INCONSISTENCY
   if (category.includes('ENTITY') || category.includes('CORPORATE') || finding.type === 'entity_inconsistency') {
+    const primaryEntity = finding.term || finding.entity || 'Primary Corporate Entity';
+    const conflicting = finding.conflictingEntity || (finding.details && finding.details.includes('vs') ? finding.details.split('vs').pop().trim() : '');
+    const linesStr = finding.lines && finding.lines.length > 1 ? `Lines ${finding.lines.join(', ')}` : (finding.line ? `Line ${finding.line}` : 'Entity Recitals & Signatures');
+
+    const title = conflicting 
+      ? `Corporate Entity Mismatch (${primaryEntity} vs. ${conflicting})`
+      : `Corporate Entity Designation Inconsistency (${primaryEntity})`;
+
+    const malpracticeRisk = conflicting
+      ? `Veil-Piercing Exposure: Mismatched entity designation ("${primaryEntity}" vs. "${conflicting}") threatens limited liability partitioning and creates acute signatory authority disputes under Delaware General Corporation Law (DGCL) § 106 and California Corp. Code § 200.`
+      : `Veil-Piercing Exposure: Inconsistent corporate designation threatens limited liability partitioning and creates acute signatory authority disputes.`;
+
+    const courtGradeRedline = conflicting
+      ? `Harmonize entity designation throughout all operative provisions, recitals, and signature blocks to the exact legal name: "${primaryEntity}" (correcting the conflicting reference to "${conflicting}" on Line ${finding.conflictingLine || finding.line || ''}).`
+      : `Harmonize entity designation and organizational jurisdiction throughout all operative provisions, recitals, and signature blocks to "${primaryEntity}".`;
+
+    const actionableAdvice = `Harmonize entity legal name and state of organization across Preamble, Covenants, and Signature Blocks to "${primaryEntity}". If counterparty intended to bind an affiliate, execute an explicit Joinder Agreement.`;
+
     return {
       ...finding,
       id: findingId,
       occurrences,
+      clauseRef: linesStr,
+      title: finding.title || title,
       severityTier: 'critical_deal_breaker',
       legalSeverityLabel: 'CRITICAL DEAL BREAKER',
       statutoryCitation: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.statute,
       legalDoctrine: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.doctrine,
       precedent: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.precedent,
-      malpracticeRisk: `Veil-Piercing Exposure: Mismatched entity designation (Delaware LLC vs. California Inc) threatens limited liability partitioning and creates acute signatory authority disputes.`,
-      courtGradeRedline: `This Agreement shall be binding upon and inure to the benefit of the Parties hereto and their respective successors and permitted assigns; provided, that all affirmative covenants, representations, and liabilities of Buyer hereunder shall be the exclusive obligation of Apex Technologies Group LLC, a Delaware limited liability company, and no individual member, manager, officer, or corporate affiliate shall incur personal or secondary liability hereunder.`,
-      actionableAdvice: `Harmonize entity name and state of organization across Preamble, Covenants, and Signature Blocks.`
+      malpracticeRisk,
+      courtGradeRedline,
+      actionableAdvice
     };
   }
 
@@ -306,16 +326,28 @@ export function enrichAllAuditFindings(auditData) {
   });
 
   // 3. Process Defined Terms & Entity Issues
+  const seenEntityStems = new Set();
   (auditData.definedTerms?.issues || []).forEach(issue => {
     if (issue.type === 'unused_defined_term') return; // Retained in Defined Terms Tab, excluded from executive hazards
     const isEntity = issue.type === 'entity_inconsistency';
     const isBoilerplate = issue.type === 'boilerplate_artifact';
+
+    if (isEntity) {
+      const stemKey = (issue.term || issue.entity || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (stemKey && seenEntityStems.has(stemKey)) return;
+      if (stemKey) seenEntityStems.add(stemKey);
+    }
+
+    const linesStr = issue.lines && issue.lines.length > 1 
+      ? `Lines ${issue.lines.join(', ')}` 
+      : (issue.line ? `Line ${issue.line}` : (isEntity ? 'Entity Designation' : 'Definitions'));
+
     const enriched = enrichFindingWithStatutoryRemedy({
       ...issue,
       category: isEntity ? 'CORPORATE ENTITY MUTATION' : isBoilerplate ? 'TEMPLATE DRAFTING ARTIFACT' : 'UNDEFINED OPERATIVE TERM',
-      clauseRef: issue.clause || (issue.line ? `Line ${issue.line}` : (isEntity ? 'Entity Designation' : 'Definitions')),
+      clauseRef: issue.clause || linesStr,
       title: isEntity 
-        ? `Corporate Entity Mismatch (${issue.entity || 'LLC vs Inc'})` 
+        ? (issue.conflictingEntity ? `Corporate Entity Mismatch (${issue.term || issue.entity} vs. ${issue.conflictingEntity})` : `Corporate Entity Mismatch (${issue.entity || 'LLC vs Inc'})`) 
         : isBoilerplate
         ? `Unfilled Template Placeholder: ${issue.placeholder || issue.term}`
         : `Undefined Operative Term: "${issue.term || ''}"`

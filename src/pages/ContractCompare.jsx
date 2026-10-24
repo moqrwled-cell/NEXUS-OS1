@@ -50,26 +50,6 @@ import PirateTrapModal from '../components/PirateTrapModal';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 
-const SAMPLE_UNPOLISHED_DEED = `COMMERCIAL CONVEYANCE AND PURCHASE AGREEMENT
-
-THIS INDENTURE, made and entered into this 15th day of October, 2026, by and between APEX REALTY HOLDINGS LLC ("Grantor"), and SUMMIT COMMERCIAL PARTNERS LLC ("Grantee").
-
-WITNESSETH:
-
-WHEREAS, Grantor is the sole legal and equitable owner of that certain real property situated in Franklin County, designated as Tax Parcel Identification Number (APN) 045-210-09-001, containing approximately 4.75 gross acres, and more particularly bounded and described as follows:
-
-BEGINNING at a concrete monument marking the Point of Beginning; thence North 45° 30' 15" East, a distance of 450.25 feet to an iron pin; thence South 89° 15' 00" East, a distance of 620.00 feet along the northerly right-of-way line; thence South 00° 44' 45" West, a distance of 450.00 feet to a point; thence South 89° 15' 00" West, a distance of 620.00 feet returning to the Point of Beginning (POB).
-
-NOW THEREFORE, for and in consideration of the sum of One Million Four Hundred Fifty Thousand Dollars ($1,450,000.00), the receipt and sufficiency of which is hereby acknowledged, the parties agree as follows:
-
-1. CONVEYANCE. Grantor does hereby transfer unto Grantee the above-described real property in fee simple, together with all tenements and hereditaments.
-
-2. MUTUAL COVENANTS. Seller and Buyer agrees that all ad valorem taxes shall be adjusted. Each of the Parties agree to execute and/or deliver all further assurances reasonably required.
-
-3. INSPECTION AND ACCESS. Grantee shall have the right to inspect the premises prior to Closing. Grantor shall have no obligation to make structural repairs.
-
-IN WITNESS WHEREOF, Grantor and Grantee have executed this Deed as of the date first written above.`;
-
 export default function ContractCompare() {
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
   const [showDeviceModal, setShowDeviceModal] = useState(true);
@@ -1511,62 +1491,31 @@ function ContractAnalyzerView({ initialSession }) {
           )}
 
           {analysisMode === 'harmonizer' ? (
-            <div className="flex flex-wrap items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setText(SAMPLE_UNPOLISHED_DEED);
-                  setDocumentTitle('Commercial Conveyance & Purchase Deed');
-                  setClientParty('Apex Realty Holdings LLC');
-                  setCounterparty('Summit Commercial Partners LLC');
-                  handleRunHarmonizer(SAMPLE_UNPOLISHED_DEED);
-                }}
-                className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 font-bold text-xs rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
-                title="Load a sample unpolished deed with land boundaries, APN, and drafting defects"
-              >
-                <RefreshCw size={14} className="text-emerald-400" />
-                <span>Load Sample Unpolished Deed</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleRunHarmonizer()}
-                disabled={isHarmonizing || !text.trim()}
-                className="px-8 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
-              >
-                {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
-                <span>{isHarmonizing ? 'Proofreading in Local Memory...' : 'Execute Linguistic & Legal Proofreading'}</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => handleRunHarmonizer()}
+              disabled={isHarmonizing || !text.trim()}
+              className="px-8 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+            >
+              {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
+              <span>{isHarmonizing ? 'Proofreading in Local Memory...' : 'Execute Linguistic & Legal Proofreading'}</span>
+            </button>
           ) : (
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => handleRunHarmonizer()}
-                disabled={isHarmonizing || !text.trim()}
-                className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-emerald-500/30 text-emerald-300 font-bold text-xs rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95 disabled:opacity-40"
-                title="Polish and restate document with 100% data preservation"
-              >
-                {isHarmonizing ? <RefreshCw className="animate-spin" size={14} /> : <Sparkles size={14} />}
-                <span>Harmonize Draft</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleExecuteAudit()}
-                disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-                className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
-              >
-                {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
-                <span>
-                  {isProcessing
-                    ? 'Auditing in Local Memory...'
-                    : analysisMode === 'single'
-                    ? 'Run Integrity Audit'
-                    : 'Execute Redline Diff & Audit'}
-                </span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => handleExecuteAudit()}
+              disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
+              className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+            >
+              {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
+              <span>
+                {isProcessing
+                  ? 'Auditing in Local Memory...'
+                  : analysisMode === 'single'
+                  ? 'Run Integrity Audit'
+                  : 'Execute Redline Diff & Audit'}
+              </span>
+            </button>
           )}
         </div>
       </div>
