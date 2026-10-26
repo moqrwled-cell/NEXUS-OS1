@@ -1344,8 +1344,8 @@ function ContractAnalyzerView({ initialSession }) {
                 <button
                   type="button"
                   onClick={() => setText('')}
-                  className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-700/80 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1.5"
-                  title="Clear contract draft"
+                  className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-800 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1"
+                  title="Clear draft text"
                 >
                   Clear Draft
                 </button>
@@ -1357,10 +1357,10 @@ function ContractAnalyzerView({ initialSession }) {
                     setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
                     setDocumentTitle('Master Asset Purchase & Services Agreement');
                   }}
-                  className="bg-white/5 hover:bg-white/10 border border-zinc-700/80 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1.5"
-                  title="Load sample hazardous contract to test engine"
+                  className="bg-transparent hover:bg-white/5 border border-zinc-800 hover:border-zinc-700 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
+                  title="Load sample demo contract"
                 >
-                  <Sparkles size={13} className="text-amber-400" /> Load Sample Contract
+                  <Sparkles size={11} className="text-amber-400/80" /> Sample Demo
                 </button>
               )}
               
