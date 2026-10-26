@@ -3,7 +3,7 @@ import {
   BookOpen, Copy, Check, FileDown, 
   Sparkles, ArrowRight, RefreshCw, CheckCircle2,
   ShieldCheck, Scale, FileText,
-  ChevronDown, ChevronUp, SlidersHorizontal, Lock
+  ChevronDown, ChevronUp, SlidersHorizontal, Lock, HelpCircle
 } from 'lucide-react';
 import { LEGAL_TEMPLATES, TEMPLATE_CATEGORIES, compileTemplateText } from '../utils/legalTemplatesVault';
 import { downloadRedactedPDF } from '../utils/redactedPdfGenerator';
@@ -87,7 +87,8 @@ const STATUTORY_GUIDANCE_MAP = {
 export default function LegalTemplatesView({ 
   onSendToAudit,
   isDemoMode = false,
-  onTriggerUpgrade
+  onTriggerUpgrade,
+  onOpenGuide
 }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -209,6 +210,16 @@ export default function LegalTemplatesView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {onOpenGuide && (
+              <button
+                onClick={() => onOpenGuide('templates')}
+                className="px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                title="How to Use Template Vault"
+              >
+                <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                <span>How to Use</span>
+              </button>
+            )}
             {/* Word DOCX Download Button */}
             {isDemoMode ? (
               <button
@@ -429,6 +440,16 @@ export default function LegalTemplatesView({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          {onOpenGuide && (
+            <button
+              onClick={() => onOpenGuide('templates')}
+              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+              title="How to Use Template Vault"
+            >
+              <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span>How to Use</span>
+            </button>
+          )}
           <button
             onClick={() => setShowStatutoryGuide(!showStatutoryGuide)}
             className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer"

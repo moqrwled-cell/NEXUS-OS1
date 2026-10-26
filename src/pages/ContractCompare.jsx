@@ -50,10 +50,14 @@ import { detectContractMetadata } from '../utils/contractMetadataDetector';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 import PirateTrapModal from '../components/PirateTrapModal';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
+import SystemGuideModal from '../components/SystemGuideModal';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 
 export default function ContractCompare() {
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
+  const [analysisMode, setAnalysisMode] = useState('single'); // single | comparative | harmonizer
+  const [showGuideModal, setShowGuideModal] = useState(false);
+  const [guideModalTab, setGuideModalTab] = useState('analyzer');
   const [showDeviceModal, setShowDeviceModal] = useState(true);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [restoredSession, setRestoredSession] = useState(null);
@@ -167,26 +171,63 @@ export default function ContractCompare() {
             </div>
             {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
+
+          {/* Sub-Tools: Single Draft Audit, Redline Diff Mode, Linguistic Proofreader */}
           {activeTool === 'analyzer' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-emerald-400 font-bold mb-2 flex items-center justify-between">
-                <span>MATHEMATICAL FORENSICS</span>
-                <span className="text-[8px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono">100% RAM</span>
-              </p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Single Draft Forensic Audit — </span><span className="text-zinc-400">Deterministic AST verification of broken cross-references, missing exhibits, undefined terms, and financial discrepancies with zero AI hallucinations.</span></span>
+            <div className="mx-1 mt-1 mb-2 p-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1">
+              <button
+                onClick={() => {
+                  setActiveTool('analyzer');
+                  setAnalysisMode('single');
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                  analysisMode === 'single'
+                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.12)]'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileCheck size={13} className={analysisMode === 'single' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <span className="truncate">Single Draft Audit</span>
                 </div>
-                <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Redline Diff Mode — </span><span className="text-zinc-400">Myers LCS comparative diff highlighting exact additions and deletions side-by-side.</span></span>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">AST</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTool('analyzer');
+                  setAnalysisMode('comparative');
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                  analysisMode === 'comparative'
+                    ? 'bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.12)]'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <Search size={13} className={analysisMode === 'comparative' ? 'text-cyan-400' : 'text-zinc-500'} />
+                  <span className="truncate">Redline Diff Mode</span>
                 </div>
-                <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Pre-Signing Court Rider — </span><span className="text-zinc-400">One-click generation of court-ready Pre-Signing Amendment Rider (PDF/HTML/Copy) and Client Memo.</span></span>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">Myers</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTool('analyzer');
+                  setAnalysisMode('harmonizer');
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                  analysisMode === 'harmonizer'
+                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.12)]'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <Sparkles size={13} className={analysisMode === 'harmonizer' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <span className="truncate">Linguistic & Deed Proofreader</span>
                 </div>
-              </div>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Deed</span>
+              </button>
             </div>
           )}
 
@@ -206,25 +247,6 @@ export default function ContractCompare() {
             </div>
             {activeTool === 'redact' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
-          {activeTool === 'redact' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Active Rules — </span><span className="text-zinc-400">Toggle detection filters for SSN, tax IDs, credit cards, banking info, emails, and phone numbers.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Custom Keywords — </span><span className="text-zinc-400">Add proprietary client names, company tags, or project titles for automated scrubbing.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Masking Style — </span><span className="text-zinc-400">Choose redaction output: Solid Black Block (█████), Semantic Tag ([REDACTED]), or Asterisks.</span></span>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Module 3: Bates Stamping */}
           <button
@@ -242,25 +264,6 @@ export default function ContractCompare() {
             </div>
             {activeTool === 'bates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
-          {activeTool === 'bates' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Bates Standard — </span><span className="text-zinc-400">Official court discovery numbering sequence (e.g. PLTF-0001) applied directly to evidentiary PDFs.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Prefix Attribution — </span><span className="text-zinc-400">Designate party filing: PLTF (Plaintiff), DEF (Defendant), or CONF (Confidential exhibit).</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Contrast Backing — </span><span className="text-zinc-400">Renders high-contrast white backing pill to ensure legibility across dark scanned exhibits.</span></span>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Module 4: Legal Templates Vault */}
           <button
@@ -281,25 +284,6 @@ export default function ContractCompare() {
             </div>
             {activeTool === 'templates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
-          {activeTool === 'templates' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Standard Library — </span><span className="text-zinc-400">Institutional Land Purchase, Commercial Lease, MSA, NDA, and APA contracts.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Quick-Fill Form — </span><span className="text-zinc-400">Type client party names, purchase price, parcel ID, and closing dates to populate instantly.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-amber-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Audit Integration — </span><span className="text-zinc-400">Send compiled contract straight to ContractGuard audit engine with one click.</span></span>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Module 5: Audit Vault */}
           <button
@@ -317,25 +301,6 @@ export default function ContractCompare() {
             </div>
             {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
-          {activeTool === 'history' && (
-            <div className="mx-1 mt-0.5 mb-1 px-3 py-3 rounded-lg bg-zinc-900/70 border border-zinc-800/70">
-              <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-400 font-bold mb-2">How To Use (For Counsel)</p>
-              <div className="space-y-2 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="text-emerald-400 font-bold shrink-0">①</span>
-                  <span><span className="text-zinc-200 font-semibold">Local Storage — </span><span className="text-zinc-400">Every audit and redline session is retained in client-side IndexedDB without cloud transmission.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-cyan-400 font-bold shrink-0">②</span>
-                  <span><span className="text-zinc-200 font-semibold">Restore Session — </span><span className="text-zinc-400">Reopen previous contract reviews, re-examine liabilities, or export updated client memos.</span></span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="text-red-400 font-bold shrink-0">③</span>
-                  <span><span className="text-zinc-200 font-semibold">Purge Vault — </span><span className="text-zinc-400">Permanently clears local database records to uphold strict client-attorney confidentiality.</span></span>
-                </div>
-              </div>
-            </div>
-          )}
         </nav>
 
         {/* Workstation & License Settings Button */}
@@ -388,25 +353,49 @@ export default function ContractCompare() {
           <AnimatePresence mode="wait">
             {activeTool === 'analyzer' && (
               <motion.div key="analyzer" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <ContractAnalyzerView initialSession={restoredSession} />
+                <ContractAnalyzerView 
+                  initialSession={restoredSession}
+                  analysisMode={analysisMode}
+                  onAnalysisModeChange={setAnalysisMode}
+                  onOpenGuide={(tab) => {
+                    setGuideModalTab(tab || 'analyzer');
+                    setShowGuideModal(true);
+                  }}
+                />
               </motion.div>
             )}
             {activeTool === 'redact' && (
               <motion.div key="redact" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <PIIRedactorView />
+                <PIIRedactorView 
+                  onOpenGuide={() => {
+                    setGuideModalTab('redact');
+                    setShowGuideModal(true);
+                  }}
+                />
               </motion.div>
             )}
             {activeTool === 'bates' && (
               <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <BatesStamperView />
+                <BatesStamperView 
+                  onOpenGuide={() => {
+                    setGuideModalTab('bates');
+                    setShowGuideModal(true);
+                  }}
+                />
               </motion.div>
             )}
             {activeTool === 'history' && (
               <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <AuditVaultView onSelectDiff={(session) => {
-                  setRestoredSession(session);
-                  setActiveTool('analyzer');
-                }} />
+                <AuditVaultView 
+                  onSelectDiff={(session) => {
+                    setRestoredSession(session);
+                    setActiveTool('analyzer');
+                  }}
+                  onOpenGuide={() => {
+                    setGuideModalTab('history');
+                    setShowGuideModal(true);
+                  }}
+                />
               </motion.div>
             )}
             {activeTool === 'templates' && (
@@ -417,6 +406,10 @@ export default function ContractCompare() {
                     setRestoredSession({ originalText: contractText, title });
                     setActiveTool('analyzer');
                   }} 
+                  onOpenGuide={() => {
+                    setGuideModalTab('templates');
+                    setShowGuideModal(true);
+                  }}
                 />
               </motion.div>
             )}
@@ -436,6 +429,19 @@ export default function ContractCompare() {
           />
         )}
       </AnimatePresence>
+
+      {/* System Guide & Methodology Modal */}
+      <SystemGuideModal
+        isOpen={showGuideModal}
+        onClose={() => setShowGuideModal(false)}
+        activeTab={guideModalTab}
+        onSelectTab={(tab) => setGuideModalTab(tab)}
+        onLaunchTool={(tool, mode) => {
+          setActiveTool(tool);
+          if (mode) setAnalysisMode(mode);
+          setShowGuideModal(false);
+        }}
+      />
 
       <PirateTrapModal
         isOpen={showDeviceModal || !isUnlocked}
@@ -843,9 +849,14 @@ This Agreement is entered into on this 1st day of October, 2026, by and between 
 // =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + In-Memory Proofreader + Multi-Export)
 // =========================================================================
-function ContractAnalyzerView({ initialSession }) {
-  // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff)
-  const [analysisMode, setAnalysisMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
+function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, onAnalysisModeChange, onOpenGuide }) {
+  // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff) or 'harmonizer'
+  const [internalMode, setInternalMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
+  const analysisMode = propAnalysisMode !== undefined ? propAnalysisMode : internalMode;
+  const setAnalysisMode = (newMode) => {
+    setInternalMode(newMode);
+    if (onAnalysisModeChange) onAnalysisModeChange(newMode);
+  };
 
   const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || '');
   const [baselineText, setBaselineText] = useState(initialSession?.originalText || '');
@@ -1265,6 +1276,17 @@ function ContractAnalyzerView({ initialSession }) {
               Linguistic & Deed Proofreader
             </button>
           </div>
+
+          {onOpenGuide && (
+            <button
+              onClick={() => onOpenGuide('analyzer')}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm group shrink-0"
+              title="How to Use & Mathematical Methodology"
+            >
+              <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span>How to Use</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -3307,7 +3329,7 @@ function ContractAnalyzerView({ initialSession }) {
 // =========================================================================
 // 2. SMART PII REDACTOR VIEW (Toggleable Rules + Live Counts + Mask Styles)
 // =========================================================================
-function PIIRedactorView() {
+function PIIRedactorView({ onOpenGuide }) {
   const [text, setText] = useState('');
   const [activeRuleIds, setActiveRuleIds] = useState(['ssn', 'creditCard', 'bankAccount', 'email', 'phone', 'ip', 'ein']);
   const [customKeywordInput, setCustomKeywordInput] = useState('');
@@ -3441,16 +3463,28 @@ function PIIRedactorView() {
 
   return (
     <div className="max-w-6xl mx-auto h-full flex flex-col gap-6">
-      <div>
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
-          <span>Air-Gapped Smart PII Redactor</span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-            Confidentiality Safe
-          </span>
-        </h2>
-        <p className="text-gray-400 text-xs mt-1">
-          Irreversibly sanitize Social Security numbers, payment cards, banking info, and confidential names in-memory before sharing documents.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
+            <span>Air-Gapped Smart PII Redactor</span>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              Confidentiality Safe
+            </span>
+          </h2>
+          <p className="text-gray-400 text-xs mt-1">
+            Irreversibly sanitize Social Security numbers, payment cards, banking info, and confidential names in-memory before sharing documents.
+          </p>
+        </div>
+        {onOpenGuide && (
+          <button
+            onClick={() => onOpenGuide('redact')}
+            className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm group shrink-0"
+            title="How to Use Smart PII Redactor"
+          >
+            <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+            <span>How to Use</span>
+          </button>
+        )}
       </div>
 
       {/* Rules Selector Bar */}
@@ -3623,7 +3657,7 @@ function PIIRedactorView() {
 // =========================================================================
 // 3. BATES STAMPING SUITE VIEW (Sequential PDFs + Contrast Pill + Manifest)
 // =========================================================================
-function BatesStamperView() {
+function BatesStamperView({ onOpenGuide }) {
   const [files, setFiles] = useState([]);
   const [prefix, setPrefix] = useState('EX-');
   const [startNum, setStartNum] = useState(1);
@@ -3705,16 +3739,28 @@ function BatesStamperView() {
 
   return (
     <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
-      <div>
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
-          <span>Enterprise Bates Stamping & Binder</span>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/30">
-            pdf-lib Native
-          </span>
-        </h2>
-        <p className="text-gray-400 text-xs mt-1">
-          Sequentially number trial exhibits and production binders locally. High-contrast backing pill ensures readability on dark scans.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
+            <span>Enterprise Bates Stamping & Binder</span>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/30">
+              pdf-lib Native
+            </span>
+          </h2>
+          <p className="text-gray-400 text-xs mt-1">
+            Sequentially number trial exhibits and production binders locally. High-contrast backing pill ensures readability on dark scans.
+          </p>
+        </div>
+        {onOpenGuide && (
+          <button
+            onClick={() => onOpenGuide('bates')}
+            className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm group shrink-0"
+            title="How to Use Bates Stamping"
+          >
+            <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+            <span>How to Use</span>
+          </button>
+        )}
       </div>
 
       {/* Configuration Grid */}
@@ -3897,7 +3943,7 @@ function BatesStamperView() {
 // =========================================================================
 // 4. AUDIT VAULT & PERSISTENCE VIEW (IndexedDB Sessions)
 // =========================================================================
-function AuditVaultView({ onSelectDiff }) {
+function AuditVaultView({ onSelectDiff, onOpenGuide }) {
   const [diffSessions, setDiffSessions] = useState([]);
   const [redactionLogs, setRedactionLogs] = useState([]);
   const [batesJobs, setBatesJobs] = useState([]);
@@ -3949,12 +3995,24 @@ function AuditVaultView({ onSelectDiff }) {
           </p>
         </div>
 
-        <button
-          onClick={handleClearAll}
-          className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 transition-colors flex items-center gap-1.5"
-        >
-          <Trash2 size={14} /> Clear Local Vault
-        </button>
+        <div className="flex items-center gap-2">
+          {onOpenGuide && (
+            <button
+              onClick={() => onOpenGuide('history')}
+              className="px-3.5 py-2 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm group"
+              title="How to Use Audit Vault"
+            >
+              <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span>How to Use</span>
+            </button>
+          )}
+          <button
+            onClick={handleClearAll}
+            className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Trash2 size={14} /> Clear Local Vault
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
