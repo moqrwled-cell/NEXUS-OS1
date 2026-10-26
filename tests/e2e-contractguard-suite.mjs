@@ -93,6 +93,7 @@ import {
   extractFactualAnchors, 
   verifyDataPreservation 
 } from '../src/utils/forensicRestatementEngine.js';
+import { detectContractMetadata } from '../src/utils/contractMetadataDetector.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -186,6 +187,7 @@ https.request = function (...args) {
     'src/utils/legalTemplatesVault.js',
     'src/utils/docxExportEngine.js',
     'src/utils/docxExtractor.js',
+    'src/utils/contractMetadataDetector.js',
     'src/components/LegalTemplatesView.jsx',
     'src/workers/contractWorker.js',
     'src/pages/ContractCompare.jsx'
@@ -556,6 +558,14 @@ suiteBanner('TIER 1', 'Feature Coverage Suite (F1â€“F20 Across Requirements R1â€
   assert(fullAudit.financialDates && Array.isArray(fullAudit.financialDates.financialPairings), 'F17.3: HUD Financial tab payload contains pairings');
   assert(fullAudit.obligations && Array.isArray(fullAudit.obligations.obligations), 'F17.4: HUD Obligations tab payload contains obligations');
   assert(fullAudit.risks && Array.isArray(fullAudit.risks), 'F17.5: HUD Risk Radar payload contains scanned risks');
+
+  // Metadata Auto-Detection (Title, Client, Counterparty)
+  const sampleMeta = `SOFTWARE AS A SERVICE (SAAS) AGREEMENT
+  This Agreement is entered into by and between CloudFlow Technologies Inc. ("Provider") and Apex Retailers LLC ("Customer").`;
+  const meta = detectContractMetadata(sampleMeta);
+  assert(meta.title.includes('SOFTWARE AS A SERVICE'), 'F17.6: Auto-detects contract title from heading');
+  assert(meta.clientParty === 'Apex Retailers LLC', 'F17.7: Auto-detects customer as client party');
+  assert(meta.counterparty === 'CloudFlow Technologies Inc.', 'F17.8: Auto-detects provider as counterparty');
 }
 
 // F18: Executive Client Memo Export (R4)

@@ -46,6 +46,7 @@ import {
   downloadRedactedPDF,
   downloadAmendmentRiderPDF
 } from '../utils/redactedPdfGenerator';
+import { detectContractMetadata } from '../utils/contractMetadataDetector';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 import PirateTrapModal from '../components/PirateTrapModal';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
@@ -993,12 +994,14 @@ function ContractAnalyzerView({ initialSession }) {
 
     try {
       const lowerName = file.name.toLowerCase();
+      let extractedContent = '';
 
       if (lowerName.endsWith('.docx')) {
         const arrayBuffer = await file.arrayBuffer();
         const result = await extractTextFromDOCX(arrayBuffer);
-        setTargetText(result.value);
-        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${result.value.split(/\s+/).length} words)` }));
+        extractedContent = result.value || '';
+        setTargetText(extractedContent);
+        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${extractedContent.split(/\s+/).length} words)` }));
       } else if (lowerName.endsWith('.pdf')) {
         setUploadStatus(prev => ({ ...prev, [statusKey]: 'Reading PDF document...' }));
         const pdfResult = await extractTextFromPDF(file, {
@@ -1010,7 +1013,8 @@ function ContractAnalyzerView({ initialSession }) {
             }));
           }
         });
-        setTargetText(pdfResult.fullText);
+        extractedContent = pdfResult.fullText || '';
+        setTargetText(extractedContent);
         const hasOcrPages = pdfResult.pages?.some(pg => pg.isOcr);
         setUploadStatus(prev => ({
           ...prev,
@@ -1027,19 +1031,32 @@ function ContractAnalyzerView({ initialSession }) {
             }));
           }
         });
-        setTargetText(ocrResult.text);
-        const wordCount = ocrResult.text.trim() ? ocrResult.text.trim().split(/\s+/).length : 0;
+        extractedContent = ocrResult.text || '';
+        setTargetText(extractedContent);
+        const wordCount = extractedContent.trim() ? extractedContent.trim().split(/\s+/).length : 0;
         setUploadStatus(prev => ({
           ...prev,
           [statusKey]: `Scanned Image OCR Complete (${wordCount} words · ${ocrResult.confidence.toFixed(1)}% conf · ${ocrResult.durationMs}ms)`
         }));
       } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
-        const fileContent = await file.text();
-        setTargetText(fileContent);
-        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded text file (${fileContent.split(/\s+/).length} words)` }));
+        extractedContent = await file.text();
+        setTargetText(extractedContent);
+        setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded text file (${extractedContent.split(/\s+/).length} words)` }));
       } else {
         alert("Supported file formats: .pdf, .docx, .txt, .md, .png, .jpg, .jpeg, .webp");
         setUploadStatus(prev => ({ ...prev, [statusKey]: '' }));
+      }
+
+      // Automatically detect Agreement Title, Client Party, and Counterparty upon upload
+      if (extractedContent) {
+        const meta = detectContractMetadata(extractedContent, file.name);
+        if (meta.title && (!documentTitle || statusKey === 'target')) {
+          setDocumentTitle(meta.title);
+        }
+        if (statusKey === 'target') {
+          if (meta.clientParty) setClientParty(meta.clientParty);
+          if (meta.counterparty) setCounterparty(meta.counterparty);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -1386,7 +1403,25 @@ function ContractAnalyzerView({ initialSession }) {
           <textarea
             id="contract-draft-textarea"
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              const newVal = e.target.value;
+              setText(newVal);
+              if (newVal.length >= 60 && (!documentTitle || !clientParty || !counterparty)) {
+                const meta = detectContractMetadata(newVal);
+                if (meta.title && !documentTitle) setDocumentTitle(meta.title);
+                if (meta.clientParty && !clientParty) setClientParty(meta.clientParty);
+                if (meta.counterparty && !counterparty) setCounterparty(meta.counterparty);
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = e.clipboardData?.getData('text');
+              if (pasted && pasted.length >= 60) {
+                const meta = detectContractMetadata(pasted);
+                if (meta.title && !documentTitle) setDocumentTitle(meta.title);
+                if (meta.clientParty && !clientParty) setClientParty(meta.clientParty);
+                if (meta.counterparty && !counterparty) setCounterparty(meta.counterparty);
+              }
+            }}
             placeholder="Paste contract text here or drag & drop .pdf / .docx / .txt file to audit for broken references, missing exhibits, undefined terms, and financial mismatches..."
             className="w-full bg-black/40 p-5 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[260px]"
           />
