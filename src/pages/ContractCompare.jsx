@@ -846,9 +846,9 @@ function ContractAnalyzerView({ initialSession }) {
   // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff)
   const [analysisMode, setAnalysisMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
 
-  const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || HAZARDOUS_SAMPLE_CONTRACT);
-  const [baselineText, setBaselineText] = useState(initialSession?.originalText || HAZARDOUS_BASELINE_CONTRACT);
-  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || 'Master Asset Purchase & Services Agreement');
+  const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || '');
+  const [baselineText, setBaselineText] = useState(initialSession?.originalText || '');
+  const [documentTitle, setDocumentTitle] = useState(initialSession?.title || '');
   const [clientParty, setClientParty] = useState('Acme Holdings LLC');
   const [counterparty, setCounterparty] = useState('Globex International Corp');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
@@ -1133,17 +1133,20 @@ function ContractAnalyzerView({ initialSession }) {
     }
   };
 
-  // Automatically execute benchmark audit on initial mount if no results exist
+  // Automatically execute audit on initial mount ONLY if a pre-existing session was passed
   useEffect(() => {
     if (!auditResults && !isProcessing) {
-      handleExecuteAudit({
-        text: initialSession?.modifiedText || initialSession?.originalText || HAZARDOUS_SAMPLE_CONTRACT,
-        baselineText: initialSession?.originalText || HAZARDOUS_BASELINE_CONTRACT,
-        title: initialSession?.title || 'Master Asset Purchase & Services Agreement',
-        clientParty: 'Acme Holdings LLC',
-        counterparty: 'Globex International Corp',
-        mode: analysisMode
-      });
+      const initialText = initialSession?.modifiedText || initialSession?.originalText;
+      if (initialText && initialText.trim()) {
+        handleExecuteAudit({
+          text: initialText,
+          baselineText: initialSession?.originalText || '',
+          title: initialSession?.title || 'Contract Integrity Audit',
+          clientParty: 'Acme Holdings LLC',
+          counterparty: 'Globex International Corp',
+          mode: analysisMode
+        });
+      }
     }
   }, []);
 
@@ -1335,6 +1338,30 @@ function ContractAnalyzerView({ initialSession }) {
             <div className="flex items-center gap-2">
               {uploadStatus.target && (
                 <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
+              )}
+
+              {text ? (
+                <button
+                  type="button"
+                  onClick={() => setText('')}
+                  className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-700/80 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1.5"
+                  title="Clear contract draft"
+                >
+                  Clear Draft
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setText(HAZARDOUS_SAMPLE_CONTRACT);
+                    setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
+                    setDocumentTitle('Master Asset Purchase & Services Agreement');
+                  }}
+                  className="bg-white/5 hover:bg-white/10 border border-zinc-700/80 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1.5"
+                  title="Load sample hazardous contract to test engine"
+                >
+                  <Sparkles size={13} className="text-amber-400" /> Load Sample Contract
+                </button>
               )}
               
               <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5">
