@@ -161,6 +161,39 @@ export function parseContractDate(rawDateStr) {
 }
 
 /**
+ * Trims extraneous sentence tokens leading up to spelled-out number phrases.
+ * e.g. "Notice period shall be sixty" -> "sixty"
+ * e.g. "The fee shall be Fifty Thousand Dollars" -> "Fifty Thousand Dollars"
+ * @param {string} rawPhrase 
+ * @returns {string}
+ */
+export function extractCleanNumberWords(rawPhrase) {
+  if (!rawPhrase || typeof rawPhrase !== 'string') return '';
+  const trimmed = rawPhrase.trim();
+  const words = trimmed.split(/\s+/);
+  const numberWordRegex = /^(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fourty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|million|billion|trillion|and|dollars?|cents?|euros?|pounds?|sterling|usd|pence|\d{1,2}\/100|no\/100|xx\/100)$/i;
+
+  let startIdx = -1;
+  for (let i = words.length - 1; i >= 0; i--) {
+    const cleanWord = words[i].replace(/[^\w\/\-]/g, '').toLowerCase();
+    const subParts = cleanWord.split('-');
+    const allValid = subParts.length > 0 && subParts.every(p => !p || numberWordRegex.test(p));
+    if (allValid && cleanWord.length > 0) {
+      startIdx = i;
+    } else {
+      if (startIdx !== -1) {
+        break;
+      }
+    }
+  }
+
+  if (startIdx !== -1) {
+    return words.slice(startIdx).join(' ');
+  }
+  return trimmed;
+}
+
+/**
  * Main Audit Function for Financial & Date Integrity
  * @param {string} text - Document raw text
  * @param {Date} [referenceDate=new Date()] - Reference audit date
@@ -254,29 +287,58 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
       const numVal = parseNumericAmount(numPart);
 
       if (wordsVal !== null && numVal > 0) {
-        const isMatch = Math.abs(wordsVal - numVal) < 0.01;
-        financialPairings.push({
-          numeric: numPart,
-          words: wordsPart,
-          numericVal: numVal,
-          wordsVal: wordsVal,
-          currency: numPart.includes('€') ? 'EUR' : (numPart.includes('£') ? 'GBP' : 'USD'),
-          match: isMatch,
-          line: lineNum,
-          snippet: lineText.trim()
-        });
+        const cleanWords = extractCleanNumberWords(wordsPart);
+        const textAfter = lineText.substring(match.index + match[0].length);
+        const isDurationOrCount = /^\s*(?:calendar\s+|business\s+)?(?:days?|months?|weeks?|years?|shares?|units?|percent|%|hours?)\b/i.test(textAfter);
+        const isMonetary = /[$€£¥₹]|(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(numPart) ||
+                           /(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(wordsPart);
 
-        if (!isMatch) {
-          issues.push({
-            type: 'amount_mismatch',
-            title: 'Financial Amount Discrepancy',
-            details: `Written words "${wordsPart}" ($${wordsVal.toLocaleString('en-US')}) conflict with numeric figure "${numPart}" ($${numVal.toLocaleString('en-US')}). Under legal drafting rules (UCC § 3-114), words govern over figures, posing immediate litigation risk.`,
-            numericValue: numVal,
-            wordValue: wordsVal,
+        const isMatch = Math.abs(wordsVal - numVal) < 0.01;
+
+        if (!isMonetary && isDurationOrCount) {
+          // Duration/count pairing (e.g. "thirty (30) days notice")
+          if (!isMatch) {
+            issues.push({
+              type: 'timeline_contradiction',
+              title: 'Conflicting Notice Duration Figures',
+              details: `Notice duration words "${cleanWords}" (${wordsVal}) conflict with parenthetical figure "${numPart}" (${numVal}). Ambiguity in notice windows risks procedural invalidity or wrongful termination claims.`,
+              line: lineNum,
+              snippet: lineText.trim(),
+              severity: 'critical'
+            });
+          }
+        } else {
+          // Monetary pairing
+          const currency = (numPart.includes('€') || /euros?\b/i.test(wordsPart)) ? 'EUR' : ((numPart.includes('£') || /pounds?\b/i.test(wordsPart)) ? 'GBP' : 'USD');
+          const currencySymbol = currency === 'EUR' ? '€' : (currency === 'GBP' ? '£' : '$');
+
+          financialPairings.push({
+            numeric: numPart,
+            words: cleanWords,
+            numericVal: numVal,
+            wordsVal: wordsVal,
+            currency,
+            match: isMatch,
             line: lineNum,
-            snippet: lineText.trim(),
-            severity: 'critical'
+            snippet: lineText.trim()
           });
+
+          if (!isMatch) {
+            issues.push({
+              type: 'amount_mismatch',
+              title: 'Financial Amount Discrepancy',
+              details: `Written words "${cleanWords}" (${currencySymbol}${wordsVal.toLocaleString('en-US')}) conflict with numeric figure "${numPart}" (${currencySymbol}${numVal.toLocaleString('en-US')}). Under legal drafting rules (UCC § 3-114), words govern over figures, posing immediate litigation risk.`,
+              numericValue: numVal,
+              wordValue: wordsVal,
+              writtenWords: cleanWords,
+              numericStr: numPart,
+              correctedNum: `${currencySymbol}${wordsVal.toLocaleString('en-US')}`,
+              currency,
+              line: lineNum,
+              snippet: lineText.trim(),
+              severity: 'critical'
+            });
+          }
         }
       }
     }
@@ -292,32 +354,59 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
       const wordsVal = parseWordsToNumber(wordsPart);
 
       if (numVal > 0 && wordsVal !== null) {
+        const cleanWords = extractCleanNumberWords(wordsPart);
+        const textAfter = lineText.substring(match.index + match[0].length);
+        const isDurationOrCount = /^\s*(?:calendar\s+|business\s+)?(?:days?|months?|weeks?|years?|shares?|units?|percent|%|hours?)\b/i.test(textAfter);
+        const isMonetary = /[$€£¥₹]|(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(numPart) ||
+                           /(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(wordsPart);
+
         // Avoid duplicate if already matched by Pattern A
         const existing = financialPairings.find(p => p.line === lineNum && p.numericVal === numVal);
         if (!existing) {
           const isMatch = Math.abs(wordsVal - numVal) < 0.01;
-          financialPairings.push({
-            numeric: numPart,
-            words: wordsPart,
-            numericVal: numVal,
-            wordsVal: wordsVal,
-            currency: numPart.includes('€') ? 'EUR' : (numPart.includes('£') ? 'GBP' : 'USD'),
-            match: isMatch,
-            line: lineNum,
-            snippet: lineText.trim()
-          });
 
-          if (!isMatch) {
-            issues.push({
-              type: 'amount_mismatch',
-              title: 'Financial Amount Discrepancy',
-              details: `Numeric figure "${numPart}" ($${numVal.toLocaleString('en-US')}) conflicts with parenthetical written words "${wordsPart}" ($${wordsVal.toLocaleString('en-US')}).`,
-              numericValue: numVal,
-              wordValue: wordsVal,
+          if (!isMonetary && isDurationOrCount) {
+            if (!isMatch) {
+              issues.push({
+                type: 'timeline_contradiction',
+                title: 'Conflicting Notice Duration Figures',
+                details: `Numeric figure "${numPart}" (${numVal}) conflicts with parenthetical written words "${cleanWords}" (${wordsVal}).`,
+                line: lineNum,
+                snippet: lineText.trim(),
+                severity: 'critical'
+              });
+            }
+          } else {
+            const currency = (numPart.includes('€') || /euros?\b/i.test(wordsPart)) ? 'EUR' : ((numPart.includes('£') || /pounds?\b/i.test(wordsPart)) ? 'GBP' : 'USD');
+            const currencySymbol = currency === 'EUR' ? '€' : (currency === 'GBP' ? '£' : '$');
+
+            financialPairings.push({
+              numeric: numPart,
+              words: cleanWords,
+              numericVal: numVal,
+              wordsVal: wordsVal,
+              currency,
+              match: isMatch,
               line: lineNum,
-              snippet: lineText.trim(),
-              severity: 'critical'
+              snippet: lineText.trim()
             });
+
+            if (!isMatch) {
+              issues.push({
+                type: 'amount_mismatch',
+                title: 'Financial Amount Discrepancy',
+                details: `Numeric figure "${numPart}" (${currencySymbol}${numVal.toLocaleString('en-US')}) conflicts with parenthetical written words "${cleanWords}" (${currencySymbol}${wordsVal.toLocaleString('en-US')}). Under legal drafting rules (UCC § 3-114), words govern over figures, posing immediate litigation risk.`,
+                numericValue: numVal,
+                wordValue: wordsVal,
+                writtenWords: cleanWords,
+                numericStr: numPart,
+                correctedNum: `${currencySymbol}${wordsVal.toLocaleString('en-US')}`,
+                currency,
+                line: lineNum,
+                snippet: lineText.trim(),
+                severity: 'critical'
+              });
+            }
           }
         }
       }

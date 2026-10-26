@@ -72,9 +72,10 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
   
   // 1. FINANCIAL CONTRADICTIONS
   if (category.includes('FINANCIAL') || category.includes('CURRENCY') || finding.type === 'financial_mismatch' || finding.type === 'amount_mismatch') {
-    const writtenWords = finding.writtenWords || 'Two Million Four Hundred Fifty Thousand Dollars';
-    const numericStr = finding.numericStr || '$2,405,000';
-    const correctedNum = finding.correctedNum || '$2,450,000';
+    const currSym = finding.currency === 'EUR' ? '€' : (finding.currency === 'GBP' ? '£' : '$');
+    const writtenWords = finding.writtenWords || (finding.wordValue ? `${finding.wordValue.toLocaleString('en-US')}` : 'Two Million Four Hundred Fifty Thousand Dollars');
+    const numericStr = finding.numericStr || (finding.numericValue ? `${currSym}${finding.numericValue.toLocaleString('en-US')}` : '$2,405,000');
+    const correctedNum = finding.correctedNum || (finding.wordValue ? `${currSym}${finding.wordValue.toLocaleString('en-US')}` : '$2,450,000');
     
     return {
       ...finding,
@@ -86,7 +87,7 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
       legalDoctrine: STATUTORY_DOCTRINES.UCC_WORDS_PREVAIL.doctrine,
       precedent: STATUTORY_DOCTRINES.UCC_WORDS_PREVAIL.precedent,
       malpracticeRisk: `Severe Financial Exposure: Under UCC § 3-114, words prevail over numbers. Your client faces an unhedged discrepancy between ${writtenWords} and ${numericStr} if executed without mathematical parity.`,
-      courtGradeRedline: `Buyer shall pay to Seller an aggregate cash purchase price of ${writtenWords} (${correctedNum}) (the "Purchase Price"), payable in immediately available wire funds at Closing; provided, that in the event of any typographical or arithmetic discrepancy between words and numerals, the corrected numerical amount shall control for all settlement calculations.`,
+      courtGradeRedline: `Buyer shall pay to Seller an aggregate cash purchase price of ${writtenWords} (${correctedNum}) (the "Purchase Price"), payable in immediately available wire funds at Closing; provided, that in the event of any typographical or arithmetic discrepancy between words and numerals, the written words shall control for all settlement calculations.`,
       actionableAdvice: `Amend the operative payment clause immediately to align the written words and numerical figures prior to circulation to counterparty.`
     };
   }
@@ -207,7 +208,26 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
   }
 
   // 5. TIMELINE / CHRONOLOGICAL CONTRADICTION
-  if (category.includes('TIMELINE') || category.includes('DATE') || finding.type === 'date_anomaly' || finding.type === 'timeline_contradiction' || finding.type === 'expired_date') {
+  if (category.includes('TIMELINE') || category.includes('DATE') || category.includes('EXPIRED') || finding.type === 'date_anomaly' || finding.type === 'timeline_contradiction' || finding.type === 'expired_date') {
+    const isExpired = finding.type === 'expired_date' || category.includes('EXPIRED');
+    const dateStr = finding.dateStr || finding.date || 'specified date';
+
+    if (isExpired) {
+      return {
+        ...finding,
+        id: findingId,
+        occurrences,
+        severityTier: 'critical_deal_breaker',
+        legalSeverityLabel: 'CRITICAL DEAL BREAKER',
+        statutoryCitation: 'Restatement (Second) of Contracts § 237 (Effect of Failure of Performance)',
+        legalDoctrine: 'Failure of Performance Window & Expiration Prior to Closing',
+        precedent: 'Standard Commercial Closing Jurisprudence',
+        malpracticeRisk: `Past-Due Operational Milestone: Contract date ("${dateStr}") has already elapsed relative to execution, creating prospective breach of warranty, unenforceable performance covenants, or unintended holdover status.`,
+        courtGradeRedline: `Amend the operative deadline from "${dateStr}" to an achievable prospective date (e.g., thirty (30) business days following mutual execution).`,
+        actionableAdvice: `Update elapsed dates to prospective future milestones prior to circulation and signing.`
+      };
+    }
+
     return {
       ...finding,
       id: findingId,
@@ -296,13 +316,31 @@ export function enrichAllAuditFindings(auditData) {
   const enforceabilityHazards = [];
   const allEnriched = [];
 
-  // 1. Process Financial Issues (e.g. Word vs Num mismatch)
+  // 1. Process Financial & Date Issues
   (auditData.financialDates?.issues || []).forEach(issue => {
+    let category = 'FINANCIAL CONTRADICTION';
+    let title = issue.title || 'Written Words Do Not Match Numeric Parenthetical';
+    let defaultClause = 'Operative Payment Terms';
+
+    if (issue.type === 'expired_date') {
+      category = 'EXPIRED TIMELINE MILESTONE';
+      title = issue.title || 'Contract Date or Milestone Has Expired';
+      defaultClause = 'Term & Milestones';
+    } else if (issue.type === 'timeline_contradiction') {
+      category = 'TIMELINE CONTRADICTION';
+      title = issue.title || 'Chronological Timeline Contradiction';
+      defaultClause = 'Term & Termination';
+    } else if (issue.type === 'ambiguous_currency') {
+      category = 'CURRENCY AMBIGUITY';
+      title = issue.title || 'Ambiguous Multi-Currency Designation';
+      defaultClause = 'Consideration';
+    }
+
     const enriched = enrichFindingWithStatutoryRemedy({
       ...issue,
-      category: 'FINANCIAL CONTRADICTION',
-      clauseRef: issue.clause || (issue.line ? `Line ${issue.line}` : 'Operative Payment Terms'),
-      title: 'Written Words Do Not Match Numeric Parenthetical'
+      category,
+      clauseRef: issue.clause || (issue.line ? `Line ${issue.line}` : defaultClause),
+      title
     });
     if (enriched.severityTier === 'critical_deal_breaker') {
       dealBreakers.push(enriched);
