@@ -849,8 +849,8 @@ function ContractAnalyzerView({ initialSession }) {
   const [text, setText] = useState(initialSession?.modifiedText || initialSession?.originalText || '');
   const [baselineText, setBaselineText] = useState(initialSession?.originalText || '');
   const [documentTitle, setDocumentTitle] = useState(initialSession?.title || '');
-  const [clientParty, setClientParty] = useState('Acme Holdings LLC');
-  const [counterparty, setCounterparty] = useState('Globex International Corp');
+  const [clientParty, setClientParty] = useState(initialSession?.clientParty || '');
+  const [counterparty, setCounterparty] = useState(initialSession?.counterparty || '');
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
   const [harmonizedData, setHarmonizedData] = useState(null);
   const [isHarmonizing, setIsHarmonizing] = useState(false);
@@ -1343,9 +1343,15 @@ function ContractAnalyzerView({ initialSession }) {
               {text ? (
                 <button
                   type="button"
-                  onClick={() => setText('')}
+                  onClick={() => {
+                    setText('');
+                    setBaselineText('');
+                    setDocumentTitle('');
+                    setClientParty('');
+                    setCounterparty('');
+                  }}
                   className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-800 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1"
-                  title="Clear draft text"
+                  title="Clear draft text and inputs"
                 >
                   Clear Draft
                 </button>
@@ -1356,6 +1362,8 @@ function ContractAnalyzerView({ initialSession }) {
                     setText(HAZARDOUS_SAMPLE_CONTRACT);
                     setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
                     setDocumentTitle('Master Asset Purchase & Services Agreement');
+                    setClientParty('Acme Holdings LLC');
+                    setCounterparty('Globex International Corp');
                   }}
                   className="bg-transparent hover:bg-white/5 border border-zinc-800 hover:border-zinc-700 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
                   title="Load sample demo contract"
