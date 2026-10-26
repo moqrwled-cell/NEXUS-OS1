@@ -10,7 +10,7 @@ import {
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
   Settings, Key, Laptop, Copy, Mail, LogOut,
   BookOpen, FileDown, Sparkles,
-  Columns, Maximize2, ChevronDown, ChevronUp, Eye, Edit3, Crosshair
+  ChevronDown, Crosshair
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
 import { downloadAmendmentRiderDOCX, downloadHarmonizedDeedDOCX } from '../utils/docxExportEngine';
@@ -840,152 +840,6 @@ This Agreement is entered into on this 1st day of October, 2026, by and between 
 14.2 Either party may terminate upon thirty (30) days notice.`;
 
 // =========================================================================
-// INTERACTIVE CONTRACT GUTTER VIEWER (Live Line-Linked Workstation Component)
-// =========================================================================
-function InteractiveContractGutterViewer({ 
-  text, 
-  setText, 
-  highlightedLine, 
-  lineDefectMap, 
-  onLineClick,
-  editorMode,
-  setEditorMode,
-  onCopyText,
-  copiedContractSuccess
-}) {
-  const lines = useMemo(() => text.split('\n'), [text]);
-
-  return (
-    <div className="flex flex-col h-full rounded-2xl bg-zinc-900/70 border border-zinc-800 shadow-2xl overflow-hidden">
-      {/* Pane Header */}
-      <div className="px-4 py-3 bg-zinc-900/95 border-b border-zinc-800 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-2">
-          <FileText size={15} className="text-emerald-400" />
-          <span className="text-xs font-mono font-bold text-zinc-200">
-            OPERATIVE CONTRACT DRAFT
-          </span>
-          <span className="text-[11px] font-mono text-zinc-500 hidden sm:inline">
-            ({lines.length} lines • {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words)
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Mode Switch: Interactive Inspector vs Raw Text */}
-          <div className="flex bg-black/60 p-0.5 rounded-lg border border-zinc-800">
-            <button
-              type="button"
-              onClick={() => setEditorMode('inspector')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                editorMode === 'inspector'
-                  ? 'bg-emerald-500 text-black shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Eye size={12} />
-              <span>Inspector</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditorMode('raw')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                editorMode === 'raw'
-                  ? 'bg-emerald-500 text-black shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Edit3 size={12} />
-              <span>Edit Raw</span>
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={onCopyText}
-            className="p-1.5 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs transition-colors cursor-pointer"
-            title="Copy contract text to clipboard"
-          >
-            {copiedContractSuccess ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Pane Body */}
-      {editorMode === 'raw' ? (
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Paste contract text..."
-          className="w-full h-full min-h-[520px] max-h-[780px] bg-black/40 p-4 text-[13.5px] font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar"
-        />
-      ) : (
-        <div className="h-full min-h-[520px] max-h-[780px] overflow-y-auto custom-scrollbar bg-black/40 font-mono text-[13px] leading-relaxed">
-          {lines.map((lineContent, idx) => {
-            const lineNum = idx + 1;
-            const defects = lineDefectMap?.get(lineNum) || [];
-            const isHighlighted = highlightedLine === lineNum;
-            const hasDealBreaker = defects.some(d => d.type === 'deal_breaker');
-            const hasHazard = defects.some(d => d.type === 'hazard');
-            const hasCitation = defects.some(d => d.type === 'citation');
-            const hasFinancial = defects.some(d => d.type === 'financial');
-
-            return (
-              <div
-                key={lineNum}
-                id={`contract-gutter-line-${lineNum}`}
-                onClick={() => onLineClick(lineNum, defects)}
-                className={`flex items-start transition-all duration-150 group cursor-pointer ${
-                  isHighlighted
-                    ? 'bg-red-500/15 border-l-4 border-red-500 text-white shadow-[inset_0_0_15px_rgba(239,68,68,0.25)]'
-                    : hasDealBreaker
-                    ? 'bg-red-950/20 hover:bg-red-950/30 border-l-2 border-red-500/60'
-                    : hasHazard
-                    ? 'bg-amber-950/15 hover:bg-amber-950/25 border-l-2 border-amber-500/50'
-                    : hasCitation
-                    ? 'bg-cyan-950/15 hover:bg-cyan-950/25 border-l-2 border-cyan-500/50'
-                    : hasFinancial
-                    ? 'bg-orange-950/15 hover:bg-orange-950/25 border-l-2 border-orange-500/50'
-                    : 'hover:bg-white/[0.02] border-l-2 border-transparent text-zinc-300'
-                }`}
-              >
-                {/* Gutter Line Number & Dot */}
-                <div className="w-12 py-0.5 pr-2.5 pl-1.5 text-right shrink-0 select-none flex items-center justify-end gap-1.5 text-zinc-600 group-hover:text-zinc-400 font-mono text-[11px]">
-                  {hasDealBreaker ? (
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" title="Critical Deal Breaker on this line" />
-                  ) : hasHazard ? (
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" title="Enforceability Hazard on this line" />
-                  ) : hasFinancial ? (
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" title="Financial Mismatch on this line" />
-                  ) : hasCitation ? (
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" title="Broken Citation on this line" />
-                  ) : null}
-                  <span>{lineNum}</span>
-                </div>
-
-                {/* Line Content */}
-                <div className="flex-1 py-0.5 px-3 break-all whitespace-pre-wrap font-legal text-[13.5px]">
-                  {lineContent || <span className="text-zinc-700 select-none">&nbsp;</span>}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Pane Footer */}
-      <div className="px-4 py-2.5 border-t border-zinc-800 bg-zinc-950/80 text-[11px] font-mono text-zinc-400 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 text-red-400"><span className="w-2 h-2 rounded-full bg-red-500" /> Deal Breakers</span>
-          <span className="flex items-center gap-1.5 text-amber-300"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Hazards</span>
-          <span className="flex items-center gap-1.5 text-orange-400"><span className="w-1.5 h-1.5 rounded-full bg-orange-400" /> Financials</span>
-          <span className="flex items-center gap-1.5 text-cyan-400"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Citations</span>
-        </div>
-        <span className="text-zinc-500">Interactive line inspector</span>
-      </div>
-    </div>
-  );
-}
-
-// =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + In-Memory Proofreader + Multi-Export)
 // =========================================================================
 function ContractAnalyzerView({ initialSession }) {
@@ -1092,90 +946,24 @@ function ContractAnalyzerView({ initialSession }) {
     return enrichAllAuditFindings(auditResults);
   }, [auditResults]);
 
-  // Workstation Dual-Pane & Gutter Navigation States
-  const [highlightedLine, setHighlightedLine] = useState(null);
-  const [workstationView, setWorkstationView] = useState('split'); // 'split' | 'full-hud' | 'full-contract'
-  const [editorMode, setEditorMode] = useState('inspector'); // 'inspector' | 'raw'
+  // Workstation Navigation States
   const [showAltExports, setShowAltExports] = useState(false);
   const [noticeExpanded, setNoticeExpanded] = useState(false);
-  const [copiedContractSuccess, setCopiedContractSuccess] = useState(false);
-  const [showSetupInputs, setShowSetupInputs] = useState(false);
 
   const handleJumpToLine = (lineNum) => {
     if (!lineNum) return;
-    setHighlightedLine(lineNum);
-    if (editorMode !== 'inspector') setEditorMode('inspector');
-    setTimeout(() => {
-      const el = document.getElementById(`contract-gutter-line-${lineNum}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const textarea = document.getElementById('contract-draft-textarea');
+    if (textarea) {
+      textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const lines = text.split('\n');
+      let charPos = 0;
+      for (let i = 0; i < Math.min(lineNum - 1, lines.length); i++) {
+        charPos += lines[i].length + 1;
       }
-    }, 60);
-  };
-
-  const handleLineClick = (lineNum, defects) => {
-    setHighlightedLine(lineNum);
-    if (defects && defects.length > 0) {
-      if (defects.some(d => d.type === 'deal_breaker')) {
-        setActiveHudTab('dealBreakers');
-      } else if (defects.some(d => d.type === 'hazard')) {
-        setActiveHudTab('enforceability');
-      } else if (defects.some(d => d.type === 'financial')) {
-        setActiveHudTab('financialDates');
-      } else if (defects.some(d => d.type === 'citation')) {
-        setActiveHudTab('crossRefs');
-      }
+      textarea.focus();
+      textarea.setSelectionRange(charPos, charPos + (lines[lineNum - 1]?.length || 0));
     }
   };
-
-  const handleCopyContract = () => {
-    if (!text) return;
-    navigator.clipboard.writeText(text);
-    setCopiedContractSuccess(true);
-    setTimeout(() => setCopiedContractSuccess(false), 2000);
-  };
-
-  const lineDefectMap = useMemo(() => {
-    const map = new Map();
-    if (!enrichedAudit) return map;
-
-    // 1. Deal Breakers (Red)
-    (enrichedAudit.dealBreakers || []).forEach(db => {
-      const targetLines = db.lines && db.lines.length > 0 ? db.lines : (db.line ? [db.line] : []);
-      targetLines.forEach(l => {
-        if (!map.has(l)) map.set(l, []);
-        map.get(l).push({ type: 'deal_breaker', title: db.title, severity: 'critical' });
-      });
-    });
-
-    // 2. Enforceability Hazards (Amber)
-    (enrichedAudit.enforceabilityHazards || []).forEach(eh => {
-      const targetLines = eh.lines && eh.lines.length > 0 ? eh.lines : (eh.line ? [eh.line] : []);
-      targetLines.forEach(l => {
-        if (!map.has(l)) map.set(l, []);
-        map.get(l).push({ type: 'hazard', title: eh.title, severity: 'warning' });
-      });
-    });
-
-    // 3. Citations & Exhibits (Cyan)
-    (auditResults?.crossRefs?.issues || []).forEach(cr => {
-      const targetLines = cr.lines && cr.lines.length > 0 ? cr.lines : (cr.line ? [cr.line] : []);
-      targetLines.forEach(l => {
-        if (!map.has(l)) map.set(l, []);
-        map.get(l).push({ type: 'citation', title: cr.targetName, severity: cr.severity || 'warning' });
-      });
-    });
-
-    // 4. Financial & Dates (Orange)
-    (auditResults?.financialDates?.issues || []).forEach(fd => {
-      if (fd.line) {
-        if (!map.has(fd.line)) map.set(fd.line, []);
-        map.get(fd.line).push({ type: 'financial', title: fd.title, severity: fd.severity || 'critical' });
-      }
-    });
-
-    return map;
-  }, [enrichedAudit, auditResults]);
 
   const [obligationPartyFilter, setObligationPartyFilter] = useState('all'); // all | Client | Counterparty | Mutual | Third Party
   const [obligationDutyFilter] = useState('all'); // all | affirmative | negative | conditional
@@ -1469,10 +1257,8 @@ function ContractAnalyzerView({ initialSession }) {
         <span className="text-zinc-400 text-[11px] shrink-0 font-bold uppercase tracking-wider">ABA Model Rule 1.6 Certified</span>
       </div>
 
-      {/* Clean Horizontal Matter Metadata Bar & Setup Inputs (Collapsible when Audit is Active) */}
-      {(!auditResults || showSetupInputs) && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
+      {/* Clean Horizontal Matter Metadata Bar & Setup Inputs (Always Visible) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
         <div>
           <label className="text-xs font-semibold text-zinc-400 block mb-1">Matter / Agreement Title</label>
           <input
@@ -1563,6 +1349,7 @@ function ContractAnalyzerView({ initialSession }) {
             </div>
           </div>
           <textarea
+            id="contract-draft-textarea"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste contract text here or drag & drop .pdf / .docx / .txt file to audit for broken references, missing exhibits, undefined terms, and financial mismatches..."
@@ -1767,8 +1554,6 @@ function ContractAnalyzerView({ initialSession }) {
           )}
         </div>
       </div>
-    </>
-  )}
 
       {/* Live In-Memory Progress Bar */}
       {isProcessing && (
@@ -1805,128 +1590,9 @@ function ContractAnalyzerView({ initialSession }) {
 
       {/* Analysis Results HUD & Dual-Pane Workstation */}
       {auditResults && (
-        <div className="flex flex-col gap-5 animate-fade-in mt-2">
-          {/* Workstation Command Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-zinc-900/80 border border-zinc-800 shadow-xl backdrop-blur-md">
-            {/* Left: Document info & re-audit */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <FileText size={16} className="text-emerald-400" />
-                <span className="text-sm font-bold text-white tracking-tight">
-                  {documentTitle.trim() || 'Contract Draft'}
-                </span>
-                <span className="text-xs font-mono text-zinc-400 hidden sm:inline">
-                  ({text.split('\n').length} lines • {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words)
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleExecuteAudit()}
-                disabled={isProcessing}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                title="Re-run audit with updated draft text"
-              >
-                <RefreshCw size={12} className={isProcessing ? 'animate-spin' : ''} />
-                <span>Re-Audit Draft</span>
-              </button>
-            </div>
-
-            {/* Right: View Modes & Setup Toggle */}
-            <div className="flex items-center gap-2">
-              <div className="flex bg-black/60 p-0.5 rounded-xl border border-zinc-800 text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setWorkstationView('split')}
-                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    workstationView === 'split'
-                      ? 'bg-emerald-500 text-black font-bold shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                  title="Side-by-side contract viewer and forensic findings"
-                >
-                  <Columns size={13} />
-                  <span className="hidden sm:inline">Split Workstation</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setWorkstationView('full-hud')}
-                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    workstationView === 'full-hud'
-                      ? 'bg-emerald-500 text-black font-bold shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                  title="Full screen forensic audit inspection"
-                >
-                  <Maximize2 size={13} />
-                  <span className="hidden sm:inline">Full HUD</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setWorkstationView('full-contract')}
-                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
-                    workstationView === 'full-contract'
-                      ? 'bg-emerald-500 text-black font-bold shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                  title="Full screen contract editor and line gutter"
-                >
-                  <FileText size={13} />
-                  <span className="hidden sm:inline">Full Contract</span>
-                </button>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowSetupInputs(prev => !prev)}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 transition-colors flex items-center gap-1 cursor-pointer"
-                title="Toggle document metadata and baseline settings"
-              >
-                <Settings size={13} />
-                <span className="hidden md:inline">{showSetupInputs ? 'Hide Setup' : 'Draft Setup'}</span>
-                {showSetupInputs ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Workstation Panes Container */}
-          {workstationView === 'full-contract' ? (
-            <div className="w-full h-[850px]">
-              <InteractiveContractGutterViewer
-                text={text}
-                setText={setText}
-                highlightedLine={highlightedLine}
-                lineDefectMap={lineDefectMap}
-                onLineClick={handleLineClick}
-                editorMode={editorMode}
-                setEditorMode={setEditorMode}
-                onCopyText={handleCopyContract}
-                copiedContractSuccess={copiedContractSuccess}
-              />
-            </div>
-          ) : (
-            <div className={workstationView === 'split' ? 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-start' : 'w-full'}>
-              {workstationView === 'split' && (
-                <div className="lg:col-span-5 sticky top-20 h-[850px]">
-                  <InteractiveContractGutterViewer
-                    text={text}
-                    setText={setText}
-                    highlightedLine={highlightedLine}
-                    lineDefectMap={lineDefectMap}
-                    onLineClick={handleLineClick}
-                    editorMode={editorMode}
-                    setEditorMode={setEditorMode}
-                    onCopyText={handleCopyContract}
-                    copiedContractSuccess={copiedContractSuccess}
-                  />
-                </div>
-              )}
-
-              <div className={workstationView === 'split' ? 'lg:col-span-7 flex flex-col gap-6' : 'flex flex-col gap-6'}>
-                {/* Executive Risk Score & Metrics Banner with Unified Action Dock */}
-                <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex flex-col xl:flex-row xl:items-center justify-between gap-5 shadow-2xl">
+        <div className="w-full flex flex-col gap-6 animate-fade-in mt-4">
+          {/* Executive Risk Score & Metrics Banner with Unified Action Dock */}
+          <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex flex-col xl:flex-row xl:items-center justify-between gap-5 shadow-2xl">
                   <div className="flex items-center gap-5">
                     <div className={`px-5 py-3 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-lg shrink-0`}>
                       <span className="text-3xl font-black block font-mono tracking-tight">{riskScore}</span>
@@ -3541,9 +3207,6 @@ function ContractAnalyzerView({ initialSession }) {
               </span>
             </div>
           </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
 

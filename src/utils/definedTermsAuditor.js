@@ -477,6 +477,24 @@ export function auditDefinedTerms(text = '', options = {}) {
   const RE_ENTITY = /\b([A-Z][A-Za-z0-9&',.-]+(?:\s+[A-Z][A-Za-z0-9&',.-]+){0,4})\s+(LLC|L\.L\.C\.|Inc\.?|Incorporated|Corp\.?|Corporation|Ltd\.?|Limited|LLP|L\.L\.P\.|GmbH)\b/g;
   const entitiesFound = [];
 
+  const STATUTORY_ENTITY_BLACKLIST = new Set([
+    'delawaregeneralcorporation',
+    'californiacorporations',
+    'californiageneralcorporation',
+    'newyorkbusinesscorporation',
+    'modelbusinesscorporation',
+    'uniformcommercial',
+    'federaldepositinsurance',
+    'federaldepositinsurancecorporation',
+    'pensionbenefitguaranty',
+    'pensionbenefitguarantycorporation',
+    'securitiesinvestorprotection',
+    'securitiesinvestorprotectioncorporation',
+    'internalrevenue',
+    'internalrevenueservice',
+    'internaltreaty'
+  ]);
+
   // Determine preamble boundary (first line with SECTION, ARTICLE, WITNESSETH, RECITALS, or max 25 lines)
   let preambleEndLine = lines.length;
   for (let i = 0; i < lines.length; i++) {
@@ -490,13 +508,33 @@ export function auditDefinedTerms(text = '', options = {}) {
   lines.forEach((lineText, idx) => {
     let m;
     while ((m = RE_ENTITY.exec(lineText)) !== null) {
+      // Exclude statutory citations where suffix is immediately followed by Law, Act, Code, Statute, etc.
+      const matchEnd = m.index + m[0].length;
+      const followingText = lineText.slice(matchEnd);
+      if (/^\s+(?:Law|Laws|Act|Acts|Code|Codes|Statute|Statutes|Rules?|Regulation|Regulations|Commission|Department|Division|Board|Governance|Jurisprudence|Section|§)\b/i.test(followingText)) {
+        continue;
+      }
+
+      // Exclude statutory references preceded by legal citation phrases
+      const leadingText = lineText.slice(0, m.index);
+      if (/(?:under|pursuant\s+to|in\s+accordance\s+with|governed\s+by|subject\s+to)\s+$/i.test(leadingText) &&
+          /(?:General|Commercial|Statutory|Uniform|Federal|National)\s*$/i.test(m[1])) {
+        continue;
+      }
+
       let raw = m[0].trim();
       let stem = m[1].trim();
       const suffix = m[2].trim();
 
-      // Clean leading prepositions/conjunctions from title phrases (e.g. "BY AND BETWEEN APEX")
-      stem = stem.replace(/^(?:BY\s+AND\s+BETWEEN|AND\s+BETWEEN|BETWEEN|AND|BY|FOR|OF|TO|THE)\s+/i, '').trim();
+      // Clean leading prepositions, conjunctions, and recital recitals from entity phrases
+      stem = stem.replace(/^(?:BY\s+AND\s+BETWEEN|AND\s+BETWEEN|BETWEEN|AND|BY|FOR|OF|TO|THE|NOW,?\s+THEREFORE,?|WHEREAS,?)\s+/i, '').trim();
       raw = `${stem} ${suffix}`;
+
+      const normStem = normalizeEntityStem(stem);
+      const normRaw = normalizeEntityStem(raw);
+      if (STATUTORY_ENTITY_BLACKLIST.has(normStem) || STATUTORY_ENTITY_BLACKLIST.has(normRaw)) {
+        continue;
+      }
 
       let category = 'OTHER';
       if (/LLC|L\.L\.C\./i.test(suffix)) category = 'LLC';
@@ -572,29 +610,31 @@ export function auditDefinedTerms(text = '', options = {}) {
         severity: 'critical'
       });
     } else {
-      // Check spelling/formatting variations or stem drift
-      const distinctForms = Array.from(new Set(group.map(g => g.raw)));
-      if (distinctForms.length > 1) {
-        const distinctStems = new Set(group.map(g => normalizeEntityStem(g.stem)));
-        const hasStemMismatch = distinctStems.size > 1;
+      // Check spelling variations or stem drift (e.g. Acme Holdings vs Acme Technologies, or typo in stem)
+      const distinctStems = new Set(group.map(g => normalizeEntityStem(g.stem)));
+      const hasStemMismatch = distinctStems.size > 1;
+      if (hasStemMismatch) {
+        const distinctForms = Array.from(new Set(group.map(g => g.raw)));
         const allLines = Array.from(new Set(group.map(g => g.line))).sort((a, b) => a - b);
+        const primaryForm = distinctForms[0];
+        const conflictingForm = distinctForms[1] || '';
         const issueItem = {
-          entity: distinctForms[0],
-          discrepancy: hasStemMismatch
-            ? `Entity name discrepancy detected: ${distinctForms.join(' vs ')}`
-            : `Inconsistent entity spelling/formatting: ${distinctForms.join(' vs ')}`,
+          entity: primaryForm,
+          conflictingEntity: conflictingForm,
+          discrepancy: `Entity name discrepancy detected: ${distinctForms.join(' vs ')}`,
           line: group[0].line,
           lines: allLines
         };
         entityIssues.push(issueItem);
         issues.push({
           type: 'entity_inconsistency',
-          term: distinctForms[0],
+          term: primaryForm,
+          conflictingEntity: conflictingForm,
           line: group[0].line,
           lines: allLines,
           snippet: lines[group[0].line - 1] || '',
           details: issueItem.discrepancy,
-          severity: hasStemMismatch ? 'critical' : 'warning'
+          severity: 'critical'
         });
       }
     }

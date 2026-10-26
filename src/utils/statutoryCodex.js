@@ -169,12 +169,17 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
     const conflicting = finding.conflictingEntity || (finding.details && finding.details.includes('vs') ? finding.details.split('vs').pop().trim() : '');
     const linesStr = finding.lines && finding.lines.length > 1 ? `Lines ${finding.lines.join(', ')}` : (finding.line ? `Line ${finding.line}` : 'Entity Recitals & Signatures');
 
+    const isLegacyAlien = finding.details && finding.details.includes('legacy counterparty');
     const title = conflicting 
       ? `Corporate Entity Mismatch (${primaryEntity} vs. ${conflicting})`
+      : isLegacyAlien
+      ? `Unrecognized Legacy Counterparty (${primaryEntity})`
       : `Corporate Entity Designation Inconsistency (${primaryEntity})`;
 
     const malpracticeRisk = conflicting
       ? `Veil-Piercing Exposure: Mismatched entity designation ("${primaryEntity}" vs. "${conflicting}") threatens limited liability partitioning and creates acute signatory authority disputes under Delaware General Corporation Law (DGCL) § 106 and California Corp. Code § 200.`
+      : isLegacyAlien
+      ? `Unrecognized Alien Entity: Document references "${primaryEntity}" which is not an executing party to this Agreement, creating confusion as to rights and obligations.`
       : `Veil-Piercing Exposure: Inconsistent corporate designation threatens limited liability partitioning and creates acute signatory authority disputes.`;
 
     const courtGradeRedline = conflicting
@@ -183,14 +188,15 @@ export function enrichFindingWithStatutoryRemedy(finding, _context = {}) {
 
     const actionableAdvice = `Harmonize entity legal name and state of organization across Preamble, Covenants, and Signature Blocks to "${primaryEntity}". If counterparty intended to bind an affiliate, execute an explicit Joinder Agreement.`;
 
+    const isWarning = finding.severity === 'warning';
     return {
       ...finding,
       id: findingId,
       occurrences,
       clauseRef: linesStr,
       title: finding.title || title,
-      severityTier: 'critical_deal_breaker',
-      legalSeverityLabel: 'CRITICAL DEAL BREAKER',
+      severityTier: isWarning ? 'enforceability_hazard' : 'critical_deal_breaker',
+      legalSeverityLabel: isWarning ? 'ENFORCEABILITY HAZARD' : 'CRITICAL DEAL BREAKER',
       statutoryCitation: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.statute,
       legalDoctrine: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.doctrine,
       precedent: STATUTORY_DOCTRINES.CORPORATE_ENTITY_MUTATION.precedent,
@@ -347,7 +353,7 @@ export function enrichAllAuditFindings(auditData) {
       category: isEntity ? 'CORPORATE ENTITY MUTATION' : isBoilerplate ? 'TEMPLATE DRAFTING ARTIFACT' : 'UNDEFINED OPERATIVE TERM',
       clauseRef: issue.clause || linesStr,
       title: isEntity 
-        ? (issue.conflictingEntity ? `Corporate Entity Mismatch (${issue.term || issue.entity} vs. ${issue.conflictingEntity})` : `Corporate Entity Mismatch (${issue.entity || 'LLC vs Inc'})`) 
+        ? (issue.conflictingEntity ? `Corporate Entity Mismatch (${issue.term || issue.entity} vs. ${issue.conflictingEntity})` : (issue.details && issue.details.includes('legacy counterparty') ? `Unrecognized Legacy Counterparty: "${issue.term || issue.entity}"` : `Corporate Entity Inconsistency: "${issue.term || issue.entity}"`)) 
         : isBoilerplate
         ? `Unfilled Template Placeholder: ${issue.placeholder || issue.term}`
         : `Undefined Operative Term: "${issue.term || ''}"`
