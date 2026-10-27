@@ -21,17 +21,14 @@ export default {
         'obsidian-border': 'rgba(255, 255, 255, 0.08)',
       },
       fontFamily: {
-        // High-Precision Typography System
-        heading: ['"Instrument Serif"', 'serif'],
-        body: ['"Barlow"', 'sans-serif'],
-        sans: ['"Barlow"', '"Inter"', 'system-ui', 'sans-serif'],
-        ui: ['"Barlow"', '"Inter"', 'sans-serif'],
-        serif: ['"Instrument Serif"', '"Source Serif 4"', 'serif'],
+        // High-Precision Dual-Tier Institutional Typography System
+        heading: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+        body: ['"Inter"', 'system-ui', 'sans-serif'],
+        sans: ['"Inter"', 'system-ui', 'sans-serif'],
+        ui: ['"Inter"', 'system-ui', 'sans-serif'],
+        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
         legal: ['"Source Serif 4"', 'Georgia', 'Cambria', 'serif'],
-        mono: ['"IBM Plex Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
-        // Fallback font aliases
-        cairo: ['"Cairo"', '"Inter"', 'sans-serif'],
-        almarai: ['"Almarai"', '"Inter"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
       backgroundImage: {
         'emerald-gradient': 'linear-gradient(135deg, #00FF9D 0%, #00F0FF 100%)',
