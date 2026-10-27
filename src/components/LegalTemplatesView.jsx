@@ -521,13 +521,6 @@ export default function LegalTemplatesView({
         </div>
 
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
-          <button
-            onClick={() => setShowStateDossierModal(true)}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
-          >
-            <MapPin size={13} className="text-emerald-400" />
-            <span>State Jurisprudence Dossier (CA, TX, NY, FL)</span>
-          </button>
           {onOpenGuide && (
             <button
               onClick={() => onOpenGuide('templates')}
@@ -742,15 +735,6 @@ export default function LegalTemplatesView({
           );
         })}
       </div>
-
-      {/* State Statutory Jurisprudence & Mandatory Contract Riders Dossier Modal */}
-      <StateDossierModal
-        isOpen={showStateDossierModal}
-        onClose={() => setShowStateDossierModal(false)}
-        selectedStateRider={selectedStateRider}
-        onSelectStateRider={handleSelectStateRider}
-        isEditorActive={false}
-      />
     </div>
   );
 }
