@@ -188,6 +188,8 @@ https.request = function (...args) {
     'src/utils/docxExportEngine.js',
     'src/utils/docxExtractor.js',
     'src/utils/contractMetadataDetector.js',
+    'src/utils/liabilityMatrixEngine.js',
+    'src/components/LiabilityReconcilerHUD.jsx',
     'src/components/LegalTemplatesView.jsx',
     'src/workers/contractWorker.js',
     'src/pages/ContractCompare.jsx'
@@ -1399,6 +1401,65 @@ assert(harmonizedResult.verification.passed === true, 'T7.18: Post-restatement v
 assert(harmonizedResult.verification.integrityScore === 100, 'T7.19: Data integrity score achieves 100% mathematical assertion');
 assert(harmonizedResult.verification.missingAnchors.length === 0, 'T7.20: Zero missing anchors or hallucinations in restated deed');
 assert(harmonizedResult.processingTimeMs < 500, `T7.21: In-RAM restatement and diff executes in <500ms (actual: ${harmonizedResult.processingTimeMs}ms)`);
+
+// ============================================================================
+// [TIER 8] Interlocking Liability & Indemnity Reconciler Engine
+// ============================================================================
+suiteBanner('TIER 8', 'Interlocking Liability & Indemnity Reconciler (Cap vs Indemnity Matrix)');
+
+const { 
+  analyzeLiabilityInterlocks, 
+  SAMPLE_DEALS, 
+  generateHarmonizedLiabilityRiderText 
+} = await import('../src/utils/liabilityMatrixEngine.js');
+
+// Test 8.1: Engine handles empty or invalid text safely
+const emptyRes = analyzeLiabilityInterlocks('');
+assert(emptyRes.score === 0, 'T8.1: Empty input returns score === 0');
+assert(emptyRes.statusBadge === 'NO_CONTRACT_LOADED', 'T8.2: Empty input returns NO_CONTRACT_LOADED badge');
+
+// Test 8.3: Evaluates high-risk SaaS deal with Gutted Indemnity trap
+const guttedRes = analyzeLiabilityInterlocks(SAMPLE_DEALS.gutted_indemnity_msa.text);
+assert(guttedRes.score < 50, `T8.3: Gutted indemnity contract receives critical score (<50) (actual: ${guttedRes.score})`);
+assert(guttedRes.statusBadge.includes('CRITICAL EXPOSURE'), 'T8.4: Correct status badge assigned to gutted contract');
+
+// Test 8.5: Rule 1 catches missing indemnity carve-out from general cap
+const r1 = guttedRes.rules.find(r => r.id === 'RULE_01_GUTTED_INDEMNITY');
+assert(r1 && r1.status === 'FAIL', 'T8.5: Rule 1 FAILS on missing indemnity carve-out from aggregate cap');
+assert(r1 && r1.severity === 'CRITICAL', 'T8.6: Rule 1 is classified as CRITICAL severity');
+
+// Test 8.7: Rule 2 catches consequential waiver bar on defense fees
+const r2 = guttedRes.rules.find(r => r.id === 'RULE_02_CONSEQUENTIAL_DEFENSE_LEAK');
+assert(r2 && r2.status === 'FAIL', 'T8.7: Rule 2 FAILS on consequential damages bar on legal defense fees');
+
+// Test 8.8: Rule 6 catches insurance vs cap mismatch ($5M policy vs $50k cap)
+const r6 = guttedRes.rules.find(r => r.id === 'RULE_06_INSURANCE_CAP_PARITY');
+assert(r6 && r6.status === 'WARNING', 'T8.8: Rule 6 flags insurance vs cap mismatch');
+
+// Test 8.9: Evaluates asymmetric vendor agreement
+const asymRes = analyzeLiabilityInterlocks(SAMPLE_DEALS.asymmetric_sole_remedy.text);
+const r3 = asymRes.rules.find(r => r.id === 'RULE_03_SOLE_REMEDY_SUBORDINATION');
+assert(r3 && r3.status === 'FAIL', 'T8.9: Rule 3 FAILS on unsubordinated sole and exclusive remedy clause');
+
+const r5 = asymRes.rules.find(r => r.id === 'RULE_05_CAP_ASYMMETRY');
+assert(r5 && r5.status === 'FAIL', 'T8.10: Rule 5 FAILS on unilateral vendor cap');
+
+// Test 8.11: Evaluates gold-standard AmLaw 100 deal
+const balancedRes = analyzeLiabilityInterlocks(SAMPLE_DEALS.harmonized_amlaw100.text);
+assert(balancedRes.score >= 90, `T8.11: Balanced AmLaw 100 deal achieves score >= 90 (actual: ${balancedRes.score})`);
+const balancedR1 = balancedRes.rules.find(r => r.id === 'RULE_01_GUTTED_INDEMNITY');
+assert(balancedR1 && balancedR1.status === 'PASS', 'T8.12: Rule 1 PASSES on balanced AmLaw 100 contract');
+
+// Test 8.13: Harmonized rider generation produces non-empty court-grade text
+const liabilityRiderText = generateHarmonizedLiabilityRiderText({ capAmount: '750,000' });
+assert(liabilityRiderText.includes('ARTICLE XII -- HARMONIZED LIMITATION OF LIABILITY'), 'T8.13: Generated rider contains formal Article XII header');
+assert(liabilityRiderText.includes('$750,000'), 'T8.14: Generated rider injects customized cap dollar amount');
+assert(liabilityRiderText.includes('shall be deemed direct damages'), 'T8.15: Generated rider injects direct damage deeming clause for defense fees');
+assert(liabilityRiderText.includes('Data Protection and Security Super-Cap'), 'T8.16: Generated rider injects dedicated cyber super-cap');
+assert(liabilityRiderText.includes('Subordination of Sole and Exclusive Remedy'), 'T8.17: Generated rider explicitly subordinates sole remedy provisions');
+
+// Test 8.18: Processing speed assertion (<200ms)
+assert(guttedRes.processingTimeMs < 200, `T8.18: In-memory liability audit executes in <200ms (actual: ${guttedRes.processingTimeMs}ms)`);
 
 // ============================================================================
 // FINAL RUNTIME AIR-GAP AUDIT ASSERTION

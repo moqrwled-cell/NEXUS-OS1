@@ -4,7 +4,7 @@ import {
   X, ShieldCheck, FileCheck, Search, Sparkles,
   EyeOff, Layers, BookOpen, Database, ArrowRight,
   CheckCircle2, Scale, Lock, Download, AlertTriangle,
-  FileCode, Terminal, Cpu
+  FileCode, Terminal, Cpu, ShieldAlert
 } from 'lucide-react';
 
 export default function SystemGuideModal({
@@ -129,7 +129,7 @@ export default function SystemGuideModal({
                   <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
                     Available Verification Modes
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                     {/* Tool 1 */}
                     <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
                       <div className="space-y-2">
@@ -193,6 +193,28 @@ export default function SystemGuideModal({
                         className="mt-3 w-full py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
                       >
                         Launch Proofreader <ArrowRight size={11} />
+                      </button>
+                    </div>
+
+                    {/* Tool 4 */}
+                    <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                            <ShieldAlert size={14} />
+                          </span>
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-bold">Risk Matrix</span>
+                        </div>
+                        <h5 className="text-xs font-bold text-white">Liability Reconciler</h5>
+                        <p className="text-[11px] text-zinc-400 leading-relaxed">
+                          Audits 7 interlocking liability vectors, pinpointing gutted indemnities, consequential waiver traps, and sole remedy overreach.
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => onLaunchTool && onLaunchTool('analyzer', 'liability')}
+                        className="mt-3 w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                      >
+                        Launch Reconciler <ArrowRight size={11} />
                       </button>
                     </div>
                   </div>

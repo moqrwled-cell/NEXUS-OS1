@@ -50,8 +50,10 @@ import { detectContractMetadata } from '../utils/contractMetadataDetector';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 import PirateTrapModal from '../components/PirateTrapModal';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
+import LiabilityReconcilerHUD from '../components/LiabilityReconcilerHUD';
 import SystemGuideModal from '../components/SystemGuideModal';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
+import { analyzeLiabilityInterlocks, SAMPLE_DEALS } from '../utils/liabilityMatrixEngine';
 
 export default function ContractCompare() {
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
@@ -227,6 +229,24 @@ export default function ContractCompare() {
                   <span className="truncate">Linguistic & Deed Proofreader</span>
                 </div>
                 <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Deed</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTool('analyzer');
+                  setAnalysisMode('liability');
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                  analysisMode === 'liability'
+                    ? 'bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <ShieldAlert size={13} className={analysisMode === 'liability' ? 'text-amber-400' : 'text-zinc-500'} />
+                  <span className="truncate">Liability & Indemnity Reconciler</span>
+                </div>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Matrix</span>
               </button>
             </div>
           )}
@@ -866,6 +886,8 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
   const [diffGranularity, setDiffGranularity] = useState('word'); // 'word' | 'line'
   const [harmonizedData, setHarmonizedData] = useState(null);
   const [isHarmonizing, setIsHarmonizing] = useState(false);
+  const [liabilityAuditData, setLiabilityAuditData] = useState(null);
+  const [isAnalyzingLiability, setIsAnalyzingLiability] = useState(false);
 
   // File upload & Drag-and-Drop states
   const [uploadStatus, setUploadStatus] = useState({ target: '', baseline: '' });
@@ -949,6 +971,23 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
         console.error('Failed to harmonize document:', err);
       } finally {
         setIsHarmonizing(false);
+      }
+    }, 40);
+  };
+
+  const handleRunLiabilityAudit = (textOverride = null) => {
+    const rawInput = typeof textOverride === 'string' ? textOverride : text;
+    if (!rawInput || !rawInput.trim()) return;
+    setIsAnalyzingLiability(true);
+    setTimeout(() => {
+      try {
+        const res = analyzeLiabilityInterlocks(rawInput.trim());
+        setLiabilityAuditData(res);
+        setAnalysisMode('liability');
+      } catch (err) {
+        console.error('Failed to audit liability interlocks:', err);
+      } finally {
+        setIsAnalyzingLiability(false);
       }
     }, 40);
   };
@@ -1275,6 +1314,23 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
               <Sparkles size={14} className="text-emerald-400" />
               Linguistic & Deed Proofreader
             </button>
+            <button
+              onClick={() => {
+                setAnalysisMode('liability');
+                if (!liabilityAuditData && text.trim()) {
+                  handleRunLiabilityAudit();
+                }
+              }}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                analysisMode === 'liability'
+                  ? 'bg-amber-500/15 border border-amber-400/35 border-t-white/30 text-amber-300 shadow-[0_2px_10px_rgba(251,191,36,0.15)] font-bold'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+              title="Audit Interlocking Liabilities, Caps, and Indemnity Carve-Outs"
+            >
+              <ShieldAlert size={14} className="text-amber-400" />
+              Liability & Indemnity Reconciler
+            </button>
           </div>
 
           {onOpenGuide && (
@@ -1338,8 +1394,8 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
       </div>
 
       {/* Input Panes */}
-      {analysisMode === 'single' || analysisMode === 'harmonizer' ? (
-        /* SINGLE DOCUMENT INTEGRITY AUDIT / HARMONIZER MODE */
+      {analysisMode === 'single' || analysisMode === 'harmonizer' || analysisMode === 'liability' ? (
+        /* SINGLE DOCUMENT INTEGRITY AUDIT / HARMONIZER / LIABILITY MODE */
         <div 
           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
@@ -1366,6 +1422,11 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
                 <>
                   <Sparkles size={15} className="text-emerald-400" />
                   LINGUISTIC & LEGAL PROOFREADER (Preserving 100% of Land Boundaries, Acreages & Covenants)
+                </>
+              ) : analysisMode === 'liability' ? (
+                <>
+                  <ShieldAlert size={15} className="text-amber-400" />
+                  CONTRACT DRAFT TO RECONCILE (Auditing Cap vs Indemnity & Consequential Waivers)
                 </>
               ) : (
                 <>
@@ -1626,6 +1687,16 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
             >
               {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
               <span>{isHarmonizing ? 'Proofreading in Local Memory...' : 'Execute Linguistic & Legal Proofreading'}</span>
+            </button>
+          ) : analysisMode === 'liability' ? (
+            <button
+              type="button"
+              onClick={() => handleRunLiabilityAudit()}
+              disabled={isAnalyzingLiability || !text.trim()}
+              className="px-8 py-3 bg-gradient-to-r from-amber-400 via-rose-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(251,191,36,0.3)] active:scale-[0.98] cursor-pointer"
+            >
+              {isAnalyzingLiability ? <RefreshCw className="animate-spin" size={16} /> : <ShieldAlert size={16} />}
+              <span>{isAnalyzingLiability ? 'Auditing Liability Interlocks in RAM...' : 'Reconcile Liability & Indemnity Caps'}</span>
             </button>
           ) : (
             <button
@@ -2102,6 +2173,32 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
                 </span>
               </button>
             </div>
+
+            {/* Cluster 5: Liability & Indemnity Matrix */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-amber-950/30 border border-amber-500/40 shrink-0">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold px-2 flex items-center gap-1">
+                <ShieldAlert size={12} className="text-amber-400" /> Liabilities:
+              </span>
+              <button
+                onClick={() => {
+                  setActiveHudTab('liabilityReconciler');
+                  if (!liabilityAuditData && text.trim()) {
+                    handleRunLiabilityAudit();
+                  }
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeHudTab === 'liabilityReconciler'
+                    ? 'bg-gradient-to-r from-amber-400 via-rose-400 to-cyan-400 text-black shadow-[0_0_15px_rgba(251,191,36,0.4)]'
+                    : 'text-amber-300 hover:text-white hover:bg-amber-500/10'
+                }`}
+              >
+                <ShieldAlert size={13} />
+                <span>Liability & Indemnity Matrix</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-950 text-amber-300 border border-amber-400/50 font-mono font-bold">
+                  {liabilityAuditData?.rules?.filter(r => r.status === 'FAIL').length || (text.trim() ? analyzeLiabilityInterlocks(text).rules.filter(r => r.status === 'FAIL').length : 0)} Traps
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* TAB: LINGUISTIC & DEED PROOFREADER */}
@@ -2123,6 +2220,30 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
                   setText(restated);
                   setActiveHudTab('dealBreakers');
                   handleExecuteAudit({ text: restated, mode: analysisMode });
+                }}
+              />
+            </div>
+          )}
+
+          {/* TAB: LIABILITY & INDEMNITY RECONCILER */}
+          {activeHudTab === 'liabilityReconciler' && (
+            <div className="flex flex-col gap-5">
+              <LiabilityReconcilerHUD
+                auditResults={liabilityAuditData || analyzeLiabilityInterlocks(text)}
+                contractText={text}
+                documentTitle={documentTitle}
+                onLoadSampleDeal={(sampleKey) => {
+                  const sample = SAMPLE_DEALS[sampleKey];
+                  if (sample) {
+                    setText(sample.text);
+                    setDocumentTitle(sample.title);
+                    handleRunLiabilityAudit(sample.text);
+                  }
+                }}
+                onApplyRiderToDraft={(riderText) => {
+                  const updated = `${text.trim()}\n\n${riderText}`;
+                  setText(updated);
+                  handleRunLiabilityAudit(updated);
                 }}
               />
             </div>
@@ -3319,6 +3440,28 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
             setText(harmonizedData.restatedText);
             setAnalysisMode('single');
             handleExecuteAudit({ text: harmonizedData.restatedText, mode: 'single' });
+          }}
+        />
+      )}
+
+      {/* Liability & Indemnity Reconciler HUD */}
+      {analysisMode === 'liability' && (liabilityAuditData || text.trim()) && (
+        <LiabilityReconcilerHUD
+          auditResults={liabilityAuditData || analyzeLiabilityInterlocks(text)}
+          contractText={text}
+          documentTitle={documentTitle}
+          onLoadSampleDeal={(sampleKey) => {
+            const sample = SAMPLE_DEALS[sampleKey];
+            if (sample) {
+              setText(sample.text);
+              setDocumentTitle(sample.title);
+              handleRunLiabilityAudit(sample.text);
+            }
+          }}
+          onApplyRiderToDraft={(riderText) => {
+            const updated = `${text.trim()}\n\n${riderText}`;
+            setText(updated);
+            handleRunLiabilityAudit(updated);
           }}
         />
       )}
