@@ -431,11 +431,11 @@ export default function LegalTemplatesView({
             <BookOpen className="text-emerald-400" size={24} />
             <span>AmLaw 100 Legal Drafting Vault</span>
             <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              U.S. Commercial Law
+              All 50 U.S. States
             </span>
           </h2>
           <p className="text-gray-400 text-xs mt-1 max-w-2xl">
-            Pre-assembled, battle-tested institutional contract models complying with Delaware General Corporation Law, the Uniform Commercial Code (UCC), FIRPTA, and American commercial jurisprudence.
+            Pre-assembled, battle-tested institutional contract models adaptable to all 50 U.S. jurisdictions, complying with Delaware corporate law, the Uniform Commercial Code (UCC), FIRPTA, and American commercial jurisprudence.
           </p>
         </div>
 

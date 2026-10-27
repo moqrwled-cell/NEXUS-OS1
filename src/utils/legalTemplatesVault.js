@@ -21,7 +21,7 @@ export const LEGAL_TEMPLATES = [
     id: 'commercial_land_psa',
     category: 'real_estate',
     title: 'Commercial Land Purchase and Sale Agreement (PSA)',
-    jurisdiction: 'United States Real Property Jurisprudence (State Specific)',
+    jurisdiction: 'All 50 U.S. States (Customizable State Jurisdiction)',
     summary: 'Institutional agreement for the purchase and conveyance of fee simple commercial land and parcels, complete with earnest money escrow, Phase I/II environmental diligence, ALTA title commitments, FIRPTA compliance, liquidated damages, and formal notary acknowledgment.',
     statutoryHighlights: ['FIRPTA Section 1445 Withholding', 'ALTA Title Commitment', 'Phase I/II Environmental', 'Liquidated Damages Escrow'],
     variables: [
@@ -124,7 +124,7 @@ All that certain unimproved parcel of commercial real property situated at {{PRO
     id: 'residential_real_estate_contract',
     category: 'real_estate',
     title: 'Residential Real Property Purchase Agreement',
-    jurisdiction: 'United States Residential Real Estate Standards',
+    jurisdiction: 'All 50 U.S. States (Residential Property Standard)',
     summary: 'Comprehensive residential real estate conveyance contract featuring standard mortgage financing contingency clauses, home and radon inspection periods, lead-based paint disclosures (42 U.S.C. 4852d), and title covenants.',
     statutoryHighlights: ['Lead Paint Disclosure 42 U.S.C. 4852d', 'Mortgage Financing Contingency', 'Home/Radon Inspection Period', 'General Warranty Deed'],
     variables: [
@@ -179,7 +179,7 @@ Date: _________________________        Date: _________________________`
     id: 'commercial_real_estate_loi',
     category: 'real_estate',
     title: 'Commercial Real Estate Letter of Intent (LOI)',
-    jurisdiction: 'United States Real Estate Practice (Universal Form)',
+    jurisdiction: 'All 50 U.S. States (Commercial LOI Universal Standard)',
     summary: 'Standard non-binding commercial acquisition term sheet outlining purchase price, earnest money escrow, physical diligence milestones, closing timelines, and binding exclusivity (no-shop) covenants.',
     statutoryHighlights: ['Binding Exclusivity / No-Shop', 'Feasibility Milestones', 'Refundable Escrow Deposit', 'Non-Binding Letter Format'],
     variables: [
@@ -243,7 +243,7 @@ Title: Authorized Signatory            Title: Authorized Signatory`
     id: 'commercial_triple_net_lease',
     category: 'real_estate',
     title: 'Commercial Triple Net (NNN) Lease Agreement',
-    jurisdiction: 'United States Commercial Real Estate Standards',
+    jurisdiction: 'All 50 U.S. States (Commercial Triple Net Standard)',
     summary: 'Full-length commercial Triple Net lease agreement where Tenant pays base rent plus proportional real estate taxes, property insurance, and common area maintenance (CAM), complete with default remedies and subordination.',
     statutoryHighlights: ['Absolute Net Structure (NNN)', 'CAM Proportional Allocation', 'Accelerated Default Remedies', 'Casualty & Subordination'],
     variables: [
@@ -296,7 +296,7 @@ Title: Authorized Representative       Title: Authorized Representative`
     id: 'llc_operating_agreement',
     category: 'corporate',
     title: 'LLC Operating Agreement (Manager-Managed)',
-    jurisdiction: 'Delaware / US State LLC Acts',
+    jurisdiction: 'Delaware & All 50 States (LLC Act Standard)',
     summary: 'Comprehensive institutional LLC Operating Agreement featuring capital account maintenance under IRC § 704(b), fiduciary duty safe harbors, transfer restrictions (Right of First Refusal), and drag-along/tag-along mechanics.',
     statutoryHighlights: ['IRC Section 704(b) Capital Accounts', 'Right of First Refusal (ROFR)', 'Major Decisions Supermajority', 'Fiduciary Safe Harbors'],
     variables: [
