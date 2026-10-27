@@ -683,13 +683,123 @@ Title: Authorized Representative       Title: Authorized Representative`
 ];
 
 /**
+ * State-Specific Statutory Compliance Riders for High-Stakes U.S. Jurisdictions.
+ * Provides court-grade statutory disclosures and mandatory covenants.
+ */
+export const STATE_SPECIFIC_RIDERS = {
+  general: {
+    id: 'general',
+    name: '50-State Multi-Jurisdiction Baseline',
+    shortName: '50-State Baseline',
+    badge: 'Restatement & UCC Uniform Standard',
+    statute: 'Restatement (Second) of Contracts § 234 & UCC Article 2/9',
+    summary: 'Uniform commercial framework establishing concurrent performance covenants and cross-state corporate good standing.',
+    legalReason: 'Provides the authoritative AmLaw 100 commercial baseline for transactions spanning Delaware, Ohio, Illinois, Georgia, North Carolina, and remaining U.S. jurisdictions without specialized local statutory overrides.',
+    defaults: {
+      GOVERNING_STATE: 'Delaware',
+      COUNTY_STATE: 'New Castle County, State of Delaware',
+      VENUE_COUNTY: 'Delaware Court of Chancery / Superior Court of New Castle County'
+    },
+    riderClause: `ARTICLE VIII -- 50-STATE COMMERCIAL ENFORCEABILITY RIDER
+8.1 Concurrent Closing Obligations (Restatement (Second) of Contracts § 234).
+The delivery of the deed and title conveyancing instruments by Seller and the payment of the balance of the Purchase Price by Buyer are mutually dependent and concurrent conditions precedent. Neither party shall be deemed in default until the other party has tendered performance in full.
+8.2 Foreign Qualification and Corporate Enforceability.
+Each Party represents and warrants that it is duly qualified to transact business and in good standing under the laws of the jurisdiction where the Land is situated, and that this Agreement constitutes a valid, legally binding obligation under applicable state jurisprudence.`
+  },
+
+  california: {
+    id: 'california',
+    name: 'California Commercial Real Property Rider',
+    shortName: 'California (CA)',
+    badge: 'Cal. Civ. Code § 1677 & § 1103',
+    statute: 'California Civil Code § 1671, § 1677 & § 1103',
+    summary: 'Mandatory 10-point bold liquidated damages initials clause and statutory Natural Hazard Disclosure (NHD) delivery covenant.',
+    legalReason: 'Under California Civil Code § 1677, a liquidated damages clause in a real property contract is legally VOID unless printed in 10-point bold face font and separately initialed by each party. Additionally, failure to provide the statutory Natural Hazard Disclosure (NHD) under § 1103 gives the buyer statutory rescission rights.',
+    defaults: {
+      GOVERNING_STATE: 'California',
+      COUNTY_STATE: 'Orange County, State of California',
+      VENUE_COUNTY: 'Superior Court of the State of California, County of Orange'
+    },
+    riderClause: `ARTICLE VIII -- CALIFORNIA STATUTORY COMPLIANCE RIDER
+8.1 Liquidated Damages Statutory Initials (Cal. Civ. Code § 1671 & § 1677).
+THE PARTIES EXPRESSLY AGREE THAT PURSUANT TO CALIFORNIA CIVIL CODE SECTIONS 1671 AND 1677, IN THE EVENT OF BUYER'S DEFAULT AND FAILURE TO COMPLETE THE PURCHASE OF THE PROPERTY, SELLER SHALL RETAIN THE EARNEST MONEY DEPOSIT AS FULLY LIQUIDATED DAMAGES. THE PARTIES ACKNOWLEDGE AND AGREE THAT SELLER'S ACTUAL DAMAGES IN THE EVENT OF A DEFAULT WOULD BE IMPRACTICABLE AND EXTREMELY DIFFICULT TO ASCERTAIN, AND THAT SAID DEPOSIT REPRESENTS THE PARTIES' REASONABLE ESTIMATE OF SUCH DAMAGES.
+
+SELLER'S INITIALS: [ __________ ]           BUYER'S INITIALS: [ __________ ]
+
+8.2 Natural Hazard Disclosure Statement (Cal. Civ. Code § 1103).
+Within seven (7) business days following the Effective Date, Seller shall deliver to Buyer a statutory Natural Hazard Disclosure Statement ("NHD Report") prepared by a licensed third-party expert, disclosing whether the Land is situated within a Special Flood Hazard Area (FEMA), Area of Potential Flooding, Very High Fire Hazard Severity Zone, Wildland Area (SRA), Earthquake Fault Zone (Alquist-Priolo Act), or Seismic Hazard Zone.`
+  },
+
+  texas: {
+    id: 'texas',
+    name: 'Texas Commercial Real Property Rider',
+    shortName: 'Texas (TX)',
+    badge: 'Tex. Water Code § 49.452 & DTPA Waiver',
+    statute: 'Texas Water Code § 49.452 & Tex. Bus. & Com. Code § 17.42',
+    summary: 'Statutory MUD / Utility District notice and express Deceptive Trade Practices Act (DTPA) commercial disclaimer.',
+    legalReason: 'Texas Water Code § 49.452 grants the purchaser an unconditional statutory right to rescind and terminate the contract up until closing if the seller fails to furnish the statutory MUD notice. The DTPA waiver under Tex. Bus. & Com. Code § 17.42 prevents treble-damages consumer protection claims between sophisticated commercial parties.',
+    defaults: {
+      GOVERNING_STATE: 'Texas',
+      COUNTY_STATE: 'Travis County, State of Texas',
+      VENUE_COUNTY: 'District Court of Travis County, Texas'
+    },
+    riderClause: `ARTICLE VIII -- TEXAS STATUTORY COMPLIANCE RIDER
+8.1 Statutory Notice to Purchaser Regarding Water / Utility District (Texas Water Code § 49.452).
+The real property, described herein, that you are about to purchase may be situated under Texas Water Code Chapter 49 in a municipal utility district (MUD) or fresh water supply district. The district has taxing authority separate from any other taxing authority and may issue bonds and impose taxes. If the Land is located in such district, Seller shall furnish to Buyer the statutory written notice prior to final execution of this contract pursuant to Texas Water Code Section 49.452.
+8.2 Express Commercial DTPA Waiver (Tex. Bus. & Com. Code § 17.42).
+BUYER HEREBY UNCONDITIONALLY WAIVES AND RELINQUISHES ALL RIGHTS AND REMEDIES UNDER THE TEXAS DECEPTIVE TRADE PRACTICES -- CONSUMER PROTECTION ACT (TEXAS BUSINESS & COMMERCE CODE SECTION 17.41 ET SEQ.), A LAW THAT GIVES CONSUMERS SPECIAL RIGHTS. BUYER REPRESENTS AND WARRANTS THAT BUYER HAS KNOWLEDGE AND EXPERIENCE IN REAL ESTATE INVESTMENTS AND IS REPRESENTED BY INDEPENDENT LEGAL COUNSEL.`
+  },
+
+  new_york: {
+    id: 'new_york',
+    name: 'New York Commercial Real Property Rider',
+    shortName: 'New York (NY)',
+    badge: 'Zev v. Merman TOE & NY Tax Law Art. 31',
+    statute: 'Zev v. Merman, 73 N.Y.2d 781 & NY Tax Law § 1402',
+    summary: 'Formal Time of the Essence (TOE) conversion protocol and NY State / NYC Real Property Transfer Tax allocation.',
+    legalReason: 'Under New York Court of Appeals doctrine (Zev v. Merman), closing dates in real estate contracts are not strictly enforceable deadlines unless a formal Time of the Essence (TOE) notice is served giving reasonable notice. In addition, New York State (TP-584) and NYC (NYC-RPT) transfer taxes must be explicitly apportioned to avoid closing escrow impounds.',
+    defaults: {
+      GOVERNING_STATE: 'New York',
+      COUNTY_STATE: 'New York County, State of New York',
+      VENUE_COUNTY: 'Supreme Court of the State of New York, Commercial Division, County of New York'
+    },
+    riderClause: `ARTICLE VIII -- NEW YORK STATUTORY COMPLIANCE RIDER
+8.1 Time is of the Essence Formal Protocol (New York Jurisprudence).
+Pursuant to established New York real property doctrine (Zev v. Merman, 73 N.Y.2d 781), if either party fails to close on the Closing Date specified herein, the non-defaulting party may make time of the essence by serving written notice designating a law day no less than thirty (30) calendar days thereafter, during which closing performance shall be strictly mandatory.
+8.2 Transfer Tax Allocation (New York Tax Law § 1402 & NYC Admin. Code § 11-2102).
+Seller shall pay all New York State Real Estate Transfer Taxes (NYS Form TP-584) due upon conveyance of the deed. If the Land is located within the City of New York, Seller shall pay the New York City Real Property Transfer Tax (NYC-RPT) and execute Form NYC-RPT at Closing.`
+  },
+
+  florida: {
+    id: 'florida',
+    name: 'Florida Commercial Real Property Rider',
+    shortName: 'Florida (FL)',
+    badge: 'Fla. Stat. § 404.056(5) & § 689.261',
+    statute: 'Florida Statutes § 404.056(5) & § 689.261',
+    summary: 'Mandatory statutory Radon Gas notification and Florida ad valorem Property Tax Disclosure Summary.',
+    legalReason: 'Florida Statutes § 404.056(5) mandates that specific statutory radon gas notification language be included in every contract for the sale of real estate prior to execution. Section 689.261 requires a statutory property tax disclosure to protect sellers from post-closing buyer lawsuits alleging reassessment misrepresentation.',
+    defaults: {
+      GOVERNING_STATE: 'Florida',
+      COUNTY_STATE: 'Miami-Dade County, State of Florida',
+      VENUE_COUNTY: 'Circuit Court of the 11th Judicial Circuit in and for Miami-Dade County, Florida'
+    },
+    riderClause: `ARTICLE VIII -- FLORIDA STATUTORY COMPLIANCE RIDER
+8.1 Mandatory Radon Gas Notification (Florida Statutes § 404.056(5)).
+RADON GAS: Radon is a naturally occurring radioactive gas that, when it has accumulated in a building in sufficient quantities, may present health risks to persons who are exposed to it over time. Levels of radon that exceed federal and state guidelines have been found in buildings in Florida. Additional information regarding radon and radon testing may be obtained from your county health department.
+8.2 Property Tax Disclosure Summary (Florida Statutes § 689.261).
+BUYER SHOULD NOT RELY ON THE SELLER'S CURRENT PROPERTY TAXES AS THE AMOUNT OF PROPERTY TAXES THAT THE BUYER MAY BE OBLIGATED TO PAY IN THE SUBSEQUENT YEAR. A CHANGE OF OWNERSHIP TRIGGERS REASSESSMENTS OF THE PROPERTY THAT COULD RESULT IN HIGHER PROPERTY TAXES.`
+  }
+};
+
+/**
  * Compiles a contract template by injecting client variable values.
  * 
  * @param {Object} template - The template object from LEGAL_TEMPLATES
  * @param {Object} userValues - Key-value map of variable inputs
+ * @param {string} [selectedStateRider='general'] - State statutory rider ID
  * @returns {string} Compiled legal agreement text
  */
-export function compileTemplateText(template, userValues = {}) {
+export function compileTemplateText(template, userValues = {}, selectedStateRider = 'general') {
   if (!template || !template.templateBody) return '';
 
   let compiled = template.templateBody;
@@ -708,6 +818,19 @@ export function compileTemplateText(template, userValues = {}) {
     const regex = new RegExp(`\\{\\{${v.key}\\}\\}`, 'g');
     compiled = compiled.replace(regex, val);
   });
+
+  // Inject State-Specific Statutory Rider for real property agreements
+  const riderKey = userValues.SELECTED_STATE_RIDER || selectedStateRider;
+  if (riderKey && STATE_SPECIFIC_RIDERS[riderKey] && template.category === 'real_estate') {
+    const rider = STATE_SPECIFIC_RIDERS[riderKey];
+    if (rider.riderClause) {
+      if (compiled.includes('IN WITNESS WHEREOF')) {
+        compiled = compiled.replace('IN WITNESS WHEREOF', `${rider.riderClause}\n\nIN WITNESS WHEREOF`);
+      } else {
+        compiled += `\n\n${rider.riderClause}`;
+      }
+    }
+  }
 
   return compiled;
 }

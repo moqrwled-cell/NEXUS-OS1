@@ -3,9 +3,10 @@ import {
   BookOpen, Copy, Check, FileDown, 
   Sparkles, ArrowRight, RefreshCw, CheckCircle2,
   ShieldCheck, Scale, FileText,
-  ChevronDown, ChevronUp, SlidersHorizontal, Lock, HelpCircle
+  ChevronDown, ChevronUp, SlidersHorizontal, Lock, HelpCircle,
+  MapPin, X, Info, Building2, AlertTriangle
 } from 'lucide-react';
-import { LEGAL_TEMPLATES, TEMPLATE_CATEGORIES, compileTemplateText } from '../utils/legalTemplatesVault';
+import { LEGAL_TEMPLATES, TEMPLATE_CATEGORIES, compileTemplateText, STATE_SPECIFIC_RIDERS } from '../utils/legalTemplatesVault';
 import { downloadRedactedPDF } from '../utils/redactedPdfGenerator';
 import { downloadContractDOCX } from '../utils/docxExportEngine';
 
@@ -98,6 +99,8 @@ export default function LegalTemplatesView({
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [isGeneratingDocx, setIsGeneratingDocx] = useState(false);
   const [showStatutoryGuide, setShowStatutoryGuide] = useState(false);
+  const [selectedStateRider, setSelectedStateRider] = useState('general');
+  const [showStateDossierModal, setShowStateDossierModal] = useState(false);
 
   const selectedTemplate = useMemo(() => {
     return LEGAL_TEMPLATES.find(t => t.id === selectedTemplateId) || null;
@@ -118,6 +121,7 @@ export default function LegalTemplatesView({
   // When opening a template, seed default values
   const handleOpenTemplate = (tpl) => {
     setSelectedTemplateId(tpl.id);
+    setSelectedStateRider('general');
     const initialVals = {};
     (tpl.variables || []).forEach(v => {
       initialVals[v.key] = v.defaultVal || '';
@@ -125,15 +129,28 @@ export default function LegalTemplatesView({
     setTemplateValues(initialVals);
   };
 
+  const handleSelectStateRider = (riderId) => {
+    setSelectedStateRider(riderId);
+    const rider = STATE_SPECIFIC_RIDERS[riderId];
+    if (rider && rider.defaults) {
+      setTemplateValues(prev => ({
+        ...prev,
+        GOVERNING_STATE: rider.defaults.GOVERNING_STATE || prev.GOVERNING_STATE,
+        COUNTY_STATE: rider.defaults.COUNTY_STATE || prev.COUNTY_STATE,
+        VENUE_COUNTY: rider.defaults.VENUE_COUNTY || prev.VENUE_COUNTY,
+      }));
+    }
+  };
+
   const handleVariableChange = (key, val) => {
     setTemplateValues(prev => ({ ...prev, [key]: val }));
   };
 
-  // Live compiled text
+  // Live compiled text with dynamic state statutory rider
   const compiledText = useMemo(() => {
     if (!selectedTemplate) return '';
-    return compileTemplateText(selectedTemplate, templateValues);
-  }, [selectedTemplate, templateValues]);
+    return compileTemplateText(selectedTemplate, templateValues, selectedStateRider);
+  }, [selectedTemplate, templateValues, selectedStateRider]);
 
   const handleCopyText = () => {
     if (!compiledText) return;
@@ -310,6 +327,61 @@ export default function LegalTemplatesView({
           </div>
         )}
 
+        {/* State Statutory Compliance Bar (California, Texas, New York, Florida, and 50-State Multi-Jurisdiction) */}
+        {selectedTemplate.category === 'real_estate' && (
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-zinc-950/90 via-zinc-900/70 to-black/90 border border-zinc-800 flex flex-col gap-3">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-zinc-300 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                  <MapPin size={13} className="text-emerald-400" />
+                  <span>State Compliance Rider:</span>
+                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {Object.values(STATE_SPECIFIC_RIDERS).map(rider => (
+                    <button
+                      key={rider.id}
+                      onClick={() => handleSelectStateRider(rider.id)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                        selectedStateRider === rider.id
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.18)] font-bold'
+                          : 'text-zinc-400 hover:text-white bg-black/40 border border-zinc-800 hover:border-zinc-700'
+                      }`}
+                    >
+                      <span>{rider.shortName}</span>
+                      {selectedStateRider === rider.id && <CheckCircle2 size={12} className="text-emerald-400" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowStateDossierModal(true)}
+                className="self-start md:self-auto px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-sm"
+              >
+                <Scale size={13} />
+                <span>50-State Statutory Dossier & Justifications</span>
+              </button>
+            </div>
+
+            {/* Active State Statutory Rationale Card */}
+            <div className="px-3.5 py-2.5 rounded-xl bg-zinc-900/80 border border-emerald-500/20 flex items-start gap-2.5 text-xs">
+              <ShieldCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-white text-[12px]">{STATE_SPECIFIC_RIDERS[selectedStateRider]?.name}</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/30">
+                    {STATE_SPECIFIC_RIDERS[selectedStateRider]?.badge}
+                  </span>
+                </div>
+                <p className="text-zinc-400 text-[11px] mt-1 leading-relaxed">
+                  <strong className="text-zinc-200">Legal Justification: </strong>
+                  {STATE_SPECIFIC_RIDERS[selectedStateRider]?.legalReason}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Split Screen Workspace */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[580px]">
           {/* Left Column: Quick-Fill Variables Form */}
@@ -417,6 +489,15 @@ export default function LegalTemplatesView({
             </div>
           </div>
         </div>
+
+        {/* State Statutory Jurisprudence & Mandatory Contract Riders Dossier Modal */}
+        <StateDossierModal
+          isOpen={showStateDossierModal}
+          onClose={() => setShowStateDossierModal(false)}
+          selectedStateRider={selectedStateRider}
+          onSelectStateRider={handleSelectStateRider}
+          isEditorActive={true}
+        />
       </div>
     );
   }
@@ -439,7 +520,14 @@ export default function LegalTemplatesView({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <button
+            onClick={() => setShowStateDossierModal(true)}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+          >
+            <MapPin size={13} className="text-emerald-400" />
+            <span>State Jurisprudence Dossier (CA, TX, NY, FL)</span>
+          </button>
           {onOpenGuide && (
             <button
               onClick={() => onOpenGuide('templates')}
@@ -653,6 +741,267 @@ export default function LegalTemplatesView({
             </div>
           );
         })}
+      </div>
+
+      {/* State Statutory Jurisprudence & Mandatory Contract Riders Dossier Modal */}
+      <StateDossierModal
+        isOpen={showStateDossierModal}
+        onClose={() => setShowStateDossierModal(false)}
+        selectedStateRider={selectedStateRider}
+        onSelectStateRider={handleSelectStateRider}
+        isEditorActive={false}
+      />
+    </div>
+  );
+}
+
+/**
+ * State Statutory Jurisprudence & Mandatory Contract Riders Dossier Modal
+ * Explains lex loci rei sitae statutory overrides (CA, TX, NY, FL) vs 50-State multi-jurisdiction baseline.
+ */
+function StateDossierModal({ isOpen, onClose, selectedStateRider, onSelectStateRider, isEditorActive }) {
+  if (!isOpen) return null;
+
+  const [activeTab, setActiveTab] = useState(selectedStateRider || 'california');
+  const [copiedClause, setCopiedClause] = useState(false);
+
+  const activeRider = STATE_SPECIFIC_RIDERS[activeTab] || STATE_SPECIFIC_RIDERS.general;
+
+  const handleCopy = (text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedClause(true);
+    setTimeout(() => setCopiedClause(false), 2200);
+  };
+
+  const statutoryRisks = {
+    california: {
+      headline: 'Void Liquidated Damages & NHD Mandatory Disclosures',
+      riskAnalysis: 'Under Cal. Civ. Code § 1677, a liquidated damages clause in a real property contract is legally void unless printed in at least 10-point bold type or contrasting red 8-point bold, and separately initialed by each party. Additionally, Cal. Civ. Code § 1103 mandates disclosure of seismic, wildfire, and flood hazard zones via a statutory NHD report.',
+      keyStatutes: ['Cal. Civ. Code § 1671 & § 1677', 'Cal. Civ. Code § 1103 (NHD Act)', 'Cal. Civ. Code § 2079.10a (Megan’s Law)'],
+      omissionPenalty: 'Liquidated damages clause declared void ab initio; Seller forfeits deposit retention and is forced to litigate actual damages before a jury.'
+    },
+    texas: {
+      headline: 'Unilateral Statutory Rescission Right (MUD) & DTPA Treble Damages',
+      riskAnalysis: 'Texas Water Code § 49.452 requires sellers of real property in a Municipal Utility District (MUD) or Water Control District to deliver statutory disclosure notices prior to contract execution. Failure to furnish this notice grants the purchaser an unconditional statutory right to terminate and rescind the contract prior to closing. Furthermore, Texas Business & Commerce Code § 17.42 requires express, conspicuous waivers signed by counsel to bar treble damages under the Deceptive Trade Practices Act.',
+      keyStatutes: ['Tex. Water Code § 49.452 (MUD Notice)', 'Tex. Bus. & Com. Code § 17.42 (DTPA Waiver)', 'Tex. Prop. Code § 5.008'],
+      omissionPenalty: 'Buyer holds unilateral statutory right of rescission up to closing; potential exposure to treble damages under the Texas DTPA.'
+    },
+    new_york: {
+      headline: 'Closing Date Not Strict Deadline (Zev v. Merman) & Transfer Tax Allocation',
+      riskAnalysis: 'Under established New York Court of Appeals doctrine (Zev v. Merman, 73 N.Y.2d 781), closing dates specified in contracts of sale are mere target dates. Time is NOT of the essence unless expressly designated as such or established through formal post-default written notice providing a reasonable "law day" (typically 30 days). In addition, New York State Transfer Tax (Tax Law Art. 31, Form TP-584) and NYC Real Property Transfer Tax (NYC Admin. Code § 11-2102) must be contractually apportioned to prevent closing escrow impounds.',
+      keyStatutes: ['Zev v. Merman, 73 N.Y.2d 781 (TOE Doctrine)', 'NY Tax Law § 1402 (NYS TP-584 Transfer Tax)', 'NYC Admin. Code § 11-2102 (NYC-RPT)'],
+      omissionPenalty: 'Non-breaching party cannot terminate contract on default date without issuing a 30-day formal TOE conversion notice; transfer tax disputes stall title closing.'
+    },
+    florida: {
+      headline: 'Mandatory Radon Gas Notice & Ad Valorem Tax Reassessment Protection',
+      riskAnalysis: 'Florida Statutes § 404.056(5) mandates that specific statutory notification language regarding radon gas be included in every contract for the sale or lease of real property. Failure to include this exact wording constitutes a violation of state administrative law. Additionally, Florida Statutes § 689.261 requires a conspicuous statutory property tax disclosure summary advising buyers that post-closing ad valorem reassessments may significantly increase property tax obligations, barring misrepresentation claims against sellers.',
+      keyStatutes: ['Fla. Stat. § 404.056(5) (Radon Warning)', 'Fla. Stat. § 689.261 (Property Tax Summary)', 'Fla. Stat. § 689.25 (Psychologically Impacted Real Estate)'],
+      omissionPenalty: 'Statutory non-compliance under Fla. Stat. § 404.056; exposure to buyer misrepresentation actions regarding post-sale ad valorem property tax spikes.'
+    },
+    general: {
+      headline: 'Uniform Commercial Baseline (Restatement (Second) of Contracts § 234)',
+      riskAnalysis: 'The 50-State multi-jurisdiction baseline applies the Restatement (Second) of Contracts § 234 doctrine of concurrent conditions precedent. Closing performance (conveying the deed and tendering purchase funds) are mutually dependent obligations. Neither party can place the counterparty in default without making a formal tender of its own performance. Provides AmLaw 100 corporate governance covenants, foreign entity qualification (MBCA § 15.01), ALTA title objection mechanisms, and FIRPTA compliance for Delaware, Ohio, Illinois, Georgia, North Carolina, and remaining states.',
+      keyStatutes: ['Restatement (Second) of Contracts § 234', 'Model Business Corporation Act § 15.01', 'IRC § 1445 (FIRPTA Non-Foreign Affidavit)'],
+      omissionPenalty: 'Premature declaration of default without tender constitutes an anticipatory repudiation breach under common law jurisprudence.'
+    }
+  };
+
+  const riskInfo = statutoryRisks[activeTab] || statutoryRisks.general;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-4xl max-h-[92vh] bg-gradient-to-b from-zinc-950 via-zinc-900 to-black border border-cyan-500/30 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-zinc-200 font-ui">
+        {/* Header */}
+        <div className="p-5 border-b border-zinc-800 bg-white/[0.02] flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+              <Scale size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-white tracking-tight">
+                  50-State Statutory Jurisprudence & Mandatory Contract Riders
+                </h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/30">
+                  Lex Loci Rei Sitae
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Jurisdictional compliance analysis: Mandatory state statutory overrides vs. 50-State commercial baseline
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            title="Close Dossier"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* State Tabs Selector */}
+        <div className="px-5 pt-3.5 pb-2 bg-black/40 border-b border-zinc-800/80 flex items-center gap-2 overflow-x-auto custom-scrollbar">
+          {Object.values(STATE_SPECIFIC_RIDERS).map(rider => (
+            <button
+              key={rider.id}
+              onClick={() => setActiveTab(rider.id)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === rider.id
+                  ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)] font-bold'
+                  : 'text-zinc-400 hover:text-zinc-200 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700'
+              }`}
+            >
+              <MapPin size={12} className={activeTab === rider.id ? 'text-cyan-400' : 'text-zinc-500'} />
+              <span>{rider.shortName}</span>
+              {selectedStateRider === rider.id && (
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" title="Active Draft Rider" />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Modal Scrollable Body */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
+          {/* Top State Badge & Title */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-2xl bg-zinc-900/70 border border-zinc-800">
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h4 className="text-sm font-bold text-white">{activeRider.name}</h4>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 font-bold border border-cyan-500/25">
+                  {activeRider.statute}
+                </span>
+              </div>
+              <p className="text-xs text-zinc-300 mt-1">{activeRider.summary}</p>
+            </div>
+
+            {isEditorActive && (
+              <button
+                onClick={() => {
+                  onSelectStateRider(activeTab);
+                  onClose();
+                }}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-sm ${
+                  selectedStateRider === activeTab
+                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
+                    : 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                }`}
+              >
+                {selectedStateRider === activeTab ? (
+                  <>
+                    <CheckCircle2 size={13} className="text-emerald-400" />
+                    <span>Currently Active In Agreement</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={13} />
+                    <span>Apply Rider to Draft</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Grid: Legal Risk Analysis & Consequences */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Left: Why this state requires statutory calibration */}
+            <div className="p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800/80 space-y-3">
+              <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">
+                <ShieldCheck size={15} />
+                <span>Statutory Mandate & Jurisprudential Rule</span>
+              </div>
+              <h5 className="text-xs font-bold text-white">{riskInfo.headline}</h5>
+              <p className="text-xs text-zinc-300 leading-relaxed">{riskInfo.riskAnalysis}</p>
+              
+              <div className="pt-2 border-t border-zinc-800 space-y-1.5">
+                <span className="text-[11px] font-mono uppercase text-zinc-400 font-semibold">Primary Governing Authorities:</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {riskInfo.keyStatutes.map((s, idx) => (
+                    <span key={idx} className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-300 border border-zinc-700">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Omission Consequence & Forum Presets */}
+            <div className="p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800/80 flex flex-col justify-between gap-3">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                  <AlertTriangle size={15} />
+                  <span>Legal Exposure if Rider is Omitted</span>
+                </div>
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-rose-200 leading-relaxed">
+                  {riskInfo.omissionPenalty}
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-zinc-800 space-y-1.5 text-xs">
+                <span className="text-[11px] font-mono uppercase text-zinc-400 font-semibold">Default Judicial Venue:</span>
+                <div className="p-2.5 rounded-xl bg-black/60 border border-zinc-800 font-mono text-[11px] text-zinc-300 flex items-center gap-2">
+                  <Building2 size={13} className="text-cyan-400 shrink-0" />
+                  <span className="truncate">{activeRider.defaults?.VENUE_COUNTY || 'Delaware Court of Chancery'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contractual Rider Language Injected into Article VIII */}
+          <div className="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2.5">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-white font-mono">
+                <FileText size={14} className="text-emerald-400" />
+                <span>Article VIII Statutory Contract Clause (Live Injected Rider)</span>
+              </div>
+              <button
+                onClick={() => handleCopy(activeRider.riderClause)}
+                className="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                {copiedClause ? (
+                  <>
+                    <Check size={12} className="text-emerald-400" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={12} />
+                    <span>Copy Clause</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <pre className="p-3.5 rounded-xl bg-black/70 border border-zinc-800 text-[11.5px] font-mono leading-relaxed text-zinc-300 whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar select-text">
+              {activeRider.riderClause}
+            </pre>
+          </div>
+
+          {/* Lex Loci Rei Sitae Jurisprudential Context Note */}
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-zinc-900/60 to-cyan-950/20 border border-emerald-500/25 flex items-start gap-3 text-xs">
+            <Info size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+            <div className="space-y-1 text-zinc-300 leading-relaxed text-[11.5px]">
+              <span className="text-white font-bold">Lex Loci Rei Sitae Doctrine (Law of the Situs): </span>
+              Under American commercial law, real property transfers are invariably adjudicated under the law of the state where the physical real estate is situated. While 85%–90% of contract covenants (purchase consideration, escrow mechanics, ALTA title review, CERCLA environmental review, and FIRPTA withholdings) remain identical nationwide, these 4 jurisdictions impose strict statutory wording rules that, if omitted, can invalidate remedies or grant statutory cancellation rights. For the remaining 46 states, the <strong className="text-white">50-State Multi-Jurisdiction Baseline</strong> delivers seamless enforceability under the Restatement (Second) of Contracts.
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center justify-between text-xs text-zinc-400">
+          <div className="flex items-center gap-2">
+            <ShieldCheck size={14} className="text-emerald-400" />
+            <span>Calibrated to AmLaw 100 Real Estate Practice Standards</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="px-4 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold cursor-pointer transition-colors"
+          >
+            Close Dossier
+          </button>
+        </div>
       </div>
     </div>
   );
