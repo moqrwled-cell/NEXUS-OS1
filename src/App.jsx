@@ -18,14 +18,12 @@ import {
   Download, 
   CheckCircle, 
   XCircle,
-  FileDown,
   Key
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import Nexus3DNode from './components/Nexus3DNode';
 import ContractGuardMasterShowcase from './components/ContractGuardMasterShowcase';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
-import { downloadContractDOCX } from './utils/docxExportEngine';
 
 // Institutional Shield Monogram (Clean, Authoritative, Non-generic)
 function BrandMark({ className = "w-9 h-9" }) {
@@ -48,47 +46,6 @@ export default function App() {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const [isDownloadingSampleRider, setIsDownloadingSampleRider] = useState(false);
-
-  const handleDownloadSampleRider = async () => {
-    setIsDownloadingSampleRider(true);
-    try {
-      const sampleRiderText = `PRE-SIGNING AMENDMENT RIDER & HARMONIZATION SCHEDULE
-(DELAWARE GENERAL CORPORATION LAW & UCC MODEL ACCORD)
-
-This Pre-Signing Amendment Rider (this "Rider") is entered into and effective as of this closing date by and between Acme Holdings LLC ("Buyer") and Globex International Corp ("Seller") to amend, settle, and harmonize that certain Master Asset Purchase and Services Agreement (the "Agreement").
-
-RECITALS
-WHEREAS, the parties desire to execute the Agreement free of drafting contradictions, broken internal citations, and numerical ambiguities; and
-WHEREAS, pursuant to Uniform Commercial Code § 3-114 (UCC § 3-114) and established Delaware Chancery principles of contractual interpretation, the parties stipulate to the harmonized terms set forth herein.
-
-NOW, THEREFORE, the Agreement is hereby amended as follows:
-
-SECTION 1. CONSIDERATION AND MONETARY PAYMENT RECONCILIATION
-Section 4.1 of the Agreement is hereby amended and restated in its entirety to resolve a patent clerical discrepancy between written words and parenthetical digits:
-   "4.1 Purchase Price. In full consideration of the Acquired Assets and Services, Buyer shall pay Seller the total agreed consideration of Two Hundred Fifty Thousand Dollars ($250,000.00 USD), payable in three equal quarterly installments of Eighty-Three Thousand Three Hundred Thirty-Three and 33/100 Dollars ($83,333.33 USD)."
-
-SECTION 2. RECTIFICATION OF CROSS-REFERENCE CITATIONS
-Section 8.2 of the Agreement cross-reference to "Section 14.3" is hereby amended to reference "Section 14.2 (Termination Procedures)", and all indemnification obligations set forth in Exhibit D are superseded and incorporated directly into Schedule 3.1.
-
-SECTION 3. ARTICLE I DEFINITIONS SUPPLEMENT
-Article I (Definitions) of the Agreement is hereby supplemented by inserting the following definition in appropriate alphabetical sequence:
-   "Key Personnel" means those corporate officers, technology architects, and managerial specialists designated on Schedule 1.1 whose continued engagement constitutes an express condition precedent to Closing.
-
-[Executed under Delaware Choice of Law and AmLaw 100 Model Drafting Standards]`;
-
-      await downloadContractDOCX(sampleRiderText, {
-        title: 'Pre-Signing Amendment Rider',
-        jurisdiction: 'Delaware Commercial Law',
-        category: 'amendment'
-      });
-    } catch (e) {
-      alert('Error generating Word document: ' + e.message);
-    } finally {
-      setIsDownloadingSampleRider(false);
-    }
   };
 
   return (
@@ -233,18 +190,6 @@ Article I (Definitions) of the Agreement is hereby supplemented by inserting the
                   <Sparkles size={16} />
                   <span>⚡ Try Interactive Live Demo</span>
                   <ArrowRight size={16} />
-                </button>
-
-                {/* Instant Real Microsoft Word .docx Download for Attorney Verification */}
-                <button
-                  type="button"
-                  onClick={handleDownloadSampleRider}
-                  disabled={isDownloadingSampleRider}
-                  className="px-5 py-3.5 rounded-xl bg-nexus-emerald/10 hover:bg-nexus-emerald/20 border border-nexus-emerald/40 text-emerald-300 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer shadow-[0_0_15px_rgba(0,255,157,0.15)] group"
-                  title="Download an authentic Pre-Signing Amendment Rider in Microsoft Word (.docx) format to inspect AmLaw 100 formatting"
-                >
-                  <FileDown size={16} className={`text-nexus-emerald ${isDownloadingSampleRider ? 'animate-bounce' : 'group-hover:scale-110'} transition-transform`} />
-                  <span>{isDownloadingSampleRider ? 'Generating Word DOCX...' : 'Download Sample Word Rider (.docx)'}</span>
                 </button>
                 
                 <button 
