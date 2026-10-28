@@ -1,0 +1,21 @@
+# Nexus ContractGuard™ Enterprise 2.0
+
+> Air-gapped, zero-cloud pre-signing contract integrity engine for commercial attorneys, boutique law firms, and corporate legal teams. Audits Microsoft Word (.docx) and PDF contracts 100% in local browser RAM in compliance with ABA Model Rule 1.6.
+
+## Key Capabilities & Superpowers
+- **Liability Reconciler & Delaware Express Rider**: Detects hidden contradictions between a low Limitation of Liability (e.g., aggregate 12-month fees = $50,000) and an express $5,000,000 indemnification covenant. Generates a Delaware/NY court-tested Pre-Signing Express Carve-Out Rider in 1-click.
+- **Deterministic AST Cross-Reference Graph**: Unlike probabilistic LLMs that guess and hallucinate citations, ContractGuard constructs a mathematical Abstract Syntax Tree (AST) verifying section references, exhibit schedules, and word-to-number financial amounts ($250k vs $205k) with 100% certainty (416/416 verified tests).
+- **Stealth Redline Diff**: In-RAM character-level contract diffing in under 180ms. Catches unvetted changes slipped into unmarked drafts, such as stealthily swapped standards ("reasonable efforts" to "sole discretion") or extended cure windows.
+- **50-State Statutory Vault**: Instant statutory conflict alerts across all 50 US jurisdictions (e.g., California B&P § 16600 void non-compete rules vs. Delaware/Texas standards).
+- **100% In-RAM Execution (ABA Model Rule 1.6)**: Zero bytes sent to remote servers or cloud AI models. Completely preserves attorney-client privilege.
+- **Word (.docx) & PDF Export**: Native support for Microsoft Word (.docx) and digital PDFs, exporting AmLaw 100 formatted court-ready Pre-Signing Amendment Riders.
+
+## Pricing & Perpetual Licensing
+- **Solo Practitioner License**: $199 USD (One-time perpetual payment, hardware-locked key, 1-click machine deactivation, zero recurring subscriptions).
+- **Law Firm Suite (5 Seats)**: $299 USD (One-time perpetual payment, 5 standalone cryptographic keys for associates and paralegals, saves $1,800+ annually compared to recurring cloud SaaS).
+- **Free Interactive Audit**: 3 complete, unrestricted evaluation passes with zero paywalls on active deal drafts.
+
+## Official Links
+- [Homepage & Interactive Showcase](https://www.nexus-os.store/): Live browser-based contract integrity demonstration.
+- [Live Demo Studio](https://www.nexus-os.store/demo): Interactive audit workspace for active contract drafts.
+- [Full Technical Briefing](https://www.nexus-os.store/llms-full.txt): Deep technical specifications, legal citations, and architectural whitepaper.

@@ -1,10 +1,49 @@
+# Nexus ContractGuard - Global Search & AI Discovery Policy
+# Optimized for Google, Bing, and Generative AI Answer Engines
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Generative AI & Answer Engine Crawlers (Permitted for Citations & AI Overviews)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
 User-agent: *
 Disallow: /welcome
 Disallow: /war-room
 Disallow: /nexus-hq
 Disallow: /secret-ops
 Disallow: /login
-
 Allow: /
 Allow: /demo
 Allow: /contractguard-demo
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /sitemap.xml
+
+# Unwanted Aggressive Scrapers
+User-agent: Bytespider
+Disallow: /
+
+Sitemap: https://www.nexus-os.store/sitemap.xml
