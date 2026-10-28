@@ -173,7 +173,7 @@ export default function App() {
                 transition={{ delay: 0.2 }}
                 className="text-base md:text-lg text-zinc-300 leading-relaxed mb-8 font-body"
               >
-                Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Audits native <strong className="text-white">Microsoft Word (.docx)</strong> and PDF drafts client-side. Catches broken section cross-references, word-to-number financial mismatches ($250k vs $205k), undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.
+                Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Audits native Microsoft Word (.docx) and PDF drafts client-side. Catches broken section cross-references, word-to-number financial mismatches ($250k vs $205k), undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.
               </motion.p>
 
               {/* Action Buttons */}
@@ -188,7 +188,7 @@ export default function App() {
                   className="bg-nexus-emerald text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] flex items-center gap-2.5 cursor-pointer"
                 >
                   <Sparkles size={16} />
-                  <span>⚡ Try Interactive Live Demo</span>
+                  <span>Try Interactive Live Demo</span>
                   <ArrowRight size={16} />
                 </button>
                 
@@ -752,28 +752,36 @@ export default function App() {
           <div className="space-y-3 font-body">
             {[
               {
+                q: 'How does ContractGuard resolve the catastrophic $5,000,000 Liability Cap vs. Indemnity trap?',
+                a: 'In standard commercial agreements, a blanket Limitation of Liability (e.g., aggregate fees paid in the past 12 months = $50,000) routinely contradicts an express $5,000,000 indemnification covenant. Under established Delaware and New York precedent, courts apply the lower liability cap across all claims unless an express carve-out exists. ContractGuard scans cross-clause operative conflicts in 240ms and generates a Delaware-compliant Pre-Signing Express Carve-Out Rider with a single click, protecting client recovery.'
+              },
+              {
+                q: 'Why is deterministic AST verification far safer for attorneys than ChatGPT or probabilistic LLMs?',
+                a: 'Generic AI models operate probabilistically—they predict likely words, gloss over contractual contradictions, and hallucinate citations that do not exist. In transactional practice, probabilistic guessing is malpractice liability. ContractGuard constructs a formal Abstract Syntax Tree (AST) that deterministically verifies section cross-references, validates that every referenced Exhibit actually exists, and confirms that spelled-out words match parenthetical digits with 100% mathematical certainty (416/416 verified tests).'
+              },
+              {
+                q: 'How does the Forensic Redline Diff catch sneaky changes slipped into unmarked drafts?',
+                a: 'Counterparties sometimes return unmarked "clean" drafts with subtle, high-risk alterations—such as replacing "reasonable efforts" with "sole discretion" or quietly extending cure periods from 30 to 90 days. ContractGuard executes character-level in-RAM forensic diffing in under 180ms, visually mapping every added word in green and deleted term in red so you never execute an unvetted change.'
+              },
+              {
+                q: 'How does the 50-State Statutory Vault protect multi-jurisdictional contracts?',
+                a: 'Restrictive covenants and indemnities diverge sharply across state lines. For example, California Business & Professions Code § 16600 and AB 1076 treat employee non-competes as void per se and impose statutory civil penalties, whereas Delaware and Texas apply narrow-tailoring and ancillary restraint rules. ContractGuard cross-checks governing law clauses against state-specific judicial benchmarks in real time, alerting counsel to statutory voids before signing.'
+              },
+              {
                 q: 'How does ContractGuard guarantee 100% privacy and ABA Model Rule 1.6 compliance?',
-                a: 'The software executes 100% client-side inside non-blocking Web Workers in local browser RAM. Zero bytes are uploaded to external servers or cloud AI models, perfectly preserving attorney-client privilege under ABA Model Rule 1.6.'
+                a: 'The software executes 100% client-side inside non-blocking Web Workers in local browser RAM. Zero bytes are uploaded to remote servers, external APIs, or public LLMs. Your client’s privileged drafts, confidential consideration amounts, and trade secrets never leave your device memory, perfectly preserving attorney-client privilege under ABA Model Rule 1.6 and state bar cyber-ethics mandates.'
               },
               {
-                q: 'Can I audit my own active contract drafts for free before purchasing?',
-                a: 'Yes. We provide 3 full, unrestricted evaluation passes with zero paywalls. You can upload or paste your real transaction drafts and experience all detection engines before deciding to buy.'
+                q: 'Can I audit our active contract drafts for free before purchasing a license?',
+                a: 'Yes. We provide 3 complete, unrestricted evaluation passes with zero paywalls. You can upload or paste your active deal drafts right now to experience all 5 audit engines and review real findings before deciding to buy.'
               },
               {
-                q: 'How does hardware-locked licensing work, and can I transfer my seat to a new computer?',
-                a: 'Each license binds cryptographically to your device hardware fingerprint. If you upgrade laptops or switch workstations, a single click on "Deactivate from this Device" releases the key for immediate activation on your new machine.'
+                q: 'How does lifetime licensing work, and can I transfer my seat to a new computer?',
+                a: 'We reject predatory recurring subscriptions. You pay a single one-time fee ($199 Solo / $299 Law Firm Suite) for permanent perpetual access with no monthly fees, saving firms upwards of $1,800 annually over legacy recurring cloud tools. Each license binds cryptographically to your workstation and can be deactivated with a single click if you switch laptops. The Law Firm Suite includes 5 independent standalone seat keys for associates and paralegals.'
               },
               {
-                q: 'How does the Law Firm Suite (5 Users) license distribute across our team?',
-                a: 'You instantly receive 5 unique cryptographic seat keys: one activates your primary workstation, and 4 standalone keys can be shared with associates and paralegals via 1-click copy or text bundle export.'
-              },
-              {
-                q: 'Which contract formats and document types are supported?',
-                a: 'ContractGuard natively audits Microsoft Word (.docx), digital PDF contracts, raw text paste, and scanned paper agreements via integrated client-side In-RAM OCR.'
-              },
-              {
-                q: 'Are there any recurring monthly subscriptions or hidden renewal fees?',
-                a: 'Zero recurring fees. You pay a single one-time fee ($199 Solo / $299 Firm) for permanent perpetual access, saving $1,800+ annually over legacy recurring cloud tools.'
+                q: 'Which file formats and exports are supported?',
+                a: 'ContractGuard natively audits Microsoft Word (.docx), digital PDF contracts, and raw text paste. When rectifying contractual defects, it exports court-ready Pre-Signing Amendment Riders in clean Microsoft Word (.docx) format formatted according to AmLaw 100 institutional drafting standards.'
               }
             ].map((item, idx) => (
               <div key={idx} className="rounded-xl border border-white/10 bg-[#060D12] overflow-hidden">
@@ -828,7 +836,7 @@ export default function App() {
                   className="bg-nexus-emerald text-black px-8 py-4 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(0,255,157,0.4)] flex items-center gap-2 cursor-pointer"
                 >
                   <Sparkles size={16} />
-                  <span>⚡ Start Free Interactive Audit</span>
+                  <span>Start Free Interactive Audit</span>
                   <ArrowRight size={16} />
                 </button>
                 
