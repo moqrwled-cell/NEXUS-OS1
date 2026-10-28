@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import Nexus3DNode from './components/Nexus3DNode';
+import ContractGuardMasterShowcase from './components/ContractGuardMasterShowcase';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
 import { downloadContractDOCX } from './utils/docxExportEngine';
 
@@ -290,136 +291,22 @@ Article I (Definitions) of the Agreement is hereby supplemented by inserting the
         </section>
 
         {/* ========================================================================= */}
-        {/* 3. REAL HIGH-FIDELITY PRODUCT VIEWPORT (Interactive Studio Preview)        */}
+        {/* 3. REAL HIGH-FIDELITY PRODUCT VIEWPORT (Interactive Master Showcase)       */}
         {/* ========================================================================= */}
         <section id="studio-preview" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
-          <div className="text-center max-w-3xl mx-auto mb-8 font-body">
-            <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3 py-1 rounded-full">
-              LIVE STUDIO TELEMETRY
+          <div className="text-center max-w-3xl mx-auto mb-10 font-body">
+            <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
+              CINEMATIC PRODUCT SHOWCASE • 5 SUPERPOWERS
             </span>
-            <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-3">
-              What Modern Legal Integrity Looks Like in Action
+            <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4 tracking-tight">
+              Interactive Legal Integrity in Action
             </h2>
+            <p className="text-zinc-400 text-sm md:text-base mt-3 max-w-2xl mx-auto leading-relaxed">
+              Explore how ContractGuard detects $5M carve-out gaps, character-level stealth alterations, and state statutory conflicts 100% in-browser with zero cloud risk.
+            </p>
           </div>
 
-          {/* High-Fidelity App Chrome Frame */}
-          <div className="rounded-2xl border border-white/15 bg-[#060D12] shadow-[0_20px_70px_rgba(0,0,0,0.85)] overflow-hidden">
-            
-            {/* Window Topbar */}
-            <div className="px-4 py-3 bg-[#03070A] border-b border-white/10 flex items-center justify-between text-xs text-zinc-400 font-mono">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                <span className="ml-2 text-zinc-300">Apex_Acquisition_Agreement_v4_Marked.docx</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-nexus-emerald animate-pulse" />
-                <span className="text-nexus-emerald font-semibold hidden sm:inline">RAM FORENSIC ENGINE READY</span>
-              </div>
-            </div>
-
-            {/* Split Screen Document & Telemetry Preview */}
-            <div className="grid grid-cols-1 lg:grid-cols-12">
-              
-              {/* Document Text Viewport (Left 7 cols) */}
-              <div className="lg:col-span-7 p-6 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#04080B] space-y-4 font-mono text-xs text-zinc-300 overflow-hidden">
-                
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                  <span className="font-bold text-white block mb-1">SECTION 4.1 — CONSIDERATION & CLOSING PAYMENT</span>
-                  <p className="text-zinc-200 font-legal text-[13.5px] leading-relaxed">
-                    Buyer shall pay Seller the purchase price of <span className="bg-amber-500/25 text-amber-300 px-1.5 py-0.5 rounded font-bold border border-amber-500/40">Two Hundred Fifty Thousand Dollars ($205,000)</span> via wire transfer of immediately available funds.
-                  </p>
-                  <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-                    <AlertTriangle size={12} />
-                    <span>FINANCIAL CONTRADICTION: Spelled words ($250k) do not match digits ($205k)</span>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                  <span className="font-bold text-white block mb-1">SECTION 8.2 — INDEMNIFICATION PROCEDURES</span>
-                  <p className="text-zinc-200 font-legal text-[13.5px] leading-relaxed">
-                    Except as expressly provided in <span className="bg-rose-500/25 text-rose-300 px-1.5 py-0.5 rounded font-bold border border-rose-500/40">Section 14.3</span> and <span className="bg-rose-500/25 text-rose-300 px-1.5 py-0.5 rounded font-bold border border-rose-500/40">Exhibit D (Cyber Indemnity)</span>, neither party shall be liable for indirect damages.
-                  </p>
-                  <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">
-                    <AlertCircle size={12} />
-                    <span>BROKEN REFERENCE: Section 14.3 was deleted in draft v3; Exhibit D is not attached to this agreement</span>
-                  </div>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                  <span className="font-bold text-white block mb-1">SECTION 12.1 — GOVERNING LAW & SEVERABILITY</span>
-                  <p className="text-zinc-200 font-legal text-[13.5px] leading-relaxed">
-                    This Agreement shall be governed by the laws of <span className="text-purple-300 font-bold bg-purple-500/20 px-1 py-0.5 rounded border border-purple-500/40">[Insert Governing Jurisdiction Here]</span> without regard to conflict of laws principles.
-                  </p>
-                  <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/30">
-                    <Sparkles size={12} />
-                    <span>BOILERPLATE RESIDUE: Unresolved draft bracket detected prior to execution</span>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Audit Findings Telemetry Panel (Right 5 cols) */}
-              <div className="lg:col-span-5 p-6 bg-[#081218] flex flex-col justify-between font-body">
-                <div>
-                  <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-                    <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider">
-                      INTEGRITY AUDIT REPORT
-                    </span>
-                    <span className="text-xs font-bold font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                      HIGH RISK (62/100)
-                    </span>
-                  </div>
-
-                  {/* Summary Metric Cards */}
-                  <div className="grid grid-cols-2 gap-2.5 mb-5 font-body">
-                    <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">Broken Citations</div>
-                      <div className="text-xl font-black text-rose-400 font-mono">2 Flagged</div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">Financial Mismatch</div>
-                      <div className="text-xl font-black text-amber-400 font-mono">1 Contradiction</div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">Boilerplate Residue</div>
-                      <div className="text-xl font-black text-purple-400 font-mono">3 Unresolved</div>
-                    </div>
-                    <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                      <div className="text-[11px] text-zinc-400">Obligations Extracted</div>
-                      <div className="text-xl font-black text-nexus-emerald font-mono">18 Covenants</div>
-                    </div>
-                  </div>
-
-                  {/* Actionable Recommendations */}
-                  <div className="space-y-2 text-xs text-zinc-300 mb-6 font-body">
-                    <div className="flex items-start gap-2">
-                      <CheckCircle2 size={14} className="text-nexus-emerald mt-0.5 shrink-0" />
-                      <span>Extracted distinct duty matrix for Client vs Contractor</span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <CheckCircle2 size={14} className="text-nexus-emerald mt-0.5 shrink-0" />
-                      <span>Executive Client Memo ready for court/partner presentation</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Direct Studio Launcher Button */}
-                <div className="pt-4 border-t border-white/10">
-                  <button 
-                    onClick={() => navigate('/app/contractcompare')}
-                    className="w-full bg-nexus-emerald text-black py-3 px-4 rounded-xl font-black text-xs hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center justify-center gap-2 cursor-pointer font-body"
-                  >
-                    <span>Launch Air-Gapped Legal Studio Now</span>
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
+          <ContractGuardMasterShowcase />
         </section>
 
         {/* ========================================================================= */}
