@@ -23,10 +23,11 @@ export default {
       fontFamily: {
         // High-Precision Dual-Tier Institutional Typography System
         heading: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+        editorial: ['"Instrument Serif"', 'Georgia', 'serif'],
+        serif: ['"Instrument Serif"', '"Source Serif 4"', 'Georgia', 'serif'],
         body: ['"Inter"', 'system-ui', 'sans-serif'],
         sans: ['"Inter"', 'system-ui', 'sans-serif'],
         ui: ['"Inter"', 'system-ui', 'sans-serif'],
-        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
         legal: ['"Source Serif 4"', 'Georgia', 'Cambria', 'serif'],
         mono: ['"JetBrains Mono"', '"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },

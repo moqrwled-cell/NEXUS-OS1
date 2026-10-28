@@ -153,12 +153,12 @@ export default function App() {
                 <span>100% AIR-GAPPED • ABA MODEL RULE 1.6 COMPLIANT</span>
               </motion.div>
 
-              {/* Master Headline (Instrument Serif) */}
+              {/* Master Headline (Instrument Serif - Magazine Editorial Font) */}
               <motion.h1 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-normal font-heading tracking-tight text-white leading-[1.08] mb-6"
+                className="text-4xl sm:text-5xl lg:text-6xl font-normal font-serif tracking-tight text-white leading-[1.08] mb-6"
               >
                 Pre-Signing Legal Defense. <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white italic">
