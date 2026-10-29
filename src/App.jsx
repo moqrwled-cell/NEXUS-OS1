@@ -930,10 +930,10 @@ export default function App() {
             </button>
           </div>
 
-          {/* Legal Protection Shield / Malpractice Disclaimer Banner */}
+          {/* Legal Protection Shield / Institutional Governance Disclaimer Banner */}
           <div className="mt-6 pt-5 border-t border-white/5 text-[11px] text-zinc-400 leading-relaxed text-center max-w-4xl mx-auto font-mono">
             <p>
-              <strong className="text-zinc-300">LEGAL NOTICE & DISCLAIMER:</strong> ContractGuard is an automated document proofreading assistant. It does not provide legal representation or substitute professional attorney review. Users retain sole professional responsibility for verifying all contract terms prior to legal execution.
+              <strong className="text-zinc-300">REGULATORY NOTICE & INSTITUTIONAL DISCLAIMER:</strong> Nexus ContractGuard™ is an institutional forensic contract intelligence and deterministic audit platform engineered for corporate counsel, transactional attorneys, and enterprise dealmakers. ContractGuard delivers computational verification and risk analysis; it does not provide formal legal advice or substitute for reviewing counsel's independent professional judgment. Reviewing counsel retains full discretion in tailoring statutory provisions and executing final transaction terms.
             </p>
           </div>
         </footer>

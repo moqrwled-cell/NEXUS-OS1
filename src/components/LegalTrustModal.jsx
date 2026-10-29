@@ -203,7 +203,7 @@ export default function LegalTrustModal({ isOpen, onClose, initialTab = 'privacy
                       ⚠️ Mandatory Legal Practice Notice
                     </p>
                     <p>
-                      ContractGuard is an automated algorithmic proofreading and contract anomaly detection utility. It is not an attorney and does not provide legal representation, legal advice, or formal legal opinions. Reviewing counsel maintains exclusive professional responsibility under applicable state bar ethics rules to independently verify all statutory citations, definitions, and contractual remedies prior to execution or court submission.
+                      ContractGuard is an institutional forensic contract intelligence and deterministic audit platform. It does not constitute a law firm, nor does it provide formal legal advice or attorney-client representation. Reviewing counsel maintains independent professional authority under applicable bar rules to calibrate statutory provisions, covenants, and remedies prior to execution.
                     </p>
                   </div>
                 </div>
