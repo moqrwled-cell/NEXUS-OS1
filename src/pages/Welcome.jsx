@@ -29,7 +29,49 @@ export default function Welcome() {
 
   const planParam = searchParams.get('plan') || 'solo'; // 'solo' | 'firm'
   const sessionId = searchParams.get('session_id') || searchParams.get('order_id') || '';
-  const orderId = searchParams.get('order_id') || searchParams.get('order') || `ORD-${Date.now().toString().slice(-6)}`;
+
+  // STABLE ORDER ID: Immutable across all renders, tab switches, and activation cycles.
+  const [orderId, setOrderId] = useState(() => {
+    // 1. Direct query param from payment provider
+    const urlOrder = searchParams.get('order_id') || searchParams.get('order') || searchParams.get('receipt_id') || searchParams.get('session_id');
+    if (urlOrder && !urlOrder.startsWith('whop_')) {
+      try { sessionStorage.setItem('nexus_current_order_id', urlOrder); } catch {}
+      return urlOrder;
+    }
+    // 2. Pending checkout ticket from localStorage / sessionStorage
+    try {
+      const storedTicketRaw = sessionStorage.getItem('nexus_pending_checkout') || localStorage.getItem('nexus_pending_checkout');
+      if (storedTicketRaw) {
+        const ticket = JSON.parse(storedTicketRaw);
+        if (ticket.sessionId && !ticket.sessionId.startsWith('whop_')) {
+          try { sessionStorage.setItem('nexus_current_order_id', ticket.sessionId); } catch {}
+          return ticket.sessionId;
+        }
+      }
+    } catch {}
+    // 3. Existing local license record
+    try {
+      const rawLicense = localStorage.getItem('nexus_contractguard_license');
+      if (rawLicense) {
+        const parsed = JSON.parse(rawLicense);
+        if (parsed.orderId) {
+          try { sessionStorage.setItem('nexus_current_order_id', parsed.orderId); } catch {}
+          return parsed.orderId;
+        }
+      }
+    } catch {}
+    // 4. Previously locked session order ID
+    try {
+      const existingSessionId = sessionStorage.getItem('nexus_current_order_id');
+      if (existingSessionId) return existingSessionId;
+    } catch {}
+    // 5. Generate once and freeze permanently for this workstation session
+    const generated = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+    try {
+      sessionStorage.setItem('nexus_current_order_id', generated);
+    } catch {}
+    return generated;
+  });
 
   const [deviceFp, setDeviceFp] = useState('Detecting hardware...');
   const [isActivating, setIsActivating] = useState(true);
@@ -53,6 +95,10 @@ export default function Welcome() {
         const existing = await verifyDeviceLicense();
         if (existing.isValid) {
           setLicenseData(existing);
+          if (existing.orderId) {
+            setOrderId(existing.orderId);
+            try { sessionStorage.setItem('nexus_current_order_id', existing.orderId); } catch {}
+          }
           setIsActivating(false);
           setIsUnauthorized(false);
           return;
@@ -73,7 +119,11 @@ export default function Welcome() {
             if (isFresh) {
               validPurchase = true;
               if (ticket.plan) detectedPlan = ticket.plan;
-              if (ticket.sessionId) detectedOrderId = ticket.sessionId;
+              if (ticket.sessionId && !ticket.sessionId.startsWith('whop_')) {
+                detectedOrderId = ticket.sessionId;
+                setOrderId(ticket.sessionId);
+                try { sessionStorage.setItem('nexus_current_order_id', ticket.sessionId); } catch {}
+              }
               // Clean up once consumed
               try {
                 sessionStorage.removeItem('nexus_pending_checkout');
@@ -101,8 +151,12 @@ export default function Welcome() {
         if (hasWhopUrlParam) {
           validPurchase = true;
           if (searchParams.get('plan')) detectedPlan = searchParams.get('plan');
-          if (searchParams.get('order_id')) detectedOrderId = searchParams.get('order_id');
-          else if (searchParams.get('receipt_id')) detectedOrderId = searchParams.get('receipt_id');
+          const urlParamOrder = searchParams.get('order_id') || searchParams.get('receipt_id') || searchParams.get('order');
+          if (urlParamOrder) {
+            detectedOrderId = urlParamOrder;
+            setOrderId(urlParamOrder);
+            try { sessionStorage.setItem('nexus_current_order_id', urlParamOrder); } catch {}
+          }
         }
 
         // Signal C: Whop Referrer check
@@ -129,8 +183,11 @@ export default function Welcome() {
 
         // Case 3: Legitimate verified purchase — generate keys and bind to this workstation
         const newKeys = generateLicenseKeys(detectedPlan, detectedOrderId);
+        newKeys.orderId = detectedOrderId;
         const activated = await activateLicenseOnDevice(newKeys);
         setLicenseData(activated);
+        setOrderId(detectedOrderId);
+        try { sessionStorage.setItem('nexus_current_order_id', detectedOrderId); } catch {}
         setIsActivating(false);
         setIsUnauthorized(false);
 
@@ -159,7 +216,7 @@ export default function Welcome() {
     }
 
     initActivation();
-  }, [planParam, orderId, sessionId, searchParams]);
+  }, []); // Run strictly once on mount to avoid re-triggering activation or fluctuating order IDs
 
   // Handle manual license activation for users with a key
   const handleManualActivation = async (e) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CheckCircle2, 
@@ -92,25 +92,60 @@ export default function NexusReceiptPrinter({
     setTimeout(() => setCopiedKey(null), 2500);
   };
 
-  const seats = licenseData?.seats || [
-    {
-      seatNumber: 1,
-      role: 'Master Admin Seat',
-      key: licenseData?.primaryKey || 'CG-LICENSE-KEY'
-    }
-  ];
+  const seats = useMemo(() => {
+    return licenseData?.seats || [
+      {
+        seatNumber: 1,
+        role: 'Master Admin Seat',
+        key: licenseData?.primaryKey || 'CG-LICENSE-KEY'
+      }
+    ];
+  }, [licenseData?.seats, licenseData?.primaryKey]);
 
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-  const currentTime = new Date().toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
+  // Static timestamp frozen to activation instant or initial receipt print
+  const currentDate = useMemo(() => {
+    if (licenseData?.activatedAt) {
+      try {
+        return new Date(licenseData.activatedAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      } catch {}
+    }
+    return new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }, [licenseData?.activatedAt]);
+
+  const currentTime = useMemo(() => {
+    if (licenseData?.activatedAt) {
+      try {
+        return new Date(licenseData.activatedAt).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+      } catch {}
+    }
+    return new Date().toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+  }, [licenseData?.activatedAt]);
+
+  // Memoized immutable QR barcode payload to prevent render flickering
+  const qrPayload = useMemo(() => {
+    const key = licenseData?.primaryKey || 'PENDING-KEY';
+    const id = orderId || 'ORD-578465';
+    const tier = planTier || 'solo';
+    return `NEXUS-LICENSE:${id}:${tier}:${key}`;
+  }, [orderId, planTier, licenseData?.primaryKey]);
 
   return (
     <div className="w-full flex flex-col items-center select-none font-sans">
@@ -316,7 +351,7 @@ export default function NexusReceiptPrinter({
 
               <div className="p-1 bg-white border border-zinc-300 rounded shrink-0 shadow-sm">
                 <QRCodeSVG 
-                  value={`NEXUS-LICENSE:${orderId}:${planTier}:${licenseData?.primaryKey || 'KEY'}`}
+                  value={qrPayload}
                   size={58}
                   level="M"
                 />
