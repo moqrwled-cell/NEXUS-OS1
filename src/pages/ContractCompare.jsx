@@ -476,6 +476,10 @@ export default function ContractCompare({ isDemoMode = false }) {
             {activeTool === 'bates' && (
               <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
                 <BatesStamperView 
+                  isDemo={isDemo}
+                  onTriggerUpgrade={(plan = 'firm') => {
+                    openSeamlessCheckout({ plan, toolName: 'contractcompare' });
+                  }}
                   onOpenGuide={() => {
                     setGuideModalTab('bates');
                     setShowGuideModal(true);
@@ -1329,25 +1333,24 @@ function ContractAnalyzerView({
     }
   };
 
-  // Automatically execute audit on initial mount ONLY if a pre-existing session was passed OR if in demo mode
+  // Automatically execute audit on initial mount ONLY if a pre-existing session was passed (e.g. from Vault or Templates)
   useEffect(() => {
     if (!auditResults && !isProcessing) {
-      const initialText = initialSession?.modifiedText || initialSession?.originalText || (isDemo ? HAZARDOUS_SAMPLE_CONTRACT : '');
-      const initialBaseline = initialSession?.originalText || (isDemo ? HAZARDOUS_BASELINE_CONTRACT : '');
+      const initialText = initialSession?.modifiedText || initialSession?.originalText;
+      const initialBaseline = initialSession?.originalText || '';
       if (initialText && initialText.trim()) {
         setText(initialText);
         setBaselineText(initialBaseline);
-        setDocumentTitle(initialSession?.title || 'Master Asset Purchase & Services Agreement');
-        setClientParty(initialSession?.clientParty || 'Acme Holdings LLC');
-        setCounterparty(initialSession?.counterparty || 'Globex International Corp');
+        setDocumentTitle(initialSession?.title || 'Contract Integrity Audit');
+        setClientParty(initialSession?.clientParty || '');
+        setCounterparty(initialSession?.counterparty || '');
         handleExecuteAudit({
           text: initialText,
           baselineText: initialBaseline,
-          title: initialSession?.title || 'Master Asset Purchase & Services Agreement',
-          clientParty: initialSession?.clientParty || 'Acme Holdings LLC',
-          counterparty: initialSession?.counterparty || 'Globex International Corp',
-          mode: analysisMode,
-          isInitialDemo: true
+          title: initialSession?.title || 'Contract Integrity Audit',
+          clientParty: initialSession?.clientParty || '',
+          counterparty: initialSession?.counterparty || '',
+          mode: analysisMode
         });
       }
     }
@@ -3936,7 +3939,7 @@ function PIIRedactorView({ onOpenGuide }) {
 // =========================================================================
 // 3. BATES STAMPING SUITE VIEW (Sequential PDFs + Contrast Pill + Manifest)
 // =========================================================================
-function BatesStamperView({ onOpenGuide }) {
+function BatesStamperView({ onOpenGuide, isDemo = false, onTriggerUpgrade }) {
   const [files, setFiles] = useState([]);
   const [prefix, setPrefix] = useState('EX-');
   const [startNum, setStartNum] = useState(1);
@@ -3951,8 +3954,27 @@ function BatesStamperView({ onOpenGuide }) {
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [lastBundle, setLastBundle] = useState(null);
 
+  const [batesRunsLeft, setBatesRunsLeft] = useState(() => {
+    try {
+      const stored = localStorage.getItem('nexus_demo_bates_runs');
+      return stored !== null ? Number(stored) : 2;
+    } catch {
+      return 2;
+    }
+  });
+
   const handleAddFiles = (e) => {
     const selected = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.pdf'));
+    if (isDemo) {
+      if (files.length >= 1 || selected.length > 1) {
+        alert("Evaluation Sandbox Limit: Master multi-document binder consolidation (up to 5,000 pages) requires a Firm Suite License ($299). In trial mode, only single document testing is permitted.");
+        if (onTriggerUpgrade) onTriggerUpgrade('firm');
+        if (files.length === 0 && selected.length > 0) {
+          setFiles([selected[0]]);
+        }
+        return;
+      }
+    }
     setFiles(prev => [...prev, ...selected]);
   };
 
@@ -3962,6 +3984,16 @@ function BatesStamperView({ onOpenGuide }) {
     setIsDragging(false);
     if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
       const selected = Array.from(e.dataTransfer.files).filter(f => f.name.toLowerCase().endsWith('.pdf'));
+      if (isDemo) {
+        if (files.length >= 1 || selected.length > 1) {
+          alert("Evaluation Sandbox Limit: Master multi-document binder consolidation (up to 5,000 pages) requires a Firm Suite License ($299). In trial mode, only single document testing is permitted.");
+          if (onTriggerUpgrade) onTriggerUpgrade('firm');
+          if (files.length === 0 && selected.length > 0) {
+            setFiles([selected[0]]);
+          }
+          return;
+        }
+      }
       setFiles(prev => [...prev, ...selected]);
     }
   };
@@ -3982,6 +4014,15 @@ function BatesStamperView({ onOpenGuide }) {
 
   const handleProcessPdfs = async () => {
     if (files.length === 0) return;
+
+    if (isDemo) {
+      if (batesRunsLeft <= 0) {
+        alert("Evaluation Sandbox Limit Reached: You have completed your free Bates stamping test runs. Please upgrade to Firm Suite ($299) for unlimited court productions and master binders.");
+        if (onTriggerUpgrade) onTriggerUpgrade('firm');
+        return;
+      }
+    }
+
     setIsProcessing(true);
     setProgress({ current: 0, total: 0 });
 
@@ -3996,6 +4037,14 @@ function BatesStamperView({ onOpenGuide }) {
         drawPill,
         onProgress: (current, total) => setProgress({ current, total })
       });
+
+      if (isDemo) {
+        const nextRuns = Math.max(0, batesRunsLeft - 1);
+        setBatesRunsLeft(nextRuns);
+        try {
+          localStorage.setItem('nexus_demo_bates_runs', String(nextRuns));
+        } catch {}
+      }
 
       // Save job in IndexedDB
       await saveBatesJob({
@@ -4041,6 +4090,32 @@ function BatesStamperView({ onOpenGuide }) {
           </button>
         )}
       </div>
+
+      {/* Evaluation Sandbox Notice */}
+      {isDemo && (
+        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/60 via-zinc-900 to-amber-950/40 border border-amber-500/30 flex flex-wrap items-center justify-between gap-3 text-xs shadow-lg">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
+              <Lock size={14} className="text-amber-400" />
+            </div>
+            <div>
+              <p className="font-bold text-amber-300">
+                Bates Stamping Evaluation Sandbox ({batesRunsLeft} of 2 Trial Runs Remaining)
+              </p>
+              <p className="text-[11px] text-zinc-400 mt-0.5">
+                Trial mode is limited to single-document testing. Master multi-document binders (up to 5,000+ pages) and unlimited batch numbering require the Firm Suite.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => onTriggerUpgrade?.('firm')}
+            className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-xs transition-all shadow-[0_0_12px_rgba(16,185,129,0.3)] shrink-0 cursor-pointer"
+          >
+            Unlock Firm Suite ($299)
+          </button>
+        </div>
+      )}
 
       {/* Configuration Grid */}
       <div className="p-6 rounded-2xl liquid-glass-strong border border-white/5 flex flex-col gap-4">
