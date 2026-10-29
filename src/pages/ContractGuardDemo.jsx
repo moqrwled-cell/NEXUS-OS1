@@ -7,11 +7,13 @@ import {
   AlertTriangle, AlertCircle, X, Download, HardDriveDownload,
   Users, User, Briefcase, FileCheck, Check, Sparkles, ExternalLink,
   ChevronRight, Clock, FileCode, FileSpreadsheet, Eye, Play,
-  Copy, Key, FileDown
+  Copy, Key, FileDown, Scale
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
 import { isImageFile, recognizeImage } from '../utils/ocrEngine';
 import LegalTemplatesView from '../components/LegalTemplatesView';
+import LiabilityReconcilerHUD from '../components/LiabilityReconcilerHUD';
+import { analyzeLiabilityInterlocks, SAMPLE_DEALS } from '../utils/liabilityMatrixEngine';
 
 import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
@@ -50,12 +52,18 @@ This Agreement is entered into on this 12th day of October, 2026, by and between
 5. CONFIDENTIALITY AND PRIVILEGED DATA
 5.1 Each party shall hold in strict confidence all proprietary data, client lists, and technical specifications disclosed by the counterparty.
 
+8. INDEMNIFICATION
+8.1 Seller shall defend, indemnify, and hold harmless Buyer and its affiliates from and against any and all claims, liabilities, losses, and damages up to Five Million Dollars ($5,000,000) arising out of third-party IP infringement, confidentiality breaches, or gross negligence.
+
 9. TERMINATION FOR CAUSE
 9.2 Either party may terminate this Agreement immediately upon written notice in accordance with the procedures set forth in Section 14.2 of this Agreement.
 9.3 Notice period shall be sixty (60) days, except as provided in Section 9.1 which specifies ten (10) days.
 
 11. SURVIVAL
-11.4 The indemnification covenants and confidentiality obligations in Section 19.1 shall survive termination of this Agreement for five (5) years.`;
+11.4 The indemnification covenants and confidentiality obligations in Section 19.1 shall survive termination of this Agreement for five (5) years.
+
+12. LIMITATION OF LIABILITY
+12.1 IN NO EVENT SHALL EITHER PARTY'S AGGREGATE LIABILITY UNDER OR RELATING TO THIS AGREEMENT EXCEED THE TOTAL FEES PAID HEREUNDER IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM ($50,000), REGARDLESS OF THE LEGAL THEORY AND NOTWITHSTANDING ANY PROVISION TO THE CONTRARY.`;
 
 const HAZARDOUS_BASELINE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT (ORIGINAL DRAFT)
 
@@ -294,7 +302,7 @@ export default function ContractGuardDemo() {
       setDocumentTitle('Master Asset Purchase Agreement');
       setClientParty('Acme Holdings LLC');
       setCounterparty('Globex International Corp');
-      handleRunAnalysis({
+      handleRunAudit({
         text: HAZARDOUS_SAMPLE_CONTRACT,
         baselineText: HAZARDOUS_BASELINE_CONTRACT,
         title: 'Master Asset Purchase Agreement',
@@ -476,6 +484,19 @@ export default function ContractGuardDemo() {
           title: 'Undefined Term: "Key Personnel"',
           snippet: 'Seller shall furnish key managerial services utilizing Key Personnel as designated in Schedule 1.',
           line: 41
+        }),
+        enrichFindingWithStatutoryRemedy({
+          id: 'def_5',
+          category: 'LIABILITY CAP CONTRADICTION',
+          severity: 'critical',
+          clause: 'Clause 8.1 vs. Clause 12.1',
+          title: 'Catastrophic $5,000,000 Indemnity vs. $50,000 Cap Contradiction',
+          snippet: 'Section 12.1 blanket liability cap ($50,000) directly nullifies Section 8.1 indemnification covenant ($5,000,000) under Delaware & NY precedent.',
+          line: 52,
+          statutoryCitation: 'Del. Ch. & UCC § 2-719 / Express Carve-Out Doctrine',
+          malpracticeRisk: 'Under established Delaware and New York precedent, courts apply the lower liability cap across all claims unless an express carve-out exists, leaving your client exposed to $4,950,000 in unrecoverable losses.',
+          courtGradeRedline: 'Section 12.2 (Express Carve-Out Rider): Notwithstanding Section 12.1 or any other limitation herein, claims arising under Section 8.1 (Indemnification) shall be expressly excluded from the aggregate liability ceiling.',
+          remedy: 'Attach Delaware-compliant Express Carve-Out Rider prior to execution.'
         })
       ];
     }
@@ -501,8 +522,12 @@ export default function ContractGuardDemo() {
         {/* Brand Header */}
         <div className="px-5 py-5 border-b border-zinc-800/60">
           <div className="flex items-center justify-between mb-3.5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+            <div 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity select-none group"
+              title="Return to Main Overview"
+            >
+              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.15)] group-hover:border-emerald-400/60 transition-colors">
                 <ShieldAlert className="text-emerald-400" size={18} />
               </div>
               <div>
@@ -512,7 +537,7 @@ export default function ContractGuardDemo() {
                     Demo
                   </span>
                 </h1>
-                <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
+                <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase group-hover:text-emerald-400/80 transition-colors">Air-Gapped Legal Studio</p>
               </div>
             </div>
             <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
@@ -564,6 +589,27 @@ export default function ContractGuardDemo() {
                   </div>
                 </div>
               )}
+
+              <button
+                onClick={() => setActiveTool('reconciler')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 active:scale-[0.98] cursor-pointer text-left ${
+                  activeTool === 'reconciler'
+                    ? 'bg-white/[0.08] text-white border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.12),inset_0_1px_0_0_rgba(255,255,255,0.1)] font-semibold'
+                    : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200 border border-transparent'
+                }`}
+              >
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${activeTool === 'reconciler' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-zinc-800/60 text-zinc-400'}`}>
+                  <Scale size={15} />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[13px] font-semibold leading-tight truncate">Liability Reconciler</p>
+                    <span className="text-[8.5px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold">New · $5M Cap</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Delaware & NY cross-clause rider</p>
+                </div>
+                {activeTool === 'reconciler' && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+              </button>
             </div>
           </div>
 
@@ -1400,6 +1446,20 @@ export default function ContractGuardDemo() {
                           </div>
                         )}
 
+                        {/* Interactive Link to Liability Reconciler */}
+                        {finding.category === 'LIABILITY CAP CONTRADICTION' && (
+                          <div className="mt-2.5">
+                            <button
+                              onClick={() => setActiveTool('reconciler')}
+                              className="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center gap-1.5 cursor-pointer w-fit transition-all shadow-[0_0_12px_rgba(16,185,129,0.15)]"
+                            >
+                              <Scale size={13} className="text-emerald-400" />
+                              <span>Open Delaware Express Carve-Out Rider Generator</span>
+                              <ArrowRight size={12} />
+                            </button>
+                          </div>
+                        )}
+
                         {/* Court-Grade Redline Replacement */}
                         {finding.courtGradeRedline ? (
                           !hasActiveLicense && idx >= 3 ? (
@@ -1537,6 +1597,27 @@ export default function ContractGuardDemo() {
                 </div>
               </div>
 
+            </motion.div>
+          )}
+
+          {/* VIEW 1.5: LIABILITY RECONCILER & DELAWARE CARVE-OUT RIDER */}
+          {activeTool === 'reconciler' && (
+            <motion.div key="reconciler" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="flex flex-col gap-4">
+              <LiabilityReconcilerHUD
+                auditResults={analyzeLiabilityInterlocks(contractText || HAZARDOUS_SAMPLE_CONTRACT)}
+                contractText={contractText || HAZARDOUS_SAMPLE_CONTRACT}
+                documentTitle={documentTitle || 'Master Asset Purchase & Services Agreement'}
+                onLoadSampleDeal={(sampleKey) => {
+                  const sample = SAMPLE_DEALS[sampleKey];
+                  if (sample) {
+                    setContractText(sample.text);
+                    setDocumentTitle(sample.title);
+                  }
+                }}
+                onApplyRiderToDraft={(riderText) => {
+                  setContractText((prev) => `${(prev || HAZARDOUS_SAMPLE_CONTRACT).trim()}\n\n${riderText}`);
+                }}
+              />
             </motion.div>
           )}
 
