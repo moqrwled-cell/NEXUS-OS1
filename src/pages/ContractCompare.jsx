@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FileText, AlertTriangle, ShieldAlert, Search, CheckCircle2,
@@ -32,10 +33,13 @@ import { useContractWorker } from '../utils/useContractWorker';
 import { extractTextFromPDF } from '../utils/pdfExtractor';
 import { isImageFile, recognizeImage } from '../utils/ocrEngine.js';
 import { verifyToolAccess } from '../utils/auth';
+import { openSeamlessCheckout } from '../utils/checkoutPopup';
 import { 
   verifyDeviceLicense, 
   getDeviceFingerprint, 
-  deactivateLicenseFromDevice 
+  deactivateLicenseFromDevice,
+  getDemoAuditsRemaining,
+  consumeDemoAudit
 } from '../utils/licenseManager';
 import { 
   enrichAllAuditFindings,
@@ -55,17 +59,30 @@ import SystemGuideModal from '../components/SystemGuideModal';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 import { analyzeLiabilityInterlocks, SAMPLE_DEALS } from '../utils/liabilityMatrixEngine';
 
-export default function ContractCompare() {
+export default function ContractCompare({ isDemoMode = false }) {
+  const navigate = useNavigate();
+  const isDemo = isDemoMode || (typeof window !== 'undefined' && (
+    window.location.pathname === '/demo' ||
+    window.location.pathname === '/contractguard-demo' ||
+    window.location.pathname.startsWith('/demo') ||
+    window.location.search.includes('demo')
+  ));
+  const [auditsLeft, setAuditsLeft] = useState(() => (typeof getDemoAuditsRemaining === 'function' ? getDemoAuditsRemaining() : 3));
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
   const [analysisMode, setAnalysisMode] = useState('single'); // single | comparative | harmonizer
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [guideModalTab, setGuideModalTab] = useState('analyzer');
-  const [showDeviceModal, setShowDeviceModal] = useState(true);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showDeviceModal, setShowDeviceModal] = useState(!isDemo);
+  const [isUnlocked, setIsUnlocked] = useState(isDemo);
   const [restoredSession, setRestoredSession] = useState(null);
 
   // Check auth
   useEffect(() => {
+    if (isDemo) {
+      setIsUnlocked(true);
+      setShowDeviceModal(false);
+      return;
+    }
     if (verifyToolAccess('contractcompare') || verifyToolAccess('all')) {
       setIsUnlocked(true);
       setShowDeviceModal(false);
@@ -73,7 +90,7 @@ export default function ContractCompare() {
       setIsUnlocked(false);
       setShowDeviceModal(true);
     }
-  }, []);
+  }, [isDemo]);
 
   // Workstation Hardware & License Settings State
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -81,6 +98,7 @@ export default function ContractCompare() {
   const [workstationFp, setWorkstationFp] = useState('');
 
   const loadDeviceLicenseData = async () => {
+    if (isDemo) return;
     try {
       const lic = await verifyDeviceLicense();
       const fp = await getDeviceFingerprint();
@@ -92,8 +110,10 @@ export default function ContractCompare() {
   };
 
   useEffect(() => {
-    loadDeviceLicenseData();
-  }, [isUnlocked, showSettingsModal]);
+    if (!isDemo) {
+      loadDeviceLicenseData();
+    }
+  }, [isUnlocked, showSettingsModal, isDemo]);
 
   const handleDeactivate = () => {
     const res = deactivateLicenseFromDevice();
@@ -143,7 +163,9 @@ export default function ContractCompare() {
                 <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">v2.4 Pro</span>
+            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">
+              {isDemo ? 'Evaluation' : 'v2.4 Pro'}
+            </span>
           </div>
 
           {/* Security Badge */}
@@ -325,18 +347,34 @@ export default function ContractCompare() {
 
         {/* Workstation & License Settings Button */}
         <div className="px-3.5 pt-2 pb-1.5 border-t border-zinc-800/60">
-          <button
-            onClick={() => { setShowSettingsModal(true); loadDeviceLicenseData(); }}
-            className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm group"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <Settings size={14} className="text-emerald-400 group-hover:rotate-45 transition-transform" />
-              <span className="truncate">Workstation & License</span>
-            </div>
-            <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold shrink-0">
-              {licenseData?.plan === 'firm' ? 'Firm' : 'Solo'}
-            </span>
-          </button>
+          {isDemo ? (
+            <button
+              type="button"
+              onClick={() => openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' })}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-500/15 to-teal-500/15 hover:from-emerald-500/25 hover:to-teal-500/25 border border-emerald-500/35 text-xs font-semibold text-emerald-300 transition-all cursor-pointer shadow-sm group"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Lock size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                <span className="truncate">Unlock License</span>
+              </div>
+              <span className="text-[9px] font-mono uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.5 rounded font-bold shrink-0">
+                {auditsLeft} Left
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => { setShowSettingsModal(true); loadDeviceLicenseData(); }}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm group"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Settings size={14} className="text-emerald-400 group-hover:rotate-45 transition-transform" />
+                <span className="truncate">Workstation & License</span>
+              </div>
+              <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold shrink-0">
+                {licenseData?.plan === 'firm' ? 'Firm' : 'Solo'}
+              </span>
+            </button>
+          )}
         </div>
 
         {/* Bottom: PWA Install */}
@@ -353,7 +391,38 @@ export default function ContractCompare() {
 
       {/* Main Workspace */}
       <main className="flex-1 p-5 md:p-7 overflow-y-auto z-10 custom-scrollbar flex flex-col">
-        {!isUnlocked ? (
+        {isDemo && (
+          <div className="mb-5 bg-gradient-to-r from-emerald-950/80 via-zinc-900 to-cyan-950/80 border border-emerald-500/30 rounded-xl p-3.5 px-5 flex flex-wrap items-center justify-between gap-4 shrink-0 shadow-lg shadow-emerald-950/40">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono text-emerald-400 font-semibold tracking-wide">
+                <Sparkles size={12} className="text-emerald-400 animate-pulse" />
+                <span>EVALUATION SANDBOX</span>
+              </div>
+              <p className="text-xs text-zinc-300">
+                You have <span className="font-bold text-emerald-400 font-mono">{auditsLeft} of 3</span> free full audits remaining in this evaluation session.
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => openSeamlessCheckout({ plan: 'solo', toolName: 'contractcompare' })}
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
+              >
+                Solo License ($199)
+              </button>
+              <button
+                type="button"
+                onClick={() => openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' })}
+                className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.35)] flex items-center gap-1.5 cursor-pointer active:scale-95"
+              >
+                <span>Unlock Firm Suite ($299)</span>
+                <Lock size={12} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!isUnlocked && !isDemo ? (
           <div className="flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto my-auto">
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
               <Lock size={32} />
@@ -377,6 +446,16 @@ export default function ContractCompare() {
                   initialSession={restoredSession}
                   analysisMode={analysisMode}
                   onAnalysisModeChange={setAnalysisMode}
+                  isDemo={isDemo}
+                  auditsLeft={auditsLeft}
+                  onConsumeAudit={() => {
+                    const next = consumeDemoAudit();
+                    setAuditsLeft(next);
+                    return next;
+                  }}
+                  onOpenCheckout={(plan = 'firm') => {
+                    openSeamlessCheckout({ plan, toolName: 'contractcompare' });
+                  }}
                   onOpenGuide={(tab) => {
                     setGuideModalTab(tab || 'analyzer');
                     setShowGuideModal(true);
@@ -421,11 +500,14 @@ export default function ContractCompare() {
             {activeTool === 'templates' && (
               <motion.div key="templates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
                 <LegalTemplatesView 
-                  isDemoMode={false}
+                  isDemoMode={isDemo}
                   onSendToAudit={(contractText, title) => {
                     setRestoredSession({ originalText: contractText, title });
                     setActiveTool('analyzer');
                   }} 
+                  onTriggerUpgrade={(trigger) => {
+                    openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' });
+                  }}
                   onOpenGuide={() => {
                     setGuideModalTab('templates');
                     setShowGuideModal(true);
@@ -464,7 +546,7 @@ export default function ContractCompare() {
       />
 
       <PirateTrapModal
-        isOpen={showDeviceModal || !isUnlocked}
+        isOpen={!isDemo && (showDeviceModal || !isUnlocked)}
         onSuccess={() => {
           setIsUnlocked(true);
           setShowDeviceModal(false);
@@ -843,12 +925,18 @@ This Agreement is entered into on this 12th day of October, 2026, by and between
 5. CONFIDENTIALITY AND PRIVILEGED DATA
 5.1 Each party shall hold in strict confidence all proprietary data, client lists, and technical specifications disclosed by the counterparty.
 
+8. INDEMNIFICATION
+8.1 Seller shall defend, indemnify, and hold harmless Buyer and its affiliates from and against any and all claims, liabilities, losses, and damages up to Five Million Dollars ($5,000,000) arising out of third-party IP infringement, confidentiality breaches, or gross negligence.
+
 9. TERMINATION FOR CAUSE
 9.2 Either party may terminate this Agreement immediately upon written notice in accordance with the procedures set forth in Section 14.2 of this Agreement.
 9.3 Notice period shall be sixty (60) days, except as provided in Section 9.1 which specifies ten (10) days.
 
 11. SURVIVAL
-11.4 The indemnification covenants and confidentiality obligations in Section 19.1 shall survive termination of this Agreement for five (5) years.`;
+11.4 The indemnification covenants and confidentiality obligations in Section 19.1 shall survive termination of this Agreement for five (5) years.
+
+12. LIMITATION OF LIABILITY
+12.1 IN NO EVENT SHALL EITHER PARTY'S AGGREGATE LIABILITY UNDER OR RELATING TO THIS AGREEMENT EXCEED THE TOTAL FEES PAID HEREUNDER IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM ($50,000), REGARDLESS OF THE LEGAL THEORY AND NOTWITHSTANDING ANY PROVISION TO THE CONTRARY.`;
 
 const HAZARDOUS_BASELINE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT (ORIGINAL DRAFT)
 
@@ -869,7 +957,16 @@ This Agreement is entered into on this 1st day of October, 2026, by and between 
 // =========================================================================
 // 1. CONTRACT ANALYZER VIEW (Dual Modes + In-Memory Proofreader + Multi-Export)
 // =========================================================================
-function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, onAnalysisModeChange, onOpenGuide }) {
+function ContractAnalyzerView({ 
+  initialSession, 
+  analysisMode: propAnalysisMode, 
+  onAnalysisModeChange, 
+  onOpenGuide,
+  isDemo = false,
+  auditsLeft = 3,
+  onConsumeAudit,
+  onOpenCheckout
+}) {
   // Mode selection: 'single' (pre-signing integrity audit) or 'comparative' (redline diff) or 'harmonizer'
   const [internalMode, setInternalMode] = useState(initialSession?.originalText ? 'comparative' : 'single');
   const analysisMode = propAnalysisMode !== undefined ? propAnalysisMode : internalMode;
@@ -959,8 +1056,17 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
   };
 
   const handleRunHarmonizer = (textOverride = null) => {
+    if (isDemo && auditsLeft <= 0) {
+      if (onOpenCheckout) {
+        onOpenCheckout('firm');
+      } else {
+        openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' });
+      }
+      return;
+    }
     const rawInput = typeof textOverride === 'string' ? textOverride : text;
     if (!rawInput || !rawInput.trim()) return;
+    if (isDemo && onConsumeAudit) onConsumeAudit();
     setIsHarmonizing(true);
     setTimeout(() => {
       try {
@@ -976,8 +1082,17 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
   };
 
   const handleRunLiabilityAudit = (textOverride = null) => {
+    if (isDemo && auditsLeft <= 0) {
+      if (onOpenCheckout) {
+        onOpenCheckout('firm');
+      } else {
+        openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' });
+      }
+      return;
+    }
     const rawInput = typeof textOverride === 'string' ? textOverride : text;
     if (!rawInput || !rawInput.trim()) return;
+    if (isDemo && onConsumeAudit) onConsumeAudit();
     setIsAnalyzingLiability(true);
     setTimeout(() => {
       try {
@@ -1135,6 +1250,20 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
 
 
   const handleExecuteAudit = async (overridePayload) => {
+    const isInitial = !!overridePayload?.isInitialDemo;
+
+    if (isDemo && !isInitial) {
+      if (auditsLeft <= 0) {
+        if (onOpenCheckout) {
+          onOpenCheckout('firm');
+        } else {
+          openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' });
+        }
+        return;
+      }
+      if (onConsumeAudit) onConsumeAudit();
+    }
+
     const targetText = overridePayload?.text !== undefined ? overridePayload.text : text;
     const targetBaseline = overridePayload?.baselineText !== undefined ? overridePayload.baselineText : baselineText;
     const targetMode = overridePayload?.mode || analysisMode;
@@ -1200,18 +1329,25 @@ function ContractAnalyzerView({ initialSession, analysisMode: propAnalysisMode, 
     }
   };
 
-  // Automatically execute audit on initial mount ONLY if a pre-existing session was passed
+  // Automatically execute audit on initial mount ONLY if a pre-existing session was passed OR if in demo mode
   useEffect(() => {
     if (!auditResults && !isProcessing) {
-      const initialText = initialSession?.modifiedText || initialSession?.originalText;
+      const initialText = initialSession?.modifiedText || initialSession?.originalText || (isDemo ? HAZARDOUS_SAMPLE_CONTRACT : '');
+      const initialBaseline = initialSession?.originalText || (isDemo ? HAZARDOUS_BASELINE_CONTRACT : '');
       if (initialText && initialText.trim()) {
+        setText(initialText);
+        setBaselineText(initialBaseline);
+        setDocumentTitle(initialSession?.title || 'Master Asset Purchase & Services Agreement');
+        setClientParty(initialSession?.clientParty || 'Acme Holdings LLC');
+        setCounterparty(initialSession?.counterparty || 'Globex International Corp');
         handleExecuteAudit({
           text: initialText,
-          baselineText: initialSession?.originalText || '',
-          title: initialSession?.title || 'Contract Integrity Audit',
-          clientParty: 'Acme Holdings LLC',
-          counterparty: 'Globex International Corp',
-          mode: analysisMode
+          baselineText: initialBaseline,
+          title: initialSession?.title || 'Master Asset Purchase & Services Agreement',
+          clientParty: initialSession?.clientParty || 'Acme Holdings LLC',
+          counterparty: initialSession?.counterparty || 'Globex International Corp',
+          mode: analysisMode,
+          isInitialDemo: true
         });
       }
     }
