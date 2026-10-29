@@ -21,6 +21,7 @@ import {
   verifyDeviceLicense,
   bindKeyToCurrentDevice
 } from '../utils/licenseManager';
+import NexusReceiptPrinter from '../components/NexusReceiptPrinter';
 
 export default function Welcome() {
   const [searchParams] = useSearchParams();
@@ -354,6 +355,18 @@ export default function Welcome() {
               <p className="text-zinc-400 text-xs md:text-sm max-w-lg leading-relaxed">
                 Your license has been cryptographically bound to this physical workstation. All air-gapped forensic audit modules are unlocked.
               </p>
+            </div>
+
+            {/* Interactive Physical License Receipt Dispenser */}
+            <div className="mb-10">
+              <NexusReceiptPrinter
+                licenseData={licenseData}
+                orderId={orderId}
+                deviceFp={deviceFp}
+                planTier={planParam}
+                onLaunchStudio={() => navigate('/app/contractcompare')}
+                onDownloadBundle={handleDownloadBundle}
+              />
             </div>
 
             {/* Hardware Binding Spec Card */}

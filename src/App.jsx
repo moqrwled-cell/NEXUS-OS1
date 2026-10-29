@@ -21,6 +21,7 @@ import {
   Key
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
+import LegalTrustModal from './components/LegalTrustModal';
 import Nexus3DNode from './components/Nexus3DNode';
 import ContractGuardMasterShowcase from './components/ContractGuardMasterShowcase';
 import { openSeamlessCheckout } from './utils/checkoutPopup';
@@ -37,6 +38,7 @@ function BrandMark({ className = "w-9 h-9" }) {
 export default function App() {
   const navigate = useNavigate();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState(null);
   const [activeFaq, setActiveFaq] = useState(null);
 
   const toggleFaq = (index) => {
@@ -887,8 +889,49 @@ export default function App() {
             </button>
           </div>
 
+          {/* Compliance & Trust Verification Links (Privacy, Terms, Security, Refunds) */}
+          <div className="mt-6 pt-5 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-mono text-zinc-400 max-w-5xl mx-auto">
+            <button
+              onClick={() => setLegalModalTab('privacy')}
+              className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+              <span>Privacy Policy (Zero-Cloud)</span>
+            </button>
+
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+
+            <button
+              onClick={() => setLegalModalTab('terms')}
+              className="hover:text-cyan-400 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/80" />
+              <span>Terms of Service & Licensing (EULA)</span>
+            </button>
+
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+
+            <button
+              onClick={() => setLegalModalTab('security')}
+              className="hover:text-teal-400 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-teal-400/80" />
+              <span>Data Storage & Security Architecture</span>
+            </button>
+
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+
+            <button
+              onClick={() => setLegalModalTab('refund')}
+              className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400/80" />
+              <span>Payments & Refund Policy</span>
+            </button>
+          </div>
+
           {/* Legal Protection Shield / Malpractice Disclaimer Banner */}
-          <div className="mt-8 pt-6 border-t border-white/5 text-[11px] text-zinc-400 leading-relaxed text-center max-w-4xl mx-auto font-mono">
+          <div className="mt-6 pt-5 border-t border-white/5 text-[11px] text-zinc-400 leading-relaxed text-center max-w-4xl mx-auto font-mono">
             <p>
               <strong className="text-zinc-300">LEGAL NOTICE & DISCLAIMER:</strong> ContractGuard is an automated document proofreading assistant. It does not provide legal representation or substitute professional attorney review. Users retain sole professional responsibility for verifying all contract terms prior to legal execution.
             </p>
@@ -901,6 +944,12 @@ export default function App() {
         isOpen={isContactModalOpen} 
         onClose={() => setIsContactModalOpen(false)} 
         services={["Nexus ContractGuard Enterprise"]}
+      />
+
+      <LegalTrustModal
+        isOpen={Boolean(legalModalTab)}
+        onClose={() => setLegalModalTab(null)}
+        initialTab={legalModalTab || 'privacy'}
       />
     </div>
   );
