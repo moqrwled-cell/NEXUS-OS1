@@ -330,7 +330,8 @@ export function getCookie(name) {
 export function setCookie(name, val, days = 3650) {
   if (typeof document === 'undefined') return;
   const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(val)}; expires=${expires}; path=/; SameSite=Strict`;
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  document.cookie = `${name}=${encodeURIComponent(val)}; expires=${expires}; path=/; SameSite=Strict${isSecure ? '; Secure' : ''}`;
 }
 
 /**

@@ -319,6 +319,15 @@ export default function ContractGuardDemo() {
   // Unified File Processor (DOCX, PDF with In-RAM OCR, images, TXT)
   const processDocumentFile = async (file, setTargetText, statusKey) => {
     if (!file) return;
+
+    // Defense-in-depth: Enforce 50MB institutional RAM file size ceiling to prevent memory exhaustion
+    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      alert(`File "${file.name}" exceeds the maximum institutional in-RAM limit of 50MB. Please select a standard contract draft.`);
+      setUploadStatus(prev => ({ ...prev, [statusKey]: 'File size exceeded (max 50MB).' }));
+      return;
+    }
+
     setUploadStatus(prev => ({ ...prev, [statusKey]: `Reading ${file.name}...` }));
 
     try {
