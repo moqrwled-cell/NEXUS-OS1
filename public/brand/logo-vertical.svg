@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 380" width="360" height="380">
+  <defs>
+    <!-- Sovereign Shield Gradient -->
+    <linearGradient id="vtShieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5D4" />
+      <stop offset="50%" stop-color="#00BBF9" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <!-- Wordmark Accent Gradient -->
+    <linearGradient id="vtTextGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F5D4" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+
+    <!-- Depth Shadow -->
+    <filter id="vtGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#00F5D4" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Top Center: Prominent Sovereign Brand Shield Mark -->
+  <g transform="translate(95, 25)" filter="url(#vtGlow)">
+    <!-- Shield Container -->
+    <path 
+      d="M 85 15 
+         L 138 41 
+         C 142 43 144 47 144 52 
+         L 144 95 
+         C 144 127 118 153 85 165 
+         C 52 153 26 127 26 95 
+         L 26 52 
+         C 26 47 28 43 32 41 
+         Z" 
+      fill="#04090E" 
+      stroke="url(#vtShieldGrad)" 
+      stroke-width="4.5" 
+      stroke-linejoin="round" 
+    />
+
+    <!-- Inner Nexus "N" Pillars of Law & Integrity -->
+    <path d="M 54 60 L 54 116" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <path d="M 54 60 L 116 116" stroke="url(#vtShieldGrad)" stroke-width="6" stroke-linecap="round" />
+    <path d="M 116 60 L 116 116" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Center Verification Diamond Core -->
+    <polygon points="85,80 93,88 85,96 77,88" fill="#00F5D4" />
+  </g>
+
+  <!-- Bottom: Balanced Stacked Typography -->
+  <g transform="translate(180, 245)" text-anchor="middle">
+    <!-- Brand Primary Name -->
+    <text y="0" font-family="system-ui, -apple-system, 'SF Pro Display', 'Inter', sans-serif" font-weight="900" font-size="38" letter-spacing="-0.03em" fill="#FFFFFF">
+      NEXUS
+    </text>
+
+    <!-- Product Signature Line -->
+    <text y="36" font-family="system-ui, -apple-system, 'SF Pro Display', 'Inter', sans-serif" font-weight="800" font-size="24" letter-spacing="0.04em" fill="url(#vtTextGrad)">
+      CONTRACTGUARD<tspan font-size="14" font-weight="600" fill="#00F5D4" dy="-10">™</tspan>
+    </text>
+
+    <!-- Dividing Precision Hairline -->
+    <line x1="-80" y1="56" x2="80" y2="56" stroke="#334155" stroke-width="1" />
+
+    <!-- Mission Descriptor -->
+    <text y="76" font-family="'JetBrains Mono', 'SF Mono', Consolas, monospace" font-weight="600" font-size="10" letter-spacing="0.25em" fill="#94A3B8">
+      AIR-GAPPED LEGAL AUDIT STUDIO
+    </text>
+  </g>
+</svg>
