@@ -68,15 +68,11 @@ export default function App() {
           className="flex items-center gap-3 cursor-pointer group select-none" 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <BrandMark />
-          <div className="flex items-center gap-2">
-            <span className="text-lg md:text-xl font-bold tracking-tight text-white group-hover:text-nexus-emerald transition-colors font-body">
-              Nexus <span className="text-nexus-emerald font-black">ContractGuard</span>
-            </span>
-            <span className="hidden sm:inline-block font-mono text-[10px] font-semibold tracking-wider bg-white/[0.06] text-zinc-300 border border-white/10 px-2 py-0.5 rounded-md">
-              ENTERPRISE 2.0
-            </span>
-          </div>
+          <img 
+            src="/brand/logo-horizontal.svg" 
+            alt="Nexus ContractGuard™" 
+            className="h-8 md:h-9 w-auto object-contain transition-transform group-hover:scale-[1.02]" 
+          />
         </div>
         
         {/* Nav Links (Desktop) */}
@@ -152,7 +148,7 @@ export default function App() {
                 className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-nexus-emerald/10 border border-nexus-emerald/30 text-nexus-emerald text-[11px] font-mono uppercase tracking-wider mb-6 shadow-[0_0_15px_rgba(0,255,157,0.12)]"
               >
                 <span className="w-2 h-2 rounded-full bg-nexus-emerald animate-pulse" />
-                <span>100% AIR-GAPPED • ABA MODEL RULE 1.6 COMPLIANT</span>
+                <span>100% AIR-GAPPED IN-RAM · ABA MODEL RULE 1.6 COMPLIANT · ZERO CLOUD EXPOSURE</span>
               </motion.div>
 
               {/* Master Headline (Instrument Serif - Magazine Editorial Font) */}
@@ -168,14 +164,14 @@ export default function App() {
                 </span>
               </motion.h1>
               
-              {/* Subheadline with Precise Legal Value Proposition & Word .docx Emphasis */}
+              {/* Subheadline with Precise Legal Value Proposition (Roast-Room & Impeccable Precision) */}
               <motion.p 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-base md:text-lg text-zinc-300 leading-relaxed mb-8 font-body"
+                className="text-base md:text-lg text-zinc-300 leading-relaxed mb-8 font-body max-w-xl"
               >
-                Automated pre-signing contract integrity engine for attorneys, boutique firms, and corporate legal teams. Audits native Microsoft Word (.docx) and PDF drafts client-side. Catches broken section cross-references, word-to-number financial mismatches ($250k vs $205k), undefined capitalized terms, and leftover boilerplate 100% in-browser with zero cloud risk.
+                A single drafting discrepancy ($250,000 vs $205,000) or missing condition precedent can cost a firm millions and spark malpractice liability. ContractGuard executes forensic pre-signing integrity audits on native Word (.docx) and PDF agreements 100% in-browser RAM in under 350ms. Zero cloud servers. Zero data leakage. Absolute client confidentiality.
               </motion.p>
 
               {/* Action Buttons */}
@@ -211,18 +207,18 @@ export default function App() {
               </motion.div>
 
               {/* Verified Metrics Row */}
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/[0.08] font-body">
+              <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/[0.08] font-body">
                 <div>
                   <div className="text-2xl font-black text-white font-mono">0ms</div>
-                  <div className="text-xs text-zinc-400 mt-0.5">Network Latency (In-Browser)</div>
+                  <div className="text-xs text-zinc-400 mt-0.5">Network Latency (Zero Cloud)</div>
                 </div>
                 <div>
                   <div className="text-2xl font-black text-nexus-emerald font-mono">100%</div>
-                  <div className="text-xs text-zinc-400 mt-0.5">Air-Gapped Client Privilege</div>
+                  <div className="text-xs text-zinc-400 mt-0.5">ABA Model Rule 1.6 Privilege</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-black text-nexus-cyan font-mono">5 in 1</div>
-                  <div className="text-xs text-zinc-400 mt-0.5">Integrated Audit Engines</div>
+                  <div className="text-2xl font-black text-nexus-cyan font-mono">350ms</div>
+                  <div className="text-xs text-zinc-400 mt-0.5">Forensic In-RAM AST Audit</div>
                 </div>
               </div>
 
@@ -287,22 +283,22 @@ export default function App() {
                 </div>
               </div>
 
-              <ul className="space-y-4 text-xs md:text-sm text-zinc-400">
+              <ul className="space-y-4 text-xs md:text-sm text-zinc-300">
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>4 to 8 billable hours lost per contract searching for cross-references.</span>
+                  <span>4 to 8 billable hours lost manually tracing citations, exhibits, and schedules.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>Overlooking numbers-to-words typos ($10k vs $100k) sparking litigation.</span>
+                  <span>Word-to-number clerical traps ($250,000 vs $205,000) trigger malpractice litigation under UCC § 3-114.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>Uploading sensitive client M&A drafts to cloud AI violates ABA Rule 1.6.</span>
+                  <span>Sending unredacted deal drafts to multi-tenant cloud AI waives attorney-client privilege under ABA Model Rule 1.6.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-red-400 font-bold shrink-0">✕</span>
-                  <span>Leftover [TBD] brackets in executed versions create exploitable loopholes.</span>
+                  <span>Sneaky counterparty alterations in "clean" redlines slip past exhausted late-night review.</span>
                 </li>
               </ul>
             </div>
@@ -318,27 +314,27 @@ export default function App() {
                     With Nexus ContractGuard Enterprise 2.0
                   </h3>
                   <span className="text-xs text-nexus-emerald font-mono">
-                    400ms Audit In-Memory + 100% Air-Gapped Confidentiality
+                    350ms In-RAM Audit + 100% Air-Gapped Confidentiality
                   </span>
                 </div>
               </div>
 
-              <ul className="space-y-4 text-xs md:text-sm text-zinc-200">
+              <ul className="space-y-4 text-xs md:text-sm text-zinc-100">
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>100% deterministic scan of all broken citations & missing exhibits.</span>
+                  <span>100% deterministic audit of broken citations, cross-references, and missing schedules in &lt; 350ms.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>Instant mathematical verification between written words & parenthetical numbers.</span>
+                  <span>Mathematical parity check between spelled-out sums and parenthetical figures prevents UCC drafting traps.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>Zero cloud telemetry guarantees ethical ABA Model Rule 1.6 compliance.</span>
+                  <span>100% in-browser RAM execution ensures zero server uploads, preserving absolute client confidentiality.</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-nexus-emerald font-bold shrink-0">✓</span>
-                  <span>Pre-Signing Amendment Rider (.docx & .pdf) automatically drafted in RAM.</span>
+                  <span>Instant character-level redline diff surfaces unmarked counterparty revisions in seconds.</span>
                 </li>
               </ul>
             </div>
@@ -586,8 +582,8 @@ export default function App() {
             <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4">
               One-Time Investment. Lifetime Ownership.
             </h2>
-            <p className="text-zinc-400 text-sm md:text-base mt-2.5">
-              Eliminate recurring SaaS subscription drains ($1,500/yr) with clean offline cryptographic ownership.
+            <p className="text-zinc-300 text-sm md:text-base mt-2.5 max-w-2xl mx-auto leading-relaxed">
+              Why pay predatory $1,800/year cloud subscriptions that expose your client redlines to third-party servers? Own your forensic contract audit workstation outright with zero recurring fees.
             </p>
           </div>
 
@@ -686,8 +682,9 @@ export default function App() {
                       LIFETIME FIRM LICENSE
                     </span>
                   </div>
-                  <p className="text-xs text-zinc-400 mt-2 font-mono">
-                    Replaces $1,800/yr per-seat cloud proofreading subscriptions
+                  <p className="text-xs text-emerald-400 font-mono mt-2 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span>Saves $1,500+ / yr vs. recurring cloud legal subscriptions</span>
                   </p>
                 </div>
 
@@ -829,7 +826,7 @@ export default function App() {
               </h2>
               
               <p className="text-sm md:text-base text-zinc-300 leading-relaxed mb-8 max-w-2xl mx-auto font-body">
-                Join modern boutique firms and counsel who transformed contract integrity audits from 6 hours of fatigue into 167 milliseconds of local in-RAM certainty.
+                Join modern boutique firms and counsel who transformed contract integrity audits from 6 hours of fatigue into 350 milliseconds of local in-RAM certainty.
               </p>
               
               <div className="flex flex-wrap items-center justify-center gap-4 font-body">
@@ -873,12 +870,18 @@ export default function App() {
         {/* 10. ENTERPRISE FOOTER WITH LEGAL PROTECTION NOTICE                        */}
         {/* ========================================================================= */}
         <footer className="border-t border-white/10 py-10 px-6 md:px-12 lg:px-20 text-xs text-zinc-400 font-body">
-          <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
-            <div className="flex items-center gap-2">
-              <Scale size={16} className="text-nexus-emerald" />
-              <span className="font-bold text-white">Nexus ContractGuard Enterprise 2.0</span>
+          <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-6">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/brand/logo-horizontal.svg" 
+                alt="Nexus ContractGuard™" 
+                className="h-7 w-auto object-contain" 
+              />
+              <span className="font-mono text-[10px] text-zinc-400 border border-white/10 px-2 py-0.5 rounded bg-white/[0.03]">
+                v2.0 AIR-GAPPED
+              </span>
             </div>
-            <div>
+            <div className="text-center md:text-left">
               © 2026 NexusOS Enterprise. Air-gapped and protected by offline local cryptography.
             </div>
             <button 
