@@ -589,53 +589,76 @@ export default function App() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch font-body">
             
-            {/* Solo Plan Card */}
-            <div className="p-8 md:p-10 rounded-3xl bg-[#060D12] border border-white/10 hover:border-nexus-emerald/30 shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all flex flex-col justify-between">
+            {/* Solo Plan Card - Individual Counsel Bestseller */}
+            <div className="p-8 md:p-10 rounded-3xl bg-gradient-to-b from-[#05131B] to-[#040C12] border-2 border-nexus-cyan/80 relative shadow-[0_0_50px_rgba(0,240,255,0.18)] flex flex-col justify-between font-body transition-all group">
+              <div className="absolute top-0 right-8 -translate-y-1/2 bg-nexus-cyan text-black text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center gap-1.5">
+                <Sparkles size={12} className="text-black" />
+                <span>INDIVIDUAL COUNSEL BESTSELLER</span>
+              </div>
+
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="text-2xl font-black text-white font-body">
-                      Solo Counsel License
-                    </h3>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      Ideal for solo attorneys, general counsels, and boutique dealmakers.
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-2xl font-black text-white font-body">
+                        Solo Counsel Workstation
+                      </h3>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-nexus-cyan/15 text-nexus-cyan border border-nexus-cyan/40">
+                        FULL FORENSIC POWER
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
+                      Uncompromising pre-signing contract integrity engine for solo attorneys, General Counsel, and boutique transactional dealmakers.
                     </p>
                   </div>
                 </div>
 
                 <div className="my-6 pb-6 border-b border-white/10">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-5xl font-black text-white font-mono tabular-nums">$199</span>
+                    <span className="text-5xl font-black text-nexus-cyan font-mono tabular-nums">$199</span>
                     <span className="text-base text-zinc-500 line-through font-mono tabular-nums">$499</span>
-                    <span className="text-xs text-nexus-emerald font-mono font-bold uppercase tracking-wider">
+                    <span className="text-xs text-nexus-cyan font-mono font-bold uppercase tracking-wider">
                       LIFETIME ACCESS
                     </span>
                   </div>
-                  <p className="text-xs text-zinc-400 mt-2 font-mono">
-                    Zero monthly fees • Instant offline cryptographic activation
+                  <p className="text-xs text-cyan-300 font-mono mt-2 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-nexus-cyan animate-pulse" />
+                    <span>Pays for itself on your very first contract review ($1,000+ value)</span>
                   </p>
                 </div>
 
-                <div className="space-y-3 text-xs md:text-sm text-zinc-300 font-body">
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>1 Lifetime Attorney Seat</span>
+                <div className="space-y-3 text-xs md:text-sm text-zinc-200 font-body">
+                  <div className="flex items-center gap-2.5 font-semibold text-white">
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>1 Dedicated High-Performance Seat (Offline Hardware Key)</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 font-semibold text-white">
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>All 5 Advanced Forensic Engines Included (Zero Stripped Features)</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>Unlimited Contract & NDA Audits</span>
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>Unlimited Lifetime Contract, NDA & M&A Audits</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>Broken Cross-Ref & Financial Words Reconciler</span>
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>Instant Word-to-Number ($250k vs $205k) Reconciler</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>Executive Client Memorandum Export (HTML & PDF)</span>
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>Character-Level Redline Diff & Stealth Alterations Hunter</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
-                    <span>100% In-Browser Execution (Zero Telemetry)</span>
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>Pre-Signing Delaware Express Carve-Out Rider Generator</span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>Executive Client Memorandum Export (HTML & Word .docx)</span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <span>100% In-Browser RAM Security (Strict ABA Rule 1.6 Privilege)</span>
                   </div>
                 </div>
               </div>
@@ -648,10 +671,11 @@ export default function App() {
                     toolName: 'contractcompare',
                     onSuccess: () => navigate('/app/contractcompare')
                   })}
-                  className="w-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/15 text-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all text-xs md:text-sm cursor-pointer shadow-sm active:scale-[0.98] font-body"
+                  className="w-full bg-nexus-cyan hover:bg-white text-black font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] text-xs md:text-sm cursor-pointer active:scale-[0.98] font-body"
                 >
-                  <Lock size={15} className="text-nexus-emerald" />
-                  <span>Purchase Solo License ($199)</span>
+                  <Lock size={15} />
+                  <span>Claim Solo Lifetime License ($199)</span>
+                  <ArrowRight size={14} />
                 </button>
               </div>
             </div>
@@ -728,6 +752,7 @@ export default function App() {
                 >
                   <Lock size={15} />
                   <span>Purchase Law Firm Suite ($299)</span>
+                  <ArrowRight size={14} />
                 </button>
               </div>
             </div>
