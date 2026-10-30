@@ -1,19 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 70" width="480" height="70">
-  <defs>
-    <!-- Text Highlight Gradient -->
-    <linearGradient id="wmTextGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00F5D4" />
-      <stop offset="100%" stop-color="#10B981" />
-    </linearGradient>
-  </defs>
-
-  <!-- Clean Typographic Signature Architecture -->
-  <g transform="translate(10, 48)">
-    <text font-family="system-ui, -apple-system, 'SF Pro Display', 'Inter', sans-serif" font-weight="900" font-size="36" letter-spacing="-0.03em" fill="#FFFFFF">
-      NEXUS <tspan fill="url(#wmTextGrad)">CONTRACTGUARD</tspan><tspan font-size="16" font-weight="600" fill="#00F5D4" dy="-14">™</tspan>
-    </text>
-  </g>
-
-  <!-- Technical Baseline Coordinate for Court Schedules & Print Riders -->
-  <line x1="10" y1="62" x2="470" y2="62" stroke="#334155" stroke-opacity="0.6" stroke-width="1" stroke-dasharray="3 3" />
+<svg viewBox="0 0 480 70" width="480" height="70" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="900" fill="#FFFFFF" letter-spacing="-0.8">Nexus</text>
+  <text x="126" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="300" fill="#00FF9D" letter-spacing="-0.8">ContractGuard</text>
+  <text x="12" y="62" font-family="monospace" font-size="10" font-weight="600" fill="#94A3B8" letter-spacing="2.8">AIR-GAPPED LEGAL AUDIT STUDIO</text>
 </svg>

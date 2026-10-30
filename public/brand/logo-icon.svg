@@ -1,77 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+<svg viewBox="0 0 200 200" width="200" height="200" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Primary Sovereign Gradient: Cyber Cyan into Luminous Emerald -->
-    <linearGradient id="nexusShieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00F5D4" />
-      <stop offset="50%" stop-color="#00BBF9" />
-      <stop offset="100%" stop-color="#10B981" />
+    <linearGradient id="nexusGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="100%" stop-color="#00FF9D" />
     </linearGradient>
-
-    <!-- Deep Vault Inner Glow Gradient -->
-    <linearGradient id="nexusInnerGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#10B981" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#00F5D4" stop-opacity="1" />
-    </linearGradient>
-
-    <!-- Subtle Ambient Drop Shadow for Precision Depth -->
-    <filter id="nexusGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00F5D4" flood-opacity="0.35" />
+    <filter id="coreGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
-
-  <!-- Background Canvas: Deep Obsidian Curved Squircle (Optimized for Icon / Avatar) -->
-  <rect width="200" height="200" rx="44" fill="#03080C" />
-  <rect width="196" height="196" x="2" y="2" rx="42" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1.5" />
-
-  <!-- Central Nexus Brand Geometry -->
-  <g transform="translate(10, 8)" filter="url(#nexusGlow)">
-    <!-- Outer Shield / Fortress Profile (ABA Legal Defense Perimeter) -->
-    <path 
-      d="M 90 20 
-         L 142 46 
-         C 146 48 148 52 148 57 
-         L 148 100 
-         C 148 132 122 158 90 170 
-         C 58 158 32 132 32 100 
-         L 32 57 
-         C 32 52 34 48 38 46 
-         Z" 
-      fill="none" 
-      stroke="url(#nexusShieldGrad)" 
-      stroke-width="5" 
-      stroke-linejoin="round" 
-      stroke-linecap="round"
-    />
-
-    <!-- Inner Nexus "N" Interlock & Precision Balance Scales -->
-    <!-- Left Pillar of Justice / Integrity -->
-    <path 
-      d="M 58 66 L 58 122" 
-      stroke="#ffffff" 
-      stroke-width="6.5" 
-      stroke-linecap="round" 
-    />
-
-    <!-- Dynamic Diagonal Nexus Bridge (Cross-Referencing & Audit Trace) -->
-    <path 
-      d="M 58 66 L 122 122" 
-      stroke="url(#nexusInnerGrad)" 
-      stroke-width="6.5" 
-      stroke-linecap="round" 
-    />
-
-    <!-- Right Pillar of Law & Sovereignty -->
-    <path 
-      d="M 122 66 L 122 122" 
-      stroke="#ffffff" 
-      stroke-width="6.5" 
-      stroke-linecap="round" 
-    />
-
-    <!-- Air-Gapped Core Monolith / Central Diamond Verification Node -->
-    <polygon 
-      points="90,86 98,94 90,102 82,94" 
-      fill="#00F5D4" 
-    />
-  </g>
+  <!-- 6 Radial Precision Sentinel Arms at 60 deg Harmonic Angles -->
+  <rect x="89" y="24" width="22" height="44" rx="11" transform="rotate(0 100 100)" fill="url(#nexusGrad)" />
+  <rect x="89" y="24" width="22" height="44" rx="11" transform="rotate(60 100 100)" fill="url(#nexusGrad)" />
+  <rect x="89" y="24" width="22" height="44" rx="11" transform="rotate(120 100 100)" fill="url(#nexusGrad)" />
+  <rect x="89" y="24" width="22" height="44" rx="11" transform="rotate(180 100 100)" fill="url(#nexusGrad)" />
+  <rect x="89" y="24" width="22" height="44" rx="11" transform="rotate(240 100 100)" fill="url(#nexusGrad)" />
+  <rect x="89" y="24" width="22" height="44" rx="11" transform="rotate(300 100 100)" fill="url(#nexusGrad)" />
+  <!-- Central Deterministic Verification Diamond Spark -->
+  <path d="M100 84 Q100 100 84 100 Q100 100 100 116 Q100 100 116 100 Q100 100 100 84 Z" fill="#FFFFFF" filter="url(#coreGlow)" />
 </svg>
