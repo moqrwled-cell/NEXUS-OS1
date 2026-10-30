@@ -1,14 +1,25 @@
 {
-  "short_name": "Nexus",
-  "name": "Nexus Local Tools",
+  "short_name": "ContractGuard",
+  "name": "Nexus ContractGuard™",
   "icons": [
     {
-      "src": "favicon.png",
-      "sizes": "192x192 512x512",
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "/brand/logo-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#000000"
+  "theme_color": "#040B0E",
+  "background_color": "#040B0E"
 }
