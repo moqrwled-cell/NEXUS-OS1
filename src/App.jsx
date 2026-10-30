@@ -632,10 +632,6 @@ export default function App() {
                     <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
                     <span>1 Dedicated High-Performance Seat (Offline Hardware Key)</span>
                   </div>
-                  <div className="flex items-center gap-2.5 font-semibold text-white">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
-                    <span>All 5 Advanced Forensic Engines Included (Zero Stripped Features)</span>
-                  </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
                     <span>Unlimited Lifetime Contract, NDA & M&A Audits</span>
