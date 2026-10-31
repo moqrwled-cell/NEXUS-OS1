@@ -98,34 +98,23 @@ export default function App() {
           </button>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Restore License for existing buyers */}
+        {/* High-Precision Navbar Actions (Clean, Authoritative, Non-Slop) */}
+        <div className="flex items-center gap-3">
           <button 
             type="button"
             onClick={() => navigate('/login')}
-            className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 transition-colors cursor-pointer font-body"
-            title="Restore an existing license using your key or Whop order ID"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-mono text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            title="Enter an active license key"
           >
             <Key size={12} className="text-nexus-emerald" />
-            <span>Restore License</span>
+            <span>Enter Key</span>
           </button>
 
-          {/* Interactive Demo CTA */}
           <button 
             onClick={() => navigate('/demo')}
-            className="px-3.5 py-2 rounded-xl text-xs font-bold text-nexus-cyan bg-nexus-cyan/10 border border-nexus-cyan/30 hover:bg-nexus-cyan/20 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(0,240,255,0.15)] font-body"
+            className="bg-nexus-emerald text-black px-4 sm:px-5 py-2 rounded-xl text-xs font-black hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center gap-2 cursor-pointer font-body"
           >
-            <Sparkles size={13} className="text-nexus-cyan" />
-            <span>Live Demo</span>
-          </button>
-
-          {/* Launch Studio CTA */}
-          <button 
-            onClick={() => navigate('/app/contractcompare')}
-            className="bg-nexus-emerald text-black px-4 py-2 rounded-xl text-xs font-black hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.35)] flex items-center gap-1.5 cursor-pointer font-body"
-          >
-            <span>Launch Studio</span>
+            <span>Audit Contract Free</span>
             <ArrowRight size={13} />
           </button>
         </div>
@@ -174,7 +163,7 @@ export default function App() {
                 A single drafting discrepancy ($250,000 vs $205,000) or missing condition precedent can cost a firm millions and spark malpractice liability. ContractGuard executes forensic pre-signing integrity audits on native Word (.docx) and PDF agreements 100% in-browser RAM in under 350ms. Zero cloud servers. Zero data leakage. Absolute client confidentiality.
               </motion.p>
 
-              {/* Action Buttons */}
+              {/* Action Buttons (Streamlined Dual High-Intent Hierarchy) */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -185,24 +174,17 @@ export default function App() {
                   onClick={() => navigate('/demo')}
                   className="bg-nexus-emerald text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] flex items-center gap-2.5 cursor-pointer"
                 >
-                  <Sparkles size={16} />
-                  <span>Try Interactive Live Demo</span>
+                  <FileText size={16} />
+                  <span>Audit Your First Contract (Free Test)</span>
                   <ArrowRight size={16} />
-                </button>
-                
-                <button 
-                  onClick={() => navigate('/app/contractcompare')}
-                  className="px-5 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <span>Full Studio</span>
                 </button>
 
                 <button 
                   onClick={() => scrollToSection('pricing')}
-                  className="px-5 py-3.5 rounded-xl bg-nexus-cyan/10 hover:bg-nexus-cyan/20 border border-nexus-cyan/30 text-nexus-cyan font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <Lock size={15} />
-                  <span>Lifetime Licenses ($199 / $299)</span>
+                  <Lock size={15} className="text-nexus-cyan" />
+                  <span>View Lifetime Pricing ($199)</span>
                 </button>
               </motion.div>
 

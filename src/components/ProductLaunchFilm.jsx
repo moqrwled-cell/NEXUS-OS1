@@ -466,7 +466,7 @@ export default function ProductLaunchFilm({ isRtl = false }) {
                 onClick={() => navigate('/demo')}
                 className="flex-1 sm:flex-initial bg-nexus-emerald text-black px-5 py-2.5 rounded-xl font-black text-xs hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.35)] flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>⚡ Try Interactive Live Demo</span>
+                <span>⚡ Audit Contract Free</span>
                 <ArrowRight size={13} />
               </button>
 

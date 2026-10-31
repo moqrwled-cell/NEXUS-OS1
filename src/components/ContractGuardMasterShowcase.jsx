@@ -568,19 +568,22 @@ export default function ContractGuardMasterShowcase() {
                 <div className="space-y-3 pt-2">
                   <button
                     onClick={() => navigate('/demo')}
-                    className="w-full bg-nexus-emerald text-black py-3.5 px-5 rounded-xl font-black text-xs md:text-sm hover:bg-white hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_25px_rgba(0,255,157,0.35)] flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full bg-nexus-emerald text-black py-3.5 px-5 rounded-xl font-black text-xs md:text-sm hover:bg-white hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_25px_rgba(0,255,157,0.35)] flex items-center justify-center gap-2 cursor-pointer font-body"
                   >
                     <Zap size={15} />
-                    <span>Test This In Interactive Live Demo</span>
+                    <span>Audit Contract Draft Free</span>
                     <ArrowRight size={15} />
                   </button>
 
                   <button
-                    onClick={() => navigate('/app/contractcompare')}
+                    onClick={() => {
+                      const el = document.getElementById('pricing');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
                     className="w-full bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white py-3 px-5 rounded-xl font-bold text-xs border border-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer font-mono"
                   >
-                    <span>Launch Full Air-Gapped Studio</span>
-                    <ExternalLink size={13} />
+                    <span>View Perpetual Licensing Plans</span>
+                    <ArrowRight size={13} className="text-nexus-cyan" />
                   </button>
                 </div>
 

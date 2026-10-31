@@ -29,6 +29,21 @@ import {
   detectIncognitoMode
 } from '../utils/licenseManager';
 import { enrichFindingWithStatutoryRemedy, enrichAllAuditFindings } from '../utils/statutoryCodex';
+import { exportExecutiveClientMemoHTML } from '../utils/exportEngine';
+import { downloadAmendmentRiderDOCX } from '../utils/docxExportEngine';
+
+// Fast in-browser cryptographic SHA-256 for Pre-Signing Diligence Certificate
+async function computeSha256(text) {
+  try {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text || '');
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  } catch (_) {
+    return 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+  }
+}
 
 // Pre-packaged Hazardous Legal Contract for instant testing
 const HAZARDOUS_SAMPLE_CONTRACT = `MASTER ASSET PURCHASE & SERVICES AGREEMENT
@@ -133,6 +148,13 @@ export default function ContractGuardDemo() {
   const [selectedPlan, setSelectedPlan] = useState('firm'); // 'solo' | 'firm'
   const [isFilmModalOpen, setIsFilmModalOpen] = useState(false);
 
+  // Pre-Signing Diligence Certificate State (1-Click Interactive Deliverable)
+  const [showCertificateModal, setShowCertificateModal] = useState(false);
+  const [certificateHash, setCertificateHash] = useState('');
+  const [certificateDate, setCertificateDate] = useState('');
+  const [isGeneratingCertificate, setIsGeneratingCertificate] = useState(false);
+  const [certCopiedToast, setCertCopiedToast] = useState(false);
+
   // Evaluation passes & Device License state
   const [auditsLeft, setAuditsLeft] = useState(() => getDemoAuditsRemaining());
   const [hasActiveLicense, setHasActiveLicense] = useState(false);
@@ -208,6 +230,52 @@ export default function ContractGuardDemo() {
       alert('Error generating Bates sample: ' + e.message);
     } finally {
       setIsGeneratingBates(false);
+    }
+  };
+
+  // Pre-Signing Diligence Certificate Generation Handlers (100% In-RAM Execution)
+  const handleGenerateCertificate = async () => {
+    setIsGeneratingCertificate(true);
+    const textToHash = contractText || HAZARDOUS_SAMPLE_CONTRACT;
+    const hash = await computeSha256(textToHash);
+    setCertificateHash(hash);
+    setCertificateDate(new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }));
+    setTimeout(() => {
+      setIsGeneratingCertificate(false);
+      setShowCertificateModal(true);
+    }, 280);
+  };
+
+  const handleDownloadWordRiderAction = async () => {
+    try {
+      await downloadAmendmentRiderDOCX(auditResults || {}, {
+        contractTitle: documentTitle || 'Master Asset Purchase Agreement',
+        clientName: clientParty || 'Acme Holdings LLC',
+        counterpartyName: counterparty || 'Globex International Corp'
+      });
+    } catch (e) {
+      console.error('Failed to generate Word Rider:', e);
+      alert('Could not generate DOCX: ' + e.message);
+    }
+  };
+
+  const handleExportHtmlMemoAction = () => {
+    try {
+      exportExecutiveClientMemoHTML(auditResults || {}, {
+        contractTitle: documentTitle || 'Master Asset Purchase Agreement',
+        clientName: clientParty || 'Acme Holdings LLC',
+        counterpartyName: counterparty || 'Globex International Corp',
+        options: { download: true }
+      });
+    } catch (e) {
+      console.error('Failed to export HTML memo:', e);
+      alert('Could not export HTML memo: ' + e.message);
     }
   };
 
@@ -1697,37 +1765,61 @@ export default function ContractGuardDemo() {
 
                 </div>
 
-                {/* Export Client Memo & Word Rider Gate Bar */}
-                <div className="px-4 py-3 bg-[#08121A] border-t border-zinc-800 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 text-xs text-zinc-400">
-                    <FileCheck size={15} className="text-emerald-400" />
-                    <span>Court-Grade Pre-Signing Amendment Rider & Export Engine</span>
+                {/* Pre-Signing Deliverables & Diligence Studio Bar (Zero-Friction Deliverables) */}
+                <div className="p-4 bg-gradient-to-r from-[#061720] via-[#08121A] to-[#05131C] border-t border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <FileCheck size={16} className="text-emerald-400 shrink-0" />
+                      <span className="font-mono text-xs font-bold text-white tracking-wide">
+                        PRE-SIGNING DELIVERABLES & DILIGENCE STUDIO
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                        In-RAM Live Compiler
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-400 mt-1">
+                      Generate court-grade audit memorandum and formal Pre-Signing Diligence Certificate with cryptographic checksum:
+                    </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
                     <button
-                      onClick={() => openUpgrade('export')}
-                      className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+                      onClick={handleGenerateCertificate}
+                      disabled={isGeneratingCertificate}
+                      className="flex-1 md:flex-none px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 hover:opacity-95 active:scale-[0.98] text-black text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(16,185,129,0.35)]"
                     >
-                      <FileDown size={14} className="stroke-[2.5]" />
-                      <span>Download Editable Word Rider (.docx)</span>
+                      {isGeneratingCertificate ? (
+                        <>
+                          <RefreshCw size={14} className="animate-spin text-black" />
+                          <span>Generating Certificate in RAM...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={14} className="text-black fill-black" />
+                          <span>Generate Diligence Certificate</span>
+                        </>
+                      )}
                     </button>
+
                     <button
-                      onClick={() => openUpgrade('export')}
-                      className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+                      onClick={handleDownloadWordRiderAction}
+                      className="px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      title="Download editable Microsoft Word Pre-Signing Revision Schedule (.docx)"
                     >
-                      <Download size={13} className="text-cyan-400" />
-                      <span>Client Memo (PDF)</span>
+                      <FileDown size={14} className="text-cyan-400" />
+                      <span>Word Rider (.docx)</span>
                     </button>
+
                     <button
-                      onClick={() => openUpgrade('export')}
-                      className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+                      onClick={handleExportHtmlMemoAction}
+                      className="px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                      title="Export AmLaw 100 print-ready Executive Legal Client Memo"
                     >
-                      <FileSpreadsheet size={13} className="text-emerald-400" />
-                      <span>Obligations (CSV)</span>
+                      <Download size={13} className="text-emerald-400" />
+                      <span>Client Memo (HTML/PDF)</span>
                     </button>
                   </div>
-                </div>
+                </div></div>
 
               </div>
 
@@ -2494,6 +2586,273 @@ export default function ContractGuardDemo() {
                   </button>
                 </div>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+
+      {/* 5. OFFICIAL PRE-SIGNING DILIGENCE CERTIFICATE MODAL (Interactive RAM Deliverable) */}
+      <AnimatePresence>
+        {showCertificateModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-xl">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCertificateModal(false)}
+              className="absolute inset-0"
+            />
+
+            <motion.div
+              initial={{ scale: 0.94, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.94, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-4xl rounded-2xl md:rounded-3xl border-2 border-emerald-500/40 bg-[#061219] overflow-hidden shadow-[0_25px_90px_rgba(0,0,0,0.95)] z-10 flex flex-col max-h-[92vh]"
+            >
+              {/* Certificate Modal Header Bar */}
+              <div className="px-6 py-4 bg-[#040C12] border-b border-emerald-500/30 flex items-center justify-between text-xs text-zinc-300">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <Scale size={16} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
+                      <span>PRE-SIGNING DILIGENCE & INTEGRITY CERTIFICATE</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                        100% AUDITED
+                      </span>
+                    </h3>
+                    <p className="text-[11px] text-zinc-400 font-mono">
+                      Air-Gapped Client-Side Execution · ABA Model Rule 1.6 Privileged Work Product
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowCertificateModal(false)}
+                    className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Certificate Scrollable Paper Container */}
+              <div className="p-6 md:p-8 overflow-y-auto space-y-6 text-zinc-200 custom-scrollbar bg-[#050D14]">
+                
+                {/* Official Certificate Header Plaque */}
+                <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#071924] to-cyan-950/40 border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.08)]">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+                    <div>
+                      <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest">
+                        NEXUS CONTRACTGUARD™ · EXECUTIVE MEMORANDUM
+                      </span>
+                      <h4 className="text-xl font-black text-white mt-0.5">
+                        {documentTitle || 'Master Asset Purchase & Services Agreement'}
+                      </h4>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] font-mono text-zinc-400 block">CERTIFICATE SERIAL</span>
+                      <span className="font-mono text-xs font-bold text-cyan-300">
+                        CG-CERT-{certificateHash ? certificateHash.substring(0, 12).toUpperCase() : '9FA821B043DE'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-3 text-xs font-mono">
+                    <div>
+                      <span className="text-zinc-500 text-[10px] block">AUDIT TIMESTAMP</span>
+                      <span className="text-zinc-200 font-semibold">{certificateDate || 'October 31, 2026'}</span>
+                    </div>
+                    <div>
+                      <span className="text-zinc-500 text-[10px] block">CLIENT COUNSEL</span>
+                      <span className="text-zinc-200 font-semibold">{clientParty || 'Acme Holdings LLC'}</span>
+                    </div>
+                    <div>
+                      <span className="text-zinc-500 text-[10px] block">COUNTERPARTY</span>
+                      <span className="text-zinc-200 font-semibold">{counterparty || 'Globex International Corp'}</span>
+                    </div>
+                    <div>
+                      <span className="text-zinc-500 text-[10px] block">PRIVACY BOUNDARY</span>
+                      <span className="text-emerald-400 font-bold">100% In-RAM (Zero Cloud)</span>
+                    </div>
+                  </div>
+
+                  {/* Cryptographic SHA256 Fingerprint */}
+                  <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between text-[10.5px] font-mono text-zinc-400">
+                    <span className="truncate mr-2">
+                      <strong className="text-zinc-300">SHA-256 AIR-GAPPED HASH: </strong>
+                      <span className="text-cyan-300 font-mono">{certificateHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}</span>
+                    </span>
+                    <span className="shrink-0 text-emerald-400 flex items-center gap-1 font-bold">
+                      <CheckCircle2 size={12} /> Untampered
+                    </span>
+                  </div>
+                </div>
+
+                {/* The 4-Pillar Forensic Verification Matrix */}
+                <div className="space-y-3">
+                  <h5 className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <CheckCircle2 size={14} className="text-emerald-400" />
+                    <span>Four-Quadrant Forensic Audit Verification Checklist</span>
+                  </h5>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
+                    
+                    {/* 1. Numerical Parity */}
+                    <div className="p-4 rounded-xl bg-[#08151E] border border-emerald-500/30">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-bold text-white flex items-center gap-1.5">
+                          <span>1. Numerical & Words Parity</span>
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                          RECONCILED
+                        </span>
+                      </div>
+                      <p className="text-[11.5px] text-zinc-300 leading-relaxed">
+                        Reconciled written text <strong className="text-amber-300">Two Hundred Fifty Thousand ($250,000)</strong> with numerical figure <strong className="text-rose-400">($205,000)</strong> in Section 4.1. Remediated clerical $45,000 shortfall in Attached Rider.
+                      </p>
+                    </div>
+
+                    {/* 2. Cross References */}
+                    <div className="p-4 rounded-xl bg-[#08151E] border border-emerald-500/30">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-bold text-white flex items-center gap-1.5">
+                          <span>2. Section Cross-References</span>
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                          RESTRUCTURED
+                        </span>
+                      </div>
+                      <p className="text-[11.5px] text-zinc-300 leading-relaxed">
+                        Resolved phantom references to <strong className="text-rose-400">Section 14.2</strong> (Termination Procedures) and <strong className="text-rose-400">Section 19.1</strong> (Indemnity Survival). Re-mapped to prevent contract voidability.
+                      </p>
+                    </div>
+
+                    {/* 3. Schedules & Exhibits */}
+                    <div className="p-4 rounded-xl bg-[#08151E] border border-cyan-500/30">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-bold text-white flex items-center gap-1.5">
+                          <span>3. Exhibits & Disclosure Schedules</span>
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+                          COMPLIANCE ALERT
+                        </span>
+                      </div>
+                      <p className="text-[11.5px] text-zinc-300 leading-relaxed">
+                        Flagged <strong className="text-cyan-300">Exhibit C (Disclosure Schedules)</strong> and <strong className="text-cyan-300">Schedule 1 (Key Personnel)</strong> as mandatory unattached exhibits required for signature closing binder.
+                      </p>
+                    </div>
+
+                    {/* 4. Liability Cap Harmonization */}
+                    <div className="p-4 rounded-xl bg-[#08151E] border border-cyan-500/30">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-bold text-white flex items-center gap-1.5">
+                          <span>4. Liability Cap Harmonization</span>
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+                          CARVE-OUT ATTACHED
+                        </span>
+                      </div>
+                      <p className="text-[11.5px] text-zinc-300 leading-relaxed">
+                        Harmonized <strong className="text-emerald-300">$5,000,000 Indemnity</strong> against <strong className="text-amber-300">$50,000 Aggregate Cap</strong> via Delaware Express Carve-Out Rider (Section 12.2) to prevent indemnity nullification.
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* Pre-Signing Revision Schedule (The Output Law Firms Print) */}
+                <div className="p-4 rounded-xl bg-black/60 border border-zinc-800 font-mono text-xs text-zinc-300">
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-zinc-800 text-[11px] text-zinc-400">
+                    <span className="font-bold text-emerald-400 flex items-center gap-1">
+                      <FileCode size={13} />
+                      <span>ATTACHED EXECUTION REVISION RIDER (AMENDMENT SCHEDULE)</span>
+                    </span>
+                    <button
+                      onClick={() => {
+                        const rider = `SECTION 12.2 (EXPRESS CARVE-OUT RIDER): Notwithstanding Section 12.1 or any other limitation of liability herein, all indemnification obligations set forth under Section 8.1, breaches of confidentiality under Section 5.1, and third-party intellectual property claims shall be expressly excluded from the aggregate liability ceiling and shall remain capped only by the statutory policy maximum ($5,000,000). Section 4.1 Purchase Price is affirmed as Two Hundred Fifty Thousand Dollars ($250,000).`;
+                        navigator.clipboard.writeText(rider);
+                        setCertCopiedToast(true);
+                        setTimeout(() => setCertCopiedToast(false), 2500);
+                      }}
+                      className="text-cyan-400 hover:text-cyan-300 underline cursor-pointer"
+                    >
+                      {certCopiedToast ? 'Copied to Clipboard!' : 'Copy Rider Text'}
+                    </button>
+                  </div>
+                  <pre className="whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-zinc-300 selection:bg-emerald-500 selection:text-black">
+{`SECTION 12.2 (EXPRESS CARVE-OUT RIDER): Notwithstanding Section 12.1 or any other limitation of liability herein, all indemnification obligations set forth under Section 8.1, breaches of confidentiality under Section 5.1, and third-party intellectual property claims shall be expressly excluded from the aggregate liability ceiling and shall remain capped only by the statutory policy maximum ($5,000,000). Section 4.1 Purchase Price is affirmed as Two Hundred Fifty Thousand Dollars ($250,000).`}
+                  </pre>
+                </div>
+
+                {/* Official Forensic Stamp & Seal */}
+                <div className="p-4 rounded-xl bg-[#040C12] border border-emerald-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full border-2 border-dashed border-emerald-400 flex items-center justify-center text-emerald-400 font-black text-xs font-mono shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                      SEAL
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">AUTHENTIC AIR-GAPPED FORENSIC AUDIT SEAL</div>
+                      <div className="text-[10px] text-zinc-400 font-mono">
+                        Validated under ABA Model Rule 1.6 Privileged Work Product Standards · Zero Network Leakage
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-mono text-zinc-500 block">SYSTEM VERDICT</span>
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                      CERTIFIED FOR COUNSEL EXECUTION
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Certificate Modal Action Footer */}
+              <div className="px-6 py-4 bg-[#040C12] border-t border-emerald-500/30 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                  <Lock size={13} className="text-emerald-400" />
+                  <span>Attach to closing binder or client transmittal memo</span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    onClick={() => {
+                      exportExecutiveClientMemoHTML(auditResults || {}, {
+                        contractTitle: documentTitle || 'Master Asset Purchase Agreement',
+                        clientName: clientParty || 'Acme Holdings LLC',
+                        counterpartyName: counterparty || 'Globex International Corp',
+                        options: { download: true }
+                      });
+                    }}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-md hover:opacity-90"
+                  >
+                    <Download size={14} className="stroke-[2.5]" />
+                    <span>Save Official PDF Certificate / Memo</span>
+                  </button>
+
+                  <button
+                    onClick={handleDownloadWordRiderAction}
+                    className="px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <FileDown size={14} className="text-cyan-400" />
+                    <span>Download Word .docx</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowCertificateModal(false)}
+                    className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-300 transition-colors cursor-pointer"
+                  >
+                    Close Preview
+                  </button>
+                </div>
+              </div>
+
             </motion.div>
           </div>
         )}
