@@ -81,6 +81,31 @@ This Agreement is entered into on this 1st day of October, 2026, by and between 
 14. TERMINATION PROCEDURES
 14.2 Either party may terminate upon thirty (30) days notice.`;
 
+const SAAS_SAMPLE_CONTRACT = `ENTERPRISE CLOUD SOFTWARE MASTER SUBSCRIPTION AGREEMENT
+
+This Master Subscription Agreement ("Agreement") is made as of November 15, 2026, by and between CloudScale Systems Inc. ("Vendor") and Apex Global Logistics ("Customer").
+
+1. SUBSCRIPTION GRANT & SCOPE
+1.1 Vendor grants Customer a non-exclusive right to access the Cloud Services specified in Order Form A-1.
+1.2 Customer authorized users shall not exceed One Hundred (100) named users, except as augmented pursuant to Schedule B.
+
+2. SERVICE LEVEL AGREEMENT & UPTIME
+2.1 Vendor shall maintain 99.9% monthly availability as set forth in Exhibit 4 (Service Level Standards).
+2.2 Liquidated damages for downtime shall be calculated pursuant to the formulas in Section 18.3.
+
+3. FEES AND BILLING RECONCILIATION
+3.1 Annual Platform Fee: Customer shall pay an annual fee of Seventy-Five Thousand Dollars ($57,000) invoiced annually in advance.
+3.2 Late fees shall accrue at 1.5% per month or the statutory maximum under Section 22.4.
+
+4. INDEMNITY AND THIRD-PARTY IP
+4.1 Vendor shall indemnify, defend, and hold harmless Customer against any third-party claim alleging that the Cloud Services infringe any patent, copyright, or trademark, with unlimited aggregate liability.
+
+5. LIMITATION OF LIABILITY
+5.1 IN NO EVENT SHALL EITHER PARTY'S TOTAL AGGREGATE LIABILITY ARISING OUT OF OR RELATED TO THIS AGREEMENT EXCEED ONE HUNDRED THOUSAND DOLLARS ($10,000) UNDER ANY CIRCUMSTANCES, INCLUDING INDEMNIFICATION CLAIMS UNDER SECTION 4.1.
+
+6. TERM AND TERMINATION
+6.1 This Agreement shall automatically renew for successive twelve (12) month terms unless either party gives written notice of non-renewal at least ninety (90) days prior to the end of the current term, subject to the cure period specified in Section 15.2.`;
+
 export default function ContractGuardDemo() {
   const navigate = useNavigate();
 
@@ -98,6 +123,7 @@ export default function ContractGuardDemo() {
 
   // Upload & Drag-and-drop state
   const [uploadStatus, setUploadStatus] = useState({ target: '', baseline: '' });
+  const [uploadError, setUploadError] = useState(null);
   const [isDraggingTarget, setIsDraggingTarget] = useState(false);
   const [isDraggingBaseline, setIsDraggingBaseline] = useState(false);
 
@@ -185,21 +211,13 @@ export default function ContractGuardDemo() {
     }
   };
 
-  // Quick Sample Loader
-  const handleLoadSample = () => {
-    setContractText(HAZARDOUS_SAMPLE_CONTRACT);
-    setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
-    setDocumentTitle('Master Asset Purchase Agreement');
-    setClientParty('Acme Holdings LLC');
-    setCounterparty('Globex International Corp');
-  };
-
   // Local Vault Purge State
   const [vaultPurged, setVaultPurged] = useState(false);
   const handlePurgeVault = () => {
     setContractText('');
     setBaselineText('');
     setRedactResult(null);
+    setUploadError(null);
     setVaultPurged(true);
     setTimeout(() => setVaultPurged(false), 3000);
   };
@@ -294,9 +312,10 @@ export default function ContractGuardDemo() {
     }
   };
 
-  // Automatically load benchmark draft and execute audit on initial mount so results are instant
-  useEffect(() => {
-    if (!contractText && !auditResults && !isProcessing) {
+  // 1-Click Interactive Benchmark Contract Loader (Zero-Friction Test Cases)
+  const handleLoadSampleCase = (caseType = 'ma') => {
+    setUploadError(null);
+    if (caseType === 'ma') {
       setContractText(HAZARDOUS_SAMPLE_CONTRACT);
       setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
       setDocumentTitle('Master Asset Purchase Agreement');
@@ -308,22 +327,52 @@ export default function ContractGuardDemo() {
         title: 'Master Asset Purchase Agreement',
         clientParty: 'Acme Holdings LLC',
         counterparty: 'Globex International Corp',
+        mode: analysisMode,
+        isInitial: true
+      });
+    } else if (caseType === 'saas') {
+      setContractText(SAAS_SAMPLE_CONTRACT);
+      setBaselineText('');
+      setDocumentTitle('Enterprise Cloud Master Subscription Agreement');
+      setClientParty('Apex Global Logistics');
+      setCounterparty('CloudScale Systems Inc.');
+      handleRunAudit({
+        text: SAAS_SAMPLE_CONTRACT,
+        baselineText: '',
+        title: 'Enterprise Cloud Master Subscription Agreement',
+        clientParty: 'Apex Global Logistics',
+        counterparty: 'CloudScale Systems Inc.',
         mode: 'single',
         isInitial: true
       });
     }
+  };
+
+  const handleLoadSample = () => handleLoadSampleCase('ma');
+
+  // Automatically load benchmark draft and execute audit on initial mount so results are instant
+  useEffect(() => {
+    if (!contractText && !auditResults && !isProcessing) {
+      handleLoadSampleCase('ma');
+    }
   }, []);
-
-
 
   // Unified File Processor (DOCX, PDF with In-RAM OCR, images, TXT)
   const processDocumentFile = async (file, setTargetText, statusKey) => {
     if (!file) return;
+    setUploadError(null);
 
     // Defense-in-depth: Enforce 50MB institutional RAM file size ceiling to prevent memory exhaustion
     const MAX_FILE_SIZE = 50 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      alert(`File "${file.name}" exceeds the maximum institutional in-RAM limit of 50MB. Please select a standard contract draft.`);
+      setUploadError({
+        title: 'File Size Exceeded (Maximum 50MB)',
+        message: `File "${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)}MB) exceeds the 50MB in-RAM processing limit. Please select a standard contract draft or test a pre-loaded agreement.`,
+        action: {
+          label: 'Load Sample M&A Agreement Instead',
+          onClick: () => handleLoadSampleCase('ma')
+        }
+      });
       setUploadStatus(prev => ({ ...prev, [statusKey]: 'File size exceeded (max 50MB).' }));
       return;
     }
@@ -377,12 +426,26 @@ export default function ContractGuardDemo() {
         setTargetText(content);
         setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded text file (${content.split(/\s+/).length} words)` }));
       } else {
-        alert("Supported file formats: .pdf, .docx, .txt, .png, .jpg, .jpeg, .webp");
+        setUploadError({
+          title: 'Unsupported File Format',
+          message: `The file format of "${file.name}" is not directly supported. Please upload a standard .docx, .pdf, .txt, or scanned image (.png, .jpg), or test one of the pre-loaded contracts.`,
+          action: {
+            label: 'Load Sample M&A Agreement',
+            onClick: () => handleLoadSampleCase('ma')
+          }
+        });
         setUploadStatus(prev => ({ ...prev, [statusKey]: '' }));
       }
     } catch (err) {
-      console.error(err);
-      alert("Failed to parse document: " + err.message);
+      console.error("Document parse error:", err);
+      setUploadError({
+        title: 'Document Parse Error',
+        message: `Could not read "${file.name}": ${err.message || 'Corrupted file stream'}. You can paste text directly into the buffer below.`,
+        action: {
+          label: 'Load Sample M&A Agreement',
+          onClick: () => handleLoadSampleCase('ma')
+        }
+      });
       setUploadStatus(prev => ({ ...prev, [statusKey]: 'Failed to parse file' }));
     }
   };
@@ -961,18 +1024,55 @@ export default function ContractGuardDemo() {
                 </div>
               </div>
 
+              {/* 1-Click Interactive Benchmark Contract Cases (Zero-Friction Test) */}
+              <div className="p-3.5 bg-gradient-to-r from-emerald-950/40 via-[#071620] to-cyan-950/40 border border-emerald-500/30 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-[0_4px_25px_rgba(16,185,129,0.08)]">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <Sparkles size={16} className="text-emerald-400" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-white tracking-wide">
+                        1-Click Interactive Benchmark Contracts
+                      </span>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Zero Upload Required
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-400">
+                      Explore how the forensic engine discovers hidden clerical and cross-reference defects in real time:
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => handleLoadSampleCase('ma')}
+                    className="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 hover:border-emerald-400 text-xs font-semibold text-emerald-300 hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-[0.98]"
+                    title="Load M&A agreement with $45,000 words-to-numbers disparity and broken Section 14.2"
+                  >
+                    <FileText size={13} className="text-emerald-400" />
+                    <span>M&amp;A Deal ($45k Clerical Flaw)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleLoadSampleCase('saas')}
+                    className="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 hover:border-cyan-400 text-xs font-semibold text-cyan-300 hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-[0.98]"
+                    title="Load SaaS MSA with broken Exhibit C and liability cap collision"
+                  >
+                    <FileCode size={13} className="text-cyan-400" />
+                    <span>SaaS MSA (Missing Exhibit C)</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Workspace Action Bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 bg-[#08121A] p-3 rounded-xl border border-zinc-800/80">
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleLoadSample}
-                    className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-xs font-semibold text-zinc-200 transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <RefreshCw size={13} className="text-emerald-400" />
-                    <span>Reset Sample M&A Contract</span>
-                  </button>
-                  <span className="text-[11px] text-zinc-400 font-mono hidden md:inline">
-                    · Or paste your own draft / drop files (.docx, .pdf, .png scan)
+                  <span className="text-[11px] text-zinc-400 font-mono flex items-center gap-1.5">
+                    <Lock size={12} className="text-emerald-400" />
+                    <span>In-RAM Buffer: Paste contract draft below or drop files (.docx, .pdf, image scan)</span>
                   </span>
                 </div>
 
@@ -980,7 +1080,7 @@ export default function ContractGuardDemo() {
                   <button
                     onClick={() => handleRunAudit()}
                     disabled={isProcessing}
-                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 active:scale-[0.98] text-black font-extrabold text-xs transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] flex items-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     {isProcessing ? (
                       <>
@@ -996,6 +1096,35 @@ export default function ContractGuardDemo() {
                   </button>
                 </div>
               </div>
+
+              {/* In-UI Error Banner (Error Recovery UX Principle) */}
+              {uploadError && (
+                <div className="p-3.5 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-200 flex items-start justify-between gap-3 animate-fadeIn">
+                  <div className="flex items-start gap-2.5">
+                    <AlertTriangle size={18} className="text-rose-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-rose-200">{uploadError.title || 'Document Upload Error'}</p>
+                      <p className="text-[11px] text-zinc-300 mt-1 leading-relaxed">{uploadError.message}</p>
+                      {uploadError.action && (
+                        <button
+                          onClick={uploadError.action.onClick}
+                          className="mt-2.5 px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-xs font-mono text-rose-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <Sparkles size={11} className="text-rose-300" />
+                          <span>{uploadError.action.label}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setUploadError(null)} 
+                    className="text-zinc-400 hover:text-white p-1 cursor-pointer transition-colors"
+                    title="Dismiss alert"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+              )}
 
               {/* Document Input Panes */}
               <div className={`grid gap-4 ${analysisMode === 'comparative' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
@@ -1162,7 +1291,33 @@ export default function ContractGuardDemo() {
                           <span>Paste from Clipboard</span>
                         </button>
                       </div>
-                      <div className="mt-4 text-[10.5px] font-mono text-zinc-400">
+
+                      {/* 1-Click Sample Pre-load Pills */}
+                      <div className="mt-4 pt-3 border-t border-zinc-800/80 flex flex-wrap items-center justify-center gap-2">
+                        <span className="text-[10.5px] font-mono text-zinc-400">
+                          Or test with pre-loaded benchmark contracts:
+                        </span>
+                        <div className="flex flex-wrap items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleLoadSampleCase('ma')}
+                            className="px-3 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-semibold text-emerald-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <FileText size={11} className="text-emerald-400" />
+                            <span>M&amp;A Deal ($45k Flaw)</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleLoadSampleCase('saas')}
+                            className="px-3 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-xs font-semibold text-cyan-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <FileCode size={11} className="text-cyan-400" />
+                            <span>SaaS MSA (Broken Exhibits)</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 text-[10.5px] font-mono text-zinc-400">
                         Or paste raw contract clauses directly below:
                       </div>
                       <textarea

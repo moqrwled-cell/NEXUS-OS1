@@ -576,9 +576,24 @@ export default function App() {
         {/* ========================================================================= */}
         <section id="pricing" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-14 font-body">
-            <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-              PERPETUAL B2B LICENSING
-            </span>
+            {/* Marketing Scarcity Badge (Psychological Urgency) */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-950/60 via-[#061822] to-emerald-950/60 border border-nexus-cyan/40 text-nexus-cyan text-xs font-mono mb-5 shadow-[0_0_25px_rgba(0,240,255,0.18)]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-nexus-cyan"></span>
+              </span>
+              <span className="font-extrabold tracking-wider text-white">FOUNDER COHORT:</span>
+              <span className="text-nexus-cyan font-black">184 / 250</span>
+              <span className="text-zinc-300">Lifetime Keys Remaining</span>
+              <span className="hidden sm:inline text-zinc-500">·</span>
+              <span className="hidden sm:inline text-amber-300 font-semibold">Tier 1 Price Locks After Sell-Out</span>
+            </div>
+
+            <div className="block">
+              <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
+                PERPETUAL B2B LICENSING
+              </span>
+            </div>
             <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4">
               One-Time Investment. Lifetime Ownership.
             </h2>
@@ -625,6 +640,12 @@ export default function App() {
                     <span className="w-1.5 h-1.5 rounded-full bg-nexus-cyan animate-pulse" />
                     <span>Pays for itself on your very first contract review ($1,000+ value)</span>
                   </p>
+                  <div className="mt-3 text-[11px] font-mono text-cyan-200/90 flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-lg border border-nexus-cyan/20">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-nexus-cyan font-bold">⚡ 48 Keys Claimed This Week</span>
+                    </span>
+                    <span className="text-zinc-400">Instant Hardware Activation</span>
+                  </div>
                 </div>
 
                 <div className="space-y-3 text-xs md:text-sm text-zinc-200 font-body">
@@ -706,6 +727,12 @@ export default function App() {
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                     <span>Saves $1,500+ / yr vs. recurring cloud legal subscriptions</span>
                   </p>
+                  <div className="mt-3 text-[11px] font-mono text-emerald-200/90 flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-lg border border-nexus-emerald/20">
+                    <span className="flex items-center gap-1.5">
+                      <span className="text-nexus-emerald font-bold">🏛️ 18 Firm Allocations Left</span>
+                    </span>
+                    <span className="text-zinc-400">5-Seat Team Floating Key</span>
+                  </div>
                 </div>
 
                 <div className="space-y-3 text-xs md:text-sm text-zinc-200 font-body">
