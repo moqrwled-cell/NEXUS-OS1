@@ -1819,7 +1819,7 @@ export default function ContractGuardDemo() {
                       <span>Client Memo (HTML/PDF)</span>
                     </button>
                   </div>
-                </div></div>
+                </div>
 
               </div>
 

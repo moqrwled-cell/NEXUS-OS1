@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import App from './App.jsx'
 import Login from './pages/Login.jsx'
 import ContractCompare from './pages/ContractCompare.jsx'
+import ContractGuardDemo from './pages/ContractGuardDemo.jsx'
 import Welcome from './pages/Welcome.jsx'
 import LanguageWrapper from './components/LanguageWrapper.jsx'
 import './i18n'
@@ -19,8 +20,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <React.Suspense fallback={<div className="min-h-screen bg-[#020608]" />}>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/demo" element={<ContractCompare isDemoMode={true} />} />
-            <Route path="/contractguard-demo" element={<ContractCompare isDemoMode={true} />} />
+            <Route path="/demo" element={<ContractGuardDemo />} />
+            <Route path="/contractguard-demo" element={<ContractGuardDemo />} />
             <Route path="/war-room" element={<WarRoom />} />
             <Route path="/nexus-hq" element={<WarRoom />} />
             <Route path="/secret-ops" element={<WarRoom />} />
