@@ -1,0 +1,12 @@
+# Ignore development, test and benchmark files from Vercel deployments
+TEST_DOCUMENTS
+tests
+sessions
+.court
+scripts
+*.py
+*.cjs
+lawyer_leads_70.csv
+TEST_READY.md
+*.png
+*.pdf
