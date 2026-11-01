@@ -20,8 +20,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <React.Suspense fallback={<div className="min-h-screen bg-[#020608]" />}>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/demo" element={<ContractGuardDemo />} />
-            <Route path="/contractguard-demo" element={<ContractGuardDemo />} />
+            <Route path="/demo" element={<ContractCompare isDemoMode={true} />} />
+            <Route path="/contractguard-demo" element={<ContractCompare isDemoMode={true} />} />
             <Route path="/war-room" element={<WarRoom />} />
             <Route path="/nexus-hq" element={<WarRoom />} />
             <Route path="/secret-ops" element={<WarRoom />} />
