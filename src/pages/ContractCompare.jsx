@@ -1,3 +1,4 @@
+import { downloadDiligenceCertificatePDF } from '../utils/diligenceCertificatePdfGenerator';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -2146,6 +2147,23 @@ function ContractAnalyzerView({
                               type="button"
                               onClick={() => {
                                 setShowAltExports(false);
+                                downloadDiligenceCertificatePDF(auditResults || {}, {
+                                  contractTitle: documentTitle || 'Master Asset Purchase & Services Agreement',
+                                  clientName: clientParty || 'Acme Holdings LLC',
+                                  counterpartyName: counterparty || 'Globex International Corp',
+                                  certificateHash: certificateHash,
+                                  certificateDate: certificateDate
+                                });
+                              }}
+                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                            >
+                              <Scale size={14} className="text-emerald-400" />
+                              <span>Official Diligence Certificate (PDF)</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAltExports(false);
                                 downloadAmendmentRiderPDF(auditResults, {
                                   contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
                                   clientName: clientParty.trim() || 'Client',
@@ -3988,12 +4006,12 @@ function ContractAnalyzerView({
                 <div className="flex flex-wrap items-center gap-2.5">
                   <button
                     onClick={() => {
-                      exportExecutiveClientMemoHTML({
-                        contractTitle: documentTitle || 'Master Asset Purchase Agreement',
+                      downloadDiligenceCertificatePDF(auditResults || {}, {
+                        contractTitle: documentTitle || 'Master Asset Purchase & Services Agreement',
                         clientName: clientParty || 'Acme Holdings LLC',
                         counterpartyName: counterparty || 'Globex International Corp',
-                        auditData: auditResults || {},
-                        options: { download: true }
+                        certificateHash: certificateHash,
+                        certificateDate: certificateDate
                       });
                     }}
                     className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-md hover:opacity-90"
