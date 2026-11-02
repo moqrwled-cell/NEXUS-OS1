@@ -173,7 +173,7 @@ export default function ContractCompare({ isDemoMode = false }) {
           {isDemo && (
             <button
               type="button"
-              onClick={() => navigate('/login?redirect=contractcompare')}
+              onClick={() => navigate('/app/contractcompare')}
               className="w-full mt-2.5 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-mono text-emerald-300 transition-colors cursor-pointer"
               title="Already a subscriber? Sign in with your license key"
             >
@@ -413,7 +413,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
-                onClick={() => navigate('/login?redirect=contractcompare')}
+                onClick={() => navigate('/app/contractcompare')}
                 className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-medium text-emerald-300 transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Sign In with your active license key"
               >
@@ -449,7 +449,7 @@ export default function ContractCompare({ isDemoMode = false }) {
               ContractGuard runs in a 100% air-gapped environment. An authenticated license key is required to access the studio.
             </p>
             <button
-              onClick={() => navigate('/login?redirect=contractcompare')}
+              onClick={() => navigate('/app/contractcompare')}
               className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm rounded-xl transition-all  cursor-pointer"
             >
               Enter License Key

@@ -102,7 +102,7 @@ export default function App() {
         <div className="flex items-center gap-2.5 sm:gap-3">
           <button 
             type="button"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/app/contractcompare')}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-lg transition-colors cursor-pointer"
             title="Subscriber Sign In with License Key"
           >
@@ -193,7 +193,7 @@ export default function App() {
                   <Key size={13} className="text-emerald-400" />
                   <span>Already have a license?</span>
                   <button 
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/app/contractcompare')}
                     className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4 cursor-pointer font-medium"
                   >
                     Subscriber Sign In →
@@ -928,7 +928,7 @@ export default function App() {
           {/* Compliance & Trust Verification Links (Privacy, Terms, Security, Refunds) */}
           <div className="mt-6 pt-5 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-mono text-zinc-400 max-w-5xl mx-auto">
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/app/contractcompare')}
               className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <Key size={12} className="text-emerald-400" />
