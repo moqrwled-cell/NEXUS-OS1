@@ -53,7 +53,6 @@ import {
 } from '../utils/redactedPdfGenerator';
 import { detectContractMetadata } from '../utils/contractMetadataDetector';
 import LegalTemplatesView from '../components/LegalTemplatesView';
-import PirateTrapModal from '../components/PirateTrapModal';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
 import LiabilityReconcilerHUD from '../components/LiabilityReconcilerHUD';
 import SystemGuideModal from '../components/SystemGuideModal';
@@ -73,25 +72,22 @@ export default function ContractCompare({ isDemoMode = false }) {
   const [analysisMode, setAnalysisMode] = useState('single'); // single | comparative | harmonizer
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [guideModalTab, setGuideModalTab] = useState('analyzer');
-  const [showDeviceModal, setShowDeviceModal] = useState(!isDemo);
   const [isUnlocked, setIsUnlocked] = useState(isDemo);
   const [restoredSession, setRestoredSession] = useState(null);
 
-  // Check auth
+  // Check auth - strictly redirect to unified login if unauthorized
   useEffect(() => {
     if (isDemo) {
       setIsUnlocked(true);
-      setShowDeviceModal(false);
       return;
     }
     if (verifyToolAccess('contractcompare') || verifyToolAccess('all')) {
       setIsUnlocked(true);
-      setShowDeviceModal(false);
     } else {
       setIsUnlocked(false);
-      setShowDeviceModal(true);
+      navigate('/login?redirect=contractcompare', { replace: true });
     }
-  }, [isDemo]);
+  }, [isDemo, navigate]);
 
   // Workstation Hardware & License Settings State
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -121,7 +117,7 @@ export default function ContractCompare({ isDemoMode = false }) {
     if (res && res.success) {
       setIsUnlocked(false);
       setShowSettingsModal(false);
-      setShowDeviceModal(true);
+      navigate('/login', { replace: true });
     }
   };
 
@@ -177,7 +173,7 @@ export default function ContractCompare({ isDemoMode = false }) {
           {isDemo && (
             <button
               type="button"
-              onClick={() => setShowDeviceModal(true)}
+              onClick={() => navigate('/login?redirect=contractcompare')}
               className="w-full mt-2.5 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-mono text-emerald-300 transition-colors cursor-pointer"
               title="Already a subscriber? Sign in with your license key"
             >
@@ -417,7 +413,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
-                onClick={() => setShowDeviceModal(true)}
+                onClick={() => navigate('/login?redirect=contractcompare')}
                 className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-medium text-emerald-300 transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Sign In with your active license key"
               >
@@ -453,7 +449,7 @@ export default function ContractCompare({ isDemoMode = false }) {
               ContractGuard runs in a 100% air-gapped environment. An authenticated license key is required to access the studio.
             </p>
             <button
-              onClick={() => setShowDeviceModal(true)}
+              onClick={() => navigate('/login?redirect=contractcompare')}
               className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm rounded-xl transition-all  cursor-pointer"
             >
               Enter License Key
@@ -570,17 +566,7 @@ export default function ContractCompare({ isDemoMode = false }) {
         }}
       />
 
-      <PirateTrapModal
-        isOpen={showDeviceModal || (!isDemo && !isUnlocked)}
-        onSuccess={() => {
-          setIsUnlocked(true);
-          setShowDeviceModal(false);
-          loadDeviceLicenseData();
-          navigate('/app/contractcompare');
-        }}
-        onClose={() => setShowDeviceModal(false)}
-        toolName="contractcompare"
-      />
+      
     </div>
   );
 }

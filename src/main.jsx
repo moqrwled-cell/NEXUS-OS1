@@ -6,6 +6,7 @@ import Login from './pages/Login.jsx'
 import ContractCompare from './pages/ContractCompare.jsx'
 import ContractGuardDemo from './pages/ContractGuardDemo.jsx'
 import Welcome from './pages/Welcome.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LanguageWrapper from './components/LanguageWrapper.jsx'
 import './i18n'
 import './index.css'
@@ -27,7 +28,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/secret-ops" element={<WarRoom />} />
             <Route path="/login" element={<Login />} />
             <Route path="/welcome" element={<Welcome />} />
-            <Route path="/app/contractcompare" element={<ContractCompare />} />
+            <Route 
+              path="/app/contractcompare" 
+              element={
+                <ProtectedRoute tool="contractcompare">
+                  <ContractCompare />
+                </ProtectedRoute>
+              } 
+            />
             {/* Redirect legacy and unused routes cleanly to ContractGuard */}
             <Route path="/hub" element={<Navigate to="/app/contractcompare" replace />} />
             <Route path="/app/*" element={<Navigate to="/app/contractcompare" replace />} />
