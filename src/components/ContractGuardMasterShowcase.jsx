@@ -165,17 +165,17 @@ export default function ContractGuardMasterShowcase() {
             <button
               key={ch.id}
               onClick={() => handleSelectTab(idx)}
-              className={`relative text-left p-3.5 rounded-2xl border transition-all duration-300 overflow-hidden cursor-pointer ${
+              className={`relative text-left p-3.5 rounded-xl border transition-colors duration-200 overflow-hidden cursor-pointer ${
                 isActive
-                  ? 'bg-white/[0.07] border-nexus-emerald/50 shadow-[0_0_25px_rgba(0,255,157,0.15)]'
-                  : 'bg-white/[0.02] border-white/10 hover:bg-white/[0.04] hover:border-white/20'
+                  ? 'bg-white/[0.06] border-emerald-500/40 text-white'
+                  : 'bg-white/[0.02] border-white/10 hover:bg-white/[0.04] hover:border-white/20 text-zinc-400'
               }`}
             >
               {/* Active Progress Bar at the top of the pill */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-white/5">
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/5">
                 {isActive && (
                   <motion.div
-                    className="h-full bg-gradient-to-r from-nexus-emerald to-nexus-cyan"
+                    className="h-full bg-emerald-400"
                     style={{ width: `${progress}%` }}
                     transition={{ ease: 'linear' }}
                   />
@@ -183,13 +183,13 @@ export default function ContractGuardMasterShowcase() {
               </div>
 
               <div className="flex items-center justify-between mb-1.5 pt-0.5">
-                <span className={`font-mono text-[11px] font-bold ${isActive ? 'text-nexus-emerald' : 'text-zinc-500'}`}>
+                <span className={`font-mono text-[11px] font-bold ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`}>
                   {ch.num}
                 </span>
-                <Icon size={14} className={isActive ? 'text-nexus-emerald' : 'text-zinc-500'} />
+                <Icon size={14} className={isActive ? 'text-emerald-400' : 'text-zinc-500'} />
               </div>
 
-              <div className={`text-xs font-bold leading-snug truncate ${isActive ? 'text-white' : 'text-zinc-300'}`}>
+              <div className={`text-xs font-semibold leading-snug truncate ${isActive ? 'text-white' : 'text-zinc-300'}`}>
                 {ch.tabTitle}
               </div>
               <div className="text-[11px] text-zinc-500 truncate mt-0.5 font-mono">
@@ -201,22 +201,19 @@ export default function ContractGuardMasterShowcase() {
       </div>
 
       {/* Main Studio Hardware Chassis */}
-      <div className="relative rounded-3xl border border-white/15 bg-[#030712] shadow-[0_25px_80px_rgba(0,0,0,0.9)] overflow-hidden">
-        
-        {/* Subtle Ambient Radial Backlight */}
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-nexus-emerald/10 blur-[130px] rounded-full pointer-events-none" />
+      <div className="relative rounded-2xl border border-white/10 bg-[#090D14] shadow-xl overflow-hidden">
 
         {/* Chassis Window Topbar */}
-        <div className="relative z-10 px-5 py-3.5 bg-[#050B12]/90 backdrop-blur-xl border-b border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div className="relative z-10 px-5 py-3 bg-[#070A0F] border-b border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
           
           <div className="flex items-center gap-2.5">
-            <div className="w-3 h-3 rounded-full bg-rose-500/80 border border-rose-500/40" />
-            <div className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-500/40" />
-            <div className="w-3 h-3 rounded-full bg-emerald-500/80 border border-emerald-500/40" />
+            <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
             
             <div className="ml-3 hidden sm:flex items-center gap-2 text-zinc-400">
-              <FileCode size={13} className="text-nexus-emerald" />
-              <span className="text-zinc-200 font-semibold font-mono text-[11px]">
+              <FileCode size={13} className="text-emerald-400" />
+              <span className="text-zinc-200 font-medium font-mono text-[11px]">
                 ContractGuard_Studio_v2.4_Audit.docx
               </span>
               <span className="px-1.5 py-0.5 rounded text-[9px] bg-white/5 border border-white/10 text-zinc-400">
@@ -227,30 +224,30 @@ export default function ContractGuardMasterShowcase() {
 
           {/* Right Status & Playback Controls */}
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] text-nexus-emerald font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse" />
-              <span>0 CLOUD PACKETS • LOCAL SANDBOX</span>
+            <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] text-emerald-400 font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>Air-gapped local sandbox</span>
             </div>
 
             {/* Play/Pause & Arrow Nav */}
-            <div className="flex items-center gap-1 bg-white/[0.05] border border-white/10 rounded-xl p-0.5">
+            <div className="flex items-center gap-1 bg-white/[0.05] border border-white/10 rounded-lg p-0.5">
               <button
                 onClick={handlePrev}
-                className="p-1.5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 hover:bg-white/10 text-zinc-400 hover:text-white rounded transition-colors cursor-pointer"
                 title="Previous Slide"
               >
                 <ChevronLeft size={13} />
               </button>
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="p-1.5 hover:bg-white/10 text-zinc-300 hover:text-white rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 hover:bg-white/10 text-zinc-300 hover:text-white rounded transition-colors cursor-pointer"
                 title={isPlaying ? 'Pause Auto-Play' : 'Resume Auto-Play'}
               >
-                {isPlaying ? <Pause size={13} /> : <Play size={13} className="text-nexus-emerald" />}
+                {isPlaying ? <Pause size={13} /> : <Play size={13} className="text-emerald-400" />}
               </button>
               <button
                 onClick={handleNext}
-                className="p-1.5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 hover:bg-white/10 text-zinc-400 hover:text-white rounded transition-colors cursor-pointer"
                 title="Next Slide"
               >
                 <ChevronRight size={13} />
@@ -532,9 +529,9 @@ export default function ContractGuardMasterShowcase() {
                 <div>
                   
                   {/* Category Accent Number & Title */}
-                  <div className="flex items-center gap-2 mb-2 font-mono text-xs font-semibold text-nexus-emerald">
-                    <Sparkles size={14} />
-                    <span>CHAPTER {activeChapter.num} • PRE-SIGNING DEFENSE</span>
+                  <div className="flex items-center gap-2 mb-2 font-mono text-xs font-medium text-emerald-400">
+                    <ShieldCheck size={14} />
+                    <span>Chapter {activeChapter.num} · Pre-signing defense</span>
                   </div>
 
                   <h3 className="text-2xl md:text-3xl font-heading font-normal text-white leading-tight mb-3">
@@ -546,15 +543,15 @@ export default function ContractGuardMasterShowcase() {
                   </p>
 
                   {/* High-Impact Stat Highlight */}
-                  <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 mb-6 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 mb-6 flex items-center justify-between">
                     <div>
                       <div className="text-[11px] font-mono text-zinc-400">Statutory Benchmark</div>
-                      <div className="text-xs font-mono font-semibold text-zinc-200 mt-0.5">
+                      <div className="text-xs font-mono font-medium text-zinc-200 mt-0.5">
                         {activeChapter.statute}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl font-black font-mono text-nexus-emerald">
+                      <div className="text-xl font-bold font-mono text-emerald-400 tabular-nums">
                         {activeChapter.metricVal}
                       </div>
                       <div className="text-[10px] font-mono text-zinc-400 mt-0.5">
@@ -568,9 +565,9 @@ export default function ContractGuardMasterShowcase() {
                 <div className="space-y-3 pt-2">
                   <button
                     onClick={() => navigate('/demo')}
-                    className="w-full bg-nexus-emerald text-black py-3.5 px-5 rounded-xl font-black text-xs md:text-sm hover:bg-white hover:scale-[1.01] active:scale-[0.99] transition-all shadow-[0_0_25px_rgba(0,255,157,0.35)] flex items-center justify-center gap-2 cursor-pointer font-body"
+                    className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3 px-5 rounded-lg font-semibold text-xs md:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer font-body border-t border-white/20 active:scale-[0.98]"
                   >
-                    <Zap size={15} />
+                    <FileText size={15} />
                     <span>Audit Contract Draft Free</span>
                     <ArrowRight size={15} />
                   </button>
@@ -580,10 +577,10 @@ export default function ContractGuardMasterShowcase() {
                       const el = document.getElementById('pricing');
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="w-full bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white py-3 px-5 rounded-xl font-bold text-xs border border-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer font-mono"
+                    className="w-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white py-2.5 px-5 rounded-lg font-medium text-xs border border-white/10 transition-colors flex items-center justify-center gap-2 cursor-pointer font-mono active:scale-[0.98]"
                   >
                     <span>View Perpetual Licensing Plans</span>
-                    <ArrowRight size={13} className="text-nexus-cyan" />
+                    <ArrowRight size={13} className="text-zinc-400" />
                   </button>
                 </div>
 

@@ -146,9 +146,7 @@ export default function ContractCompare({ isDemoMode = false }) {
 
   return (
     <div className="min-h-screen bg-[#030712] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00F0FF]/8 blur-[180px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-[#00FF9D]/8 blur-[180px] rounded-full pointer-events-none" />
+      {/* Subtle Background Surface */}
 
       {/* Sidebar — Professional Legal Dashboard */}
       <aside className="w-full md:w-[280px] bg-[#050A0F] border-r border-zinc-800/60 flex flex-col shrink-0 z-20">
@@ -156,7 +154,7 @@ export default function ContractCompare({ isDemoMode = false }) {
         <div className="px-5 py-5 border-b border-zinc-800/60">
           <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center ">
                 <ShieldAlert className="text-emerald-400" size={18} />
               </div>
               <div>
@@ -185,7 +183,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             onClick={() => setActiveTool('analyzer')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'analyzer'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
@@ -207,7 +205,7 @@ export default function ContractCompare({ isDemoMode = false }) {
                 }}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                   analysisMode === 'single'
-                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.12)]'
+                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                 }`}
               >
@@ -225,7 +223,7 @@ export default function ContractCompare({ isDemoMode = false }) {
                 }}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                   analysisMode === 'comparative'
-                    ? 'bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 shadow-[0_0_8px_rgba(6,182,212,0.12)]'
+                    ? 'bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 '
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                 }`}
               >
@@ -243,12 +241,12 @@ export default function ContractCompare({ isDemoMode = false }) {
                 }}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                   analysisMode === 'harmonizer'
-                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.12)]'
+                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                 }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
-                  <Sparkles size={13} className={analysisMode === 'harmonizer' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <Scale size={13} className={analysisMode === 'harmonizer' ? 'text-emerald-400' : 'text-zinc-500'} />
                   <span className="truncate">Linguistic & Deed Proofreader</span>
                 </div>
                 <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Deed</span>
@@ -261,7 +259,7 @@ export default function ContractCompare({ isDemoMode = false }) {
                 }}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                   analysisMode === 'liability'
-                    ? 'bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
+                    ? 'bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30 '
                     : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
                 }`}
               >
@@ -279,7 +277,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             onClick={() => setActiveTool('redact')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'redact'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
@@ -296,7 +294,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             onClick={() => setActiveTool('bates')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'bates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
@@ -313,7 +311,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             onClick={() => setActiveTool('templates')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'templates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
@@ -333,7 +331,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             onClick={() => setActiveTool('history')}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
               activeTool === 'history'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.1)]'
+                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
                 : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
             }`}
           >
@@ -352,7 +350,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             <button
               type="button"
               onClick={() => openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' })}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-emerald-500/15 to-teal-500/15 hover:from-emerald-500/25 hover:to-teal-500/25 border border-emerald-500/35 text-xs font-semibold text-emerald-300 transition-all cursor-pointer shadow-sm group"
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 text-xs font-medium text-emerald-400 transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <Lock size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
@@ -382,7 +380,7 @@ export default function ContractCompare({ isDemoMode = false }) {
         <div className="px-4 py-3 border-t border-zinc-800/40">
           <button
             onClick={handleInstallApp}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs px-4 py-2.5 rounded-lg transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)] cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs px-4 py-2.5 rounded-lg transition-all  cursor-pointer"
           >
             <HardDriveDownload size={14} />
             Install Offline App (PWA)
@@ -393,28 +391,28 @@ export default function ContractCompare({ isDemoMode = false }) {
       {/* Main Workspace */}
       <main className="flex-1 p-5 md:p-7 overflow-y-auto z-10 custom-scrollbar flex flex-col">
         {isDemo && (
-          <div className="mb-5 bg-gradient-to-r from-emerald-950/80 via-zinc-900 to-cyan-950/80 border border-emerald-500/30 rounded-xl p-3.5 px-5 flex flex-wrap items-center justify-between gap-4 shrink-0 shadow-lg shadow-emerald-950/40">
+          <div className="mb-5 bg-[#090D14] border border-white/10 rounded-xl p-3 px-5 flex flex-wrap items-center justify-between gap-4 shrink-0 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono text-emerald-400 font-semibold tracking-wide">
-                <Sparkles size={12} className="text-emerald-400 animate-pulse" />
-                <span>EVALUATION SANDBOX</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[11px] font-mono text-emerald-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>Evaluation Sandbox</span>
               </div>
               <p className="text-xs text-zinc-300">
-                You have <span className="font-bold text-emerald-400 font-mono">{auditsLeft} of 3</span> free full audits remaining in this evaluation session.
+                You have <span className="font-semibold text-white font-mono tabular-nums">{auditsLeft} of 3</span> free full audits remaining in this evaluation session.
               </p>
             </div>
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => openSeamlessCheckout({ plan: 'solo', toolName: 'contractcompare' })}
-                className="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
               >
                 Solo License ($199)
               </button>
               <button
                 type="button"
                 onClick={() => openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' })}
-                className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.35)] flex items-center gap-1.5 cursor-pointer active:scale-95"
+                className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer border-t border-white/20 active:scale-[0.98]"
               >
                 <span>Unlock Firm Suite ($299)</span>
                 <Lock size={12} />
@@ -425,7 +423,7 @@ export default function ContractCompare({ isDemoMode = false }) {
 
         {!isUnlocked && !isDemo ? (
           <div className="flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto my-auto">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 ">
               <Lock size={32} />
             </div>
             <h2 className="text-xl font-bold text-white mb-2 tracking-tight">Protected Legal Workspace</h2>
@@ -434,7 +432,7 @@ export default function ContractCompare({ isDemoMode = false }) {
             </p>
             <button
               onClick={() => setShowDeviceModal(true)}
-              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] cursor-pointer"
+              className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm rounded-xl transition-all  cursor-pointer"
             >
               Enter License Key
             </button>
@@ -639,7 +637,7 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 12 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl bg-[#08121A] border border-emerald-500/30 rounded-2xl p-6 shadow-[0_0_50px_rgba(16,185,129,0.15)] flex flex-col gap-5 my-8 max-h-[90vh] overflow-y-auto custom-scrollbar"
+        className="w-full max-w-2xl bg-[#08121A] border border-emerald-500/30 rounded-2xl p-6  flex flex-col gap-5 my-8 max-h-[90vh] overflow-y-auto custom-scrollbar"
       >
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-zinc-800">
@@ -1565,7 +1563,7 @@ function ContractAnalyzerView({
               }`}
               title="Forensic Linguistic & Legal Proofreading with 100% Data Preservation"
             >
-              <Sparkles size={14} className="text-emerald-400" />
+              <FileCheck size={14} className="text-emerald-400" />
               Linguistic & Deed Proofreader
             </button>
             <button
@@ -1649,18 +1647,18 @@ function ContractAnalyzerView({
 
       {/* 1-Click Interactive Benchmark Contract Cases (Zero-Friction Test for Demo) */}
       {isDemo && (
-        <div className="p-3.5 bg-gradient-to-r from-emerald-950/40 via-[#071620] to-cyan-950/40 border border-emerald-500/30 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-[0_0_20px_rgba(16,185,129,0.08)]">
+        <div className="p-3 bg-[#090D14] border border-white/10 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-              <Sparkles size={16} />
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <FileText size={15} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-white tracking-wide">
-                  1-Click Interactive Benchmark Contracts
+                <span className="font-mono text-xs font-semibold text-white">
+                  Interactive Benchmark Contracts
                 </span>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                  Zero Upload Required
+                <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-white/[0.04] text-emerald-400 border border-white/10">
+                  Pre-loaded
                 </span>
               </div>
               <p className="text-[11px] text-zinc-400 mt-0.5">
@@ -1673,19 +1671,19 @@ function ContractAnalyzerView({
             <button
               type="button"
               onClick={() => handleLoadSampleCase('ma')}
-              className="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-xs font-semibold text-emerald-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 md:flex-none px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-emerald-400 transition-colors flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
               title="Load M&A Agreement with $45,000 words vs numbers discrepancy and broken Section 14.2 reference"
             >
-              <FileText size={13} className="text-emerald-400" />
+              <FileText size={13} />
               <span>M&A Deal ($45k Clerical Flaw)</span>
             </button>
             <button
               type="button"
               onClick={() => handleLoadSampleCase('saas')}
-              className="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/35 text-xs font-semibold text-cyan-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 md:flex-none px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-cyan-400 transition-colors flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
               title="Load SaaS MSA with broken Exhibit C and liability cap collision"
             >
-              <FileCode size={13} className="text-cyan-400" />
+              <FileCode size={13} />
               <span>SaaS MSA (Missing Exhibit C)</span>
             </button>
           </div>
@@ -1701,13 +1699,13 @@ function ContractAnalyzerView({
           onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
           className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
             isDraggingTarget 
-              ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.3)] ring-2 ring-emerald-400/50' 
+              ? 'border-emerald-400 bg-emerald-500/10  ring-2 ring-emerald-400/50' 
               : 'border-zinc-800'
           }`}
         >
           {isDraggingTarget && (
             <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center ">
                 <Upload size={30} className="animate-bounce" />
               </div>
               <p className="text-sm font-bold text-white tracking-wide">Drop Contract Document Here</p>
@@ -1719,7 +1717,7 @@ function ContractAnalyzerView({
             <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
               {analysisMode === 'harmonizer' ? (
                 <>
-                  <Sparkles size={15} className="text-emerald-400" />
+                  <FileCheck size={15} className="text-emerald-400" />
                   LINGUISTIC & LEGAL PROOFREADER (Preserving 100% of Land Boundaries, Acreages & Covenants)
                 </>
               ) : analysisMode === 'liability' ? (
@@ -1767,7 +1765,7 @@ function ContractAnalyzerView({
                   className="bg-transparent hover:bg-white/5 border border-zinc-800 hover:border-zinc-700 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
                   title="Load sample demo contract"
                 >
-                  <Sparkles size={11} className="text-amber-400/80" /> Sample Demo
+                  <FileText size={11} className="text-amber-400/80" /> Sample Demo
                 </button>
               )}
               
@@ -1825,7 +1823,7 @@ function ContractAnalyzerView({
             onDrop={(e) => handleFileDrop(e, setBaselineText, 'baseline', setIsDraggingBaseline)}
             className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
               isDraggingBaseline 
-                ? 'border-cyan-400 bg-cyan-500/10 shadow-[0_0_25px_rgba(6,182,212,0.25)] ring-2 ring-cyan-400/50' 
+                ? 'border-cyan-400 bg-cyan-500/10  ring-2 ring-cyan-400/50' 
                 : 'border-zinc-800'
             }`}
           >
@@ -1876,7 +1874,7 @@ function ContractAnalyzerView({
             onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
             className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
               isDraggingTarget 
-                ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-2 ring-emerald-400/50' 
+                ? 'border-emerald-400 bg-emerald-500/10  ring-2 ring-emerald-400/50' 
                 : 'border-zinc-800'
             }`}
           >
@@ -1970,7 +1968,7 @@ function ContractAnalyzerView({
                 e.stopPropagation();
                 cancelAnalysis();
               }}
-              className="px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.4)] cursor-pointer active:scale-95"
+              className="px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2  cursor-pointer active:scale-95"
             >
               <StopCircle size={16} />
               <span>Cancel Audit</span>
@@ -1982,9 +1980,9 @@ function ContractAnalyzerView({
               type="button"
               onClick={() => handleRunHarmonizer()}
               disabled={isHarmonizing || !text.trim()}
-              className="px-8 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+              className="px-7 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 border-t border-white/20 active:scale-[0.98] cursor-pointer shadow-sm"
             >
-              {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Sparkles size={16} />}
+              {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Scale size={16} />}
               <span>{isHarmonizing ? 'Proofreading in Local Memory...' : 'Execute Linguistic & Legal Proofreading'}</span>
             </button>
           ) : analysisMode === 'liability' ? (
@@ -1992,7 +1990,7 @@ function ContractAnalyzerView({
               type="button"
               onClick={() => handleRunLiabilityAudit()}
               disabled={isAnalyzingLiability || !text.trim()}
-              className="px-8 py-3 bg-gradient-to-r from-amber-400 via-rose-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(251,191,36,0.3)] active:scale-[0.98] cursor-pointer"
+              className="px-7 py-2.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 border-t border-white/20 active:scale-[0.98] cursor-pointer shadow-sm"
             >
               {isAnalyzingLiability ? <RefreshCw className="animate-spin" size={16} /> : <ShieldAlert size={16} />}
               <span>{isAnalyzingLiability ? 'Auditing Liability Interlocks in RAM...' : 'Reconcile Liability & Indemnity Caps'}</span>
@@ -2002,7 +2000,7 @@ function ContractAnalyzerView({
               type="button"
               onClick={() => handleExecuteAudit()}
               disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-              className="px-8 py-3 bg-gradient-to-r from-emerald-400 to-cyan-400 text-black font-extrabold text-sm rounded-xl hover:opacity-95 transition-all flex items-center gap-2.5 disabled:opacity-40 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-[0.98] cursor-pointer"
+              className="px-7 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 border-t border-white/20 active:scale-[0.98] cursor-pointer shadow-sm"
             >
               {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
               <span>
@@ -2083,13 +2081,13 @@ function ContractAnalyzerView({
                         type="button"
                         onClick={handleGenerateCertificate}
                         disabled={isGeneratingCertificate}
-                        className="px-4 py-2.5 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 hover:from-emerald-500/30 hover:to-cyan-500/30 border border-emerald-400/40 text-emerald-300 font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50 shrink-0"
+                        className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-emerald-400 font-medium rounded-lg text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0"
                         title="Generate Court-Grade Pre-Signing Diligence & Integrity Certificate with Cryptographic SHA-256 Checksum"
                       >
                         {isGeneratingCertificate ? (
                           <RefreshCw size={15} className="animate-spin text-emerald-400" />
                         ) : (
-                          <Sparkles size={16} className="text-emerald-400" />
+                          <ShieldCheck size={16} className="text-emerald-400" />
                         )}
                         <span>Pre-Signing Certificate</span>
                       </button>
@@ -2099,7 +2097,7 @@ function ContractAnalyzerView({
                         type="button"
                         onClick={handleDownloadWordRider}
                         disabled={isDownloadingWordRider}
-                        className="px-4 py-2.5 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:opacity-95 text-black font-black rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.35)] cursor-pointer disabled:opacity-50 shrink-0 active:scale-95"
+                        className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold rounded-lg text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0 border-t border-white/25 active:scale-[0.98]"
                         title="Download editable Microsoft Word Pre-Signing Amendment Rider (.docx) for counsel customization"
                       >
                         {isDownloadingWordRider ? (
@@ -2335,7 +2333,7 @@ function ContractAnalyzerView({
               } text-center`}
             >
               <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center justify-center gap-1">
-                <Sparkles size={13} className="text-emerald-400" /> Proofreading
+                <FileCheck size={13} className="text-emerald-400" /> Proofreading
               </p>
               <p className="text-3xl font-black text-emerald-300 mt-1 font-mono">
                 {harmonizedData?.improvements?.length || (text.trim() ? restateAndPolishContract(text).improvements.length : 0)}
@@ -2488,17 +2486,17 @@ function ContractAnalyzerView({
             {/* Cluster 4: Forensic Linguistic Proofreader */}
             <div className="flex items-center gap-1.5 p-1 rounded-xl bg-emerald-950/30 border border-emerald-500/40 shrink-0">
               <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold px-2 flex items-center gap-1">
-                <Sparkles size={12} className="text-emerald-400" /> Proofreader:
+                <FileCheck size={12} className="text-emerald-400" /> Proofreader:
               </span>
               <button
                 onClick={() => setActiveHudTab('linguisticProofreader')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                   activeHudTab === 'linguisticProofreader'
-                    ? 'bg-gradient-to-r from-emerald-400 to-cyan-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                    ? 'bg-emerald-500 text-zinc-950 font-semibold border-t border-white/20'
                     : 'text-emerald-300 hover:text-white hover:bg-emerald-500/10'
                 }`}
               >
-                <Sparkles size={13} />
+                <FileCheck size={13} />
                 <span>Linguistic & Deed Proofreading</span>
                 <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-400/50 font-mono font-bold">
                   {harmonizedData?.improvements?.length || (text.trim() ? restateAndPolishContract(text).improvements.length : 0)}
@@ -2520,7 +2518,7 @@ function ContractAnalyzerView({
                 }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                   activeHudTab === 'liabilityReconciler'
-                    ? 'bg-gradient-to-r from-amber-400 via-rose-400 to-cyan-400 text-black shadow-[0_0_15px_rgba(251,191,36,0.4)]'
+                    ? 'bg-amber-500 text-zinc-950 font-semibold border-t border-white/20'
                     : 'text-amber-300 hover:text-white hover:bg-amber-500/10'
                 }`}
               >
@@ -3726,7 +3724,7 @@ function ContractAnalyzerView({
           {/* ========================================================================= */}
           {/* LEGAL PROTECTION SHIELD & MALPRACTICE VERIFICATION NOTICE                 */}
           {/* ========================================================================= */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-zinc-950 to-cyan-950/20 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+          <div className="p-4 rounded-xl bg-[#090D14] border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4 shadow-sm">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
                 <ShieldCheck size={20} />
@@ -3847,7 +3845,7 @@ function ContractAnalyzerView({
               </div>
 
               <div className="p-6 md:p-8 overflow-y-auto space-y-6 text-zinc-200 custom-scrollbar bg-[#050D14]">
-                <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#071924] to-cyan-950/40 border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.08)]">
+                <div className="p-5 rounded-xl bg-[#090D14] border border-white/10 shadow-sm">
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
                     <div>
                       <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest">
@@ -4014,7 +4012,7 @@ function ContractAnalyzerView({
                         certificateDate: certificateDate
                       });
                     }}
-                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-black text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-md hover:opacity-90"
+                    className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer border-t border-white/20 active:scale-[0.98]"
                   >
                     <Download size={14} className="stroke-[2.5]" />
                     <span>Save Official PDF Certificate / Memo</span>
@@ -4283,13 +4281,13 @@ function PIIRedactorView({ onOpenGuide }) {
           onDrop={handleFileDrop}
           className={`flex flex-col rounded-2xl liquid-glass-strong border transition-all overflow-hidden relative ${
             isDragging 
-              ? 'border-emerald-400 bg-emerald-500/10 shadow-[0_0_25px_rgba(16,185,129,0.25)] ring-2 ring-emerald-400/50' 
+              ? 'border-emerald-400 bg-emerald-500/10  ring-2 ring-emerald-400/50' 
               : 'border-white/5'
           }`}
         >
           {isDragging && (
             <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center ">
                 <Upload size={28} className="animate-bounce" />
               </div>
               <p className="text-sm font-bold text-white tracking-wide">Drop Document to Redact Here</p>
@@ -4531,7 +4529,7 @@ function BatesStamperView({ onOpenGuide, isDemo = false, onTriggerUpgrade }) {
 
       {/* Evaluation Sandbox Notice */}
       {isDemo && (
-        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/60 via-zinc-900 to-amber-950/40 border border-amber-500/30 flex flex-wrap items-center justify-between gap-3 text-xs shadow-lg">
+        <div className="p-4 rounded-xl bg-[#090D14] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs shadow-sm">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
               <Lock size={14} className="text-amber-400" />
@@ -4548,7 +4546,7 @@ function BatesStamperView({ onOpenGuide, isDemo = false, onTriggerUpgrade }) {
           <button
             type="button"
             onClick={() => onTriggerUpgrade?.('firm')}
-            className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-bold text-xs transition-all shadow-[0_0_12px_rgba(16,185,129,0.3)] shrink-0 cursor-pointer"
+            className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition-colors shrink-0 cursor-pointer border-t border-white/20 active:scale-[0.98]"
           >
             Unlock Firm Suite ($299)
           </button>

@@ -10,7 +10,6 @@ import {
   FileText, 
   AlertTriangle, 
   ChevronDown, 
-  Sparkles, 
   Scale, 
   Search, 
   EyeOff, 
@@ -18,7 +17,10 @@ import {
   Download, 
   CheckCircle, 
   XCircle,
-  Key
+  Key,
+  Building2,
+  Zap,
+  FileCheck
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import LegalTrustModal from './components/LegalTrustModal';
@@ -29,8 +31,8 @@ import { openSeamlessCheckout } from './utils/checkoutPopup';
 // Institutional Shield Monogram (Clean, Authoritative, Non-generic)
 function BrandMark({ className = "w-9 h-9" }) {
   return (
-    <div className={`relative flex items-center justify-center rounded-xl bg-nexus-emerald/10 border border-nexus-emerald/30 shadow-[0_0_20px_rgba(0,255,157,0.2)] shrink-0 ${className}`}>
-      <Scale size={19} className="text-nexus-emerald" />
+    <div className={`relative flex items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0 ${className}`}>
+      <Scale size={18} className="text-emerald-400" />
     </div>
   );
 }
@@ -51,19 +53,17 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#040B0E] text-zinc-100 selection:bg-nexus-emerald selection:text-black antialiased font-body">
+    <div className="min-h-screen bg-[#070A0F] text-zinc-100 selection:bg-emerald-500 selection:text-black antialiased font-body">
       
-      {/* Background Architectural Grid & Subtle Radial Glow */}
+      {/* Background Architectural Subtle Grid */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[420px] bg-nexus-emerald/10 blur-[150px] rounded-full pointer-events-none" />
-        <div className="absolute top-[45%] right-[-5%] w-[500px] h-[400px] bg-nexus-cyan/8 blur-[160px] rounded-full pointer-events-none" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-70" />
       </div>
 
       {/* ========================================================================= */}
       {/* 1. TOP NAVIGATION: Modern High-Precision Navigation                       */}
       {/* ========================================================================= */}
-      <nav className="fixed w-full z-50 top-0 py-3.5 px-6 md:px-12 flex justify-between items-center bg-[#040B0E]/85 backdrop-blur-xl backdrop-saturate-150 border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.6)] transition-all">
+      <nav className="fixed w-full z-50 top-0 py-3 px-6 md:px-12 flex justify-between items-center bg-[#070A0F]/90 backdrop-blur-xl border-b border-white/[0.08] transition-all">
         <div 
           className="flex items-center gap-3 cursor-pointer group select-none" 
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -71,48 +71,48 @@ export default function App() {
           <img 
             src="/brand/logo-horizontal.svg" 
             alt="Nexus ContractGuard™" 
-            className="h-8 md:h-9 w-auto object-contain transition-transform group-hover:scale-[1.02]" 
+            className="h-8 md:h-8.5 w-auto object-contain" 
           />
         </div>
         
         {/* Nav Links (Desktop) */}
-        <div className="hidden lg:flex items-center gap-7 text-xs font-semibold text-zinc-300 font-body">
-          <button onClick={() => scrollToSection('studio-preview')} className="hover:text-nexus-emerald transition-colors cursor-pointer">
+        <div className="hidden lg:flex items-center gap-7 text-xs font-medium text-zinc-300 font-body">
+          <button onClick={() => scrollToSection('studio-preview')} className="hover:text-white transition-colors cursor-pointer">
             Live Studio
           </button>
-          <button onClick={() => scrollToSection('comparison')} className="hover:text-nexus-emerald transition-colors cursor-pointer">
+          <button onClick={() => scrollToSection('comparison')} className="hover:text-white transition-colors cursor-pointer">
             Risk Comparison
           </button>
-          <button onClick={() => scrollToSection('engines')} className="hover:text-nexus-emerald transition-colors cursor-pointer">
+          <button onClick={() => scrollToSection('engines')} className="hover:text-white transition-colors cursor-pointer">
             5-in-1 Engines
           </button>
-          <button onClick={() => scrollToSection('security')} className="hover:text-nexus-emerald transition-colors cursor-pointer flex items-center gap-1.5">
+          <button onClick={() => scrollToSection('security')} className="hover:text-white transition-colors cursor-pointer flex items-center gap-1.5">
             <span>ABA Rule 1.6</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-nexus-emerald animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           </button>
-          <button onClick={() => scrollToSection('pricing')} className="hover:text-nexus-emerald transition-colors cursor-pointer">
+          <button onClick={() => scrollToSection('pricing')} className="hover:text-white transition-colors cursor-pointer">
             Licensing & Pricing
           </button>
-          <button onClick={() => scrollToSection('faq')} className="hover:text-nexus-emerald transition-colors cursor-pointer">
+          <button onClick={() => scrollToSection('faq')} className="hover:text-white transition-colors cursor-pointer">
             FAQ
           </button>
         </div>
 
-        {/* High-Precision Navbar Actions (Clean, Authoritative, Non-Slop) */}
+        {/* High-Precision Navbar Actions */}
         <div className="flex items-center gap-3">
           <button 
             type="button"
             onClick={() => navigate('/login')}
-            className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-mono text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-zinc-400 hover:text-white transition-colors cursor-pointer"
             title="Enter an active license key"
           >
-            <Key size={12} className="text-nexus-emerald" />
+            <Key size={12} className="text-emerald-400" />
             <span>Enter Key</span>
           </button>
 
           <button 
             onClick={() => navigate('/demo')}
-            className="bg-nexus-emerald text-black px-4 sm:px-5 py-2 rounded-xl text-xs font-black hover:bg-white active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(0,255,157,0.3)] flex items-center gap-2 cursor-pointer font-body"
+            className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 px-4 py-2 rounded-lg text-xs font-semibold active:scale-[0.98] transition-colors flex items-center gap-1.5 cursor-pointer font-body border-t border-white/25"
           >
             <span>Audit Contract Free</span>
             <ArrowRight size={13} />
@@ -134,10 +134,10 @@ export default function App() {
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-nexus-emerald/10 border border-nexus-emerald/30 text-nexus-emerald text-[11px] font-mono uppercase tracking-wider mb-6 shadow-[0_0_15px_rgba(0,255,157,0.12)]"
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white/[0.04] border border-white/10 text-emerald-400 text-xs font-mono mb-6"
               >
-                <span className="w-2 h-2 rounded-full bg-nexus-emerald animate-pulse" />
-                <span>100% AIR-GAPPED IN-RAM · ABA MODEL RULE 1.6 COMPLIANT · ZERO CLOUD EXPOSURE</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>100% in-RAM air-gapped · ABA Model Rule 1.6 privilege</span>
               </motion.div>
 
               {/* Master Headline (Instrument Serif - Magazine Editorial Font) */}
@@ -148,12 +148,12 @@ export default function App() {
                 className="text-4xl sm:text-5xl lg:text-6xl font-normal font-serif tracking-tight text-white leading-[1.08] mb-6"
               >
                 Pre-Signing Legal Defense. <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-emerald via-[#00F0FF] to-white italic">
-                  Never Sign a Defective Contract.
+                <span className="text-zinc-300 font-serif italic">
+                  Never sign a defective contract.
                 </span>
               </motion.h1>
               
-              {/* Subheadline with Precise Legal Value Proposition (Roast-Room & Impeccable Precision) */}
+              {/* Subheadline with Precise Legal Value Proposition */}
               <motion.p 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -163,27 +163,27 @@ export default function App() {
                 A single drafting discrepancy ($250,000 vs $205,000) or missing condition precedent can cost a firm millions and spark malpractice liability. ContractGuard executes forensic pre-signing integrity audits on native Word (.docx) and PDF agreements 100% in-browser RAM in under 350ms. Zero cloud servers. Zero data leakage. Absolute client confidentiality.
               </motion.p>
 
-              {/* Action Buttons (Streamlined Dual High-Intent Hierarchy) */}
+              {/* Action Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="flex flex-wrap gap-3.5 items-center mb-10 font-body"
+                className="flex flex-wrap gap-3 items-center mb-10 font-body"
               >
                 <button 
                   onClick={() => navigate('/demo')}
-                  className="bg-nexus-emerald text-black px-7 py-3.5 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] flex items-center gap-2.5 cursor-pointer"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 px-6 py-3 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer border-t border-white/20 active:scale-[0.98]"
                 >
                   <FileText size={16} />
                   <span>Audit Your First Contract (Free Test)</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={15} />
                 </button>
 
                 <button 
                   onClick={() => scrollToSection('pricing')}
-                  className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-3 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-zinc-200 font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer active:scale-[0.98]"
                 >
-                  <Lock size={15} className="text-nexus-cyan" />
+                  <Lock size={14} className="text-zinc-400" />
                   <span>View Lifetime Pricing ($199)</span>
                 </button>
               </motion.div>
@@ -191,15 +191,15 @@ export default function App() {
               {/* Verified Metrics Row */}
               <div className="grid grid-cols-3 gap-6 pt-6 border-t border-white/[0.08] font-body">
                 <div>
-                  <div className="text-2xl font-black text-white font-mono">0ms</div>
+                  <div className="text-2xl font-bold text-white font-mono tabular-nums">0ms</div>
                   <div className="text-xs text-zinc-400 mt-0.5">Network Latency (Zero Cloud)</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-black text-nexus-emerald font-mono">100%</div>
+                  <div className="text-2xl font-bold text-emerald-400 font-mono tabular-nums">100%</div>
                   <div className="text-xs text-zinc-400 mt-0.5">ABA Model Rule 1.6 Privilege</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-black text-nexus-cyan font-mono">350ms</div>
+                  <div className="text-2xl font-bold text-cyan-400 font-mono tabular-nums">350ms</div>
                   <div className="text-xs text-zinc-400 mt-0.5">Forensic In-RAM AST Audit</div>
                 </div>
               </div>
@@ -208,7 +208,6 @@ export default function App() {
 
             {/* Visual 3D Node Element */}
             <div className="w-full lg:w-[460px] h-[360px] lg:h-[460px] relative flex items-center justify-center">
-              <div className="absolute inset-0 bg-radial-gradient from-nexus-emerald/15 to-transparent blur-2xl pointer-events-none" />
               <Nexus3DNode />
             </div>
 
@@ -220,8 +219,8 @@ export default function App() {
         {/* ========================================================================= */}
         <section id="studio-preview" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-10 font-body">
-            <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-              CINEMATIC PRODUCT SHOWCASE • 5 SUPERPOWERS
+            <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md">
+              Forensic audit demonstration · Operative engines
             </span>
             <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4 tracking-tight">
               Interactive Legal Integrity in Action
@@ -238,84 +237,84 @@ export default function App() {
         {/* 4. HIGH-STAKES COMPARISON: Manual Liability vs ContractGuard               */}
         {/* ========================================================================= */}
         <section id="comparison" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
-          <div className="text-center max-w-3xl mx-auto mb-14 font-body">
-            <span className="font-mono text-xs font-bold text-rose-400 uppercase tracking-wider bg-rose-500/10 border border-rose-500/20 px-3.5 py-1 rounded-full">
-              THE LIABILITY REALITY
+          <div className="text-center max-w-3xl mx-auto mb-12 font-body">
+            <span className="font-mono text-xs font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-md">
+              Litigation risk audit
             </span>
             <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4">
               Manual Proofreading vs. Air-Gapped Precision
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 font-body">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-body">
             
             {/* The Manual Flawed Way */}
-            <div className="p-8 md:p-10 rounded-3xl bg-[#090C0F] border border-red-500/20 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative">
+            <div className="p-8 rounded-2xl bg-[#0A0E15] border border-rose-500/20 shadow-md relative">
               <div className="flex items-center gap-3.5 mb-6">
-                <div className="w-11 h-11 rounded-2xl bg-red-500/10 text-red-400 flex items-center justify-center">
-                  <XCircle size={24} />
+                <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
+                  <XCircle size={20} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-base font-bold text-white">
                     Traditional Manual & Cloud AI Proofreading
                   </h3>
-                  <span className="text-xs text-red-400 font-mono">
-                    Human Fatigue + Malpractice & Privilege Breaches
+                  <span className="text-xs text-rose-400/90 font-mono">
+                    Human fatigue + malpractice and privilege risk
                   </span>
                 </div>
               </div>
 
-              <ul className="space-y-4 text-xs md:text-sm text-zinc-300">
+              <ul className="space-y-3.5 text-xs md:text-sm text-zinc-300">
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 font-bold shrink-0">✕</span>
+                  <span className="text-rose-400 font-bold shrink-0">✕</span>
                   <span>4 to 8 billable hours lost manually tracing citations, exhibits, and schedules.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 font-bold shrink-0">✕</span>
+                  <span className="text-rose-400 font-bold shrink-0">✕</span>
                   <span>Word-to-number clerical traps ($250,000 vs $205,000) trigger malpractice litigation under UCC § 3-114.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 font-bold shrink-0">✕</span>
+                  <span className="text-rose-400 font-bold shrink-0">✕</span>
                   <span>Sending unredacted deal drafts to multi-tenant cloud AI waives attorney-client privilege under ABA Model Rule 1.6.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-red-400 font-bold shrink-0">✕</span>
+                  <span className="text-rose-400 font-bold shrink-0">✕</span>
                   <span>Sneaky counterparty alterations in "clean" redlines slip past exhausted late-night review.</span>
                 </li>
               </ul>
             </div>
 
             {/* The ContractGuard Enterprise Way */}
-            <div className="p-8 md:p-10 rounded-3xl bg-[#06141A] border-2 border-nexus-emerald relative shadow-[0_0_50px_rgba(0,255,157,0.15)]">
+            <div className="p-8 rounded-2xl bg-[#0D131C] border border-emerald-500/30 relative shadow-md">
               <div className="flex items-center gap-3.5 mb-6">
-                <div className="w-11 h-11 rounded-2xl bg-nexus-emerald/15 text-nexus-emerald flex items-center justify-center shadow-[0_0_15px_rgba(0,255,157,0.2)]">
-                  <CheckCircle size={24} />
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
+                  <CheckCircle size={20} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">
-                    With Nexus ContractGuard Enterprise 2.0
+                  <h3 className="text-base font-bold text-white">
+                    Nexus ContractGuard Enterprise
                   </h3>
-                  <span className="text-xs text-nexus-emerald font-mono">
-                    350ms In-RAM Audit + 100% Air-Gapped Confidentiality
+                  <span className="text-xs text-emerald-400/90 font-mono">
+                    350ms in-RAM audit · 100% air-gapped privilege
                   </span>
                 </div>
               </div>
 
-              <ul className="space-y-4 text-xs md:text-sm text-zinc-100">
+              <ul className="space-y-3.5 text-xs md:text-sm text-zinc-200">
                 <li className="flex items-start gap-3">
-                  <span className="text-nexus-emerald font-bold shrink-0">✓</span>
+                  <span className="text-emerald-400 font-bold shrink-0">✓</span>
                   <span>100% deterministic audit of broken citations, cross-references, and missing schedules in &lt; 350ms.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-nexus-emerald font-bold shrink-0">✓</span>
+                  <span className="text-emerald-400 font-bold shrink-0">✓</span>
                   <span>Mathematical parity check between spelled-out sums and parenthetical figures prevents UCC drafting traps.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-nexus-emerald font-bold shrink-0">✓</span>
+                  <span className="text-emerald-400 font-bold shrink-0">✓</span>
                   <span>100% in-browser RAM execution ensures zero server uploads, preserving absolute client confidentiality.</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-nexus-emerald font-bold shrink-0">✓</span>
+                  <span className="text-emerald-400 font-bold shrink-0">✓</span>
                   <span>Instant character-level redline diff surfaces unmarked counterparty revisions in seconds.</span>
                 </li>
               </ul>
@@ -324,10 +323,10 @@ export default function App() {
           </div>
 
           {/* Institutional 3-Way Comparison Matrix Table */}
-          <div className="mt-14 rounded-3xl bg-[#060D12] border border-white/10 p-6 md:p-8 overflow-x-auto shadow-2xl font-body">
+          <div className="mt-12 rounded-2xl bg-[#090D14] border border-white/10 p-6 md:p-8 overflow-x-auto shadow-xl font-body">
             <div className="text-center max-w-2xl mx-auto mb-8">
-              <span className="font-mono text-[11px] font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-                DELAWARE & AMLAW 100 BENCHMARK
+              <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md">
+                Delaware & AmLaw 100 benchmark
               </span>
               <h3 className="text-2xl md:text-3xl font-normal font-heading text-white mt-3">
                 How ContractGuard Outperforms Traditional Alternatives
@@ -390,8 +389,8 @@ export default function App() {
         {/* ========================================================================= */}
         <section id="engines" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-16 font-body">
-            <span className="font-mono text-xs font-bold text-nexus-cyan uppercase tracking-wider bg-nexus-cyan/10 border border-nexus-cyan/20 px-3.5 py-1 rounded-full">
-              INTEGRATED ARCHITECTURE
+            <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md">
+              Integrated architecture
             </span>
             <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4">
               Five Forensic Engines in One Air-Gapped Studio
@@ -401,96 +400,96 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-body">
             
             {/* Engine 1 */}
-            <div className="p-7 md:p-8 rounded-3xl bg-[#060D12] border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-nexus-emerald/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#090D14] border border-white/10 shadow-sm hover:border-white/20 transition-colors flex flex-col justify-between">
               <div>
-                <div className="w-11 h-11 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(244,63,94,0.15)]">
-                  <Search size={22} />
+                <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center mb-5">
+                  <Search size={20} />
                 </div>
-                <div className="text-[11px] font-mono text-rose-400 mb-1 font-bold">ENGINE 01</div>
-                <h3 className="text-lg font-bold text-white mb-2">
+                <div className="text-xs font-mono text-rose-400 mb-1 font-semibold">Engine 01</div>
+                <h3 className="text-base font-bold text-white mb-2">
                   Cross-Reference & Broken Section Validator
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
                   Maps all internal citations, paragraph references, and schedule attachments. Automatically flags deleted clauses and orphaned exhibits.
                 </p>
               </div>
-              <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="text-xs font-mono text-zinc-300 bg-white/[0.03] p-2.5 rounded-lg border border-white/5">
                 ✓ Catches missing Exhibit schedules
               </div>
             </div>
 
             {/* Engine 2 */}
-            <div className="p-7 md:p-8 rounded-3xl bg-[#060D12] border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-nexus-emerald/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#090D14] border border-white/10 shadow-sm hover:border-white/20 transition-colors flex flex-col justify-between">
               <div>
-                <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                  <FileText size={22} />
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-5">
+                  <FileText size={20} />
                 </div>
-                <div className="text-[11px] font-mono text-amber-400 mb-1 font-bold">ENGINE 02</div>
-                <h3 className="text-lg font-bold text-white mb-2">
+                <div className="text-xs font-mono text-amber-400 mb-1 font-semibold">Engine 02</div>
+                <h3 className="text-base font-bold text-white mb-2">
                   Word-to-Number Financial & Calendar Auditor
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
                   Reconciles spelled-out financial sums with numerical digits. Flags backward chronology where delivery dates precede execution dates.
                 </p>
               </div>
-              <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="text-xs font-mono text-zinc-300 bg-white/[0.03] p-2.5 rounded-lg border border-white/5">
                 ✓ Catches $10k vs $100k typo traps
               </div>
             </div>
 
             {/* Engine 3 */}
-            <div className="p-7 md:p-8 rounded-3xl bg-[#060D12] border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-nexus-emerald/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#090D14] border border-white/10 shadow-sm hover:border-white/20 transition-colors flex flex-col justify-between">
               <div>
-                <div className="w-11 h-11 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(168,85,247,0.15)]">
-                  <AlertTriangle size={22} />
+                <div className="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center mb-5">
+                  <AlertTriangle size={20} />
                 </div>
-                <div className="text-[11px] font-mono text-purple-400 mb-1 font-bold">ENGINE 03</div>
-                <h3 className="text-lg font-bold text-white mb-2">
+                <div className="text-xs font-mono text-violet-400 mb-1 font-semibold">Engine 03</div>
+                <h3 className="text-base font-bold text-white mb-2">
                   Defined Terms & Boilerplate Residue Hunter
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
                   Surfaces undefined capitalized terms, duplicate definitions, and incomplete bracketed drafting placeholders before signing.
                 </p>
               </div>
-              <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="text-xs font-mono text-zinc-300 bg-white/[0.03] p-2.5 rounded-lg border border-white/5">
                 ✓ Eliminates [TBD] boilerplate residue
               </div>
             </div>
 
             {/* Engine 4 */}
-            <div className="p-7 md:p-8 rounded-3xl bg-[#060D12] border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-nexus-emerald/40 transition-all flex flex-col justify-between">
+            <div className="p-7 rounded-2xl bg-[#090D14] border border-white/10 shadow-sm hover:border-white/20 transition-colors flex flex-col justify-between">
               <div>
-                <div className="w-11 h-11 rounded-2xl bg-nexus-cyan/10 text-nexus-cyan flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
-                  <Briefcase size={22} />
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-5">
+                  <Briefcase size={20} />
                 </div>
-                <div className="text-[11px] font-mono text-nexus-cyan mb-1 font-bold">ENGINE 04</div>
-                <h3 className="text-lg font-bold text-white mb-2">
+                <div className="text-xs font-mono text-cyan-400 mb-1 font-semibold">Engine 04</div>
+                <h3 className="text-base font-bold text-white mb-2">
                   Obligations & Rights Matrix
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
                   Extracts and classifies covenants by contracting party and legal weight (Shall / Must / May).
                 </p>
               </div>
-              <div className="text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="text-xs font-mono text-zinc-300 bg-white/[0.03] p-2.5 rounded-lg border border-white/5">
                 ✓ Party-by-party covenant sorting
               </div>
             </div>
 
             {/* Engine 5 */}
-            <div className="p-7 md:p-8 rounded-3xl bg-[#060D12] border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:border-nexus-emerald/40 transition-all flex flex-col justify-between md:col-span-2">
+            <div className="p-7 rounded-2xl bg-[#090D14] border border-white/10 shadow-sm hover:border-white/20 transition-colors flex flex-col justify-between md:col-span-2">
               <div>
-                <div className="w-11 h-11 rounded-2xl bg-nexus-emerald/10 text-nexus-emerald flex items-center justify-center mb-5 shadow-[0_0_15px_rgba(0,255,157,0.15)]">
-                  <Download size={22} />
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-5">
+                  <Download size={20} />
                 </div>
-                <div className="text-[11px] font-mono text-nexus-emerald mb-1 font-bold">ENGINE 05 • WHITE-LABEL</div>
-                <h3 className="text-lg font-bold text-white mb-2">
+                <div className="text-xs font-mono text-emerald-400 mb-1 font-semibold">Engine 05 · White-Label</div>
+                <h3 className="text-base font-bold text-white mb-2">
                   1-Click Executive Client Memorandum (PDF & HTML)
                 </h3>
                 <p className="text-xs text-zinc-400 leading-relaxed mb-4">
                   Converts technical audit findings into an executive-ready legal memorandum for clients or senior partners, complete with risk matrices, findings breakdowns, and printable court-grade styling.
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-zinc-300 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-zinc-300 bg-white/[0.03] p-2.5 rounded-lg border border-white/5">
                 <span>✓ HTML & Clean Print Layout</span>
                 <span>✓ Color-Coded Risk Heatmap</span>
                 <span>✓ Client-Facing Summary</span>
@@ -504,12 +503,11 @@ export default function App() {
         {/* 6. ETHICS & PRIVACY: ABA MODEL RULE 1.6 ARCHITECTURE                      */}
         {/* ========================================================================= */}
         <section id="security" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
-          <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-b from-[#050C10] to-[#020608] border border-nexus-emerald/30 shadow-[0_10px_40px_rgba(0,0,0,0.6)] relative overflow-hidden font-body">
-            <div className="absolute top-0 right-0 w-[400px] h-[300px] bg-nexus-emerald/10 blur-[130px] rounded-full pointer-events-none" />
+          <div className="p-8 md:p-12 rounded-2xl bg-[#0A0E15] border border-white/10 shadow-md relative overflow-hidden font-body">
 
             <div className="max-w-3xl mb-10 relative z-10">
-              <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-                LEGAL ETHICS & PRIVILEGE
+              <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md">
+                Legal ethics & privilege
               </span>
               <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4 mb-3">
                 Why Boutique Law Firms Trust Nexus ContractGuard
@@ -520,9 +518,9 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-              <div className="p-6 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:border-nexus-emerald/40 transition-all">
-                <Shield size={22} className="text-nexus-emerald mb-3.5" />
-                <h4 className="text-sm font-bold text-white mb-2">
+              <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors">
+                <Shield size={20} className="text-emerald-400 mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1.5">
                   100% In-Browser Execution
                 </h4>
                 <p className="text-xs text-zinc-400 leading-relaxed">
@@ -530,9 +528,9 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:border-nexus-cyan/40 transition-all">
-                <EyeOff size={22} className="text-nexus-cyan mb-3.5" />
-                <h4 className="text-sm font-bold text-white mb-2">
+              <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors">
+                <EyeOff size={20} className="text-cyan-400 mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1.5">
                   Zero Telemetry & Storage
                 </h4>
                 <p className="text-xs text-zinc-400 leading-relaxed">
@@ -540,9 +538,9 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-black/60 border border-white/10 shadow-lg hover:border-purple-400/40 transition-all">
-                <Lock size={22} className="text-purple-400 mb-3.5" />
-                <h4 className="text-sm font-bold text-white mb-2">
+              <div className="p-6 rounded-xl bg-white/[0.02] border border-white/10 hover:border-white/20 transition-colors">
+                <Lock size={20} className="text-zinc-300 mb-3" />
+                <h4 className="text-sm font-bold text-white mb-1.5">
                   Zero AI Model Training
                 </h4>
                 <p className="text-xs text-zinc-400 leading-relaxed">
@@ -558,105 +556,98 @@ export default function App() {
         {/* ========================================================================= */}
         <section id="pricing" className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 scroll-mt-28">
           <div className="text-center max-w-3xl mx-auto mb-14 font-body">
-            {/* Marketing Scarcity Badge (Psychological Urgency) */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-cyan-950/60 via-[#061822] to-emerald-950/60 border border-nexus-cyan/40 text-nexus-cyan text-xs font-mono mb-5 shadow-[0_0_25px_rgba(0,240,255,0.18)]">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-nexus-cyan"></span>
-              </span>
-              <span className="font-extrabold tracking-wider text-white">FOUNDER COHORT:</span>
-              <span className="text-nexus-cyan font-black">184 / 250</span>
-              <span className="text-zinc-300">Lifetime Keys Remaining</span>
-              <span className="hidden sm:inline text-zinc-500">·</span>
-              <span className="hidden sm:inline text-amber-300 font-semibold">Tier 1 Price Locks After Sell-Out</span>
+            {/* Scarcity Allocation Note */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-xs font-mono text-zinc-300 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>Founder cohort · 184 of 250 perpetual licenses issued</span>
             </div>
 
             <div className="block">
-              <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full">
-                PERPETUAL B2B LICENSING
+              <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md">
+                Perpetual B2B licensing
               </span>
             </div>
             <h2 className="text-3xl md:text-5xl font-normal font-heading text-white mt-4">
               One-Time Investment. Lifetime Ownership.
             </h2>
             <p className="text-zinc-300 text-sm md:text-base mt-2.5 max-w-2xl mx-auto leading-relaxed">
-              Why pay predatory $1,800/year cloud subscriptions that expose your client redlines to third-party servers? Own your forensic contract audit workstation outright with zero recurring fees.
+              Why pay recurring $1,800/year cloud subscriptions that expose your client redlines to third-party servers? Own your forensic contract audit workstation outright with zero recurring fees.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch font-body">
             
-            {/* Solo Plan Card - Individual Counsel Bestseller */}
-            <div className="p-8 md:p-10 rounded-3xl bg-gradient-to-b from-[#05131B] to-[#040C12] border-2 border-nexus-cyan/80 relative shadow-[0_0_50px_rgba(0,240,255,0.18)] flex flex-col justify-between font-body transition-all group">
-              <div className="absolute top-0 right-8 -translate-y-1/2 bg-nexus-cyan text-black text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-[0_0_20px_rgba(0,240,255,0.4)] flex items-center gap-1.5">
-                <Sparkles size={12} className="text-black" />
-                <span>INDIVIDUAL COUNSEL BESTSELLER</span>
+            {/* Solo Plan Card - Individual Counsel */}
+            <div className="p-8 rounded-2xl bg-[#090D14] border border-white/15 relative flex flex-col justify-between font-body transition-colors group">
+              <div className="absolute top-0 right-8 -translate-y-1/2 bg-white/[0.08] text-zinc-200 border border-white/15 text-[10px] font-mono font-medium px-3 py-1 rounded-md">
+                Individual counsel
               </div>
 
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-2xl font-black text-white font-body">
+                      <h3 className="text-xl font-bold text-white font-body">
                         Solo Counsel Workstation
                       </h3>
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-nexus-cyan/15 text-nexus-cyan border border-nexus-cyan/40">
-                        FULL FORENSIC POWER
+                      <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        Full forensic suite
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
-                      Uncompromising pre-signing contract integrity engine for solo attorneys, General Counsel, and boutique transactional dealmakers.
+                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                      Pre-signing contract integrity engine for solo attorneys, General Counsel, and boutique transactional dealmakers.
                     </p>
                   </div>
                 </div>
 
                 <div className="my-6 pb-6 border-b border-white/10">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-5xl font-black text-nexus-cyan font-mono tabular-nums">$199</span>
+                    <span className="text-4xl md:text-5xl font-bold text-white font-mono tabular-nums">$199</span>
                     <span className="text-base text-zinc-500 line-through font-mono tabular-nums">$499</span>
-                    <span className="text-xs text-nexus-cyan font-mono font-bold uppercase tracking-wider">
-                      LIFETIME ACCESS
+                    <span className="text-xs text-zinc-400 font-mono font-medium">
+                      Perpetual license
                     </span>
                   </div>
-                  <p className="text-xs text-cyan-300 font-mono mt-2 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-nexus-cyan animate-pulse" />
-                    <span>Pays for itself on your very first contract review ($1,000+ value)</span>
+                  <p className="text-xs text-zinc-400 font-mono mt-2 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    <span>Amortizes on first transactional review · Zero recurring fees</span>
                   </p>
-                  <div className="mt-3 text-[11px] font-mono text-cyan-200/90 flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-lg border border-nexus-cyan/20">
+                  <div className="mt-3 text-xs font-mono text-zinc-300 flex items-center justify-between bg-white/[0.02] px-3 py-2 rounded-lg border border-white/5">
                     <span className="flex items-center gap-1.5">
-                      <span className="text-nexus-cyan font-bold">⚡ 48 Keys Claimed This Week</span>
+                      <Zap size={12} className="text-cyan-400" />
+                      <span>48 licenses activated this week</span>
                     </span>
-                    <span className="text-zinc-400">Instant Hardware Activation</span>
+                    <span className="text-zinc-500">Instant hardware binding</span>
                   </div>
                 </div>
 
-                <div className="space-y-3 text-xs md:text-sm text-zinc-200 font-body">
-                  <div className="flex items-center gap-2.5 font-semibold text-white">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                <div className="space-y-3 text-xs md:text-sm text-zinc-300 font-body">
+                  <div className="flex items-center gap-2.5 font-medium text-white">
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>1 Dedicated High-Performance Seat (Offline Hardware Key)</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>Unlimited Lifetime Contract, NDA & M&A Audits</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>Instant Word-to-Number ($250k vs $205k) Reconciler</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>Character-Level Redline Diff & Stealth Alterations Hunter</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>Pre-Signing Delaware Express Carve-Out Rider Generator</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>Executive Client Memorandum Export (HTML & Word .docx)</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-cyan shrink-0" />
+                    <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>100% In-Browser RAM Security (Strict ABA Rule 1.6 Privilege)</span>
                   </div>
                 </div>
@@ -670,76 +661,77 @@ export default function App() {
                     toolName: 'contractcompare',
                     onSuccess: () => navigate('/app/contractcompare')
                   })}
-                  className="w-full bg-nexus-cyan hover:bg-white text-black font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] text-xs md:text-sm cursor-pointer active:scale-[0.98] font-body"
+                  className="w-full bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-semibold py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors text-xs md:text-sm cursor-pointer active:scale-[0.98] font-body border-t border-white/20"
                 >
-                  <Lock size={15} />
+                  <Lock size={14} />
                   <span>Claim Solo Lifetime License ($199)</span>
                   <ArrowRight size={14} />
                 </button>
               </div>
             </div>
 
-            {/* Law Firm Suite (Most Popular) */}
-            <div className="p-8 md:p-10 rounded-3xl bg-[#06141A] border-2 border-nexus-emerald relative shadow-[0_0_50px_rgba(0,255,157,0.15)] flex flex-col justify-between font-body">
-              <div className="absolute top-0 right-8 -translate-y-1/2 bg-nexus-emerald text-black text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-lg">
-                MOST POPULAR FOR FIRMS
+            {/* Law Firm Suite */}
+            <div className="p-8 rounded-2xl bg-[#0D131C] border border-emerald-500/30 relative flex flex-col justify-between font-body shadow-md">
+              <div className="absolute top-0 right-8 -translate-y-1/2 bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-medium px-3 py-1 rounded-md">
+                Multi-attorney firm suite
               </div>
 
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="text-2xl font-black text-white font-body">
+                    <h3 className="text-xl font-bold text-white font-body">
                       Law Firm & Team Suite
                     </h3>
                     <p className="text-xs text-zinc-400 mt-1">
-                      Engineered for law firms, advisory departments, and multi-user teams.
+                      Engineered for boutique transactional practices, corporate legal, and advisory teams.
                     </p>
                   </div>
                 </div>
 
                 <div className="my-6 pb-6 border-b border-white/10">
                   <div className="flex items-baseline gap-3">
-                    <span className="text-5xl font-black text-nexus-emerald font-mono tabular-nums">$299</span>
+                    <span className="text-4xl md:text-5xl font-bold text-emerald-400 font-mono tabular-nums">$299</span>
                     <span className="text-base text-zinc-500 line-through font-mono tabular-nums">$799</span>
-                    <span className="text-xs text-nexus-emerald font-mono font-bold uppercase tracking-wider">
-                      LIFETIME FIRM LICENSE
+                    <span className="text-xs text-emerald-400/90 font-mono font-medium">
+                      5-Seat perpetual license
                     </span>
                   </div>
-                  <p className="text-xs text-emerald-400 font-mono mt-2 flex items-center gap-1.5">
+                  <p className="text-xs text-emerald-400/90 font-mono mt-2 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Saves $1,500+ / yr vs. recurring cloud legal subscriptions</span>
+                    <span>Saves $1,500+ annually over recurring multi-user cloud subscriptions</span>
                   </p>
-                  <div className="mt-3 text-[11px] font-mono text-emerald-200/90 flex items-center justify-between bg-black/40 px-3 py-1.5 rounded-lg border border-nexus-emerald/20">
+                  <div className="mt-3 text-xs font-mono text-zinc-300 flex items-center justify-between bg-white/[0.02] px-3 py-2 rounded-lg border border-white/5">
                     <span className="flex items-center gap-1.5">
-                      <span className="text-nexus-emerald font-bold">🏛️ 18 Firm Allocations Left</span>
+                      <Building2 size={12} className="text-emerald-400" />
+                      <span>18 multi-seat allocations remaining</span>
                     </span>
-                    <span className="text-zinc-400">5-Seat Team Floating Key</span>
+                    <span className="text-zinc-500">5-Seat team floating key</span>
                   </div>
                 </div>
 
                 <div className="space-y-3 text-xs md:text-sm text-zinc-200 font-body">
-                  <div className="flex items-center gap-2.5 font-semibold text-white">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                  <div className="flex items-center gap-2.5 font-medium text-white">
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                     <span>Up to 5 Attorney & Paralegal Seats</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                     <span>All 5 Advanced Integrity Engines + Obligations Matrix</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                     <span>12 Master AmLaw 100 Transaction Templates</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                     <span>White-Label Branding on Executive Client Memorandums</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                     <span>Court Bates Stamping & Sensitive PII Redactor</span>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                    <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                     <span>Priority Enterprise Support & Engine Updates</span>
                   </div>
                 </div>
@@ -753,9 +745,9 @@ export default function App() {
                     toolName: 'contractcompare',
                     onSuccess: () => navigate('/app/contractcompare')
                   })}
-                  className="w-full bg-nexus-emerald text-black hover:bg-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all shadow-[0_0_25px_rgba(0,255,157,0.4)] text-xs md:text-sm cursor-pointer active:scale-[0.98] font-body"
+                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold py-3.5 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors text-xs md:text-sm cursor-pointer active:scale-[0.98] font-body border-t border-white/20"
                 >
-                  <Lock size={15} />
+                  <Lock size={14} />
                   <span>Purchase Law Firm Suite ($299)</span>
                   <ArrowRight size={14} />
                 </button>
@@ -842,13 +834,11 @@ export default function App() {
         {/* 9. GRAND CLOSING CALL TO ACTION                                           */}
         {/* ========================================================================= */}
         <section className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-28 font-body">
-          <div className="relative rounded-3xl p-10 md:p-16 overflow-hidden bg-gradient-to-b from-[#06141A] via-[#040B0E] to-[#020608] border border-nexus-emerald/30 shadow-[0_20px_80px_rgba(0,255,157,0.12)] text-center">
-            {/* Ambient Emerald Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[220px] bg-nexus-emerald/15 blur-[120px] rounded-full pointer-events-none" />
+          <div className="relative rounded-2xl p-10 md:p-14 bg-[#090D14] border border-white/10 shadow-xl text-center">
             
             <div className="relative z-10 max-w-3xl mx-auto">
-              <span className="font-mono text-xs font-bold text-nexus-emerald uppercase tracking-wider bg-nexus-emerald/10 border border-nexus-emerald/20 px-3.5 py-1 rounded-full mb-6 inline-block">
-                PRE-SIGNING CONTRACT CERTAINTY
+              <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md mb-6 inline-block">
+                Pre-signing contract certainty
               </span>
               
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal font-heading text-white leading-tight mb-5">
@@ -859,36 +849,36 @@ export default function App() {
                 Join modern boutique firms and counsel who transformed contract integrity audits from 6 hours of fatigue into 350 milliseconds of local in-RAM certainty.
               </p>
               
-              <div className="flex flex-wrap items-center justify-center gap-4 font-body">
+              <div className="flex flex-wrap items-center justify-center gap-3.5 font-body">
                 <button
                   onClick={() => navigate('/demo')}
-                  className="bg-nexus-emerald text-black px-8 py-4 rounded-xl font-black text-sm hover:bg-white hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(0,255,157,0.4)] flex items-center gap-2 cursor-pointer"
+                  className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 px-7 py-3.5 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer border-t border-white/20 active:scale-[0.98]"
                 >
-                  <Sparkles size={16} />
+                  <FileText size={16} />
                   <span>Start Free Interactive Audit</span>
-                  <ArrowRight size={16} />
+                  <ArrowRight size={15} />
                 </button>
                 
                 <button
                   onClick={() => scrollToSection('pricing')}
-                  className="px-8 py-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-sm transition-all flex items-center gap-2 cursor-pointer active:scale-[0.98]"
+                  className="px-6 py-3.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-zinc-200 font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer active:scale-[0.98]"
                 >
-                  <Lock size={15} className="text-nexus-cyan" />
+                  <Lock size={14} className="text-zinc-400" />
                   <span>View Perpetual Plans ($199 / $299)</span>
                 </button>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[11px] font-mono text-zinc-400">
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-zinc-400">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 size={13} className="text-nexus-emerald" />
+                  <CheckCircle2 size={13} className="text-emerald-400" />
                   <span>100% In-RAM Audit</span>
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 size={13} className="text-nexus-emerald" />
+                  <CheckCircle2 size={13} className="text-emerald-400" />
                   <span>Perpetual Lifetime Key</span>
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 size={13} className="text-nexus-emerald" />
+                  <CheckCircle2 size={13} className="text-emerald-400" />
                   <span>ABA Rule 1.6 Compliant</span>
                 </span>
               </div>
