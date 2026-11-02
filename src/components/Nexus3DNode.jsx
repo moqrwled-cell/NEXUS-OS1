@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { Shield, Lock, FileCheck2, Cpu } from 'lucide-react';
+import { ShieldCheck, Lock } from 'lucide-react';
 
 export default function Nexus3DNode() {
   const mountRef = useRef(null);
-  const [hovered, setHovered] = useState(false);
-  const [activeMetric, setActiveMetric] = useState('audit');
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -16,10 +15,10 @@ export default function Nexus3DNode() {
 
     // 1. Scene & Camera Setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
-    camera.position.set(0, 0, 8.2);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    camera.position.set(0, 0, 7.8);
 
-    // 2. High-Precision WebGL Renderer
+    // 2. High-Precision WebGL Renderer (Clean & Smooth)
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: true,
@@ -28,316 +27,220 @@ export default function Nexus3DNode() {
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.2;
     container.appendChild(renderer.domElement);
 
-    // 3. Lighting Rig (Institutional Emerald & Titanium Cold Accents)
-    const ambientLight = new THREE.AmbientLight(0x0e1726, 2.5);
+    // 3. Studio Lighting Rig (Museum-Grade Soft Highlighting)
+    const ambientLight = new THREE.AmbientLight(0x0a141d, 2.8);
     scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0x10b981, 4.0); // Vivid Emerald
-    dirLight1.position.set(5, 8, 6);
-    scene.add(dirLight1);
+    // Main Studio Key Light (Pure White Specular)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
+    keyLight.position.set(4, 6, 6);
+    scene.add(keyLight);
 
-    const dirLight2 = new THREE.DirectionalLight(0x06b6d4, 2.5); // Forensic Cyan
-    dirLight2.position.set(-6, -5, -4);
-    scene.add(dirLight2);
+    // Subtle Emerald Rim Light (Authoritative Brand Accent)
+    const rimLight = new THREE.DirectionalLight(0x10b981, 3.0);
+    rimLight.position.set(-5, -2, -3);
+    scene.add(rimLight);
 
-    const coreLight = new THREE.PointLight(0x34d399, 4.5, 12);
-    coreLight.position.set(0, 0, 0);
-    scene.add(coreLight);
+    // Soft Cyan Fill Light
+    const fillLight = new THREE.DirectionalLight(0x06b6d4, 1.4);
+    fillLight.position.set(0, -5, 4);
+    scene.add(fillLight);
 
-    // Master Rotation Assembly
+    // Subtle Internal Core Point Light
+    const corePoint = new THREE.PointLight(0x34d399, 2.5, 6);
+    corePoint.position.set(0, 0, 0.4);
+    scene.add(corePoint);
+
+    // =========================================================================
+    // MASTER ASSEMBLY: SOLID INSTITUTIONAL GUARDIAN SHIELD
+    // =========================================================================
     const masterAssembly = new THREE.Group();
     scene.add(masterAssembly);
 
-    // =========================================================================
-    // A. CENTRAL FORENSIC LEGAL VAULT (Geometric Cryptographic Cage)
-    // =========================================================================
-    const vaultGroup = new THREE.Group();
-    masterAssembly.add(vaultGroup);
-
-    // 1. Outer Faceted Wireframe Cage (Icosahedron Shield)
-    const cageGeom = new THREE.IcosahedronGeometry(2.1, 0);
-    const cageMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.38
-    });
-    const cageMesh = new THREE.Mesh(cageGeom, cageMat);
-    vaultGroup.add(cageMesh);
-
-    // 2. Corner Joint Nodes (Spheres on vertices)
-    const nodeGeom = new THREE.SphereGeometry(0.045, 8, 8);
-    const nodeMat = new THREE.MeshBasicMaterial({ color: 0x34d399 });
-    const posAttr = cageGeom.attributes.position;
-    for (let i = 0; i < posAttr.count; i++) {
-      const node = new THREE.Mesh(nodeGeom, nodeMat);
-      node.position.fromBufferAttribute(posAttr, i);
-      vaultGroup.add(node);
-    }
-
-    // 3. Inner Translucent Dodecahedron Glass Core
-    const coreGeom = new THREE.DodecahedronGeometry(1.4, 0);
-    const coreMat = new THREE.MeshStandardMaterial({
-      color: 0x062820,
-      roughness: 0.15,
-      metalness: 0.9,
-      transparent: true,
-      opacity: 0.72,
-      emissive: 0x064e3b,
-      emissiveIntensity: 0.35
-    });
-    const coreMesh = new THREE.Mesh(coreGeom, coreMat);
-    vaultGroup.add(coreMesh);
-
-    // 4. Central Solid Nucleus (The In-RAM Diligence Anchor)
-    const nucleusGeom = new THREE.OctahedronGeometry(0.55, 0);
-    const nucleusMat = new THREE.MeshBasicMaterial({
-      color: 0x6ee7b7,
-      wireframe: true
-    });
-    const nucleusMesh = new THREE.Mesh(nucleusGeom, nucleusMat);
-    vaultGroup.add(nucleusMesh);
-
-    // =========================================================================
-    // B. DUAL PROCEDURAL 3D CONTRACT PLATES (Baseline vs Redline Comparative)
-    // =========================================================================
-    const createContractCanvas = (isRedline = false) => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 720;
-      const ctx = canvas.getContext('2d');
-
-      // Slate dark parchment background
-      ctx.fillStyle = '#060B10';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Fine border
-      ctx.strokeStyle = isRedline ? 'rgba(52, 211, 153, 0.6)' : 'rgba(6, 182, 212, 0.6)';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(8, 8, canvas.width - 16, canvas.height - 16);
-
-      // Header Banner
-      ctx.fillStyle = isRedline ? 'rgba(16, 185, 129, 0.25)' : 'rgba(6, 182, 212, 0.2)';
-      ctx.fillRect(24, 28, canvas.width - 48, 48);
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 22px monospace';
-      ctx.fillText(isRedline ? 'COUNTERPARTY MARKUP · REV-B' : 'MASTER AGREEMENT · BASELINE', 40, 60);
-
-      // Paragraph lines simulation
-      const lineCount = 18;
-      for (let i = 0; i < lineCount; i++) {
-        const y = 110 + i * 32;
-        const lineLen = (i % 5 === 0) ? 260 : (i % 3 === 0) ? 380 : 440;
-
-        if (isRedline && (i === 4 || i === 9 || i === 13)) {
-          // Highlighted redline deletion/addition block
-          ctx.fillStyle = (i === 9) ? 'rgba(239, 68, 68, 0.35)' : 'rgba(16, 185, 129, 0.4)';
-          ctx.fillRect(36, y - 10, lineLen, 18);
-          
-          ctx.fillStyle = (i === 9) ? '#FCA5A5' : '#6EE7B7';
-          ctx.font = 'bold 15px monospace';
-          ctx.fillText((i === 9) ? '[-] STEALTH CARVE-OUT STRICKEN' : '[+] MANDATORY MUTUAL INDEMNITY', 44, y + 4);
-        } else {
-          // Normal clean contractual clauses
-          ctx.fillStyle = 'rgba(148, 163, 184, 0.45)';
-          ctx.fillRect(36, y - 4, lineLen, 7);
-        }
-      }
-
-      // Institutional Forensic Seal at bottom
-      ctx.fillStyle = isRedline ? '#10B981' : '#06B6D4';
-      ctx.font = 'bold 16px monospace';
-      ctx.fillText(isRedline ? 'AST DIFFERENTIAL: CERTIFIED' : 'SHA-256 HASH: 9E4F...8B12', 40, 680);
-
-      return new THREE.CanvasTexture(canvas);
+    // Create Shield Contour
+    const createShieldShape = (scale = 1.0) => {
+      const shape = new THREE.Shape();
+      const s = scale;
+      shape.moveTo(0, 2.2 * s);
+      shape.quadraticCurveTo(1.4 * s, 2.1 * s, 1.65 * s, 1.75 * s);
+      shape.lineTo(1.65 * s, 0.35 * s);
+      shape.quadraticCurveTo(1.55 * s, -1.05 * s, 0, -2.25 * s);
+      shape.quadraticCurveTo(-1.55 * s, -1.05 * s, -1.65 * s, 0.35 * s);
+      shape.lineTo(-1.65 * s, 1.75 * s);
+      shape.quadraticCurveTo(-1.4 * s, 2.1 * s, 0, 2.2 * s);
+      return shape;
     };
 
-    const docGeom = new THREE.BoxGeometry(1.65, 2.3, 0.035);
-
-    // Plate 1: Baseline Contract
-    const docTex1 = createContractCanvas(false);
-    const docMat1 = new THREE.MeshStandardMaterial({
-      map: docTex1,
-      roughness: 0.3,
-      metalness: 0.4,
-      transparent: true,
-      opacity: 0.88
+    // 1. Primary Solid Beveled Shield (Titanium & Deep Obsidian Finish)
+    const outerShape = createShieldShape(1.0);
+    const outerGeom = new THREE.ExtrudeGeometry(outerShape, {
+      depth: 0.18,
+      bevelEnabled: true,
+      bevelThickness: 0.1,
+      bevelSize: 0.08,
+      bevelSegments: 8
     });
-    const docMesh1 = new THREE.Mesh(docGeom, docMat1);
-    docMesh1.position.set(-1.35, 0.15, 0.45);
-    docMesh1.rotation.set(0.1, 0.4, -0.05);
-    masterAssembly.add(docMesh1);
+    outerGeom.computeVertexNormals();
 
-    // Plate 2: Counterparty Redline
-    const docTex2 = createContractCanvas(true);
-    const docMat2 = new THREE.MeshStandardMaterial({
-      map: docTex2,
-      roughness: 0.3,
-      metalness: 0.4,
-      transparent: true,
-      opacity: 0.88
+    const outerMat = new THREE.MeshStandardMaterial({
+      color: 0x090f15,
+      metalness: 0.92,
+      roughness: 0.22,
+      envMapIntensity: 1.0
     });
-    const docMesh2 = new THREE.Mesh(docGeom, docMat2);
-    docMesh2.position.set(1.35, -0.15, -0.45);
-    docMesh2.rotation.set(-0.1, -0.38, 0.05);
-    masterAssembly.add(docMesh2);
+    const outerShield = new THREE.Mesh(outerGeom, outerMat);
+    outerShield.position.z = -0.09;
+    masterAssembly.add(outerShield);
 
-    // =========================================================================
-    // C. DYNAMIC FORENSIC SCANNING LASER BEAM (350ms AST Audit Simulation)
-    // =========================================================================
-    const laserGroup = new THREE.Group();
-    masterAssembly.add(laserGroup);
-
-    const laserBarGeom = new THREE.CylinderGeometry(0.02, 0.02, 4.4, 16);
-    laserBarGeom.rotateZ(Math.PI / 2);
-    const laserBarMat = new THREE.MeshBasicMaterial({
-      color: 0x34d399,
-      transparent: true,
-      opacity: 0.95
+    // 2. Beveled Inner Medallion (Smoked Frosted Emerald Plate)
+    const innerShape = createShieldShape(0.82);
+    const innerGeom = new THREE.ExtrudeGeometry(innerShape, {
+      depth: 0.06,
+      bevelEnabled: true,
+      bevelThickness: 0.05,
+      bevelSize: 0.04,
+      bevelSegments: 5
     });
-    const laserBar = new THREE.Mesh(laserBarGeom, laserBarMat);
-    laserGroup.add(laserBar);
+    innerGeom.computeVertexNormals();
 
-    // Laser Sheet Fan Plane
-    const laserPlaneGeom = new THREE.PlaneGeometry(4.4, 0.35);
-    const laserPlaneMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
-      transparent: true,
-      opacity: 0.22,
-      side: THREE.DoubleSide
-    });
-    const laserPlane = new THREE.Mesh(laserPlaneGeom, laserPlaneMat);
-    laserPlane.rotation.x = Math.PI / 2;
-    laserGroup.add(laserPlane);
-
-    // =========================================================================
-    // D. PRECISION GIMBAL RINGS (Institutional Gyroscopic Perimeter)
-    // =========================================================================
-    const ring1Geom = new THREE.TorusGeometry(3.05, 0.018, 16, 120);
-    const ring1Mat = new THREE.MeshStandardMaterial({
-      color: 0x10b981,
+    const innerMat = new THREE.MeshStandardMaterial({
+      color: 0x062820,
       metalness: 0.8,
-      roughness: 0.2,
-      transparent: true,
-      opacity: 0.45
+      roughness: 0.28,
+      emissive: 0x054f3c,
+      emissiveIntensity: 0.25
     });
-    const ring1 = new THREE.Mesh(ring1Geom, ring1Mat);
-    ring1.rotation.x = Math.PI / 3;
-    masterAssembly.add(ring1);
+    const innerShield = new THREE.Mesh(innerGeom, innerMat);
+    innerShield.position.z = 0.08;
+    masterAssembly.add(innerShield);
 
-    const ring2Geom = new THREE.TorusGeometry(2.7, 0.014, 16, 100);
-    const ring2Mat = new THREE.MeshStandardMaterial({
-      color: 0x06b6d4,
-      metalness: 0.85,
-      roughness: 0.2,
-      transparent: true,
-      opacity: 0.35
-    });
-    const ring2 = new THREE.Mesh(ring2Geom, ring2Mat);
-    ring2.rotation.y = Math.PI / 4;
-    masterAssembly.add(ring2);
+    // 3. Central Emblem: Precision Scales of Justice / Legal Diamond
+    const emblemGroup = new THREE.Group();
+    emblemGroup.position.set(0, 0.05, 0.22);
+    masterAssembly.add(emblemGroup);
 
-    // Outer Calibrated Tick Ring
-    const ring3Geom = new THREE.TorusGeometry(3.4, 0.012, 16, 140);
-    const ring3Mat = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.16
+    // Emblem Center Fulcrum Column
+    const fulcrumGeom = new THREE.CylinderGeometry(0.04, 0.04, 1.2, 16);
+    const emblemMat = new THREE.MeshStandardMaterial({
+      color: 0xe2e8f0,
+      metalness: 0.95,
+      roughness: 0.15,
+      emissive: 0x10b981,
+      emissiveIntensity: 0.15
     });
-    const ring3 = new THREE.Mesh(ring3Geom, ring3Mat);
-    masterAssembly.add(ring3);
+    const fulcrum = new THREE.Mesh(fulcrumGeom, emblemMat);
+    emblemGroup.add(fulcrum);
+
+    // Horizontal Balance Beam
+    const beamGeom = new THREE.CylinderGeometry(0.03, 0.03, 1.3, 16);
+    beamGeom.rotateZ(Math.PI / 2);
+    const beam = new THREE.Mesh(beamGeom, emblemMat);
+    beam.position.y = 0.45;
+    emblemGroup.add(beam);
+
+    // Left Scale Pan Assembly
+    const panGeom = new THREE.ConeGeometry(0.24, 0.12, 16, 1, true);
+    panGeom.rotateX(Math.PI);
+    const leftPan = new THREE.Mesh(panGeom, emblemMat);
+    leftPan.position.set(-0.55, 0.1, 0);
+    emblemGroup.add(leftPan);
+
+    const leftStringGeom = new THREE.CylinderGeometry(0.008, 0.008, 0.35, 8);
+    const leftString = new THREE.Mesh(leftStringGeom, emblemMat);
+    leftString.position.set(-0.55, 0.28, 0);
+    emblemGroup.add(leftString);
+
+    // Right Scale Pan Assembly
+    const rightPan = new THREE.Mesh(panGeom, emblemMat);
+    rightPan.position.set(0.55, 0.1, 0);
+    emblemGroup.add(rightPan);
+
+    const rightString = new THREE.Mesh(leftStringGeom, emblemMat);
+    rightString.position.set(0.55, 0.28, 0);
+    emblemGroup.add(rightString);
+
+    // Top Crown Finial (Diamond Node)
+    const crownGeom = new THREE.OctahedronGeometry(0.12, 0);
+    const crownMat = new THREE.MeshBasicMaterial({ color: 0x34d399 });
+    const crown = new THREE.Mesh(crownGeom, crownMat);
+    crown.position.y = 0.65;
+    emblemGroup.add(crown);
+
+    // 4. Subtle Outer Precision Halo Ring (Thin Hairline)
+    const haloGeom = new THREE.TorusGeometry(2.7, 0.008, 16, 120);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x10b981,
+      transparent: true,
+      opacity: 0.3
+    });
+    const haloRing = new THREE.Mesh(haloGeom, haloMat);
+    masterAssembly.add(haloRing);
 
     // =========================================================================
-    // E. FLOATING TELEMETRY PARTICLES (Cryptographic Entropy Seeds)
+    // SMOOTH CALM MOUSE INTERACTION & ANIMATION
     // =========================================================================
-    const particleCount = 75;
-    const particleGeom = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      const radius = 2.4 + Math.random() * 2.2;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = (Math.random() - 0.5) * Math.PI;
-
-      particlePositions[i] = radius * Math.cos(phi) * Math.sin(theta);
-      particlePositions[i + 1] = radius * Math.sin(phi);
-      particlePositions[i + 2] = radius * Math.cos(phi) * Math.cos(theta);
-    }
-
-    particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-    const particleMat = new THREE.PointsMaterial({
-      color: 0x34d399,
-      size: 0.045,
-      transparent: true,
-      opacity: 0.65
-    });
-    const particles = new THREE.Points(particleGeom, particleMat);
-    masterAssembly.add(particles);
-
-    // =========================================================================
-    // F. MOUSE PARALLAX & ANIMATION LOOP
-    // =========================================================================
-    let targetRotX = 0.15;
-    let targetRotY = -0.3;
-    let currentRotX = 0.15;
-    let currentRotY = -0.3;
+    let targetRotX = 0.0;
+    let targetRotY = 0.0;
+    let currentRotX = 0.0;
+    let currentRotY = 0.0;
 
     const onPointerMove = (e) => {
       const rect = container.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
 
-      targetRotY = x * 0.65;
-      targetRotX = -y * 0.45;
+      targetRotY = x * 0.45; // Max 25 degrees tilt
+      targetRotX = -y * 0.3;
+    };
+
+    const onPointerLeave = () => {
+      targetRotX = 0;
+      targetRotY = 0;
     };
 
     container.addEventListener('pointermove', onPointerMove);
+    container.addEventListener('pointerleave', onPointerLeave);
 
     let animationFrameId;
     let clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      const elapsedTime = clock.getElapsedTime();
+      const t = clock.getElapsedTime();
 
-      // Smooth Inertial Interpolation (Lerp)
-      currentRotX += (targetRotX - currentRotX) * 0.06;
-      currentRotY += (targetRotY - currentRotY) * 0.06;
+      // Fluid, gentle lerp (quiet luxury feel)
+      currentRotX += (targetRotX - currentRotX) * 0.05;
+      currentRotY += (targetRotY - currentRotY) * 0.05;
 
-      // Base Gentle Continuous Rotation
-      masterAssembly.rotation.x = currentRotX + Math.sin(elapsedTime * 0.4) * 0.04;
-      masterAssembly.rotation.y = currentRotY + elapsedTime * 0.18;
+      // Soft, meditative breathing float
+      masterAssembly.position.y = Math.sin(t * 1.1) * 0.06;
+      
+      // Gentle subtle idle oscillation
+      const idleYaw = Math.sin(t * 0.45) * 0.16;
+      const idlePitch = Math.cos(t * 0.6) * 0.05;
 
-      // Vault Core Self-Rotation & Pulsing
-      vaultGroup.rotation.x = elapsedTime * 0.35;
-      vaultGroup.rotation.y = -elapsedTime * 0.45;
-      nucleusMesh.rotation.z = elapsedTime * 1.2;
+      masterAssembly.rotation.x = currentRotX + idlePitch;
+      masterAssembly.rotation.y = currentRotY + idleYaw;
 
-      // Scanning Laser Vertical Sweep across Contracts
-      const scanY = Math.sin(elapsedTime * 2.4) * 1.05;
-      laserGroup.position.y = scanY;
+      // Subtle dynamic glimmer on balance pans
+      const panTilt = Math.sin(t * 1.8) * 0.03;
+      beam.rotation.z = panTilt;
+      leftPan.position.y = 0.1 + panTilt * 0.4;
+      rightPan.position.y = 0.1 - panTilt * 0.4;
 
-      // Counter-rotating Gimbal Rings
-      ring1.rotation.z = elapsedTime * 0.12;
-      ring2.rotation.x = -elapsedTime * 0.15;
-      ring3.rotation.z = -elapsedTime * 0.08;
+      // Halo ring gentle slow spin
+      haloRing.rotation.z = t * 0.08;
 
-      // Document Plates Gentle Organic Hover
-      docMesh1.position.y = 0.15 + Math.sin(elapsedTime * 1.5) * 0.05;
-      docMesh2.position.y = -0.15 + Math.cos(elapsedTime * 1.5) * 0.05;
-
-      // Render Scene
       renderer.render(scene, camera);
     };
 
     animate();
 
     // =========================================================================
-    // G. RESPONSIVE RESIZE HANDLING & CLEANUP
+    // RESPONSIVE RESIZE & CLEANUP
     // =========================================================================
     const handleResize = () => {
       if (!container) return;
@@ -356,35 +259,24 @@ export default function Nexus3DNode() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       container.removeEventListener('pointermove', onPointerMove);
+      container.removeEventListener('pointerleave', onPointerLeave);
       resizeObserver.disconnect();
 
-      // Deep Disposal of WebGL Resources
+      // Memory Disposal
       renderer.dispose();
-      cageGeom.dispose();
-      cageMat.dispose();
-      nodeGeom.dispose();
-      nodeMat.dispose();
-      coreGeom.dispose();
-      coreMat.dispose();
-      nucleusGeom.dispose();
-      nucleusMat.dispose();
-      docGeom.dispose();
-      docMat1.dispose();
-      docMat2.dispose();
-      docTex1.dispose();
-      docTex2.dispose();
-      laserBarGeom.dispose();
-      laserBarMat.dispose();
-      laserPlaneGeom.dispose();
-      laserPlaneMat.dispose();
-      ring1Geom.dispose();
-      ring1Mat.dispose();
-      ring2Geom.dispose();
-      ring2Mat.dispose();
-      ring3Geom.dispose();
-      ring3Mat.dispose();
-      particleGeom.dispose();
-      particleMat.dispose();
+      outerGeom.dispose();
+      outerMat.dispose();
+      innerGeom.dispose();
+      innerMat.dispose();
+      fulcrumGeom.dispose();
+      beamGeom.dispose();
+      panGeom.dispose();
+      leftStringGeom.dispose();
+      emblemMat.dispose();
+      crownGeom.dispose();
+      crownMat.dispose();
+      haloGeom.dispose();
+      haloMat.dispose();
 
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
@@ -395,40 +287,22 @@ export default function Nexus3DNode() {
   return (
     <div 
       className="w-full h-full relative flex items-center justify-center select-none"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{ minHeight: '440px' }}
     >
       {/* 3D WebGL Canvas Viewport */}
       <div ref={mountRef} className="w-full h-full absolute inset-0 cursor-grab active:cursor-grabbing" />
 
-      {/* Ambient Radial Gradient Depth (Under the 3D model) */}
-      <div className="absolute w-80 h-80 rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none -z-10" />
+      {/* Very Soft, Calm Ambient Backlight (Zero neon noise) */}
+      <div className="absolute w-72 h-72 rounded-full bg-emerald-500/8 blur-[110px] pointer-events-none -z-10" />
 
-      {/* Floating Institutional Status Tags */}
-      <div className="absolute top-2 left-3 flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#090D14]/85 border border-white/10 backdrop-blur-md shadow-lg pointer-events-none">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-[10px] font-mono text-zinc-300 uppercase tracking-wider">
-          Forensic Core · Online
-        </span>
-      </div>
-
-      <div className="absolute top-2 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#090D14]/85 border border-white/10 backdrop-blur-md shadow-lg pointer-events-none text-[10px] font-mono text-emerald-400">
-        <Cpu size={12} className="text-emerald-400" />
-        <span>100% Client In-RAM</span>
-      </div>
-
-      {/* Active Scan Telemetry Micro-Indicator */}
-      <div className="absolute top-11 right-3 hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md bg-[#090D14]/85 border border-white/10 text-[10px] font-mono text-zinc-400 pointer-events-none">
-        <span className="text-emerald-400 font-semibold">AST DUAL-SCAN</span>
-        <span>·</span>
-        <span>350ms</span>
-      </div>
-
-      {/* Permanent ABA Rule 1.6 Privileged Legal Shield Badge */}
-      <div className="absolute bottom-2 px-3.5 py-1.5 rounded-lg bg-[#090D14]/90 border border-emerald-500/30 text-[10.5px] font-mono text-emerald-300 flex items-center gap-2 shadow-2xl backdrop-blur-md pointer-events-none">
-        <Shield size={13} className="text-emerald-400 shrink-0" />
-        <span>LOCAL IN-RAM FORENSIC ENGINE · 0 CLOUD TELEMETRY · ABA RULE 1.6 PRIVILEGED</span>
+      {/* Single Clean, Calm, Elegant Telemetry Capsule (Quiet Luxury) */}
+      <div className="absolute bottom-3 px-4 py-1.5 rounded-full bg-[#090D14]/90 border border-white/10 text-xs font-mono text-zinc-300 flex items-center gap-2 shadow-xl backdrop-blur-md pointer-events-none">
+        <ShieldCheck size={14} className="text-emerald-400" />
+        <span>Nexus ContractGuard™</span>
+        <span className="text-zinc-600">·</span>
+        <span className="text-emerald-400 font-medium">In-RAM Diligence Shield</span>
       </div>
     </div>
   );
