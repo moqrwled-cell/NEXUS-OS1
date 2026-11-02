@@ -172,6 +172,19 @@ export default function ContractCompare({ isDemoMode = false }) {
             <ShieldCheck size={12} className="shrink-0 text-emerald-400" />
             <span>Air-Gapped · RAM-Only · 0 Cloud</span>
           </div>
+
+          {/* Subscriber Sign In for Demo Mode */}
+          {isDemo && (
+            <button
+              type="button"
+              onClick={() => setShowDeviceModal(true)}
+              className="w-full mt-2.5 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-mono text-emerald-300 transition-colors cursor-pointer"
+              title="Already a subscriber? Sign in with your license key"
+            >
+              <Key size={12} className="text-emerald-400" />
+              <span>Subscriber Sign In</span>
+            </button>
+          )}
         </div>
 
         {/* Navigation Modules */}
@@ -404,6 +417,15 @@ export default function ContractCompare({ isDemoMode = false }) {
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
+                onClick={() => setShowDeviceModal(true)}
+                className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-medium text-emerald-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="Sign In with your active license key"
+              >
+                <Key size={12} className="text-emerald-400" />
+                <span>Subscriber Sign In</span>
+              </button>
+              <button
+                type="button"
                 onClick={() => openSeamlessCheckout({ plan: 'solo', toolName: 'contractcompare' })}
                 className="px-3.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
               >
@@ -549,12 +571,14 @@ export default function ContractCompare({ isDemoMode = false }) {
       />
 
       <PirateTrapModal
-        isOpen={!isDemo && (showDeviceModal || !isUnlocked)}
+        isOpen={showDeviceModal || (!isDemo && !isUnlocked)}
         onSuccess={() => {
           setIsUnlocked(true);
           setShowDeviceModal(false);
           loadDeviceLicenseData();
+          navigate('/app/contractcompare');
         }}
+        onClose={() => setShowDeviceModal(false)}
         toolName="contractcompare"
       />
     </div>

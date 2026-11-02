@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Key, Loader2, ArrowLeft, ShieldAlert, Lock, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Key, Loader2, ArrowLeft, ShieldAlert, Lock, ShieldCheck, FileText } from 'lucide-react';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
 import { bindKeyToCurrentDevice } from '../utils/licenseManager';
 import { openSeamlessCheckout } from '../utils/checkoutPopup';
@@ -51,25 +51,25 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#020608] p-4 font-sans text-zinc-100 antialiased" dir="ltr">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-[#060D12] border border-white/10 relative overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.9)]">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-nexus-emerald to-transparent"></div>
+    <div className="min-h-screen flex items-center justify-center bg-[#070A0F] p-4 font-sans text-zinc-100 antialiased" dir="ltr">
+      <div className="w-full max-w-md p-8 rounded-2xl bg-[#090D14] border border-white/10 relative overflow-hidden shadow-2xl">
+        <div className="absolute top-0 left-0 w-full h-0.5 bg-emerald-500"></div>
         
         {/* Chassis Header */}
         <div className="text-center mb-6 flex flex-col items-center">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-3 text-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.2)]">
-            <Key size={30} />
+          <div className="w-14 h-14 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-3 text-emerald-400">
+            <Key size={26} />
           </div>
-          <h1 className="text-xl font-black text-white tracking-wider flex items-center gap-2">
-            NEXUS <span className="text-nexus-emerald">CONTRACTGUARD</span>
+          <h1 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            Subscriber & Licensee Portal
           </h1>
           <p className="text-xs text-zinc-400 mt-1 font-mono">
-            WORKSTATION LICENSE AUTHENTICATION
+            Nexus ContractGuard™ Workstation Authentication
           </p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2">
+          <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
             <ShieldAlert size={14} className="shrink-0" />
             <span>{error}</span>
           </div>
@@ -78,32 +78,32 @@ export default function Login() {
         {/* Enter License Key Form */}
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-1.5">
-              Hardware-Bound License Key
+            <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-1.5">
+              License Key
             </label>
             <input
               type="text"
               value={licenseKey}
               onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
               placeholder="CG-SOLO-... or CG-FIRM-..."
-              className="w-full bg-black/70 border border-zinc-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-center font-mono text-sm text-white placeholder:text-zinc-600 outline-none transition-colors"
+              className="w-full bg-black/60 border border-white/10 focus:border-emerald-500 rounded-lg px-4 py-3 text-center font-mono text-sm text-white placeholder:text-zinc-600 outline-none transition-colors"
               required
             />
-            <p className="text-[10px] text-zinc-400 mt-1.5 text-center">
-              Enter the cryptographic key from your Whop purchase receipt or email.
+            <p className="text-[11px] text-zinc-400 mt-1.5 text-center">
+              Enter the license key from your Whop receipt or purchase email.
             </p>
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-emerald-500 text-black font-extrabold py-3.5 rounded-xl hover:bg-emerald-400 transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-xs tracking-wide"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold py-3 rounded-lg transition-colors border-t border-white/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-xs tracking-wide active:scale-[0.98]"
           >
             {isLoading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
               <>
-                <span>Authenticate Workstation</span>
+                <span>Authenticate & Unlock Workstation</span>
                 <ArrowRight size={15} />
               </>
             )}
@@ -111,7 +111,7 @@ export default function Login() {
         </form>
 
         {/* Whop Purchase CTA */}
-        <div className="mt-6 pt-5 border-t border-zinc-800 flex flex-col items-center gap-2.5">
+        <div className="mt-6 pt-5 border-t border-white/10 flex flex-col items-center gap-2.5">
           <span className="text-xs text-zinc-400">Don't have a license key yet?</span>
           <button
             type="button"
@@ -122,9 +122,9 @@ export default function Login() {
                 onSuccess: () => navigate('/welcome?status=success')
               });
             }}
-            className="w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 text-emerald-400 border border-emerald-500/30 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-2.5 px-4 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/10 font-medium rounded-lg text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
           >
-            <Lock size={13} />
+            <Lock size={13} className="text-emerald-400" />
             <span>Instant Checkout ($199 Solo / $299 Firm)</span>
           </button>
         </div>
@@ -134,15 +134,20 @@ export default function Login() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="hover:text-zinc-300 transition-colors flex items-center gap-1 cursor-pointer"
+            className="hover:text-zinc-200 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <ArrowLeft size={13} />
-            <span>Back to Overview</span>
+            <span>Back to Home</span>
           </button>
-          <div className="flex items-center gap-1 font-mono text-[10px]">
-            <ShieldCheck size={12} className="text-emerald-400" />
-            <span>100% In-RAM Offline</span>
-          </div>
+
+          <button
+            type="button"
+            onClick={() => navigate('/demo')}
+            className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors flex items-center gap-1 cursor-pointer"
+          >
+            <FileText size={13} />
+            <span>Try Free Demo</span>
+          </button>
         </div>
       </div>
     </div>

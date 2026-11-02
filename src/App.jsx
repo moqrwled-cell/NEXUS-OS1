@@ -99,15 +99,16 @@ export default function App() {
         </div>
 
         {/* High-Precision Navbar Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           <button 
             type="button"
             onClick={() => navigate('/login')}
-            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-zinc-400 hover:text-white transition-colors cursor-pointer"
-            title="Enter an active license key"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 rounded-lg transition-colors cursor-pointer"
+            title="Subscriber Sign In with License Key"
           >
-            <Key size={12} className="text-emerald-400" />
-            <span>Enter Key</span>
+            <Key size={13} className="text-emerald-400" />
+            <span className="hidden sm:inline">Subscriber Sign In</span>
+            <span className="sm:hidden">Sign In</span>
           </button>
 
           <button 
@@ -186,6 +187,18 @@ export default function App() {
                   <Lock size={14} className="text-zinc-400" />
                   <span>View Lifetime Pricing ($199)</span>
                 </button>
+                
+                {/* Subscriber Portal Quick Entry */}
+                <div className="w-full flex items-center gap-2 text-xs font-mono text-zinc-400 pt-1">
+                  <Key size={13} className="text-emerald-400" />
+                  <span>Already have a license?</span>
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4 cursor-pointer font-medium"
+                  >
+                    Subscriber Sign In →
+                  </button>
+                </div>
               </motion.div>
 
               {/* Verified Metrics Row */}
@@ -914,6 +927,15 @@ export default function App() {
 
           {/* Compliance & Trust Verification Links (Privacy, Terms, Security, Refunds) */}
           <div className="mt-6 pt-5 border-t border-white/5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-mono text-zinc-400 max-w-5xl mx-auto">
+            <button
+              onClick={() => navigate('/login')}
+              className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <Key size={12} className="text-emerald-400" />
+              <span>Subscriber Sign In</span>
+            </button>
+
+            <span className="text-zinc-600 hidden sm:inline">•</span>
             <button
               onClick={() => setLegalModalTab('privacy')}
               className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"

@@ -508,7 +508,7 @@ export async function generateDiligenceCertificatePDFBytes(auditData = {}, metad
   const sealCenterX = marginX + sealRadius + 14;
   const sealCenterY = y - (bottomBoxHeight / 2) + 2;
 
-  // Draw the Authentic Concentric Corporate Seal (مثل الصورة المرفوعة)
+  // Draw the Authentic Concentric Corporate Seal
   drawCorporateSeal(page1, sealCenterX, sealCenterY, sealRadius, fonts);
 
   // Draw the Formal Corporate Signature Block next to the seal
