@@ -220,7 +220,7 @@ export default function App() {
             </div>
 
             {/* Visual 3D Node Element */}
-            <div className="w-full lg:w-[460px] h-[360px] lg:h-[460px] relative flex items-center justify-center">
+            <div className="w-full lg:w-[480px] h-[390px] lg:h-[480px] relative flex items-center justify-center">
               <Nexus3DNode />
             </div>
 
