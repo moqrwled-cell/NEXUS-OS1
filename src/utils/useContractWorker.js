@@ -129,13 +129,29 @@ export function useContractWorker(hookOptions = {}) {
     setProgress(null);
   }, []);
 
+  /**
+   * Complete reset: aborts active job and purges result, error, and progress.
+   */
+  const resetAnalysis = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    activeJobIdRef.current = null;
+    setIsProcessing(false);
+    setProgress(null);
+    setResult(null);
+    setError(null);
+  }, []);
+
   return {
     isProcessing,
     progress,
     result,
     error,
     runAnalysis,
-    cancelAnalysis
+    cancelAnalysis,
+    resetAnalysis
   };
 }
 

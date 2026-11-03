@@ -1120,8 +1120,35 @@ function ContractAnalyzerView({
     result: auditResults,
     error: workerError,
     runAnalysis,
-    cancelAnalysis
+    cancelAnalysis,
+    resetAnalysis
   } = useContractWorker();
+
+  // Reset active audit findings when switching between analysis tools / modes
+  const prevModeRef = useRef(analysisMode);
+  useEffect(() => {
+    if (prevModeRef.current !== analysisMode) {
+      prevModeRef.current = analysisMode;
+      resetAnalysis();
+      setHarmonizedData(null);
+      setLiabilityAuditData(null);
+      setDiffDecisions({});
+    }
+  }, [analysisMode, resetAnalysis]);
+
+  // Master draft reset: clears all inputs and purges in-memory audit findings
+  const handleClearDraft = () => {
+    setText('');
+    setBaselineText('');
+    setDocumentTitle('');
+    setClientParty('');
+    setCounterparty('');
+    setHarmonizedData(null);
+    setLiabilityAuditData(null);
+    setDiffDecisions({});
+    setParsingProgress({ active: false, statusKey: '', percent: 0, currentPage: 0, totalPages: 0, message: '' });
+    resetAnalysis();
+  };
 
   const [activeHudTab, setActiveHudTab] = useState('dealBreakers'); // dealBreakers | enforceability | obligations | crossRefs | financialDates | definedTerms | diff | risks
   const [copiedRedlineId, setCopiedRedlineId] = useState(null);
@@ -1491,8 +1518,10 @@ function ContractAnalyzerView({
   };
 
   // In Demo mode, populate M&A benchmark deal text on mount without auto-running
+  const hasLoadedInitialDemoRef = useRef(false);
   useEffect(() => {
-    if (isDemo && !auditResults && !isProcessing && !text) {
+    if (isDemo && !hasLoadedInitialDemoRef.current && !text) {
+      hasLoadedInitialDemoRef.current = true;
       handleLoadSampleCase('ma', false);
     }
   }, [isDemo]);
@@ -1791,16 +1820,11 @@ function ContractAnalyzerView({
               {text ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    setText('');
-                    setBaselineText('');
-                    setDocumentTitle('');
-                    setClientParty('');
-                    setCounterparty('');
-                  }}
-                  className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-800 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1"
+                  onClick={handleClearDraft}
+                  className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-800 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer"
                   title="Clear draft text and inputs"
                 >
+                  <Trash2 size={11} className="text-zinc-500 hover:text-rose-400" />
                   Clear Draft
                 </button>
               ) : (
@@ -1837,7 +1861,12 @@ function ContractAnalyzerView({
             onChange={(e) => {
               const newVal = e.target.value;
               setText(newVal);
-              if (newVal.length >= 60 && (!documentTitle || !clientParty || !counterparty)) {
+              if (!newVal.trim()) {
+                resetAnalysis();
+                setHarmonizedData(null);
+                setLiabilityAuditData(null);
+                setDiffDecisions({});
+              } else if (newVal.length >= 60 && (!documentTitle || !clientParty || !counterparty)) {
                 const meta = detectContractMetadata(newVal);
                 if (meta.title && !documentTitle) setDocumentTitle(meta.title);
                 if (meta.clientParty && !clientParty) setClientParty(meta.clientParty);
@@ -1937,11 +1966,32 @@ function ContractAnalyzerView({
                     onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')}
                   />
                 </label>
+                {baselineText && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBaselineText('');
+                      resetAnalysis();
+                      setDiffDecisions({});
+                    }}
+                    className="px-2 py-1 bg-white/5 hover:bg-rose-500/15 border border-zinc-800 hover:border-rose-500/30 rounded-lg text-[11px] font-mono text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Clear baseline text"
+                  >
+                    <Trash2 size={11} /> Clear
+                  </button>
+                )}
               </div>
             </div>
             <textarea
               value={baselineText}
-              onChange={(e) => setBaselineText(e.target.value)}
+              onChange={(e) => {
+                const newVal = e.target.value;
+                setBaselineText(newVal);
+                if (!newVal.trim() && analysisMode === 'comparative') {
+                  resetAnalysis();
+                  setDiffDecisions({});
+                }
+              }}
               placeholder="Paste your firm's approved baseline contract or drag & drop .pdf / .docx here..."
               className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
@@ -2020,11 +2070,34 @@ function ContractAnalyzerView({
                     onChange={(e) => handleFileUpload(e, setText, 'target')}
                   />
                 </label>
+                {text && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setText('');
+                      resetAnalysis();
+                      setDiffDecisions({});
+                    }}
+                    className="px-2 py-1 bg-white/5 hover:bg-rose-500/15 border border-zinc-800 hover:border-rose-500/30 rounded-lg text-[11px] font-mono text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Clear markup text"
+                  >
+                    <Trash2 size={11} /> Clear
+                  </button>
+                )}
               </div>
             </div>
             <textarea
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                const newVal = e.target.value;
+                setText(newVal);
+                if (!newVal.trim()) {
+                  resetAnalysis();
+                  setHarmonizedData(null);
+                  setLiabilityAuditData(null);
+                  setDiffDecisions({});
+                }
+              }}
               placeholder="Paste counterparty modified text or drag & drop returned redline here..."
               className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
@@ -2077,6 +2150,18 @@ function ContractAnalyzerView({
         </div>
 
         <div className="flex items-center gap-3">
+          {(text.trim() || baselineText.trim()) && !isProcessing && (
+            <button
+              type="button"
+              onClick={handleClearDraft}
+              className="px-3.5 py-2.5 bg-zinc-950 hover:bg-rose-950/20 border border-zinc-800 hover:border-rose-500/40 rounded-lg text-xs font-semibold text-zinc-400 hover:text-rose-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              title="Clear active draft and reset audit findings"
+            >
+              <Trash2 size={13} />
+              <span>Clear Draft</span>
+            </button>
+          )}
+
           {isProcessing && (
             <button
               type="button"
@@ -2166,7 +2251,7 @@ function ContractAnalyzerView({
       )}
 
       {/* Analysis Results HUD & Dual-Pane Workstation */}
-      {auditResults && (
+      {auditResults && text.trim() && (analysisMode === 'single' || analysisMode === 'comparative') && (
         <div className="w-full flex flex-col gap-6 animate-fade-in mt-4">
           {/* Executive Risk Score & Metrics Banner with Unified Action Dock */}
           <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex flex-col xl:flex-row xl:items-center justify-between gap-5 shadow-2xl">
