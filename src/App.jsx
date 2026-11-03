@@ -20,7 +20,8 @@ import {
   Key,
   Building2,
   Zap,
-  FileCheck
+  FileCheck,
+  Sparkles
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import LegalTrustModal from './components/LegalTrustModal';
