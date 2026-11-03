@@ -1,5 +1,5 @@
 import { downloadDiligenceCertificatePDF } from '../utils/diligenceCertificatePdfGenerator';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
