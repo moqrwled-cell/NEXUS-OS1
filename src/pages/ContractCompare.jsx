@@ -12,10 +12,10 @@ import {
   AlertCircle, Clock, CheckSquare, Tag, FileSpreadsheet, Lock,
   Settings, Key, Laptop, Copy, Mail, LogOut,
   BookOpen, FileDown, Sparkles,
-  ChevronDown, Crosshair, Scale
+  ChevronDown, Crosshair, Scale, Activity, Flag, FileEdit, XCircle
 } from 'lucide-react';
 import { extractTextFromDOCX } from '../utils/docxExtractor';
-import { downloadAmendmentRiderDOCX, downloadHarmonizedDeedDOCX } from '../utils/docxExportEngine';
+import { downloadAmendmentRiderDOCX, downloadHarmonizedDeedDOCX, downloadRedlineDOCX } from '../utils/docxExportEngine';
 
 // Flagship Engines & Utilities
 import { sanitizeDocumentPII, PII_RULES } from '../utils/piiEngine';
@@ -1046,6 +1046,10 @@ function ContractAnalyzerView({
   const [certCopiedToast, setCertCopiedToast] = useState(false);
   const [includeCertStamp, setIncludeCertStamp] = useState(true);
   const [activeDiffNavIdx, setActiveDiffNavIdx] = useState(0);
+  const [parsingProgress, setParsingProgress] = useState({ active: false, statusKey: '', percent: 0, currentPage: 0, totalPages: 0, message: '' });
+  const [diffDecisions, setDiffDecisions] = useState({});
+  const [showCounterRiderModal, setShowCounterRiderModal] = useState(false);
+  const [memoCopiedToast, setMemoCopiedToast] = useState(false);
 
   const handleGenerateCertificate = async () => {
     setIsGeneratingCertificate(true);
@@ -1294,14 +1298,28 @@ function ContractAnalyzerView({
         setTargetText(extractedContent);
         setUploadStatus(prev => ({ ...prev, [statusKey]: `Loaded Word DOCX (${extractedContent.split(/\s+/).length} words)` }));
       } else if (lowerName.endsWith('.pdf')) {
-        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Reading PDF document...' }));
+        setUploadStatus(prev => ({ ...prev, [statusKey]: 'Reading PDF in local RAM...' }));
+        setParsingProgress({
+          active: true,
+          statusKey,
+          percent: 5,
+          currentPage: 1,
+          totalPages: 1,
+          message: 'Reading PDF in local RAM...'
+        });
         const pdfResult = await extractTextFromPDF(file, {
           enableOcr: true,
           onProgress: (p) => {
-            setUploadStatus(prev => ({
-              ...prev,
-              [statusKey]: p.message || `Parsing PDF: page ${p.currentPage}/${p.totalPages} (${p.percent}%)...`
-            }));
+            const pageMsg = p.totalPages ? `Reading Page ${p.currentPage} of ${p.totalPages} in local RAM (${p.percent}%)...` : (p.message || 'Processing in local RAM...');
+            setUploadStatus(prev => ({ ...prev, [statusKey]: pageMsg }));
+            setParsingProgress({
+              active: true,
+              statusKey,
+              percent: p.percent || Math.round((p.currentPage / (p.totalPages || 1)) * 100),
+              currentPage: p.currentPage || 1,
+              totalPages: p.totalPages || 1,
+              message: pageMsg
+            });
           }
         });
         extractedContent = pdfResult.fullText || '';
@@ -1311,15 +1329,30 @@ function ContractAnalyzerView({
           ...prev,
           [statusKey]: `Loaded PDF (${pdfResult.totalWords} words${hasOcrPages ? ' · In-RAM OCR applied' : ''})`
         }));
+        setParsingProgress({ active: false, statusKey: '', percent: 100, currentPage: 0, totalPages: 0, message: '' });
       } else if (isImageFile(file)) {
         setUploadStatus(prev => ({ ...prev, [statusKey]: 'Initializing In-RAM OCR Engine...' }));
+        setParsingProgress({
+          active: true,
+          statusKey,
+          percent: 15,
+          currentPage: 1,
+          totalPages: 1,
+          message: 'In-RAM OCR: Preprocessing scanned contract...'
+        });
         const ocrResult = await recognizeImage(file, {
           preprocess: true,
           onProgress: (p) => {
-            setUploadStatus(prev => ({
-              ...prev,
-              [statusKey]: p.userFriendly ? `In-RAM OCR: ${p.userFriendly}` : 'Scanning contract image...'
-            }));
+            const ocrMsg = p.userFriendly ? `In-RAM OCR: ${p.userFriendly}` : 'Extracting text from scan...';
+            setUploadStatus(prev => ({ ...prev, [statusKey]: ocrMsg }));
+            setParsingProgress({
+              active: true,
+              statusKey,
+              percent: Math.round((p.progress || 0.5) * 100),
+              currentPage: 1,
+              totalPages: 1,
+              message: ocrMsg
+            });
           }
         });
         extractedContent = ocrResult.text || '';
@@ -1329,6 +1362,7 @@ function ContractAnalyzerView({
           ...prev,
           [statusKey]: `Scanned Image OCR Complete (${wordCount} words · ${ocrResult.confidence.toFixed(1)}% conf · ${ocrResult.durationMs}ms)`
         }));
+        setParsingProgress({ active: false, statusKey: '', percent: 100, currentPage: 0, totalPages: 0, message: '' });
       } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
         extractedContent = await file.text();
         setTargetText(extractedContent);
@@ -1353,6 +1387,7 @@ function ContractAnalyzerView({
       console.error(err);
       alert("Failed to parse document: " + err.message);
       setUploadStatus(prev => ({ ...prev, [statusKey]: 'Failed to parse file' }));
+      setParsingProgress({ active: false, statusKey: '', percent: 0, currentPage: 0, totalPages: 0, message: '' });
     }
   };
 
@@ -1830,39 +1865,71 @@ function ContractAnalyzerView({
           </div>
         </div>
       ) : (
-        /* COMPARATIVE REDLINE DIFF MODE (DUAL PANES) */
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Baseline Contract */}
+        /* COMPARATIVE REDLINE DIFF MODE (DUAL PANES - COLOR-CODED) */
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {/* Approved Baseline Draft (GREEN / EMERALD THEME) */}
           <div 
             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(true); }}
             onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(false); }}
             onDrop={(e) => handleFileDrop(e, setBaselineText, 'baseline', setIsDraggingBaseline)}
-            className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+            className={`flex flex-col rounded-2xl bg-zinc-950/80 border transition-all overflow-hidden shadow-xl relative ${
               isDraggingBaseline 
-                ? 'border-cyan-400 bg-cyan-500/10  ring-2 ring-cyan-400/50' 
-                : 'border-zinc-800'
+                ? 'border-emerald-400 bg-emerald-500/10 ring-2 ring-emerald-400/50' 
+                : 'border-emerald-500/30 hover:border-emerald-500/50'
             }`}
           >
             {isDraggingBaseline && (
-              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-cyan-400 gap-2 animate-in fade-in">
-                <Upload size={26} className="animate-bounce" />
-                <p className="text-xs font-bold text-white">Drop Baseline Document Here</p>
-                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt</p>
+              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2 animate-in fade-in">
+                <Upload size={28} className="animate-bounce" />
+                <p className="text-sm font-bold text-white">Drop Approved Baseline Document Here</p>
+                <p className="text-xs text-zinc-400 font-mono">.pdf, .docx, .txt</p>
               </div>
             )}
 
-            <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
-              <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
-                <FileText size={14} className="text-zinc-400" />
-                ORIGINAL BASELINE (Drop file here)
-              </span>
+            {/* In-RAM Parsing Progress Bar Overlay (for 100+ pages & OCR) */}
+            {parsingProgress.active && parsingProgress.statusKey === 'baseline' && (
+              <div className="absolute inset-0 z-30 bg-[#04090e]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-3 animate-pulse">
+                  <Activity size={24} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">
+                  Parsing Baseline in Local RAM
+                </h4>
+                <p className="text-xs font-mono text-emerald-300 mb-3">
+                  {parsingProgress.message || `Reading Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} in local RAM (${parsingProgress.percent}%)...`}
+                </p>
+                <div className="w-full max-w-xs h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-2">
+                  <div 
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-200" 
+                    style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }} 
+                  />
+                </div>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  Zero Cloud Upload · 100% In-Memory RAM Stream
+                </span>
+              </div>
+            )}
+
+            {/* Pane Header: Emerald */}
+            <div className="px-4 py-3 bg-emerald-950/30 border-b border-emerald-500/20 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-bold text-emerald-400 font-mono flex items-center gap-2">
+                  <ShieldCheck size={15} className="text-emerald-400" />
+                  YOUR APPROVED DRAFT (Original / Internal Master)
+                </span>
+                <p className="text-[10.5px] text-zinc-400 font-sans mt-0.5">
+                  Your firm's clean, approved baseline version before counterparty changes
+                </p>
+              </div>
               <div className="flex items-center gap-2">
                 {uploadStatus.baseline && (
-                  <span className="text-xs font-mono text-cyan-400">{uploadStatus.baseline}</span>
+                  <span className="text-xs font-mono text-emerald-300 max-w-[130px] truncate" title={uploadStatus.baseline}>
+                    {uploadStatus.baseline}
+                  </span>
                 )}
                 
-                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
-                  <Upload size={12} /> Upload
+                <label className="cursor-pointer bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-medium text-emerald-300 transition-colors flex items-center gap-1">
+                  <Upload size={12} /> Upload File
                   <input
                     type="file"
                     accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
@@ -1875,44 +1942,77 @@ function ContractAnalyzerView({
             <textarea
               value={baselineText}
               onChange={(e) => setBaselineText(e.target.value)}
-              placeholder="Paste original baseline contract or drop file here..."
+              placeholder="Paste your firm's approved baseline contract or drag & drop .pdf / .docx here..."
               className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
-            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
-              {baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words
+            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
+              <span className="text-[11px] text-zinc-500">Baseline Master Reference</span>
+              <span>{baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words</span>
             </div>
           </div>
 
-          {/* Amended Contract */}
+          {/* Counterparty Markup (CYAN THEME) */}
           <div 
             onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
             onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
             onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
-            className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
+            className={`flex flex-col rounded-2xl bg-zinc-950/80 border transition-all overflow-hidden shadow-xl relative ${
               isDraggingTarget 
-                ? 'border-emerald-400 bg-emerald-500/10  ring-2 ring-emerald-400/50' 
-                : 'border-zinc-800'
+                ? 'border-cyan-400 bg-cyan-500/10 ring-2 ring-cyan-400/50' 
+                : 'border-cyan-500/30 hover:border-cyan-500/50'
             }`}
           >
             {isDraggingTarget && (
-              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2 animate-in fade-in">
-                <Upload size={26} className="animate-bounce" />
-                <p className="text-xs font-bold text-white">Drop Amended Document Here</p>
-                <p className="text-[10px] text-zinc-400 font-mono">.pdf, .docx, .txt, .png, .jpg</p>
+              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-cyan-400 gap-2 animate-in fade-in">
+                <Upload size={28} className="animate-bounce" />
+                <p className="text-sm font-bold text-white">Drop Counterparty Proposed Markup Here</p>
+                <p className="text-xs text-zinc-400 font-mono">.pdf, .docx, .txt, .png, .jpg</p>
               </div>
             )}
 
-            <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
-              <span className="text-xs font-semibold text-cyan-400 font-mono flex items-center gap-2">
-                <FileCheck size={14} className="text-cyan-400" />
-                AMENDED DRAFT (Drop file here)
-              </span>
+            {/* In-RAM Parsing Progress Bar Overlay (for 100+ pages & OCR) */}
+            {parsingProgress.active && parsingProgress.statusKey === 'target' && (
+              <div className="absolute inset-0 z-30 bg-[#04090e]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
+                <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 mb-3 animate-pulse">
+                  <Activity size={24} />
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">
+                  Parsing Markup in Local RAM
+                </h4>
+                <p className="text-xs font-mono text-cyan-300 mb-3">
+                  {parsingProgress.message || `Reading Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} in local RAM (${parsingProgress.percent}%)...`}
+                </p>
+                <div className="w-full max-w-xs h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-2">
+                  <div 
+                    className="h-full bg-cyan-400 rounded-full transition-all duration-200" 
+                    style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }} 
+                  />
+                </div>
+                <span className="text-[10px] font-mono text-zinc-500">
+                  Zero Cloud Upload · 100% In-Memory RAM Stream
+                </span>
+              </div>
+            )}
+
+            {/* Pane Header: Cyan */}
+            <div className="px-4 py-3 bg-cyan-950/30 border-b border-cyan-500/20 flex items-center justify-between">
+              <div>
+                <span className="text-xs font-bold text-cyan-400 font-mono flex items-center gap-2">
+                  <FileEdit size={15} className="text-cyan-400" />
+                  COUNTERPARTY'S MARKUP (Incoming Proposed Revision)
+                </span>
+                <p className="text-[10.5px] text-zinc-400 font-sans mt-0.5">
+                  The opposing counsel's modified, returned, or proposed draft to audit
+                </p>
+              </div>
               <div className="flex items-center gap-2">
                 {uploadStatus.target && (
-                  <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
+                  <span className="text-xs font-mono text-cyan-300 max-w-[130px] truncate" title={uploadStatus.target}>
+                    {uploadStatus.target}
+                  </span>
                 )}
-                <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-2.5 py-1 rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1">
-                  <Upload size={12} /> Upload
+                <label className="cursor-pointer bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-medium text-cyan-300 transition-colors flex items-center gap-1">
+                  <Upload size={12} /> Upload File
                   <input
                     type="file"
                     accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
@@ -1925,11 +2025,12 @@ function ContractAnalyzerView({
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Paste modified or redlined contract text here or drop file..."
-              className="w-full bg-black/40 p-4 text-sm font-mono leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
+              placeholder="Paste counterparty modified text or drag & drop returned redline here..."
+              className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
             />
-            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 text-right">
-              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words
+            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
+              <span className="text-[11px] text-zinc-500">Incoming Counterparty Draft</span>
+              <span>{text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words</span>
             </div>
           </div>
         </div>
@@ -3672,19 +3773,51 @@ function ContractAnalyzerView({
           {/* TAB 6: REDLINE DIFF (Myers LCS) */}
           {activeHudTab === 'diff' && auditResults.diff && (
             <div className="flex flex-col gap-4">
-              {/* Diff Navigator Bar (Next / Prev Difference) */}
-              <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-zinc-900 border border-white/10 text-xs font-mono">
-                <div className="flex items-center gap-2 text-zinc-300">
+              
+              {/* Diff Navigator Bar + Actions Toolbar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-xl bg-zinc-900/90 border border-white/10 text-xs font-mono">
+                <div className="flex items-center gap-2.5 text-zinc-300">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="font-semibold">Diff Navigation</span>
+                  <span className="font-semibold text-white">Redline Variance Engine</span>
                   <span className="text-zinc-500">|</span>
-                  <span className="text-zinc-400">
-                    {auditResults.diff.segments.filter(s => s.type !== 'unchanged').length} Differences Detected
+                  <span className="text-emerald-400 font-semibold">
+                    {auditResults.diff.segments.filter(s => s.type !== 'unchanged').length} Differences
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-zinc-400 hidden sm:inline">Keyboard: [J] Next / [K] Prev</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Export Word Redline Button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      downloadRedlineDOCX(auditResults.diff, {
+                        title: documentTitle || 'Commercial Agreement',
+                        clientParty: clientParty || 'Client Principal',
+                        counterparty: counterparty || 'Counterparty'
+                      });
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                    title="Export clean Word document with Track Changes strikethrough & underline markup"
+                  >
+                    <FileDown size={13} />
+                    <span>Download Redline Word (.docx)</span>
+                  </button>
+
+                  {/* One-Click Counter-Rider Generator */}
+                  <button
+                    type="button"
+                    onClick={() => setShowCounterRiderModal(true)}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                    title="Generate instant email-ready Counter-Rider rejecting counterparty alterations"
+                  >
+                    <ShieldAlert size={13} />
+                    <span>One-Click Counter-Rider</span>
+                  </button>
+
+                  <div className="h-4 w-[1px] bg-white/10 mx-1 hidden sm:block" />
+
+                  {/* Next / Prev Navigation */}
+                  <span className="text-[11px] text-zinc-400 hidden lg:inline">[J] Next / [K] Prev</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -3694,7 +3827,7 @@ function ContractAnalyzerView({
                       setActiveDiffNavIdx(nextIdx);
                       diffEls[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }}
-                    className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 text-xs font-medium cursor-pointer transition-colors"
+                    className="px-2.5 py-1.5 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 text-xs font-medium cursor-pointer transition-colors"
                     title="Previous Difference (K)"
                   >
                     ▲ Prev (K)
@@ -3709,7 +3842,7 @@ function ContractAnalyzerView({
                       setActiveDiffNavIdx(nextIdx);
                       diffEls[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }}
-                    className="px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-medium cursor-pointer transition-colors"
+                    className="px-2.5 py-1.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-medium cursor-pointer transition-colors"
                     title="Next Difference (J)"
                   >
                     ▼ Next (J)
@@ -3717,32 +3850,137 @@ function ContractAnalyzerView({
                 </div>
               </div>
 
-              <div id="diff-container-viewport" className="p-6 rounded-2xl liquid-glass-strong border border-white/5 font-mono text-xs leading-relaxed max-h-[500px] overflow-y-auto custom-scrollbar bg-black/50">
-                {auditResults.diff.segments.map((seg) => {
-                  if (seg.type === 'added') {
-                    return (
-                      <span 
-                        key={seg.id} 
-                        className="diff-target-segment bg-emerald-500/25 text-emerald-300 font-semibold px-1 py-0.5 mx-0.5 rounded border border-emerald-500/30"
-                        title="Added in modified draft"
-                      >
-                        {seg.value}
-                      </span>
-                    );
-                  }
-                  if (seg.type === 'removed') {
-                    return (
-                      <span 
-                        key={seg.id} 
-                        className="diff-target-segment bg-red-500/25 text-red-300 line-through px-1 py-0.5 mx-0.5 rounded border border-red-500/30 opacity-75"
-                        title="Removed from original draft"
-                      >
-                        {seg.value}
-                      </span>
-                    );
-                  }
-                  return <span key={seg.id} className="text-gray-300">{seg.value}</span>;
-                })}
+              {/* Accept / Reject / Flag HUD Summary Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs font-mono">
+                <div className="flex items-center gap-4">
+                  <span className="text-zinc-400 font-semibold">Review Decisions:</span>
+                  <span className="text-emerald-400 font-bold flex items-center gap-1">
+                    <Check size={13} /> {Object.values(diffDecisions).filter(d => d === 'accepted').length} Accepted
+                  </span>
+                  <span className="text-rose-400 font-bold flex items-center gap-1">
+                    <XCircle size={13} /> {Object.values(diffDecisions).filter(d => d === 'rejected').length} Rejected
+                  </span>
+                  <span className="text-amber-400 font-bold flex items-center gap-1">
+                    <Flag size={13} /> {Object.values(diffDecisions).filter(d => d === 'flagged').length} Flagged
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const entries = Object.entries(diffDecisions);
+                      if (entries.length === 0) {
+                        alert('Mark at least one clause as Accepted, Rejected, or Flagged before exporting the decision summary.');
+                        return;
+                      }
+                      let summaryText = `EXECUTIVE REVISION REVIEW & BOARD DECISION SCHEDULE\n`;
+                      summaryText += `=================================================================\n`;
+                      summaryText += `Agreement: ${documentTitle || 'Commercial Agreement'}\n`;
+                      summaryText += `Client: ${clientParty || 'Client Principal'} | Counterparty: ${counterparty || 'Counterparty'}\n`;
+                      summaryText += `Date: ${new Date().toLocaleDateString('en-US')}\n\n`;
+                      summaryText += `EXECUTIVE SUMMARY:\n`;
+                      summaryText += `- Accepted Changes: ${entries.filter(([_, d]) => d === 'accepted').length}\n`;
+                      summaryText += `- Rejected Changes (Require Reversion): ${entries.filter(([_, d]) => d === 'rejected').length}\n`;
+                      summaryText += `- Flagged for Board/Partner Direction: ${entries.filter(([_, d]) => d === 'flagged').length}\n\n`;
+                      summaryText += `CLAUSE-BY-CLAUSE AUDIT LOG:\n`;
+                      entries.forEach(([cIdx, decision]) => {
+                        const clause = auditResults?.diff?.clauseDiffs?.[cIdx];
+                        summaryText += `Clause #${parseInt(cIdx) + 1}: [${decision.toUpperCase()}]\n`;
+                        if (clause?.text) {
+                          summaryText += `Text: "${clause.text.substring(0, 160)}..."\n`;
+                        }
+                        summaryText += `\n`;
+                      });
+                      summaryText += `=================================================================\n`;
+                      summaryText += `Prepared via Nexus ContractGuard (100% In-RAM Local Processing)\n`;
+                      
+                      const blob = new Blob([summaryText], { type: 'text/plain;charset=utf-8' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${(documentTitle || 'Contract').replace(/[^a-zA-Z0-9]/g, '_')}_Decision_Schedule.txt`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="px-3 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer text-[11px] font-semibold flex items-center gap-1.5"
+                  >
+                    <Download size={12} />
+                    <span>Export Decisions Brief</span>
+                  </button>
+
+                  {Object.keys(diffDecisions).length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setDiffDecisions({})}
+                      className="text-[11px] text-zinc-500 hover:text-zinc-300 underline cursor-pointer"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Diff Container Viewport with Heatmap Minimap Rail */}
+              <div className="relative flex rounded-2xl liquid-glass-strong border border-white/5 bg-black/60 overflow-hidden">
+                <div id="diff-container-viewport" className="flex-1 p-6 font-mono text-xs leading-relaxed max-h-[500px] overflow-y-auto custom-scrollbar">
+                  {auditResults.diff.segments.map((seg) => {
+                    if (seg.type === 'added') {
+                      return (
+                        <span 
+                          key={seg.id} 
+                          className="diff-target-segment bg-emerald-500/25 text-emerald-300 font-semibold px-1 py-0.5 mx-0.5 rounded border border-emerald-500/30"
+                          title="Added in modified draft"
+                        >
+                          {seg.value}
+                        </span>
+                      );
+                    }
+                    if (seg.type === 'removed') {
+                      return (
+                        <span 
+                          key={seg.id} 
+                          className="diff-target-segment bg-red-500/25 text-red-300 line-through px-1 py-0.5 mx-0.5 rounded border border-red-500/30 opacity-75"
+                          title="Removed from original draft"
+                        >
+                          {seg.value}
+                        </span>
+                      );
+                    }
+                    return <span key={seg.id} className="text-gray-300">{seg.value}</span>;
+                  })}
+                </div>
+
+                {/* Vertical Minimap / Heatmap Rail (One-Click Jump Track) */}
+                <div 
+                  className="w-7 border-l border-white/10 bg-zinc-950/90 flex flex-col items-center py-2 relative select-none shrink-0" 
+                  title="Visual Diff Minimap: Click any tick to jump to difference"
+                >
+                  <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-tighter mb-1">MAP</span>
+                  <div className="relative w-full flex-1">
+                    {auditResults.diff.segments.filter(s => s.type !== 'unchanged').map((seg, sIdx, allDiffs) => {
+                      const topPercent = (sIdx / Math.max(allDiffs.length - 1, 1)) * 92 + 4;
+                      return (
+                        <button
+                          key={seg.id || sIdx}
+                          type="button"
+                          onClick={() => {
+                            const diffEls = document.querySelectorAll('.diff-target-segment');
+                            if (diffEls[sIdx]) {
+                              diffEls[sIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              setActiveDiffNavIdx(sIdx);
+                            }
+                          }}
+                          style={{ top: `${topPercent}%` }}
+                          className={`absolute left-1/2 -translate-x-1/2 w-4 h-1.5 rounded-full cursor-pointer hover:scale-150 transition-transform ${
+                            seg.type === 'added' ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-rose-400 shadow-[0_0_6px_rgba(244,63,94,0.8)]'
+                          }`}
+                          title={`Diff #${sIdx + 1}: ${seg.type === 'added' ? 'Added' : 'Deleted'} "${(seg.value || '').substring(0, 30)}..."`}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
 
               {/* Clause Breakdown */}
@@ -3758,11 +3996,64 @@ function ContractAnalyzerView({
 
                     return (
                       <div key={clause.index} className="p-3.5 rounded-xl liquid-glass border border-white/5">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-bold text-gray-300">Clause / Paragraph #{clause.index}</span>
-                          <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${badge}`}>
-                            {clause.status}
-                          </span>
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-gray-200">Clause / Paragraph #{clause.index}</span>
+                            <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${badge}`}>
+                              {clause.status}
+                            </span>
+                            {diffDecisions[clause.index] && (
+                              <span className={`text-[9px] font-mono uppercase font-bold px-1.5 py-0.5 rounded border ${
+                                diffDecisions[clause.index] === 'accepted' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
+                                diffDecisions[clause.index] === 'rejected' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' :
+                                'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                              }`}>
+                                {diffDecisions[clause.index]}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Quick Decision Actions */}
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => setDiffDecisions(prev => ({ ...prev, [clause.index]: 'accepted' }))}
+                              className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
+                                diffDecisions[clause.index] === 'accepted'
+                                  ? 'bg-emerald-500 text-black font-bold'
+                                  : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30'
+                              }`}
+                              title="Accept this revision"
+                            >
+                              <Check size={11} /> Accept
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setDiffDecisions(prev => ({ ...prev, [clause.index]: 'rejected' }))}
+                              className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
+                                diffDecisions[clause.index] === 'rejected'
+                                  ? 'bg-rose-500 text-white font-bold'
+                                  : 'bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30'
+                              }`}
+                              title="Reject and reinstate original language"
+                            >
+                              <XCircle size={11} /> Reject
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setDiffDecisions(prev => ({ ...prev, [clause.index]: 'flagged' }))}
+                              className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-colors cursor-pointer flex items-center gap-1 ${
+                                diffDecisions[clause.index] === 'flagged'
+                                  ? 'bg-amber-500 text-black font-bold'
+                                  : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'
+                              }`}
+                              title="Flag for negotiation / partner direction"
+                            >
+                              <Flag size={11} /> Flag
+                            </button>
+                          </div>
                         </div>
 
                         <div className="font-mono text-xs leading-relaxed text-gray-300">
@@ -3857,7 +4148,140 @@ function ContractAnalyzerView({
         />
       )}
 
-      {/* PRE-SIGNING DILIGENCE CERTIFICATE MODAL */}
+            {/* ========================================================================= */}
+      {/* ONE-CLICK TRANSACTIONAL COUNTER-RIDER MODAL (REJECTION MEMO)              */}
+      {/* ========================================================================= */}
+      {showCounterRiderModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+          <div className="relative w-full max-w-3xl max-h-[90vh] rounded-2xl bg-[#080E14] border border-emerald-500/40 shadow-2xl flex flex-col overflow-hidden">
+            
+            {/* Header */}
+            <div className="px-6 py-4 bg-zinc-950 border-b border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <ShieldAlert size={20} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                    <span>Formal Counter-Rider & Rejection Memorandum</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">
+                      EMAIL-READY
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-zinc-400">
+                    Pre-signing legal memorandum rejecting opposing counsel's altered terms and reinstating baseline protections
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowCounterRiderModal(false)}
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Memo Textarea / Preview */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
+              <div className="p-3.5 rounded-xl bg-black/50 border border-zinc-800 text-xs font-mono space-y-1 text-zinc-300">
+                <div><strong className="text-white">RE:</strong> Rejection of Proposed Revisions & Demand for Restorative Counter-Rider</div>
+                <div><strong className="text-white">TRANSACTION:</strong> {documentTitle || 'Master Commercial Agreement'}</div>
+                <div><strong className="text-white">CLIENT:</strong> {clientParty || 'Acme Holdings LLC'} | <strong className="text-white">COUNTERPARTY:</strong> {counterparty || 'Counterparty Corp'}</div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-black/70 border border-zinc-800 font-mono text-xs leading-relaxed text-zinc-200 whitespace-pre-wrap">
+{`TRANSACTIONAL REJECTION & RESTORATIVE COUNTER-RIDER MEMORANDUM
+DATE: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+TO: Transactional Counsel for ${counterparty || 'Counterparty'}
+FROM: Legal Counsel to ${clientParty || 'Client Principal'}
+RE: Objections to Proposed Revisions & Demand for Restorative Counter-Riders
+
+Dear Counsel,
+
+We have completed our pre-signature forensic contract integrity diligence on your revised draft. While our client desires to progress this transaction smoothly toward closing, several proposed alterations introduce unacceptable risk asymmetry, clerical consideration discrepancies, and latent voidability hazards.
+
+Accordingly, please be advised that our client formally REJECTS the following proposed amendments and tenders the mandatory restorative Counter-Riders below for reinstatement:
+
+1. CONSIDERATION & PAYMENT PARITY RESTORATION:
+Objection: Numerical and written figures must reconcile unambiguously under standard commercial accords.
+Restorative Counter-Rider: Section consideration and milestone figures shall strictly track the agreed terms of the approved baseline draft without clerical variance.
+
+2. SECTION CROSS-REFERENCES & TERMINATION INTEGRITY:
+Objection: Citations to phantom sections or deleted cure procedures operate as procedural nullities that imperil transaction enforceability.
+Restorative Counter-Rider: All internal cross-references to default remedies, survival covenants, and notice protocols shall remain aligned with the baseline draft structure.
+
+3. LIABILITY & INDEMNIFICATION HARMONIZATION:
+Objection: Blanket Limitation of Liability caps must not nullify fundamental representation indemnities or third-party intellectual property protections.
+Restorative Counter-Rider: Blanket liability disclaimers shall contain an express carve-out preserving Seller/Buyer core indemnities, fraud liabilities, and confidentiality covenants.
+
+Please confirm counsel's agreement to incorporate these restorative Counter-Riders so that we may finalize the signature execution binder.
+
+Sincerely,
+Transactional Legal Counsel
+Counsel of Record for ${clientParty || 'Client Principal'}`}
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="px-6 py-3.5 bg-zinc-950 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="text-[11px] font-mono text-zinc-400">
+                {memoCopiedToast ? (
+                  <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                    <Check size={13} /> Email Memo Copied to Clipboard!
+                  </span>
+                ) : (
+                  <span>Ready to paste directly into email or transaction binder</span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const memoText = `TRANSACTIONAL REJECTION & RESTORATIVE COUNTER-RIDER MEMORANDUM\nDATE: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\nTO: Transactional Counsel for ${counterparty || 'Counterparty'}\nFROM: Legal Counsel to ${clientParty || 'Client Principal'}\nRE: Objections to Proposed Revisions\n\nDear Counsel,\n\nWe have completed our pre-signature forensic contract integrity diligence on your revised draft. Please be advised that our client formally REJECTS proposed amendments altering baseline liability caps, numerical parity, and survival covenants.\n\nMandatory Counter-Riders:\n1. Consideration parity shall be reconciled to baseline values.\n2. Liability caps shall contain an express carve-out for indemnities.\n3. Procedural default cross-references shall be fully restored.\n\nPlease confirm counsel's agreement to incorporate these Counter-Riders.\n\nSincerely,\nCounsel of Record for ${clientParty || 'Client Principal'}`;
+                    navigator.clipboard.writeText(memoText);
+                    setMemoCopiedToast(true);
+                    setTimeout(() => setMemoCopiedToast(false), 2500);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <Copy size={13} />
+                  <span>Copy Email Memo</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    downloadAmendmentRiderDOCX(auditResults || {}, {
+                      contractTitle: documentTitle || 'Commercial Agreement',
+                      clientName: clientParty || 'Client Principal',
+                      counterpartyName: counterparty || 'Counterparty',
+                      date: new Date().toLocaleDateString('en-US')
+                    });
+                  }}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Download size={13} />
+                  <span>Download Rider (.docx)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowCounterRiderModal(false)}
+                  className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 font-medium text-xs transition-colors cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+{/* PRE-SIGNING DILIGENCE CERTIFICATE MODAL */}
       <AnimatePresence>
         {showCertificateModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-xl">

@@ -492,3 +492,279 @@ export async function downloadHarmonizedDeedDOCX(harmonizedResult, options = {})
 
   return { success: true, fileName: outFileName };
 }
+
+/**
+ * Generates an institutional Microsoft Word (.docx) document containing 
+ * visual Redline Markup (Track Changes visual equivalent):
+ * - Additions: Blue bold text with single underline
+ * - Deletions: Red text with strikethrough
+ * - Preserves formal AmLaw 100 paragraph formatting
+ */
+export async function downloadRedlineDOCX(diffData, options = {}) {
+  const {
+    title = 'Master Commercial Agreement',
+    clientParty = 'Client Principal',
+    counterparty = 'Counterparty Entity',
+    date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  } = options;
+
+  if (!diffData || !Array.isArray(diffData.segments)) {
+    throw new Error('Valid diffData with segments array is required for Redline DOCX export.');
+  }
+
+  const stats = diffData.stats || {};
+  const children = [];
+
+  // Formal Header Block
+  children.push(
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 200, after: 120 },
+      children: [
+        new TextRun({
+          text: 'REDLINE COMPARATIVE AUDIT & TRACK CHANGES MARKUP',
+          bold: true,
+          size: 26,
+          font: 'Times New Roman'
+        })
+      ]
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 200 },
+      children: [
+        new TextRun({
+          text: title.toUpperCase(),
+          bold: true,
+          size: 24,
+          font: 'Times New Roman',
+          color: '222222'
+        })
+      ]
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      spacing: { before: 0, after: 300 },
+      children: [
+        new TextRun({
+          text: `Baseline Draft vs. Proposed Counterparty Markup • ${date}`,
+          italics: true,
+          size: 19,
+          font: 'Times New Roman',
+          color: '555555'
+        })
+      ]
+    })
+  );
+
+  // Redline Legend Box (Standard Transactional Practice)
+  children.push(
+    new Paragraph({
+      spacing: { before: 100, after: 60 },
+      children: [
+        new TextRun({
+          text: 'REDLINE MARKUP LEGEND:',
+          bold: true,
+          size: 19,
+          font: 'Times New Roman',
+          color: '333333'
+        })
+      ]
+    }),
+    new Paragraph({
+      spacing: { before: 0, after: 60 },
+      children: [
+        new TextRun({
+          text: '1. DELETED TEXT (Baseline): ',
+          bold: true,
+          size: 19,
+          font: 'Times New Roman'
+        }),
+        new TextRun({
+          text: 'Stricken in red strikethrough (e.g., ',
+          size: 19,
+          font: 'Times New Roman'
+        }),
+        new TextRun({
+          text: 'proposed deletion',
+          strike: true,
+          color: 'C00000',
+          size: 19,
+          font: 'Times New Roman'
+        }),
+        new TextRun({
+          text: ')',
+          size: 19,
+          font: 'Times New Roman'
+        })
+      ]
+    }),
+    new Paragraph({
+      spacing: { before: 0, after: 240 },
+      children: [
+        new TextRun({
+          text: '2. ADDED TEXT (Counterparty): ',
+          bold: true,
+          size: 19,
+          font: 'Times New Roman'
+        }),
+        new TextRun({
+          text: 'Shown in blue underline (e.g., ',
+          size: 19,
+          font: 'Times New Roman'
+        }),
+        new TextRun({
+          text: 'proposed addition',
+          underline: { type: 'single' },
+          color: '0070C0',
+          bold: true,
+          size: 19,
+          font: 'Times New Roman'
+        }),
+        new TextRun({
+          text: ')',
+          size: 19,
+          font: 'Times New Roman'
+        })
+      ]
+    }),
+    new Paragraph({
+      spacing: { before: 0, after: 360 },
+      children: [
+        new TextRun({
+          text: `Summary of Changes: ${stats.additions || 0} additions, ${stats.deletions || 0} deletions. Client: ${clientParty} | Counterparty: ${counterparty}.`,
+          italics: true,
+          size: 18,
+          font: 'Times New Roman',
+          color: '666666'
+        })
+      ]
+    })
+  );
+
+  // Divider
+  children.push(
+    new Paragraph({
+      spacing: { before: 0, after: 300 },
+      children: [
+        new TextRun({
+          text: '_________________________________________________________________________________',
+          size: 16,
+          color: 'CCCCCC'
+        })
+      ]
+    })
+  );
+
+  // Group diff segments into paragraphs by newline
+  let currentParaRuns = [];
+
+  const flushParagraph = () => {
+    if (currentParaRuns.length > 0) {
+      children.push(
+        new Paragraph({
+          spacing: { before: 120, after: 120, line: 276 },
+          children: [...currentParaRuns]
+        })
+      );
+      currentParaRuns = [];
+    }
+  };
+
+  for (const seg of diffData.segments) {
+    const rawVal = seg.value || '';
+    const parts = rawVal.split(/\r?\n/);
+
+    for (let pIdx = 0; pIdx < parts.length; pIdx++) {
+      const part = parts[pIdx];
+
+      if (part.length > 0) {
+        if (seg.type === 'added') {
+          currentParaRuns.push(
+            new TextRun({
+              text: part,
+              underline: { type: 'single' },
+              color: '0070C0',
+              bold: true,
+              size: 22,
+              font: 'Times New Roman'
+            })
+          );
+        } else if (seg.type === 'removed') {
+          currentParaRuns.push(
+            new TextRun({
+              text: part,
+              strike: true,
+              color: 'C00000',
+              size: 22,
+              font: 'Times New Roman'
+            })
+          );
+        } else {
+          currentParaRuns.push(
+            new TextRun({
+              text: part,
+              size: 22,
+              font: 'Times New Roman'
+            })
+          );
+        }
+      }
+
+      // If there are more parts, that means there was a newline
+      if (pIdx < parts.length - 1) {
+        flushParagraph();
+      }
+    }
+  }
+
+  // Flush any remaining runs
+  flushParagraph();
+
+  // Document Footer Disclaimer
+  children.push(
+    new Paragraph({
+      spacing: { before: 400, after: 100 },
+      children: [
+        new TextRun({
+          text: 'CONFIDENTIAL WORK PRODUCT  PREPARED VIA NEXUS CONTRACTGUARD AIR-GAPPED IN-RAM ENGINE',
+          size: 16,
+          color: '888888',
+          italics: true
+        })
+      ]
+    })
+  );
+
+  // Build Document
+  const doc = new Document({
+    title: `${title} — Redline Markup`,
+    subject: 'Forensic Redline Comparison',
+    creator: 'Nexus ContractGuard Enterprise',
+    sections: [
+      {
+        properties: {
+          page: {
+            margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 }
+          }
+        },
+        children
+      }
+    ]
+  });
+
+  const blob = await Packer.toBlob(doc);
+  const cleanTitle = title.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 35) || 'Contract';
+  const outFileName = `${cleanTitle}_Redline_TrackChanges.docx`;
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = outFileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+  return { success: true, fileName: outFileName };
+}

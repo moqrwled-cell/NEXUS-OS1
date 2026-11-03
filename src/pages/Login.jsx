@@ -276,6 +276,10 @@ export default function Login() {
               </div>
             </div>
 
+            <p className="text-[10px] font-mono text-emerald-400 text-center mb-1.5 flex items-center justify-center gap-1.5">
+              <span>✨</span>
+              <span>Continuous Evolution: All future engine releases & upcoming modules included free forever.</span>
+            </p>
             <p className="text-[10px] font-mono text-zinc-400 text-center">
               14-Day Money-Back Guarantee • Instant Whop Checkout with Apple Pay & Cards
             </p>

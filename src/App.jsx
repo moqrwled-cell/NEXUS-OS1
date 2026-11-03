@@ -510,6 +510,8 @@ export default function App() {
             </div>
 
           </div>
+
+          
         </section>
 
         {/* ========================================================================= */}
@@ -663,6 +665,10 @@ export default function App() {
                     <CheckCircle2 size={16} className="text-cyan-400 shrink-0" />
                     <span>100% In-Browser RAM Security (Strict ABA Rule 1.6 Privilege)</span>
                   </div>
+                  <div className="flex items-center gap-2.5 font-medium text-cyan-300">
+                    <Sparkles size={16} className="text-cyan-400 shrink-0" />
+                    <span>Continuous Engine Evolution & All Upcoming Feature Releases Included</span>
+                  </div>
                 </div>
               </div>
 
@@ -745,7 +751,11 @@ export default function App() {
                   </div>
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
-                    <span>Priority Enterprise Support & Engine Updates</span>
+                    <span>Priority Enterprise Support Desk (nexus.os.store@gmail.com)</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 font-medium text-emerald-300">
+                    <Sparkles size={16} className="text-emerald-400 shrink-0" />
+                    <span>Continuous Engine Evolution & All Upcoming Feature Releases Included</span>
                   </div>
                 </div>
               </div>
@@ -767,6 +777,50 @@ export default function App() {
               </div>
             </div>
 
+          </div>
+
+          {/* Continuous Evolution & Future Modules Guarantee */}
+          <div className="mt-8 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-emerald-950/30 via-zinc-950 to-cyan-950/30 border border-white/10 shadow-xl">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              <div className="space-y-2.5 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-mono font-semibold">
+                  <Sparkles size={13} className="text-emerald-400" />
+                  <span>CONTINUOUS ENGINE EVOLUTION · INCLUDED FREE FOREVER</span>
+                </div>
+                <h4 className="text-xl md:text-2xl font-bold text-white tracking-tight">
+                  ContractGuard Never Stands Still. Your License Evolves With You.
+                </h4>
+                <p className="text-xs md:text-sm text-zinc-300 leading-relaxed">
+                  Unlike traditional software platforms that lock you into frozen versions or demand monthly subscription fees, your perpetual license includes continuous engine refinements, statutory codex updates, and upcoming modules at zero additional cost:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs font-mono text-zinc-200">
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span>In-Browser Neural OCR (Scanned Contracts)</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    <span>One-Click Counter-Rider Generator</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 rounded-xl bg-black/40 border border-white/5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                    <span>Word Track Changes (.docx) Redline Export</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="shrink-0 p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-center lg:text-right w-full lg:w-auto">
+                <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider block">
+                  Perpetual Evolution Promise
+                </span>
+                <span className="text-base font-bold text-emerald-400 font-mono block mt-1">
+                  0 Monthly Fees · 0 Upgrade Charges
+                </span>
+                <span className="text-xs text-zinc-400 block mt-1">
+                  All enhancements run 100% locally in volatile RAM
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
