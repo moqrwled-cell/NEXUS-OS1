@@ -339,7 +339,7 @@ export default function App() {
           <div className="mt-12 rounded-2xl bg-[#090D14] border border-white/10 p-6 md:p-8 overflow-x-auto shadow-xl font-body">
             <div className="text-center max-w-2xl mx-auto mb-8">
               <span className="font-mono text-xs font-medium text-emerald-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-md">
-                Delaware & AmLaw 100 benchmark
+                50-State & Global Common Law Benchmark
               </span>
               <h3 className="text-2xl md:text-3xl font-normal font-heading text-white mt-3">
                 How ContractGuard Outperforms Traditional Alternatives

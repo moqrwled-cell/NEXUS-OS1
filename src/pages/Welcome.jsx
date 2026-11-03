@@ -11,7 +11,8 @@ import {
   ArrowRight, 
   Key, 
   ShieldAlert,
-  Mail
+  Mail,
+  X
 } from 'lucide-react';
 import { 
   getDeviceFingerprint, 
@@ -73,6 +74,7 @@ export default function Welcome() {
     return generated;
   });
 
+  const [showSuccessPopup, setShowSuccessPopup] = useState(true);
   const [deviceFp, setDeviceFp] = useState('Detecting hardware...');
   const [isActivating, setIsActivating] = useState(true);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
@@ -217,6 +219,16 @@ export default function Welcome() {
 
     initActivation();
   }, []); // Run strictly once on mount to avoid re-triggering activation or fluctuating order IDs
+
+  // Auto-dismiss the activation success popup after 3.8 seconds
+  useEffect(() => {
+    if (!isActivating && !isUnauthorized && licenseData && showSuccessPopup) {
+      const timer = setTimeout(() => {
+        setShowSuccessPopup(false);
+      }, 3800);
+      return () => clearTimeout(timer);
+    }
+  }, [isActivating, isUnauthorized, licenseData, showSuccessPopup]);
 
   // Handle manual license activation for users with a key
   const handleManualActivation = async (e) => {
@@ -401,16 +413,63 @@ export default function Welcome() {
         {!isActivating && !isUnauthorized && licenseData && (
           <div className="p-6 md:p-10">
 
-            {/* Success Banner */}
-            <div className="text-center mb-8 flex flex-col items-center">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)] mb-4">
-                <CheckCircle2 size={36} />
+            {/* Floating Auto-Dismissing Success Notification Modal */}
+            {showSuccessPopup && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+                <div className="relative w-full max-w-md p-6 rounded-2xl bg-[#080E14] border border-emerald-500/50 shadow-[0_0_60px_rgba(16,185,129,0.35)] text-center flex flex-col items-center">
+                  <button
+                    onClick={() => setShowSuccessPopup(false)}
+                    className="absolute top-3 right-3 text-zinc-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                    aria-label="Close modal"
+                  >
+                    <X size={16} />
+                  </button>
+
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-3 shadow-[0_0_25px_rgba(16,185,129,0.4)]">
+                    <CheckCircle2 size={32} />
+                  </div>
+
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold mb-1">
+                    Transaction Verified · Workstation Bound
+                  </span>
+
+                  <h3 className="text-xl font-black text-white tracking-tight mb-2">
+                    Workstation Successfully Activated!
+                  </h3>
+
+                  <p className="text-xs text-zinc-300 leading-relaxed mb-4">
+                    Your license key is cryptographically bound to this hardware. Air-gapped forensic audit modules are fully unlocked.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowSuccessPopup(false)}
+                    className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-xs transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer mb-3"
+                  >
+                    View Official Invoice & Keys
+                  </button>
+
+                  <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full transition-all duration-300 ease-linear animate-pulse" style={{ width: '100%' }} />
+                  </div>
+                  <span className="text-[10px] font-mono text-zinc-500 mt-2">
+                    Auto-closing to invoice receipt...
+                  </span>
+                </div>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">
-                Workstation Successfully Activated & Hardware-Bound!
+            )}
+
+            {/* Clean Page Header: Official Tax Invoice & Workstation Passport */}
+            <div className="text-center mb-6 flex flex-col items-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-semibold mb-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>OFFICIAL TAX INVOICE & WORKSTATION PASSPORT</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                {licenseData.tierName || 'ContractGuard License'} Receipt
               </h2>
-              <p className="text-zinc-400 text-xs md:text-sm max-w-lg leading-relaxed">
-                Your license has been cryptographically bound to this physical workstation. All air-gapped forensic audit modules are unlocked.
+              <p className="text-zinc-400 text-xs md:text-sm max-w-lg mt-1">
+                Whop Merchant of Record · Cryptographically Bound to RAM · Order: {orderId}
               </p>
             </div>
 

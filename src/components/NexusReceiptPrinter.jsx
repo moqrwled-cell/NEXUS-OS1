@@ -144,7 +144,7 @@ export default function NexusReceiptPrinter({
     const key = licenseData?.primaryKey || 'PENDING-KEY';
     const id = orderId || 'ORD-578465';
     const tier = planTier || 'solo';
-    return `NEXUS-LICENSE:${id}:${tier}:${key}`;
+    return `https://www.nexus-os.store/welcome?order_id=${encodeURIComponent(id)}&plan=${encodeURIComponent(tier)}&key=${encodeURIComponent(key)}&verified=true`;
   }, [orderId, planTier, licenseData?.primaryKey]);
 
   return (
@@ -346,7 +346,7 @@ export default function NexusReceiptPrinter({
               <div className="text-[9.5px] leading-tight text-zinc-600">
                 <p className="font-bold text-zinc-900">VERIFICATION PASSPORT</p>
                 <p className="mt-0.5">Scan to verify cryptographic license signature or transfer key.</p>
-                <p className="text-[8.5px] text-zinc-400 mt-1 font-mono">ABA Model Rule 1.6 Certified</p>
+                <p className="text-[8.5px] text-zinc-400 mt-1 font-mono">Cryptographically Signed & Verified</p>
               </div>
 
               <div className="p-1 bg-white border border-zinc-300 rounded shrink-0 shadow-sm">

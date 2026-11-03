@@ -190,7 +190,7 @@ export default function Nexus3DNode() {
             <span className="text-zinc-600">•</span>
             <span className="text-emerald-400 font-semibold">0 Cloud Telemetry</span>
             <span className="text-zinc-600">•</span>
-            <span className="text-zinc-400">Delaware Law</span>
+            <span className="text-zinc-400">50-State & Global Common Law</span>
           </div>
         </div>
       </div>

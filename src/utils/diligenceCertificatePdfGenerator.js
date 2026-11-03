@@ -152,54 +152,40 @@ function drawCorporateSeal(page, cx, cy, radius, fonts) {
     }
   }
 
-  drawTopArc('NEXUS CONTRACTGUARD TECHNOLOGIES', radius - 8.5);
-  drawBottomArc('AIR-GAPPED FORENSIC AUDIT SEAL', radius - 8.5);
+  drawTopArc('PRE-SIGNING CONTRACT INTEGRITY AUDIT', radius - 8.5);
+  drawBottomArc('AIR-GAPPED IN-RAM DILIGENCE', radius - 8.5);
 
-  // Left & Right boundary separator stars
-  page.drawText('*', { x: cx - radius + 4.5, y: cy - 3, size: 8, font: fontBold, color: sealColor });
-  page.drawText('*', { x: cx + radius - 8.5, y: cy - 3, size: 8, font: fontBold, color: sealColor });
+  // Left & Right boundary separator bullets
+  page.drawText('*', { x: cx - radius + 4.5, y: cy - 3, size: 7, font: fontBold, color: sealColor });
+  page.drawText('*', { x: cx + radius - 8.5, y: cy - 3, size: 7, font: fontBold, color: sealColor });
 
-  // Center 6-Point Starburst (Nexus Identity Symbol)
-  const starRadius = 6.5;
-  for (let i = 0; i < 6; i++) {
-    const a = (i * 60 * Math.PI) / 180;
-    const sx = cx + starRadius * Math.cos(a);
-    const sy = cy + 11 + starRadius * Math.sin(a);
-    page.drawLine({
-      start: { x: cx, y: cy + 11 },
-      end: { x: sx, y: sy },
-      thickness: 1.2,
-      color: sealColor,
-    });
-  }
-
-  // Center Monogram & Attestation text
-  const centerName = 'NEXUS';
-  const nw = fontBold.widthOfTextAtSize(centerName, 9.5);
+  // Center Attestation Emblem
+  const centerName = 'ATTESTED';
+  const nw = fontBold.widthOfTextAtSize(centerName, 8.5);
   page.drawText(centerName, {
     x: cx - nw / 2,
-    y: cy + 1,
-    size: 9.5,
+    y: cy + 3,
+    size: 8.5,
     font: fontBold,
     color: sealColor,
   });
 
-  const centerSub = 'AUTHENTIC & CERTIFIED';
+  const centerSub = 'OFFICIALLY VERIFIED';
   const sw = fontBold.widthOfTextAtSize(centerSub, 4.5);
   page.drawText(centerSub, {
     x: cx - sw / 2,
-    y: cy - 6.5,
+    y: cy - 4.5,
     size: 4.5,
     font: fontBold,
     color: sealColor,
   });
 
-  const centerRule = 'ABA MODEL RULE 1.6 · 2026';
-  const rw = fontRegular.widthOfTextAtSize(centerRule, 4.0);
+  const centerRule = 'ZERO CLOUD LEAKAGE · IN-RAM';
+  const rw = fontRegular.widthOfTextAtSize(centerRule, 3.8);
   page.drawText(centerRule, {
     x: cx - rw / 2,
-    y: cy - 13,
-    size: 4.0,
+    y: cy - 11,
+    size: 3.8,
     font: fontRegular,
     color: sealColor,
   });
@@ -508,13 +494,19 @@ export async function generateDiligenceCertificatePDFBytes(auditData = {}, metad
   const sealCenterX = marginX + sealRadius + 14;
   const sealCenterY = y - (bottomBoxHeight / 2) + 2;
 
-  // Draw the Authentic Concentric Corporate Seal
-  drawCorporateSeal(page1, sealCenterX, sealCenterY, sealRadius, fonts);
-
-  // Draw the Formal Corporate Signature Block next to the seal
-  const sigStartX = sealCenterX + sealRadius + 30;
-  const sigStartY = y - 12;
-  drawSignatureBlock(page1, sigStartX, sigStartY, { hash, dateStr }, fonts);
+  // Draw the Ink Certification Stamp if requested by counsel
+  const includeSeal = metadata?.includeSeal !== false;
+  if (includeSeal) {
+    drawCorporateSeal(page1, sealCenterX, sealCenterY, sealRadius, fonts);
+    const sigStartX = sealCenterX + sealRadius + 30;
+    const sigStartY = y - 12;
+    drawSignatureBlock(page1, sigStartX, sigStartY, { hash, dateStr }, fonts);
+  } else {
+    // Clean formal attestation without seal (signature block centered across bottom)
+    const sigStartX = marginX + 20;
+    const sigStartY = y - 12;
+    drawSignatureBlock(page1, sigStartX, sigStartY, { hash, dateStr }, fonts);
+  }
 
   // Bottom Notice
   page1.drawText('CERTIFICATE AUTHENTICATION NOTE: Attach this execution certificate and the attached Amendment Rider directly to transaction closing binder.', {
