@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; script-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; font-src 'self' https: data:; img-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; worker-src 'self' blob: data:; frame-src 'self' https:; upgrade-insecure-requests;"
+          "value": "default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; script-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; script-src-elem 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; worker-src 'self' blob: data: 'unsafe-inline' 'unsafe-eval'; child-src 'self' blob: data:; style-src 'self' https: 'unsafe-inline'; style-src-elem 'self' https: 'unsafe-inline'; font-src 'self' https: data:; img-src 'self' https: data: blob:; connect-src 'self' https: data: blob:; frame-src 'self' https:; upgrade-insecure-requests;"
         },
         {
           "key": "Strict-Transport-Security",

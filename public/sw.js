@@ -1,13 +1,16 @@
 self.addEventListener('install', (event) => {
-  console.log('Nexus OS Service Worker installed.');
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(keys.map((key) => caches.delete(key)));
+    }).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass-through to avoid caching stale bundles
+  // Pass-through network requests to always fetch latest assets
   return;
 });
