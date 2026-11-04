@@ -21,7 +21,8 @@ import {
   Building2,
   Zap,
   FileCheck,
-  Sparkles
+  Sparkles,
+  Upload
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import LegalTrustModal from './components/LegalTrustModal';
@@ -122,7 +123,29 @@ export default function App() {
         </div>
       </nav>
 
-      <main className="relative z-10 pt-28 md:pt-36 pb-24">
+      {/* 15-Second Action Bar (SaaS Founder Instant Challenge) */}
+      <div className="fixed top-[57px] md:top-[61px] left-0 right-0 z-40 bg-gradient-to-r from-emerald-950/95 via-[#071319]/95 to-emerald-950/95 border-b border-emerald-500/25 py-2 px-4 backdrop-blur-md shadow-lg">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2 text-zinc-200">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="font-bold text-white font-mono uppercase tracking-wide text-[11px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded">15-Second Challenge</span>
+            <span className="text-zinc-300 hidden sm:inline">Don't read long brochures. Audit your active deal draft right now in local browser RAM.</span>
+          </div>
+          <button
+            onClick={() => navigate('/demo')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95"
+          >
+            <Zap size={12} className="fill-zinc-950" />
+            <span>Launch Free In-RAM Audit (15s)</span>
+            <ArrowRight size={12} />
+          </button>
+        </div>
+      </div>
+
+      <main className="relative z-10 pt-36 md:pt-44 pb-24">
         
         {/* ========================================================================= */}
         {/* 2. HERO SECTION: Professional, Authoritative & Laser-Focused               */}
@@ -150,49 +173,89 @@ export default function App() {
                 className="text-4xl sm:text-5xl lg:text-6xl font-normal font-serif tracking-tight text-white leading-[1.08] mb-6"
               >
                 Pre-Signing Legal Defense. <br />
-                <span className="text-zinc-300 font-serif italic">
-                  Never sign a defective contract.
+                <span className="text-emerald-400 font-serif italic">
+                  Audit Any Contract in 15 Seconds.
                 </span>
               </motion.h1>
               
-              {/* Subheadline with Precise Legal Value Proposition */}
+              {/* Subheadline with Zero-Friction Direct Value Proposition */}
               <motion.p 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-base md:text-lg text-zinc-300 leading-relaxed mb-8 font-body max-w-xl"
+                className="text-base md:text-lg text-zinc-300 leading-relaxed mb-6 font-body max-w-xl"
               >
-                A single drafting discrepancy ($250,000 vs $205,000) or missing condition precedent can cost a firm millions and spark malpractice liability. ContractGuard executes forensic pre-signing integrity audits on native Word (.docx) and PDF agreements 100% in-browser RAM in under 350ms. Zero cloud servers. Zero data leakage. Absolute client confidentiality.
+                Skip the sales brochure. Drop or paste your counterparty's agreement right now to catch numerical clerical traps ($250k vs $205k), orphaned cross-references, and missing exhibits 100% in local browser RAM. Zero server uploads. Absolute ABA Model Rule 1.6 confidentiality.
               </motion.p>
 
-              {/* Action Buttons */}
+              {/* Action Unit: 15-Second Zero-Friction Launcher */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="flex flex-wrap gap-3 items-center mb-10 font-body"
+                className="space-y-4 mb-8 font-body"
               >
-                <button 
-                  onClick={() => navigate('/demo')}
-                  className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 px-6 py-3 rounded-lg font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer border-t border-white/20 active:scale-[0.98]"
-                >
-                  <FileText size={16} />
-                  <span>Audit Your First Contract (Free Test)</span>
-                  <ArrowRight size={15} />
-                </button>
+                <div className="flex flex-wrap gap-3 items-center">
+                  <button 
+                    onClick={() => navigate('/demo')}
+                    className="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 px-7 py-3.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2 cursor-pointer border-t border-white/30 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] active:scale-[0.98]"
+                  >
+                    <Zap size={16} className="fill-zinc-950 text-zinc-950" />
+                    <span>Run 15-Second Contract Audit (Free Test)</span>
+                    <ArrowRight size={15} />
+                  </button>
 
-                <button 
-                  onClick={() => scrollToSection('pricing')}
-                  className="px-5 py-3 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-zinc-200 font-medium text-sm transition-colors flex items-center gap-2 cursor-pointer active:scale-[0.98]"
-                >
-                  <Lock size={14} className="text-zinc-400" />
-                  <span>View Lifetime Pricing ($199)</span>
-                </button>
-                
+                  <button 
+                    onClick={() => scrollToSection('pricing')}
+                    className="px-5 py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-zinc-200 font-semibold text-sm transition-colors flex items-center gap-2 cursor-pointer active:scale-[0.98]"
+                  >
+                    <Lock size={14} className="text-zinc-400" />
+                    <span>Perpetual Licenses ($199 / $299)</span>
+                  </button>
+                </div>
+
+                {/* Instant Zero-Friction Guarantees */}
+                <div className="flex flex-wrap items-center gap-y-1.5 gap-x-4 text-xs font-mono text-zinc-400">
+                  <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                    <CheckCircle2 size={13} className="text-emerald-400" />
+                    3 Free Full Audits Unlocked
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 size={13} className="text-zinc-500" />
+                    No Email / Credit Card Needed
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 size={13} className="text-zinc-500" />
+                    Runs 100% In-RAM
+                  </span>
+                </div>
+
+                {/* Quick 1-Click Interactive Sample Triggers */}
+                <div className="p-3 rounded-xl bg-[#080D14] border border-white/10 flex flex-wrap items-center justify-between gap-2 max-w-xl">
+                  <span className="text-[11px] font-mono font-semibold text-zinc-400 flex items-center gap-1.5">
+                    <FileText size={13} className="text-cyan-400" />
+                    <span>Instant Sample Audits:</span>
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => navigate('/demo')}
+                      className="px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-zinc-200 hover:text-emerald-300 transition-all cursor-pointer text-[11px] font-mono flex items-center gap-1"
+                    >
+                      <span>M&A Agreement ($45k Defect) →</span>
+                    </button>
+                    <button
+                      onClick={() => navigate('/demo')}
+                      className="px-2.5 py-1 rounded-md bg-white/[0.05] hover:bg-cyan-500/15 border border-white/10 hover:border-cyan-500/40 text-zinc-200 hover:text-cyan-300 transition-all cursor-pointer text-[11px] font-mono flex items-center gap-1"
+                    >
+                      <span>Enterprise SaaS (Citations) →</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Subscriber Portal Quick Entry */}
-                <div className="w-full flex items-center gap-2 text-xs font-mono text-zinc-400 pt-1">
+                <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 pt-0.5">
                   <Key size={13} className="text-emerald-400" />
-                  <span>Already have a license?</span>
+                  <span>Already licensed?</span>
                   <button 
                     onClick={() => navigate('/app/contractcompare')}
                     className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4 cursor-pointer font-medium"
@@ -245,6 +308,29 @@ export default function App() {
           </div>
 
           <ContractGuardMasterShowcase />
+
+          {/* Zero-Friction Test Drive Callout (SaaS Founder Lethal Weapon) */}
+          <div className="mt-12 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#07151D] to-cyan-950/40 border border-emerald-500/30 text-center flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_15px_40px_rgba(0,0,0,0.5)]">
+            <div className="text-left max-w-xl">
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-mono font-semibold mb-2">
+                <span>ZERO RISK · ZERO WAITING</span>
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-white">
+                Don't Take Our Word For It. Audit Your Own Contract.
+              </h3>
+              <p className="text-zinc-300 text-xs md:text-sm mt-1 leading-relaxed">
+                No forms to fill out, no sales demos to schedule. The engine is live right now in your browser. Paste any draft and see all 5 verification engines run in 15 seconds.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/demo')}
+              className="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shrink-0 shadow-[0_0_25px_rgba(16,185,129,0.35)] hover:scale-105 active:scale-95"
+            >
+              <Zap size={16} className="fill-zinc-950 text-zinc-950" />
+              <span>Launch 15-Second Test Drive</span>
+              <ArrowRight size={15} />
+            </button>
+          </div>
         </section>
 
         {/* ========================================================================= */}
