@@ -2385,6 +2385,10 @@ export default function ContractGuardDemo() {
                           <Check size={14} className="text-emerald-400 shrink-0" />
                           <span>Offline PWA Desktop App</span>
                         </li>
+                        <li className="flex items-center gap-2">
+                          <Sparkles size={14} className="text-cyan-400 shrink-0" />
+                          <span className="text-cyan-300 font-semibold">Continuous Engine & Future Feature Updates</span>
+                        </li>
                       </ul>
                     </div>
 
@@ -2449,6 +2453,10 @@ export default function ContractGuardDemo() {
                         <li className="flex items-center gap-2">
                           <Check size={14} className="text-emerald-400 shrink-0" />
                           <span>White-Label Executive Client Memos</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Sparkles size={14} className="text-cyan-400 shrink-0" />
+                          <span className="text-cyan-300 font-semibold">All Future Modules & Continuous Engine Upgrades</span>
                         </li>
                       </ul>
                     </div>

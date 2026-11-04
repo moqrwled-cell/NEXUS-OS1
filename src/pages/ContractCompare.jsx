@@ -2348,11 +2348,13 @@ function ContractAnalyzerView({
                               onClick={() => {
                                 setShowAltExports(false);
                                 downloadDiligenceCertificatePDF(auditResults || {}, {
-                                  contractTitle: documentTitle || 'Master Asset Purchase & Services Agreement',
-                                  clientName: clientParty || 'Acme Holdings LLC',
-                                  counterpartyName: counterparty || 'Globex International Corp',
+                                  contractTitle: documentTitle?.trim() || (isDemo ? 'Master Asset Purchase & Services Agreement' : 'Commercial Contract Agreement'),
+                                  clientName: clientParty?.trim() || 'Retained Client Counsel',
+                                  counterpartyName: counterparty?.trim() || 'Disclosed Counterparty',
                                   certificateHash: certificateHash,
-                                  certificateDate: certificateDate
+                                  certificateDate: certificateDate,
+                                  customFileUploaded: !isDemo && documentTitle !== 'Master Asset Purchase & Services Agreement',
+                                  includeSeal: includeCertStamp
                                 });
                               }}
                               className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
@@ -4625,14 +4627,26 @@ Counsel of Record for ${clientParty || 'Client Principal'}`}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5">
+                  <label className="flex items-center gap-2 text-xs text-zinc-300 font-sans cursor-pointer select-none bg-zinc-900/60 border border-zinc-700/60 px-3 py-1.5 rounded-lg">
+                    <input 
+                      type="checkbox" 
+                      checked={includeCertStamp} 
+                      onChange={(e) => setIncludeCertStamp(e.target.checked)} 
+                      className="rounded border-zinc-700 bg-zinc-950 text-emerald-500 focus:ring-emerald-500/20 w-3.5 h-3.5 cursor-pointer"
+                    />
+                    <span>Include Verification Ink Seal</span>
+                  </label>
+
                   <button
                     onClick={() => {
                       downloadDiligenceCertificatePDF(auditResults || {}, {
-                        contractTitle: documentTitle || 'Master Asset Purchase & Services Agreement',
-                        clientName: clientParty || 'Acme Holdings LLC',
-                        counterpartyName: counterparty || 'Globex International Corp',
+                        contractTitle: documentTitle?.trim() || (isDemo ? 'Master Asset Purchase & Services Agreement' : 'Commercial Contract Agreement'),
+                        clientName: clientParty?.trim() || 'Retained Client Counsel',
+                        counterpartyName: counterparty?.trim() || 'Disclosed Counterparty',
                         certificateHash: certificateHash,
-                        certificateDate: certificateDate
+                        certificateDate: certificateDate,
+                        customFileUploaded: !isDemo && documentTitle !== 'Master Asset Purchase & Services Agreement',
+                        includeSeal: includeCertStamp
                       });
                     }}
                     className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer border-t border-white/20 active:scale-[0.98]"

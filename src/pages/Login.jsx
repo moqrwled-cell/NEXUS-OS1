@@ -11,7 +11,8 @@ import {
   FileText, 
   X, 
   CheckCircle2, 
-  Users 
+  Users,
+  Sparkles
 } from 'lucide-react';
 import { grantToolAccess, validateEnterpriseKey } from '../utils/auth';
 import { bindKeyToCurrentDevice } from '../utils/licenseManager';
@@ -206,6 +207,10 @@ export default function Login() {
                       <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />
                       <span>Zero Cloud Telemetry</span>
                     </li>
+                    <li className="flex items-center gap-1.5">
+                      <Sparkles size={12} className="text-cyan-400 shrink-0" />
+                      <span>Continuous Engine & Future Feature Updates</span>
+                    </li>
                   </ul>
                 </div>
 
@@ -254,6 +259,10 @@ export default function Login() {
                     <li className="flex items-center gap-1.5">
                       <CheckCircle2 size={12} className="text-emerald-400 shrink-0" />
                       <span>Priority Support</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <Sparkles size={12} className="text-cyan-400 shrink-0" />
+                      <span>Continuous Engine Upgrades & Future Modules</span>
                     </li>
                   </ul>
                 </div>
