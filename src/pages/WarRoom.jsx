@@ -26,6 +26,9 @@ export default function WarRoom() {
   const [selectedLocation, setSelectedLocation] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'PENDING' | 'CONTACTED' | 'STARRED'
   
+  // Selected Outreach Strategy Angle (Hormozi / Behavioral Psychology)
+  const [selectedAngle, setSelectedAngle] = useState('15sec'); // '15sec' | 'aba' | 'roi'
+  
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 50;
@@ -155,12 +158,13 @@ export default function WarRoom() {
     });
   };
 
-  // Generate Email Content with Strict Unicode LTR Markers & Hormozi Framing
-  const generateEmailData = (lead, type) => {
+  // Generate Email Content with Strict Unicode LTR Markers & Psychological Hormozi Framing
+  const generateEmailData = (lead, type, overrideAngle) => {
     const isAttorney = type === 'attorneys';
     const name = isAttorney ? lead.name : (lead.managingPartner || 'Counsel');
     const firmName = isAttorney ? lead.firm : lead.name;
     const email = lead.email;
+    const angle = overrideAngle || selectedAngle;
 
     // Unicode Left-to-Right Mark (LRM) guarantees LTR alignment in any email client
     const LRM = '\u200E';
@@ -169,40 +173,93 @@ export default function WarRoom() {
     let body = '';
 
     if (isAttorney) {
-      // 1. Tailored Attorney-Specific Message
-      subject = `${LRM}confidentiality & contract redline turnaround for ${firmName}`;
-      body = `${LRM}Hi ${name},
+      // SOLO PRACTITIONER & TRANSACTIONAL PARTNER OUTREACH
+      if (angle === 'aba') {
+        // ANGLE 2: ABA MODEL RULE 1.6 & ETHICS ADVISORY SHIELD
+        subject = `${LRM}state bar cloud AI warning & ${firmName}`;
+        body = `${LRM}Hi ${name},
 
-${LRM}With state bar associations issuing formal ethics warnings regarding client data leaks into public cloud AI, transactional partners face an exhausting dilemma:
+${LRM}With state bar ethics committees issuing formal warnings regarding client data leaks into public cloud AI, transactional counsel face an exhausting dilemma:
 
 ${LRM}Either spend late nights manually cross-referencing multi-version indemnification clauses and defined terms, or risk privileged client exposure on third-party cloud servers.
 
-${LRM}We built an air-gapped forensic audit engine specifically to eliminate this ABA Model Rule 1.6 conflict. It audits 50-page agreements for broken cross-references, undefined capitalized terms, and silent financial discrepancies in under 3 seconds—running strictly inside your local workstation RAM with zero cloud transmission.
+${LRM}We engineered ContractGuard to eliminate this ABA Model Rule 1.6 conflict entirely: an air-gapped forensic audit engine that runs 100% locally in your browser RAM with zero network transmission. No client data ever touches an external server, remote API, or LLM.
 
-${LRM}You can stress-test a sample redacted agreement directly in our zero-network sandbox:
+${LRM}It audits 40-page agreements in 15 seconds across 4 forensic engines, catches numerical mismatches and broken cross-references, and exports court-ready Word (.docx) amendment riders and signed Pre-Signing Diligence Certificates (.pdf).
+
+${LRM}Instead of recurring $1,800/year subscriptions, we offer a single lifetime perpetual license ($199) with all upcoming feature releases and continuous engine evolution included.
+
+${LRM}You can stress-test a sample agreement directly in our zero-network sandbox (no signup or payment required):
 ${LRM}https://www.nexus-os.store/demo
 
-${LRM}Zero account creation, zero cloud telemetry, and zero payment info required.
-
-${LRM}Would you be opposed to a 60-second test to see how it flags cross-clause shifts before closing?
+${LRM}Would you be opposed to a 60-second test to see how it flags cross-clause shifts before your next closing?
 
 ${LRM}Best regards,
 ${LRM}Nexus ContractGuard | Legal Forensic Systems
 ${LRM}office@nexus-os.store`;
+      } else if (angle === 'roi') {
+        // ANGLE 3: ANTI-SAAS $199 PERPETUAL LIFETIME ROI
+        subject = `${LRM}eliminating $1,800/yr contract software fees for ${firmName}`;
+        body = `${LRM}Hi ${name},
+
+${LRM}Most legal tech vendors charge transactional solo attorneys $150 to $200 every single month ($1,800+/year)—only to route your confidential client drafts through third-party cloud servers with annual price hikes.
+
+${LRM}We built ContractGuard with an anti-SaaS philosophy: a one-time perpetual lifetime license ($199) that runs 100% locally in your workstation RAM with zero cloud telemetry.
+
+${LRM}What you get:
+${LRM}• 15-Second Forensic Diligence: Audits 40-page agreements for broken cross-references, missing exhibits, and numerical discrepancies ($57,000 vs Fifty-Seven Thousand Dollars).
+${LRM}• Court-Ready Deliverables: Instant 1-click Microsoft Word (.docx) amendment rider export + signed Pre-Signing Diligence Certificate (.pdf) for client closing binders.
+${LRM}• Continuous Evolution Included: All future statutory rules, engine upgrades, and feature releases are included forever with zero monthly renewals.
+${LRM}• 100% Air-Gapped Security: Fully compliant with ABA Model Rule 1.6 and NY State Bar Ethics Opinion 1240.
+
+${LRM}Take the 15-second test drive right now (zero friction, no account, no credit card):
+${LRM}https://www.nexus-os.store/demo
+
+${LRM}Worth a quick test to see if it can replace your recurring contract review tools?
+
+${LRM}Best regards,
+${LRM}Nexus ContractGuard | Legal Forensic Systems
+${LRM}office@nexus-os.store`;
+      } else {
+        // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND CLOSING AUDIT
+        subject = `${LRM}quick question re: closing drafts at ${firmName}`;
+        body = `${LRM}Hi ${name},
+
+${LRM}If you've ever spent until 2:00 AM manually cross-referencing defined terms and Section citations before a closing call, you know how easy it is for an opponent to catch an embarrassing clerical mismatch like "$57,000" vs "Seventy-Five Thousand Dollars".
+
+${LRM}We built an air-gapped forensic audit engine that scans 40-page agreements in 15 seconds locally in your browser RAM. It instantly flags broken cross-references, missing exhibits, and uncarved indemnification caps—then exports a court-ready Microsoft Word (.docx) amendment rider and formal diligence certificate with 1 click.
+
+${LRM}Crucially: zero cloud transmission. It executes 100% inside your local workstation memory, fully compliant with ABA Model Rule 1.6 confidentiality standards. No client data ever touches a remote server or LLM.
+
+${LRM}Instead of enterprise SaaS tools charging $1,800/yr, we offer a single lifetime perpetual license ($199) with all upcoming feature releases and continuous engine evolution included.
+
+${LRM}You can stress-test a sample agreement in 15 seconds without creating an account or entering card details:
+${LRM}https://www.nexus-os.store/demo
+
+${LRM}Would you be opposed to testing a 1-page sample to see how it flags cross-clause shifts before your next closing?
+
+${LRM}Best regards,
+${LRM}Nexus ContractGuard | Legal Forensic Systems
+${LRM}office@nexus-os.store`;
+      }
     } else {
-      // 2. Tailored Law Firm & Managing Partner Message
-      subject = `${LRM}firm-wide ABA Model Rule 1.6 compliance & review efficiency at ${firmName}`;
-      body = `${LRM}Dear ${name},
+      // LAW FIRM & MANAGING PARTNER OUTREACH
+      if (angle === 'aba') {
+        // ANGLE 2: FIRM-WIDE ABA 1.6 PRIVILEGE & SUBPOENA SHIELD
+        subject = `${LRM}firm-wide ABA Model Rule 1.6 compliance & review efficiency at ${firmName}`;
+        body = `${LRM}Dear ${name},
 
-${LRM}As managing partner of ${firmName}, firm-wide compliance and associate review turnaround are likely constant balancing acts.
+${LRM}As managing partner of ${firmName}, ensuring that associates review complex commercial agreements under strict ABA Model Rule 1.6 confidentiality has become a critical liability priority.
 
-${LRM}With recent Bar advisories warning firms about third-party subpoena risks and cloud LLM data retention, ensuring all associates audit agreements under strict ABA Model Rule 1.6 confidentiality has become a critical liability priority.
+${LRM}With state bar advisories warning firms about third-party subpoena risks and cloud LLM data retention, associates who quietly paste client drafts into web tools create severe malpractice and privilege waiver exposure.
 
-${LRM}We engineered ContractGuard for boutique commercial firms: an on-premise, zero-network forensic audit engine. It empowers your transactional team to catch broken citations, missing exhibits, and hidden liability shifts in under 3 seconds—running 100% locally in workstation RAM with zero external server connection.
+${LRM}We engineered ContractGuard specifically for boutique transactional practices: an on-premise, zero-network forensic audit engine. It empowers your transactional team to catch broken citations, missing exhibits, and hidden liability shifts in 15 seconds—running 100% locally in workstation RAM with zero external server connection.
 
-${LRM}Unlike legacy enterprise platforms that charge $1,800/year per seat, we provide perpetual, air-gapped multi-workstation licenses for boutique practices.
+${LRM}Unlike legacy enterprise platforms that charge $1,800/year per seat, we provide a 5-Attorney Law Firm Suite for a single one-time payment of $299, with all upcoming engine updates and statutory codex upgrades included forever.
 
-${LRM}Your team can test our live offline sandbox with any redacted agreement (no signup required):
+${LRM}Every audit generates an AmLaw 100 Pre-Signing Diligence Certificate (.pdf) and an editable Word (.docx) amendment rider for partner sign-off.
+
+${LRM}Your team can test our live offline sandbox with any redacted agreement (no signup or card required):
 ${LRM}https://www.nexus-os.store/demo
 
 ${LRM}Would you be open to seeing how our air-gapped forensic radar protects ${firmName}'s client privilege while accelerating review speed?
@@ -210,14 +267,59 @@ ${LRM}Would you be open to seeing how our air-gapped forensic radar protects ${f
 ${LRM}Sincerely,
 ${LRM}Nexus ContractGuard Enterprise | Corporate Systems
 ${LRM}office@nexus-os.store`;
+      } else if (angle === 'roi') {
+        // ANGLE 3: ELIMINATING RECURRING TRANSACTIONAL SEAT FEES
+        subject = `${LRM}eliminating recurring transactional software seat costs at ${firmName}`;
+        body = `${LRM}Dear ${name},
+
+${LRM}Between Lexis, Thomson Reuters, and emerging cloud AI vendors charging $1,500–$2,500 per attorney annually, boutique firm transactional software budgets have gotten out of hand.
+
+${LRM}ContractGuard provides an enterprise-grade alternative: a 5-Attorney Law Firm Suite for a single one-time payment of $299. No subscriptions, no per-seat annual renewals, and continuous engine evolution with all future feature releases included forever.
+
+${LRM}How it protects ${firmName}:
+${LRM}1. 100% Air-Gapped: Runs in local workstation RAM. Zero network transmission means absolute compliance with ABA Model Rule 1.6 and zero cloud discovery subpoena risk.
+${LRM}2. 15-Second Forensic QC: Audits complex agreements for broken cross-references, undefined capitalized terms, and numerical parity mismatches before partner sign-off.
+${LRM}3. Partner-Ready Deliverables: Instant 1-click Microsoft Word (.docx) amendment rider export + signed Pre-Signing Diligence Certificates (.pdf) for client closing binders.
+
+${LRM}Your transactional team can run a live 15-second test drive right now (zero signup, zero card):
+${LRM}https://www.nexus-os.store/demo
+
+${LRM}Open to seeing how ${firmName} can eliminate recurring contract review fees while upgrading turnaround speed?
+
+${LRM}Sincerely,
+${LRM}Nexus ContractGuard Enterprise | Corporate Systems
+${LRM}office@nexus-os.store`;
+      } else {
+        // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND ASSOCIATE QC SHIELD
+        subject = `${LRM}associate redlines & ABA 1.6 risk at ${firmName}`;
+        body = `${LRM}Dear ${name},
+
+${LRM}As managing partner of ${firmName}, you probably worry about two things before a major commercial transaction closes: (1) an associate missing an uncarved liability clause or broken Section reference, and (2) associates quietly pasting confidential client drafts into cloud AI to meet tight deadlines.
+
+${LRM}We engineered ContractGuard for commercial law firms: an air-gapped forensic diligence engine that audits complex 50-page agreements in 15 seconds directly in local workstation RAM. It catches broken citations, numerical mismatches, and undefined capitalized terms before partner sign-off—with zero cloud exposure.
+
+${LRM}Crucially: 100% client-side memory execution. Zero network calls, zero third-party subpoena risk, and absolute compliance with ABA Model Rule 1.6 confidentiality standards.
+
+${LRM}Instead of enterprise legal tech platforms charging $1,800/year per seat with recurring lock-in, we provide a 5-Attorney Law Firm Suite for a one-time perpetual license ($299) with all upcoming engine updates and statutory codex upgrades included forever.
+
+${LRM}Your transactional group can run a live 15-second audit test with any redacted agreement right now (no signup or card required):
+${LRM}https://www.nexus-os.store/demo
+
+${LRM}Would you be open to a 60-second test to see how it standardizes quality control across ${firmName}'s transactional team?
+
+${LRM}Sincerely,
+${LRM}Nexus ContractGuard Enterprise | Corporate Systems
+${LRM}office@nexus-os.store`;
+      }
     }
 
     return { name, firmName, email, subject, body };
   };
 
   // 1-Click Gmail Action (Forced English LTR mode)
-  const handleOpenGmail = (lead, type) => {
-    const { name, email, subject, body } = generateEmailData(lead, type);
+  const handleOpenGmail = (lead, type, overrideAngle) => {
+    const activeAngle = overrideAngle || selectedAngle;
+    const { name, email, subject, body } = generateEmailData(lead, type, activeAngle);
     // hl=en forces English interface & default LTR text flow in Gmail
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&hl=en&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     
@@ -226,12 +328,13 @@ ${LRM}office@nexus-os.store`;
     
     // Auto-mark as Contacted
     toggleContacted(lead.id, true);
-    showToast(`⚡ Opened Gmail for ${name} & marked as Contacted!`);
+    showToast(`⚡ Opened Gmail for ${name} (${activeAngle.toUpperCase()} angle) & marked Contacted!`);
   };
 
   // Default Mailto Fallback
-  const handleOpenMailto = (lead, type) => {
-    const { name, email, subject, body } = generateEmailData(lead, type);
+  const handleOpenMailto = (lead, type, overrideAngle) => {
+    const activeAngle = overrideAngle || selectedAngle;
+    const { name, email, subject, body } = generateEmailData(lead, type, activeAngle);
     const mailtoUrl = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoUrl;
     toggleContacted(lead.id, true);
@@ -239,10 +342,11 @@ ${LRM}office@nexus-os.store`;
   };
 
   // Copy Template
-  const handleCopyTemplate = (lead, type) => {
-    const { body } = generateEmailData(lead, type);
+  const handleCopyTemplate = (lead, type, overrideAngle) => {
+    const activeAngle = overrideAngle || selectedAngle;
+    const { body } = generateEmailData(lead, type, activeAngle);
     navigator.clipboard.writeText(body);
-    showToast(`📋 Copied personalized email for ${lead.name || lead.managingPartner}`);
+    showToast(`📋 Copied ${activeAngle.toUpperCase()} template for ${lead.name || lead.managingPartner}`);
   };
 
   // Locations Extract
@@ -524,10 +628,10 @@ ${LRM}office@nexus-os.store`;
                 The 1-Click High Velocity Advantage
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                One-Click Gmail Pre-Filling Activated
+                Psychological Outreach & 1-Click Execution Activated
               </h2>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Clicking <span className="text-emerald-300 font-medium">"Open Gmail"</span> instantly opens your Gmail with the exact personalized email, customized name (<code className="text-xs bg-black/40 px-1 py-0.5 rounded text-emerald-300">Hi [Attorney]</code>), firm name, and demo link pre-populated. Your progress automatically saves locally.
+                Choose between 3 battle-tested psychological angles below: <strong className="text-emerald-300">⚡ 15-Sec Closing Audit</strong> (curiosity & test drive), <strong className="text-cyan-300">🛡️ ABA 1.6 Ethics Shield</strong> (loss aversion & privilege), and <strong className="text-amber-300">💰 Anti-SaaS Lifetime ($199/$299)</strong>. All emails feature strict Unicode LTR protection and personalized firm tokens.
               </p>
             </div>
 
@@ -550,6 +654,64 @@ ${LRM}office@nexus-os.store`;
                 <span>{1500 - totalContactsCount} Remaining</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Outreach Strategy Angle Selector */}
+        <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 rounded-2xl bg-[#081224] border border-emerald-500/30 shadow-lg">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse ml-1" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-amber-400" />
+              Active Outreach Angle:
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => {
+                setSelectedAngle('15sec');
+                showToast('⚡ Switched to 15-Sec Closing Audit Angle (Highest Reply Rate)');
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                selectedAngle === '15sec'
+                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Focuses on 2 AM fatigue, clerical mismatches ($57,000 vs Seventy-Five Thousand), and instant 15-second test drive"
+            >
+              <span>⚡ 15-Sec Audit (Recommended)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedAngle('aba');
+                showToast('🛡️ Switched to ABA Model Rule 1.6 Ethics Shield Angle');
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                selectedAngle === 'aba'
+                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Focuses on state bar ethics warnings, subpoena risks, and 100% in-RAM air-gapped compliance"
+            >
+              <span>🛡️ ABA 1.6 Ethics Shield</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setSelectedAngle('roi');
+                showToast('💰 Switched to Anti-SaaS Lifetime ROI Angle ($199 / $299)');
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                selectedAngle === 'roi'
+                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Focuses on eliminating $1,800/yr per-seat subscriptions with perpetual lifetime license + continuous evolution"
+            >
+              <span>💰 Anti-SaaS Lifetime ($199 / $299)</span>
+            </button>
           </div>
         </div>
 
@@ -909,6 +1071,48 @@ ${LRM}office@nexus-os.store`;
               >
                 ✕
               </button>
+            </div>
+
+            {/* Angle Switcher inside Modal */}
+            <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded-2xl bg-black/40 border border-white/10 mb-4 text-xs">
+              <span className="text-[10px] font-mono text-slate-400 uppercase font-bold px-1">
+                Strategy Angle:
+              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAngle('15sec')}
+                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                    selectedAngle === '15sec'
+                      ? 'bg-emerald-500 text-slate-950'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  ⚡ 15-Sec Audit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedAngle('aba')}
+                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                    selectedAngle === 'aba'
+                      ? 'bg-emerald-500 text-slate-950'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  🛡️ ABA 1.6 Ethics
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedAngle('roi')}
+                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                    selectedAngle === 'roi'
+                      ? 'bg-emerald-500 text-slate-950'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  💰 Anti-SaaS Lifetime
+                </button>
+              </div>
             </div>
 
             {/* Subject */}
