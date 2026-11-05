@@ -428,7 +428,7 @@ export function generateTaxInvoiceHtml(data = {}) {
           <p class="brand-address">
             300 Delaware Avenue, Suite 210 · Wilmington, DE 19801 · United States<br />
             Authorized Merchant of Record: Whop Inc. · Stripe Payments Network<br />
-            Corporate Tax Exemption / Entity ID: US-DEL-984210 · billing@nexus-os.store
+            Corporate Tax Exemption / Entity ID: US-DEL-984210 · nexus.os.store@gmail.com
           </p>
         </td>
         <td style="width: 42%;">
@@ -452,7 +452,7 @@ export function generateTaxInvoiceHtml(data = {}) {
           <p class="party-detail">
             Delaware Registered Digital Systems Corporation<br />
             Air-Gapped Forensic Diligence Engine Division<br />
-            Support & Billing: billing@nexus-os.store · www.nexus-os.store
+            Support & Billing: nexus.os.store@gmail.com · www.nexus-os.store
           </p>
         </td>
         <td>

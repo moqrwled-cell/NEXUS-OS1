@@ -241,7 +241,7 @@ export async function generateTaxInvoicePDFBytes(data = {}) {
 
   y -= 11;
 
-  page.drawText('Tax Exemption / Corporation ID: US-DEL-984210 · billing@nexus-os.store', {
+  page.drawText('Tax Exemption / Corporation ID: US-DEL-984210 · nexus.os.store@gmail.com', {
     x: marginX,
     y: y,
     size: 7.5,
@@ -318,7 +318,7 @@ export async function generateTaxInvoicePDFBytes(data = {}) {
     font: fontRegular,
     color: darkGray,
   });
-  page.drawText('Support: billing@nexus-os.store · www.nexus-os.store', {
+  page.drawText('Support: nexus.os.store@gmail.com · www.nexus-os.store', {
     x: marginX + 10,
     y: y - 48,
     size: 7.5,

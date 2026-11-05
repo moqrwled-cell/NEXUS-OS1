@@ -196,7 +196,7 @@ ${LRM}Would you be opposed to a 60-second test to see how it flags cross-clause 
 
 ${LRM}Best regards,
 ${LRM}Nexus ContractGuard | Legal Forensic Systems
-${LRM}office@nexus-os.store`;
+${LRM}nexus.os.store@gmail.com`;
       } else if (angle === 'roi') {
         // ANGLE 3: ANTI-SAAS $199 PERPETUAL LIFETIME ROI
         subject = `${LRM}eliminating $1,800/yr contract software fees for ${firmName}`;
@@ -219,7 +219,7 @@ ${LRM}Worth a quick test to see if it can replace your recurring contract review
 
 ${LRM}Best regards,
 ${LRM}Nexus ContractGuard | Legal Forensic Systems
-${LRM}office@nexus-os.store`;
+${LRM}nexus.os.store@gmail.com`;
       } else {
         // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND CLOSING AUDIT
         subject = `${LRM}quick question re: closing drafts at ${firmName}`;
@@ -240,7 +240,7 @@ ${LRM}Would you be opposed to testing a 1-page sample to see how it flags cross-
 
 ${LRM}Best regards,
 ${LRM}Nexus ContractGuard | Legal Forensic Systems
-${LRM}office@nexus-os.store`;
+${LRM}nexus.os.store@gmail.com`;
       }
     } else {
       // LAW FIRM & MANAGING PARTNER OUTREACH
@@ -266,7 +266,7 @@ ${LRM}Would you be open to seeing how our air-gapped forensic radar protects ${f
 
 ${LRM}Sincerely,
 ${LRM}Nexus ContractGuard Enterprise | Corporate Systems
-${LRM}office@nexus-os.store`;
+${LRM}nexus.os.store@gmail.com`;
       } else if (angle === 'roi') {
         // ANGLE 3: ELIMINATING RECURRING TRANSACTIONAL SEAT FEES
         subject = `${LRM}eliminating recurring transactional software seat costs at ${firmName}`;
@@ -288,7 +288,7 @@ ${LRM}Open to seeing how ${firmName} can eliminate recurring contract review fee
 
 ${LRM}Sincerely,
 ${LRM}Nexus ContractGuard Enterprise | Corporate Systems
-${LRM}office@nexus-os.store`;
+${LRM}nexus.os.store@gmail.com`;
       } else {
         // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND ASSOCIATE QC SHIELD
         subject = `${LRM}associate redlines & ABA 1.6 risk at ${firmName}`;
@@ -309,7 +309,7 @@ ${LRM}Would you be open to a 60-second test to see how it standardizes quality c
 
 ${LRM}Sincerely,
 ${LRM}Nexus ContractGuard Enterprise | Corporate Systems
-${LRM}office@nexus-os.store`;
+${LRM}nexus.os.store@gmail.com`;
       }
     }
 
