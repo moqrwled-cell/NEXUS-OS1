@@ -466,14 +466,14 @@ export default function Welcome() {
                 <span>OFFICIAL TAX INVOICE & WORKSTATION PASSPORT</span>
               </div>
               <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
-                {licenseData.tierName || 'ContractGuard License'} Receipt
+                {licenseData.tierName || 'ContractGuard License'} Tax Invoice
               </h2>
               <p className="text-zinc-400 text-xs md:text-sm max-w-lg mt-1">
                 Whop Merchant of Record · Cryptographically Bound to RAM · Order: {orderId}
               </p>
             </div>
 
-            {/* Interactive Physical License Receipt Dispenser */}
+            {/* Official Corporate Tax Invoice Document */}
             <div className="mb-10">
               <NexusReceiptPrinter
                 licenseData={licenseData}

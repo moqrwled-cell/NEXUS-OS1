@@ -32,3 +32,4 @@ dist-ssr
 
 # Temporary audit & court logs
 .court/
+scratch/
