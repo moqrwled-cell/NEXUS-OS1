@@ -38,8 +38,10 @@
       ]
     }
   ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    {
+      "source": "/((?!assets/|brand/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
   ]
 }
