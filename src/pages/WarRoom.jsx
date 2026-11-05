@@ -3,7 +3,7 @@ import {
   Mail, ExternalLink, Copy, Check, Search, Filter, Shield, Star, 
   Download, Lock, Unlock, Send, Users, Building2, Sparkles, 
   RefreshCw, CheckCircle2, AlertCircle, ArrowUpRight, Flame,
-  ChevronLeft, ChevronRight, Eye, HelpCircle, Loader2
+  ChevronLeft, ChevronRight, Eye, HelpCircle, Loader2, PenTool
 } from 'lucide-react';
 
 const MASTER_PIN = '2026';
@@ -603,6 +603,18 @@ ${LRM}nexus.os.store@gmail.com`;
               <Download className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Export CSV</span>
             </button>
+
+            {/* Email Signature Studio */}
+            <a
+              href="/signature.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 px-3 py-2 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer text-xs font-mono"
+              title="Open Official Email Signature Studio"
+            >
+              <PenTool className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Signature</span>
+            </a>
 
             {/* Logout */}
             <button
