@@ -38,22 +38,8 @@
       ]
     }
   ],
-  "rewrites": [
-    {
-      "source": "/brand/:match*",
-      "destination": "/brand/:match*"
-    },
-    {
-      "source": "/assets/:match*",
-      "destination": "/assets/:match*"
-    },
-    {
-      "source": "/signature.html",
-      "destination": "/signature.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
