@@ -190,13 +190,17 @@ ${LRM}It audits 40-page agreements in 15 seconds across 4 forensic engines, catc
 ${LRM}Instead of recurring $1,800/year subscriptions, we offer a single lifetime perpetual license ($199) with all upcoming feature releases and continuous engine evolution included.
 
 ${LRM}You can stress-test a sample agreement directly in our zero-network sandbox (no signup or payment required):
-${LRM}https://www.nexus-os.store/demo
+${LRM}👉 https://www.nexus-os.store/demo
 
 ${LRM}Would you be opposed to a 60-second test to see how it flags cross-clause shifts before your next closing?
 
 ${LRM}Best regards,
-${LRM}Nexus ContractGuard | Legal Forensic Systems
-${LRM}nexus.os.store@gmail.com`;
+
+${LRM}Nexus ContractGuard™
+${LRM}Air-Gapped Legal Forensic Systems & Diligence Architecture
+${LRM}Web: https://www.nexus-os.store
+${LRM}Email: nexus.os.store@gmail.com
+${LRM}Security & Ethics: ABA Model Rule 1.6 Compliant | 100% Local In-RAM | Zero Telemetry`;
       } else if (angle === 'roi') {
         // ANGLE 3: ANTI-SAAS $199 PERPETUAL LIFETIME ROI
         subject = `${LRM}eliminating $1,800/yr contract software fees for ${firmName}`;
@@ -207,40 +211,48 @@ ${LRM}Most legal tech vendors charge transactional solo attorneys $150 to $200 e
 ${LRM}We built ContractGuard with an anti-SaaS philosophy: a one-time perpetual lifetime license ($199) that runs 100% locally in your workstation RAM with zero cloud telemetry.
 
 ${LRM}What you get:
-${LRM}• 15-Second Forensic Diligence: Audits 40-page agreements for broken cross-references, missing exhibits, and numerical discrepancies ($57,000 vs Fifty-Seven Thousand Dollars).
+${LRM}• 15-Second Forensic Diligence: Audits 40-page agreements for broken cross-references, missing exhibits, and numerical discrepancies.
 ${LRM}• Court-Ready Deliverables: Instant 1-click Microsoft Word (.docx) amendment rider export + signed Pre-Signing Diligence Certificate (.pdf) for client closing binders.
 ${LRM}• Continuous Evolution Included: All future statutory rules, engine upgrades, and feature releases are included forever with zero monthly renewals.
 ${LRM}• 100% Air-Gapped Security: Fully compliant with ABA Model Rule 1.6 and NY State Bar Ethics Opinion 1240.
 
 ${LRM}Take the 15-second test drive right now (zero friction, no account, no credit card):
-${LRM}https://www.nexus-os.store/demo
+${LRM}👉 https://www.nexus-os.store/demo
 
 ${LRM}Worth a quick test to see if it can replace your recurring contract review tools?
 
 ${LRM}Best regards,
-${LRM}Nexus ContractGuard | Legal Forensic Systems
-${LRM}nexus.os.store@gmail.com`;
+
+${LRM}Nexus ContractGuard™
+${LRM}Air-Gapped Legal Forensic Systems & Diligence Architecture
+${LRM}Web: https://www.nexus-os.store
+${LRM}Email: nexus.os.store@gmail.com
+${LRM}Security & Ethics: ABA Model Rule 1.6 Compliant | 100% Local In-RAM | Zero Telemetry`;
       } else {
-        // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND CLOSING AUDIT
-        subject = `${LRM}quick question re: closing drafts at ${firmName}`;
+        // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND CLOSING AUDIT & HIDDEN LIABILITY SHIFTS
+        subject = `${LRM}quick question re: hidden liability shifts in closing drafts`;
         body = `${LRM}Hi ${name},
 
-${LRM}If you've ever spent until 2:00 AM manually cross-referencing defined terms and Section citations before a closing call, you know how easy it is for an opponent to catch an embarrassing clerical mismatch like "$57,000" vs "Seventy-Five Thousand Dollars".
+${LRM}When an opposing counsel subtly slips a unilateral indemnity expansion or an uncarved consequential damages waiver into a 45-page closing revision at 11 PM, traditional redlines often bury it.
 
-${LRM}We built an air-gapped forensic audit engine that scans 40-page agreements in 15 seconds locally in your browser RAM. It instantly flags broken cross-references, missing exhibits, and uncarved indemnification caps—then exports a court-ready Microsoft Word (.docx) amendment rider and formal diligence certificate with 1 click.
+${LRM}We built ContractGuard to catch what human eyes miss under closing fatigue: an air-gapped forensic engine that flags cross-clause liability shifts, broken citations, and exhibit mismatches in 15 seconds.
 
-${LRM}Crucially: zero cloud transmission. It executes 100% inside your local workstation memory, fully compliant with ABA Model Rule 1.6 confidentiality standards. No client data ever touches a remote server or LLM.
+${LRM}100% Local in your workstation RAM — zero cloud telemetry, strictly compliant with ABA Model Rule 1.6 confidentiality. No client data ever touches a server or LLM.
 
-${LRM}Instead of enterprise SaaS tools charging $1,800/yr, we offer a single lifetime perpetual license ($199) with all upcoming feature releases and continuous engine evolution included.
+${LRM}Instead of recurring $1,800/yr enterprise subscriptions, we offer a single lifetime perpetual license ($199).
 
-${LRM}You can stress-test a sample agreement in 15 seconds without creating an account or entering card details:
-${LRM}https://www.nexus-os.store/demo
+${LRM}Test a 1-page sample in our zero-network sandbox (no signup or card needed):
+${LRM}👉 https://www.nexus-os.store/demo
 
-${LRM}Would you be opposed to testing a 1-page sample to see how it flags cross-clause shifts before your next closing?
+${LRM}Would you be opposed to a 30-second run before your next closing?
 
 ${LRM}Best regards,
-${LRM}Nexus ContractGuard | Legal Forensic Systems
-${LRM}nexus.os.store@gmail.com`;
+
+${LRM}Nexus ContractGuard™
+${LRM}Air-Gapped Legal Forensic Systems & Diligence Architecture
+${LRM}Web: https://www.nexus-os.store
+${LRM}Email: nexus.os.store@gmail.com
+${LRM}Security & Ethics: ABA Model Rule 1.6 Compliant | 100% Local In-RAM | Zero Telemetry`;
       }
     } else {
       // LAW FIRM & MANAGING PARTNER OUTREACH
@@ -260,13 +272,17 @@ ${LRM}Unlike legacy enterprise platforms that charge $1,800/year per seat, we pr
 ${LRM}Every audit generates an AmLaw 100 Pre-Signing Diligence Certificate (.pdf) and an editable Word (.docx) amendment rider for partner sign-off.
 
 ${LRM}Your team can test our live offline sandbox with any redacted agreement (no signup or card required):
-${LRM}https://www.nexus-os.store/demo
+${LRM}👉 https://www.nexus-os.store/demo
 
 ${LRM}Would you be open to seeing how our air-gapped forensic radar protects ${firmName}'s client privilege while accelerating review speed?
 
 ${LRM}Sincerely,
-${LRM}Nexus ContractGuard Enterprise | Corporate Systems
-${LRM}nexus.os.store@gmail.com`;
+
+${LRM}Nexus ContractGuard Enterprise™
+${LRM}Institutional Diligence Systems & Privilege Architecture
+${LRM}Web: https://www.nexus-os.store
+${LRM}Email: nexus.os.store@gmail.com
+${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero Subpoena Risk`;
       } else if (angle === 'roi') {
         // ANGLE 3: ELIMINATING RECURRING TRANSACTIONAL SEAT FEES
         subject = `${LRM}eliminating recurring transactional software seat costs at ${firmName}`;
@@ -278,38 +294,49 @@ ${LRM}ContractGuard provides an enterprise-grade alternative: a 5-Attorney Law F
 
 ${LRM}How it protects ${firmName}:
 ${LRM}1. 100% Air-Gapped: Runs in local workstation RAM. Zero network transmission means absolute compliance with ABA Model Rule 1.6 and zero cloud discovery subpoena risk.
-${LRM}2. 15-Second Forensic QC: Audits complex agreements for broken cross-references, undefined capitalized terms, and numerical parity mismatches before partner sign-off.
+${LRM}2. 15-Second Forensic QC: Audits complex agreements for broken cross-references, undefined capitalized terms, and hidden cross-clause liability shifts before partner sign-off.
 ${LRM}3. Partner-Ready Deliverables: Instant 1-click Microsoft Word (.docx) amendment rider export + signed Pre-Signing Diligence Certificates (.pdf) for client closing binders.
 
 ${LRM}Your transactional team can run a live 15-second test drive right now (zero signup, zero card):
-${LRM}https://www.nexus-os.store/demo
+${LRM}👉 https://www.nexus-os.store/demo
 
 ${LRM}Open to seeing how ${firmName} can eliminate recurring contract review fees while upgrading turnaround speed?
 
 ${LRM}Sincerely,
-${LRM}Nexus ContractGuard Enterprise | Corporate Systems
-${LRM}nexus.os.store@gmail.com`;
+
+${LRM}Nexus ContractGuard Enterprise™
+${LRM}Institutional Diligence Systems & Privilege Architecture
+${LRM}Web: https://www.nexus-os.store
+${LRM}Email: nexus.os.store@gmail.com
+${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero Subpoena Risk`;
       } else {
-        // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND ASSOCIATE QC SHIELD
-        subject = `${LRM}associate redlines & ABA 1.6 risk at ${firmName}`;
+        // ANGLE 1 (DEFAULT / RECOMMENDED): SUBPOENA-PROOF AGREEMENT AUDITS & ASSOCIATE REDLINE RISKS
+        subject = `${LRM}subpoena-proof agreement audits & associate redline risks at ${firmName}`;
         body = `${LRM}Dear ${name},
 
-${LRM}As managing partner of ${firmName}, you probably worry about two things before a major commercial transaction closes: (1) an associate missing an uncarved liability clause or broken Section reference, and (2) associates quietly pasting confidential client drafts into cloud AI to meet tight deadlines.
+${LRM}State bar ethics panels are actively scrutinizing client confidentiality leaks caused by associates pasting sensitive draft agreements into cloud-hosted tools.
 
-${LRM}We engineered ContractGuard for commercial law firms: an air-gapped forensic diligence engine that audits complex 50-page agreements in 15 seconds directly in local workstation RAM. It catches broken citations, numerical mismatches, and undefined capitalized terms before partner sign-off—with zero cloud exposure.
+${LRM}At the same time, manual review of complex commercial indemnities and cross-default clauses remains one of the largest unbilled cost centers for transactional teams.
 
-${LRM}Crucially: 100% client-side memory execution. Zero network calls, zero third-party subpoena risk, and absolute compliance with ABA Model Rule 1.6 confidentiality standards.
+${LRM}We engineered ContractGuard Enterprise as an on-premise, air-gapped audit engine for boutique practices:
+${LRM}• 15-Second Forensic Diligence: Scans 50-page agreements for hidden cross-clause liability transfers and missing schedules.
+${LRM}• Absolute Privilege Shield: Executes 100% in browser RAM. Zero network traffic, zero third-party subpoena risk.
+${LRM}• Court-Ready Deliverables: 1-click Word (.docx) amendment riders + partner diligence certificates.
 
-${LRM}Instead of enterprise legal tech platforms charging $1,800/year per seat with recurring lock-in, we provide a 5-Attorney Law Firm Suite for a one-time perpetual license ($299) with all upcoming engine updates and statutory codex upgrades included forever.
+${LRM}We replace $2,000/yr per-seat subscriptions with a 5-Attorney Firm Suite for a one-time $299 lifetime license.
 
-${LRM}Your transactional group can run a live 15-second audit test with any redacted agreement right now (no signup or card required):
-${LRM}https://www.nexus-os.store/demo
+${LRM}Run a test audit in our instant sandbox (no registration):
+${LRM}👉 https://www.nexus-os.store/demo
 
-${LRM}Would you be open to a 60-second test to see how it standardizes quality control across ${firmName}'s transactional team?
+${LRM}Open to a 1-minute test to see how it shields ${firmName}'s deal velocity?
 
 ${LRM}Sincerely,
-${LRM}Nexus ContractGuard Enterprise | Corporate Systems
-${LRM}nexus.os.store@gmail.com`;
+
+${LRM}Nexus ContractGuard Enterprise™
+${LRM}Institutional Diligence Systems & Privilege Architecture
+${LRM}Web: https://www.nexus-os.store
+${LRM}Email: nexus.os.store@gmail.com
+${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero Subpoena Risk`;
       }
     }
 
@@ -633,7 +660,7 @@ ${LRM}nexus.os.store@gmail.com`;
                 Psychological Outreach & 1-Click Execution Activated
               </h2>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Choose between 3 battle-tested psychological angles below: <strong className="text-emerald-300">⚡ 15-Sec Closing Audit</strong> (curiosity & test drive), <strong className="text-cyan-300">🛡️ ABA 1.6 Ethics Shield</strong> (loss aversion & privilege), and <strong className="text-amber-300">💰 Anti-SaaS Lifetime ($199/$299)</strong>. All emails feature strict Unicode LTR protection and personalized firm tokens.
+                Choose between 3 battle-tested psychological angles below: <strong className="text-emerald-300">🎯 Liability Traps</strong> (unilateral indemnity & fatigue), <strong className="text-cyan-300">🛡️ ABA 1.6 Ethics Shield</strong> (loss aversion & privilege), and <strong className="text-amber-300">💰 Anti-SaaS Lifetime ($199/$299)</strong>. All emails feature strict Unicode LTR protection, personalized firm tokens, and official corporate signatures.
               </p>
             </div>
 
@@ -673,16 +700,16 @@ ${LRM}nexus.os.store@gmail.com`;
             <button
               onClick={() => {
                 setSelectedAngle('15sec');
-                showToast('⚡ Switched to 15-Sec Closing Audit Angle (Highest Reply Rate)');
+                showToast('🎯 Switched to Hidden Liability Traps Angle (Highest Reply Rate)');
               }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 selectedAngle === '15sec'
                   ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
                   : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
               }`}
-              title="Focuses on 2 AM fatigue, clerical mismatches ($57,000 vs Seventy-Five Thousand), and instant 15-second test drive"
+              title="Focuses on 11 PM fatigue, unilateral indemnity expansion, uncarved waivers, and instant 15-second demo"
             >
-              <span>⚡ 15-Sec Audit (Recommended)</span>
+              <span>🎯 Liability Traps (Recommended)</span>
             </button>
 
             <button
@@ -1090,7 +1117,7 @@ ${LRM}nexus.os.store@gmail.com`;
                       : 'text-slate-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  ⚡ 15-Sec Audit
+                  🎯 Liability Traps
                 </button>
                 <button
                   type="button"
@@ -1141,6 +1168,33 @@ ${LRM}nexus.os.store@gmail.com`;
                     <pre className="p-4 rounded-xl bg-[#030712] border border-white/10 font-sans text-slate-200 text-xs leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
                       {body}
                     </pre>
+                  </div>
+
+                  {/* Official Corporate Signature Badge */}
+                  <div className="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-serif font-black text-lg shadow-sm">
+                        N
+                      </div>
+                      <div>
+                        <div className="text-white font-bold text-xs flex items-center gap-2">
+                          <span className="tracking-wide">Nexus ContractGuard™</span>
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+                            100% AIR-GAPPED
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-slate-400">
+                          Air-Gapped Legal Forensic Systems & Diligence Architecture
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                          nexus.os.store@gmail.com · https://www.nexus-os.store
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-[10px] font-mono text-emerald-400 bg-black/60 px-3 py-1.5 rounded-lg border border-emerald-500/20 flex items-center gap-1.5 whitespace-nowrap">
+                      <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>ABA Model Rule 1.6 Shield</span>
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
