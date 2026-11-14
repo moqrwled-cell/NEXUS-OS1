@@ -8,5 +8,5 @@ scripts
 *.cjs
 lawyer_leads_70.csv
 TEST_READY.md
-*.png
-*.pdf
+!public/*.png
+!public/*.pdf
