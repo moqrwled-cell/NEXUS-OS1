@@ -56,6 +56,7 @@ import LegalTemplatesView from '../components/LegalTemplatesView';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
 import LiabilityReconcilerHUD from '../components/LiabilityReconcilerHUD';
 import SystemGuideModal from '../components/SystemGuideModal';
+import LicensePlanModal from '../components/LicensePlanModal';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 import { analyzeLiabilityInterlocks, SAMPLE_DEALS } from '../utils/liabilityMatrixEngine';
 
@@ -71,6 +72,7 @@ export default function ContractCompare({ isDemoMode = false }) {
   const [activeTool, setActiveTool] = useState('analyzer'); // analyzer | bates | redact | history | templates
   const [analysisMode, setAnalysisMode] = useState('single'); // single | comparative | harmonizer
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showPlanModal, setShowPlanModal] = useState(false);
   const [guideModalTab, setGuideModalTab] = useState('analyzer');
   const [isUnlocked, setIsUnlocked] = useState(isDemo);
   const [restoredSession, setRestoredSession] = useState(null);
@@ -204,82 +206,80 @@ export default function ContractCompare({ isDemoMode = false }) {
             {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
 
-          {/* Sub-Tools: Single Draft Audit, Redline Diff Mode, Linguistic Proofreader */}
-          {activeTool === 'analyzer' && (
-            <div className="mx-1 mt-1 mb-2 p-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1">
-              <button
-                onClick={() => {
-                  setActiveTool('analyzer');
-                  setAnalysisMode('single');
-                }}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
-                  analysisMode === 'single'
-                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <FileCheck size={13} className={analysisMode === 'single' ? 'text-emerald-400' : 'text-zinc-500'} />
-                  <span className="truncate">Single Draft Audit</span>
-                </div>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">AST</span>
-              </button>
+          {/* Sub-Tools: Single Draft Audit, Redline Diff Mode, Linguistic Proofreader, Liability Reconciler (Permanently Pinned) */}
+          <div className="mx-1 mt-1 mb-2 p-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1">
+            <button
+              onClick={() => {
+                setActiveTool('analyzer');
+                setAnalysisMode('single');
+              }}
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                activeTool === 'analyzer' && analysisMode === 'single'
+                  ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <FileCheck size={13} className={activeTool === 'analyzer' && analysisMode === 'single' ? 'text-emerald-400' : 'text-zinc-500'} />
+                <span className="truncate">Single Draft Audit</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">AST</span>
+            </button>
 
-              <button
-                onClick={() => {
-                  setActiveTool('analyzer');
-                  setAnalysisMode('comparative');
-                }}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
-                  analysisMode === 'comparative'
-                    ? 'bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 '
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Search size={13} className={analysisMode === 'comparative' ? 'text-cyan-400' : 'text-zinc-500'} />
-                  <span className="truncate">Redline Diff Mode</span>
-                </div>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">Myers</span>
-              </button>
+            <button
+              onClick={() => {
+                setActiveTool('analyzer');
+                setAnalysisMode('comparative');
+              }}
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                activeTool === 'analyzer' && analysisMode === 'comparative'
+                  ? 'bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 '
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Search size={13} className={activeTool === 'analyzer' && analysisMode === 'comparative' ? 'text-cyan-400' : 'text-zinc-500'} />
+                <span className="truncate">Redline Diff Mode</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">Myers</span>
+            </button>
 
-              <button
-                onClick={() => {
-                  setActiveTool('analyzer');
-                  setAnalysisMode('harmonizer');
-                }}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
-                  analysisMode === 'harmonizer'
-                    ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Scale size={13} className={analysisMode === 'harmonizer' ? 'text-emerald-400' : 'text-zinc-500'} />
-                  <span className="truncate">Linguistic & Deed Proofreader</span>
-                </div>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Deed</span>
-              </button>
+            <button
+              onClick={() => {
+                setActiveTool('analyzer');
+                setAnalysisMode('harmonizer');
+              }}
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                activeTool === 'analyzer' && analysisMode === 'harmonizer'
+                  ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <Scale size={13} className={activeTool === 'analyzer' && analysisMode === 'harmonizer' ? 'text-emerald-400' : 'text-zinc-500'} />
+                <span className="truncate">Linguistic & Deed Proofreader</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Deed</span>
+            </button>
 
-              <button
-                onClick={() => {
-                  setActiveTool('analyzer');
-                  setAnalysisMode('liability');
-                }}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
-                  analysisMode === 'liability'
-                    ? 'bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30 '
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
-                }`}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <ShieldAlert size={13} className={analysisMode === 'liability' ? 'text-amber-400' : 'text-zinc-500'} />
-                  <span className="truncate">Liability & Indemnity Reconciler</span>
-                </div>
-                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Matrix</span>
-              </button>
-            </div>
-          )}
+            <button
+              onClick={() => {
+                setActiveTool('analyzer');
+                setAnalysisMode('liability');
+              }}
+              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                activeTool === 'analyzer' && analysisMode === 'liability'
+                  ? 'bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30 '
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <ShieldAlert size={13} className={activeTool === 'analyzer' && analysisMode === 'liability' ? 'text-amber-400' : 'text-zinc-500'} />
+                <span className="truncate">Liability & Indemnity Reconciler</span>
+              </div>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Matrix</span>
+            </button>
+          </div>
 
           {/* Module 2: PII Redactor */}
           <button
@@ -358,7 +358,7 @@ export default function ContractCompare({ isDemoMode = false }) {
           {isDemo ? (
             <button
               type="button"
-              onClick={() => openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' })}
+              onClick={() => setShowPlanModal(true)}
               className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 text-xs font-medium text-emerald-400 transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2 min-w-0">
@@ -470,8 +470,8 @@ export default function ContractCompare({ isDemoMode = false }) {
                     setAuditsLeft(next);
                     return next;
                   }}
-                  onOpenCheckout={(plan = 'firm') => {
-                    openSeamlessCheckout({ plan, toolName: 'contractcompare' });
+                  onOpenCheckout={(plan) => {
+                    setShowPlanModal(true);
                   }}
                   onOpenGuide={(tab) => {
                     setGuideModalTab(tab || 'analyzer');
@@ -494,8 +494,8 @@ export default function ContractCompare({ isDemoMode = false }) {
               <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
                 <BatesStamperView 
                   isDemo={isDemo}
-                  onTriggerUpgrade={(plan = 'firm') => {
-                    openSeamlessCheckout({ plan, toolName: 'contractcompare' });
+                  onTriggerUpgrade={(plan) => {
+                    setShowPlanModal(true);
                   }}
                   onOpenGuide={() => {
                     setGuideModalTab('bates');
@@ -527,7 +527,7 @@ export default function ContractCompare({ isDemoMode = false }) {
                     setActiveTool('analyzer');
                   }} 
                   onTriggerUpgrade={(trigger) => {
-                    openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' });
+                    setShowPlanModal(true);
                   }}
                   onOpenGuide={() => {
                     setGuideModalTab('templates');
@@ -565,6 +565,20 @@ export default function ContractCompare({ isDemoMode = false }) {
           setShowGuideModal(false);
         }}
       />
+
+      {/* License Plan Selection Modal */}
+      <AnimatePresence>
+        {showPlanModal && (
+          <LicensePlanModal
+            isOpen={showPlanModal}
+            onClose={() => setShowPlanModal(false)}
+            onSelectPlan={(plan) => {
+              setShowPlanModal(false);
+              openSeamlessCheckout({ plan, toolName: 'contractcompare' });
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       
     </div>
