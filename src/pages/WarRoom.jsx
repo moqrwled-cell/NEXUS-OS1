@@ -158,10 +158,25 @@ export default function WarRoom() {
     });
   };
 
-  // Generate Email Content with Strict Unicode LTR Markers & Psychological Hormozi Framing
+  // Helper to extract clean first name (handles middle initials, titles, suffixes)
+  const extractCleanFirstName = (fullName) => {
+    if (!fullName || typeof fullName !== 'string') return 'Counsel';
+    let clean = fullName.replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Hon\.|Attorney)\s+/i, '').trim();
+    const parts = clean.split(/[\s,]+/).filter(Boolean);
+    if (!parts.length) return 'Counsel';
+    let candidate = parts[0].replace(/[^a-zA-Z]/g, '');
+    if (candidate.length <= 1 && parts.length > 1) {
+      candidate = parts[1].replace(/[^a-zA-Z]/g, '');
+    }
+    if (!candidate || candidate.length < 2) return 'Counsel';
+    return candidate.charAt(0).toUpperCase() + candidate.slice(1).toLowerCase();
+  };
+
+  // Generate Email Content with Strict Unicode LTR Markers & Nationwide B2B Legal Formatting
   const generateEmailData = (lead, type, overrideAngle) => {
     const isAttorney = type === 'attorneys';
-    const name = isAttorney ? lead.name : (lead.managingPartner || 'Counsel');
+    const fullName = isAttorney ? lead.name : (lead.managingPartner || 'Counsel');
+    const firstName = extractCleanFirstName(fullName);
     const firmName = isAttorney ? lead.firm : lead.name;
     const email = lead.email;
     const angle = overrideAngle || selectedAngle;
@@ -177,9 +192,9 @@ export default function WarRoom() {
       if (angle === 'aba') {
         // ANGLE 2: ABA MODEL RULE 1.6 & ETHICS ADVISORY SHIELD
         subject = `${LRM}state bar cloud AI warning & ${firmName}`;
-        body = `${LRM}Hi ${name},
+        body = `${LRM}Hi ${firstName},
 
-${LRM}With state bar ethics committees issuing formal warnings regarding client data leaks into public cloud AI, transactional counsel face an exhausting dilemma:
+${LRM}With state bar ethics committees nationwide issuing formal warnings regarding client data leaks into public cloud AI, transactional counsel face an exhausting dilemma:
 
 ${LRM}Either spend late nights manually cross-referencing multi-version indemnification clauses and defined terms, or risk privileged client exposure on third-party cloud servers.
 
@@ -187,24 +202,23 @@ ${LRM}We engineered ContractGuard to eliminate this ABA Model Rule 1.6 conflict 
 
 ${LRM}It audits 40-page agreements in 15 seconds across 4 forensic engines, catches numerical mismatches and broken cross-references, and exports court-ready Word (.docx) amendment riders and signed Pre-Signing Diligence Certificates (.pdf).
 
-${LRM}Instead of recurring $1,800/year subscriptions, we offer a single lifetime perpetual license ($199) with all upcoming feature releases and continuous engine evolution included.
+${LRM}Instead of recurring $1,800/year subscriptions, we offer a single lifetime perpetual license ($199) with all upcoming feature releases included forever.
 
-${LRM}You can stress-test a sample agreement directly in our zero-network sandbox (no signup or payment required):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}Test a sample agreement in our zero-network sandbox (no signup or card needed):
+${LRM}nexus-os.store/demo
 
 ${LRM}Would you be opposed to a 60-second test to see how it flags cross-clause shifts before your next closing?
 
 ${LRM}Best regards,
 
-${LRM}Nexus ContractGuard™
-${LRM}Air-Gapped Legal Forensic Systems & Diligence Architecture
-${LRM}Web: https://www.nexus-os.store
-${LRM}Email: nexus.os.store@gmail.com
-${LRM}Security & Ethics: ABA Model Rule 1.6 Compliant | 100% Local In-RAM | Zero Telemetry`;
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard™
+${LRM}nexus-os.store
+${LRM}ABA Model Rule 1.6 Compliant | 100% Local In-RAM`;
       } else if (angle === 'roi') {
         // ANGLE 3: ANTI-SAAS $199 PERPETUAL LIFETIME ROI
         subject = `${LRM}eliminating $1,800/yr contract software fees for ${firmName}`;
-        body = `${LRM}Hi ${name},
+        body = `${LRM}Hi ${firstName},
 
 ${LRM}Most legal tech vendors charge transactional solo attorneys $150 to $200 every single month ($1,800+/year)—only to route your confidential client drafts through third-party cloud servers with annual price hikes.
 
@@ -214,56 +228,54 @@ ${LRM}What you get:
 ${LRM}• 15-Second Forensic Diligence: Audits 40-page agreements for broken cross-references, missing exhibits, and numerical discrepancies.
 ${LRM}• Court-Ready Deliverables: Instant 1-click Microsoft Word (.docx) amendment rider export + signed Pre-Signing Diligence Certificate (.pdf) for client closing binders.
 ${LRM}• Continuous Evolution Included: All future statutory rules, engine upgrades, and feature releases are included forever with zero monthly renewals.
-${LRM}• 100% Air-Gapped Security: Fully compliant with ABA Model Rule 1.6 and NY State Bar Ethics Opinion 1240.
+${LRM}• 100% Air-Gapped Security: Fully compliant with ABA Model Rule 1.6 confidentiality standards nationwide.
 
 ${LRM}Take the 15-second test drive right now (zero friction, no account, no credit card):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}nexus-os.store/demo
 
 ${LRM}Worth a quick test to see if it can replace your recurring contract review tools?
 
 ${LRM}Best regards,
 
-${LRM}Nexus ContractGuard™
-${LRM}Air-Gapped Legal Forensic Systems & Diligence Architecture
-${LRM}Web: https://www.nexus-os.store
-${LRM}Email: nexus.os.store@gmail.com
-${LRM}Security & Ethics: ABA Model Rule 1.6 Compliant | 100% Local In-RAM | Zero Telemetry`;
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard™
+${LRM}nexus-os.store
+${LRM}ABA Model Rule 1.6 Compliant | 100% Local In-RAM`;
       } else {
         // ANGLE 1 (DEFAULT / RECOMMENDED): THE 15-SECOND CLOSING AUDIT & HIDDEN LIABILITY SHIFTS
         subject = `${LRM}quick question re: hidden liability shifts in closing drafts`;
-        body = `${LRM}Hi ${name},
+        body = `${LRM}Hi ${firstName},
 
 ${LRM}When an opposing counsel subtly slips a unilateral indemnity expansion or an uncarved consequential damages waiver into a 45-page closing revision at 11 PM, traditional redlines often bury it.
 
 ${LRM}We built ContractGuard to catch what human eyes miss under closing fatigue: an air-gapped forensic engine that flags cross-clause liability shifts, broken citations, and exhibit mismatches in 15 seconds.
 
-${LRM}100% Local in your workstation RAM — zero cloud telemetry, strictly compliant with ABA Model Rule 1.6 confidentiality. No client data ever touches a server or LLM.
+${LRM}100% Local in your workstation RAM — zero cloud telemetry, strictly compliant with ABA Model Rule 1.6 confidentiality. No client data ever touches an external server or LLM.
 
 ${LRM}Instead of recurring $1,800/yr enterprise subscriptions, we offer a single lifetime perpetual license ($199).
 
-${LRM}Test a 1-page sample in our zero-network sandbox (no signup or card needed):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}Test a sample agreement in our zero-network sandbox (no signup or card needed):
+${LRM}nexus-os.store/demo
 
 ${LRM}Would you be opposed to a 30-second run before your next closing?
 
 ${LRM}Best regards,
 
-${LRM}Nexus ContractGuard™
-${LRM}Air-Gapped Legal Forensic Systems & Diligence Architecture
-${LRM}Web: https://www.nexus-os.store
-${LRM}Email: nexus.os.store@gmail.com
-${LRM}Security & Ethics: ABA Model Rule 1.6 Compliant | 100% Local In-RAM | Zero Telemetry`;
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard™
+${LRM}nexus-os.store
+${LRM}ABA Model Rule 1.6 Compliant | 100% Local In-RAM`;
       }
     } else {
       // LAW FIRM & MANAGING PARTNER OUTREACH
       if (angle === 'aba') {
         // ANGLE 2: FIRM-WIDE ABA 1.6 PRIVILEGE & SUBPOENA SHIELD
         subject = `${LRM}firm-wide ABA Model Rule 1.6 compliance & review efficiency at ${firmName}`;
-        body = `${LRM}Dear ${name},
+        body = `${LRM}Hi ${firstName},
 
 ${LRM}As managing partner of ${firmName}, ensuring that associates review complex commercial agreements under strict ABA Model Rule 1.6 confidentiality has become a critical liability priority.
 
-${LRM}With state bar advisories warning firms about third-party subpoena risks and cloud LLM data retention, associates who quietly paste client drafts into web tools create severe malpractice and privilege waiver exposure.
+${LRM}With state bar advisories nationwide warning firms about third-party subpoena risks and cloud LLM data retention, associates who quietly paste client drafts into web tools create severe malpractice and privilege waiver exposure.
 
 ${LRM}We engineered ContractGuard specifically for boutique transactional practices: an on-premise, zero-network forensic audit engine. It empowers your transactional team to catch broken citations, missing exhibits, and hidden liability shifts in 15 seconds—running 100% locally in workstation RAM with zero external server connection.
 
@@ -272,21 +284,20 @@ ${LRM}Unlike legacy enterprise platforms that charge $1,800/year per seat, we pr
 ${LRM}Every audit generates an AmLaw 100 Pre-Signing Diligence Certificate (.pdf) and an editable Word (.docx) amendment rider for partner sign-off.
 
 ${LRM}Your team can test our live offline sandbox with any redacted agreement (no signup or card required):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}nexus-os.store/demo
 
 ${LRM}Would you be open to seeing how our air-gapped forensic radar protects ${firmName}'s client privilege while accelerating review speed?
 
-${LRM}Sincerely,
+${LRM}Best regards,
 
-${LRM}Nexus ContractGuard Enterprise™
-${LRM}Institutional Diligence Systems & Privilege Architecture
-${LRM}Web: https://www.nexus-os.store
-${LRM}Email: nexus.os.store@gmail.com
-${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero Subpoena Risk`;
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard Enterprise™
+${LRM}nexus-os.store
+${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
       } else if (angle === 'roi') {
         // ANGLE 3: ELIMINATING RECURRING TRANSACTIONAL SEAT FEES
         subject = `${LRM}eliminating recurring transactional software seat costs at ${firmName}`;
-        body = `${LRM}Dear ${name},
+        body = `${LRM}Hi ${firstName},
 
 ${LRM}Between Lexis, Thomson Reuters, and emerging cloud AI vendors charging $1,500–$2,500 per attorney annually, boutique firm transactional software budgets have gotten out of hand.
 
@@ -298,23 +309,22 @@ ${LRM}2. 15-Second Forensic QC: Audits complex agreements for broken cross-refer
 ${LRM}3. Partner-Ready Deliverables: Instant 1-click Microsoft Word (.docx) amendment rider export + signed Pre-Signing Diligence Certificates (.pdf) for client closing binders.
 
 ${LRM}Your transactional team can run a live 15-second test drive right now (zero signup, zero card):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}nexus-os.store/demo
 
 ${LRM}Open to seeing how ${firmName} can eliminate recurring contract review fees while upgrading turnaround speed?
 
-${LRM}Sincerely,
+${LRM}Best regards,
 
-${LRM}Nexus ContractGuard Enterprise™
-${LRM}Institutional Diligence Systems & Privilege Architecture
-${LRM}Web: https://www.nexus-os.store
-${LRM}Email: nexus.os.store@gmail.com
-${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero Subpoena Risk`;
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard Enterprise™
+${LRM}nexus-os.store
+${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
       } else {
         // ANGLE 1 (DEFAULT / RECOMMENDED): SUBPOENA-PROOF AGREEMENT AUDITS & ASSOCIATE REDLINE RISKS
         subject = `${LRM}subpoena-proof agreement audits & associate redline risks at ${firmName}`;
-        body = `${LRM}Dear ${name},
+        body = `${LRM}Hi ${firstName},
 
-${LRM}State bar ethics panels are actively scrutinizing client confidentiality leaks caused by associates pasting sensitive draft agreements into cloud-hosted tools.
+${LRM}State bar ethics panels nationwide are actively scrutinizing client confidentiality leaks caused by associates pasting sensitive draft agreements into cloud-hosted tools.
 
 ${LRM}At the same time, manual review of complex commercial indemnities and cross-default clauses remains one of the largest unbilled cost centers for transactional teams.
 
@@ -326,21 +336,20 @@ ${LRM}• Court-Ready Deliverables: 1-click Word (.docx) amendment riders + part
 ${LRM}We replace $2,000/yr per-seat subscriptions with a 5-Attorney Firm Suite for a one-time $299 lifetime license.
 
 ${LRM}Run a test audit in our instant sandbox (no registration):
-${LRM}👉 https://www.nexus-os.store/demo
+${LRM}nexus-os.store/demo
 
 ${LRM}Open to a 1-minute test to see how it shields ${firmName}'s deal velocity?
 
-${LRM}Sincerely,
+${LRM}Best regards,
 
-${LRM}Nexus ContractGuard Enterprise™
-${LRM}Institutional Diligence Systems & Privilege Architecture
-${LRM}Web: https://www.nexus-os.store
-${LRM}Email: nexus.os.store@gmail.com
-${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero Subpoena Risk`;
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard Enterprise™
+${LRM}nexus-os.store
+${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
       }
     }
 
-    return { name, firmName, email, subject, body };
+    return { name: fullName, firstName, firmName, email, subject, body };
   };
 
   // 1-Click Gmail Action (Forced English LTR mode)
@@ -1174,20 +1183,21 @@ ${LRM}Compliance: 100% Air-Gapped In-RAM | ABA Model Rule 1.6 Compliant | Zero S
                   <div className="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-inner">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-serif font-black text-lg shadow-sm">
-                        N
+                        M
                       </div>
                       <div>
                         <div className="text-white font-bold text-xs flex items-center gap-2">
-                          <span className="tracking-wide">Nexus ContractGuard™</span>
+                          <span className="tracking-wide">Mohammed Qaraman</span>
+                          <span className="text-[10px] text-emerald-400 font-mono">Founder</span>
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
                             100% AIR-GAPPED
                           </span>
                         </div>
                         <div className="text-[11px] text-slate-400">
-                          Air-Gapped Legal Forensic Systems & Diligence Architecture
+                          Nexus ContractGuard™ · Institutional Diligence Systems
                         </div>
                         <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                          nexus.os.store@gmail.com · https://www.nexus-os.store
+                          nexus-os.store · ABA Model Rule 1.6 Compliant
                         </div>
                       </div>
                     </div>
