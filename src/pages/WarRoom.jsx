@@ -3,7 +3,7 @@ import {
   Mail, ExternalLink, Copy, Check, Search, Filter, Shield, Star, 
   Download, Lock, Unlock, Send, Users, Building2, Sparkles, 
   RefreshCw, CheckCircle2, AlertCircle, ArrowUpRight, Flame,
-  ChevronLeft, ChevronRight, Eye, HelpCircle, Loader2
+  ChevronLeft, ChevronRight, Eye, HelpCircle, Loader2, Clock
 } from 'lucide-react';
 
 const MASTER_PIN = '2026';
@@ -11,6 +11,38 @@ const STORAGE_AUTH_KEY = 'nexus_war_room_auth_v1';
 const STORAGE_PROGRESS_KEY = 'nexus_war_room_progress_v1';
 const STORAGE_STARS_KEY = 'nexus_war_room_stars_v1';
 const DAILY_TARGET = 25;
+
+// US Time Zones and optimal sending windows (in Palestine Local Time)
+const US_TIME_ZONES = {
+  EST: {
+    id: 'EST',
+    name: 'Eastern (EST)',
+    label: 'EST · 3:30 - 5:00 PM',
+    window: '3:30 PM – 5:00 PM (Palestine)',
+    states: ['NY', 'FL', 'DC', 'PA', 'GA', 'MA', 'VA', 'NC', 'OH', 'MI', 'NJ', 'MD', 'CT', 'SC', 'IN', 'KY']
+  },
+  CST: {
+    id: 'CST',
+    name: 'Central (CST)',
+    label: 'CST · 4:30 - 6:00 PM',
+    window: '4:30 PM – 6:00 PM (Palestine)',
+    states: ['TX', 'IL', 'MN', 'MO', 'WI', 'TN', 'LA', 'AL', 'OK', 'IA', 'AR', 'MS', 'KS', 'NE']
+  },
+  MST: {
+    id: 'MST',
+    name: 'Mountain (MST)',
+    label: 'MST · 5:30 - 7:00 PM',
+    window: '5:30 PM – 7:00 PM (Palestine)',
+    states: ['CO', 'AZ', 'UT', 'NM', 'MT', 'WY', 'ID']
+  },
+  PST: {
+    id: 'PST',
+    name: 'Pacific (PST)',
+    label: 'PST · 6:30 - 8:00 PM',
+    window: '6:30 PM – 8:00 PM (Palestine)',
+    states: ['CA', 'WA', 'OR', 'NV']
+  }
+};
 
 export default function WarRoom() {
   // Authentication State
@@ -23,11 +55,23 @@ export default function WarRoom() {
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTimeZone, setSelectedTimeZone] = useState('ALL'); // 'ALL' | 'EST' | 'CST' | 'MST' | 'PST'
   const [selectedLocation, setSelectedLocation] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'PENDING' | 'CONTACTED' | 'STARRED'
   
   // Selected Outreach Strategy Angle (Hormozi / Behavioral Psychology)
-  const [selectedAngle, setSelectedAngle] = useState('15sec'); // '15sec' | 'aba' | 'roi'
+  const [selectedAngle, setSelectedAngle] = useState('15sec'); // '15sec' | 'aba' | 'roi' | 'followup'
+  
+  // Detect currently active Palestine sending window
+  const activePalestineWindow = useMemo(() => {
+    const now = new Date();
+    const mins = now.getHours() * 60 + now.getMinutes();
+    if (mins >= 930 && mins < 1020) return 'EST'; // 15:30 - 17:00 (3:30 - 5:00 PM)
+    if (mins >= 990 && mins < 1080) return 'CST'; // 16:30 - 18:00 (4:30 - 6:00 PM)
+    if (mins >= 1050 && mins < 1140) return 'MST'; // 17:30 - 19:00 (5:30 - 7:00 PM)
+    if (mins >= 1110 && mins < 1200) return 'PST'; // 18:30 - 20:00 (6:30 - 8:00 PM)
+    return null;
+  }, []);
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -189,7 +233,16 @@ export default function WarRoom() {
 
     if (isAttorney) {
       // SOLO PRACTITIONER & TRANSACTIONAL PARTNER OUTREACH
-      if (angle === 'aba') {
+      if (angle === 'followup') {
+        // ANGLE 4: QUICK FOLLOW-UP / BUMP
+        subject = `${LRM}quick follow-up re: closing drafts`;
+        body = `${LRM}Hi ${firstName},
+
+${LRM}Quick follow-up on this — would you be open to a 30-second look at how it flags liability shifts before your next closing, or are you all set with your current review process?
+
+${LRM}Best,
+${LRM}Mohammed`;
+      } else if (angle === 'aba') {
         // ANGLE 2: ABA MODEL RULE 1.6 & ETHICS ADVISORY SHIELD
         subject = `${LRM}state bar cloud AI warning & ${firmName}`;
         body = `${LRM}Hi ${firstName},
@@ -268,7 +321,16 @@ ${LRM}ABA Model Rule 1.6 Compliant | 100% Local In-RAM`;
       }
     } else {
       // LAW FIRM & MANAGING PARTNER OUTREACH
-      if (angle === 'aba') {
+      if (angle === 'followup') {
+        // ANGLE 4: QUICK FOLLOW-UP / BUMP
+        subject = `${LRM}quick follow-up re: ${firmName} closing drafts`;
+        body = `${LRM}Hi ${firstName},
+
+${LRM}Quick follow-up on this — would you be open to a 30-second look at how it flags liability shifts before your next closing, or are you all set with your current review process?
+
+${LRM}Best,
+${LRM}Mohammed`;
+      } else if (angle === 'aba') {
         // ANGLE 2: FIRM-WIDE ABA 1.6 PRIVILEGE & SUBPOENA SHIELD
         subject = `${LRM}firm-wide ABA Model Rule 1.6 compliance & review efficiency at ${firmName}`;
         body = `${LRM}Hi ${firstName},
@@ -385,12 +447,16 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
     showToast(`📋 Copied ${activeAngle.toUpperCase()} template for ${lead.name || lead.managingPartner}`);
   };
 
-  // Locations Extract
+  // Locations Extract (Adaptive to selected Time Zone)
   const locationsList = useMemo(() => {
     const data = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
-    const states = new Set(data.map(d => d.state || 'Other'));
-    return ['ALL', ...Array.from(states).sort()];
-  }, [activeTab, leadsData]);
+    let states = Array.from(new Set(data.map(d => d.state || 'Other'))).sort();
+    if (selectedTimeZone !== 'ALL' && US_TIME_ZONES[selectedTimeZone]) {
+      const allowed = new Set(US_TIME_ZONES[selectedTimeZone].states);
+      states = states.filter(s => allowed.has(s));
+    }
+    return ['ALL', ...states];
+  }, [activeTab, leadsData, selectedTimeZone]);
 
   // Filtered Leads
   const filteredLeads = useMemo(() => {
@@ -408,6 +474,11 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
         (item.specialty && item.specialty.toLowerCase().includes(q))
       );
 
+      // Time Zone Match (Optimal Sending Window in Palestine Time)
+      const matchesTimeZone = selectedTimeZone === 'ALL' || (
+        Boolean(US_TIME_ZONES[selectedTimeZone]?.states.includes(item.state))
+      );
+
       // Location Match
       const matchesLoc = selectedLocation === 'ALL' || item.state === selectedLocation;
 
@@ -420,9 +491,9 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
       if (statusFilter === 'PENDING') matchesStatus = !isContacted;
       if (statusFilter === 'STARRED') matchesStatus = isStarred;
 
-      return matchesSearch && matchesLoc && matchesStatus;
+      return matchesSearch && matchesTimeZone && matchesLoc && matchesStatus;
     });
-  }, [activeTab, searchQuery, selectedLocation, statusFilter, contactedMap, starredSet, leadsData]);
+  }, [activeTab, searchQuery, selectedTimeZone, selectedLocation, statusFilter, contactedMap, starredSet, leadsData]);
 
   // Pagination Slice
   const totalPages = Math.ceil(filteredLeads.length / pageSize) || 1;
@@ -434,7 +505,7 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedLocation, statusFilter, activeTab]);
+  }, [searchQuery, selectedTimeZone, selectedLocation, statusFilter, activeTab]);
 
   // Export CSV
   const handleExportCSV = () => {
@@ -750,6 +821,21 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
             >
               <span>💰 Anti-SaaS Lifetime ($199 / $299)</span>
             </button>
+
+            <button
+              onClick={() => {
+                setSelectedAngle('followup');
+                showToast('🔄 Switched to Quick Follow-Up Bump Angle (High Response Rate)');
+              }}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                selectedAngle === 'followup'
+                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+              }`}
+              title="Ultra-short follow-up bump for previously contacted attorneys"
+            >
+              <span>🔄 Quick Follow-Up (Bump)</span>
+            </button>
           </div>
         </div>
 
@@ -828,6 +914,30 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
                 ⭐ Starred
               </button>
             </div>
+
+            {/* Time Zone / Sending Windows (Palestine Local Time) */}
+            <select
+              value={selectedTimeZone}
+              onChange={(e) => {
+                setSelectedTimeZone(e.target.value);
+                setSelectedLocation('ALL');
+              }}
+              className="bg-[#0b1324] border border-white/15 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-400 cursor-pointer"
+            >
+              <option value="ALL">🕒 All Time Zones / Windows</option>
+              <option value="EST">
+                ⚡ EST · 3:30 - 5:00 PM (NY, FL, PA...){activePalestineWindow === 'EST' ? ' 🟢 ACTIVE' : ''}
+              </option>
+              <option value="CST">
+                🎯 CST · 4:30 - 6:00 PM (TX, IL, MN...){activePalestineWindow === 'CST' ? ' 🟢 ACTIVE' : ''}
+              </option>
+              <option value="MST">
+                🏔️ MST · 5:30 - 7:00 PM (CO, AZ, UT...){activePalestineWindow === 'MST' ? ' 🟢 ACTIVE' : ''}
+              </option>
+              <option value="PST">
+                🌊 PST · 6:30 - 8:00 PM (CA, WA, OR...){activePalestineWindow === 'PST' ? ' 🟢 ACTIVE' : ''}
+              </option>
+            </select>
 
             {/* Location Select */}
             <select
@@ -1008,7 +1118,14 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
                         {/* Location */}
                         <td className="py-3.5 px-4 text-slate-400">
-                          {item.city}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-white text-xs">{item.city || item.state}</span>
+                            {item.state && (
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-white/5 border border-white/10 text-emerald-400 font-semibold">
+                                {item.state}
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Action Buttons */}
@@ -1149,6 +1266,17 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
                   }`}
                 >
                   💰 Anti-SaaS Lifetime
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedAngle('followup')}
+                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                    selectedAngle === 'followup'
+                      ? 'bg-amber-400 text-slate-950'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  🔄 Quick Follow-Up
                 </button>
               </div>
             </div>
