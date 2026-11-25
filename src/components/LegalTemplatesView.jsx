@@ -200,61 +200,51 @@ export default function LegalTemplatesView({
     return (
       <div className="max-w-7xl mx-auto h-full flex flex-col gap-4">
         {/* Top Header & Actions Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl liquid-glass border border-white/5">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-lg bg-[#111115] border border-white/[0.08]">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSelectedTemplateId(null)}
-              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-2.5 py-1.5 rounded-md bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              ← Back to Catalog
+              ← Back
             </button>
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
                 <span>{selectedTemplate.title}</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                  AmLaw 100 Standard
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  AmLaw 100
                 </span>
                 {currentStatute?.badge && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-400 border border-white/[0.08]">
                     {currentStatute.badge}
                   </span>
                 )}
               </h3>
-              <p className="text-xs text-zinc-400 font-sans mt-0.5">
+              <p className="text-xs text-zinc-500 font-sans mt-0.5">
                 {selectedTemplate.jurisdiction}
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {onOpenGuide && (
-              <button
-                onClick={() => onOpenGuide('templates')}
-                className="px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
-                title="How to Use Template Vault"
-              >
-                <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
-                <span>How to Use</span>
-              </button>
-            )}
             {/* Word DOCX Download Button */}
             {isDemoMode ? (
               <button
                 onClick={() => onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Template Word DOCX export requires an active license.')}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Unlock Word (.docx) export with lifetime license"
               >
-                <Lock size={13} className="text-amber-400 group-hover:scale-110 transition-transform" />
+                <Lock size={13} className="text-zinc-400" />
                 <span>Unlock Word (.docx)</span>
               </button>
             ) : (
               <button
                 onClick={handleDownloadDocx}
                 disabled={isGeneratingDocx}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-blue-600/90 hover:bg-blue-500 text-white border border-blue-400/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.25)] disabled:opacity-50"
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.1] transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 title="Download fully editable Microsoft Word document (.docx)"
               >
-                {isGeneratingDocx ? <RefreshCw className="animate-spin" size={14} /> : <FileText size={14} />}
+                {isGeneratingDocx ? <RefreshCw className="animate-spin" size={13} /> : <FileText size={13} />}
                 <span>{isGeneratingDocx ? 'Exporting Word...' : 'Download Word (.docx)'}</span>
               </button>
             )}
@@ -293,19 +283,19 @@ export default function LegalTemplatesView({
             ) : (
               <button
                 onClick={handleCopyText}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-200 border border-zinc-700 transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
               >
-                {copiedContract ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                <span>{copiedContract ? 'Copied to Clipboard! ✓' : 'Copy Text'}</span>
+                {copiedContract ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                <span>{copiedContract ? 'Copied' : 'Copy Text'}</span>
               </button>
             )}
 
             {/* Audit in ContractGuard */}
             <button
               onClick={() => onSendToAudit && onSendToAudit(compiledText, selectedTemplate.title)}
-              className="px-4 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-cyan-500 to-emerald-500 hover:opacity-90 text-black transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
+              className="px-3.5 py-1.5 rounded-md text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center gap-1.5 cursor-pointer"
             >
-              <Sparkles size={14} />
+              <Sparkles size={13} />
               <span>{isDemoMode ? 'Audit Preview in Studio →' : 'Audit in ContractGuard →'}</span>
             </button>
           </div>
@@ -313,42 +303,42 @@ export default function LegalTemplatesView({
 
         {/* Statutory Context Alert Banner */}
         {currentStatute && (
-          <div className="px-4 py-3 rounded-xl bg-cyan-950/30 border border-cyan-500/30 flex items-start gap-3 text-xs leading-relaxed">
-            <Scale size={18} className="text-cyan-400 shrink-0 mt-0.5" />
+          <div className="px-3.5 py-2.5 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-sky-500/60 flex items-start gap-2.5 text-xs leading-relaxed">
+            <Scale size={15} className="text-sky-400 shrink-0 mt-0.5" />
             <div className="flex-1">
-              <div className="flex items-center gap-2 font-bold text-cyan-200">
-                <span>Statutory Enforceability Baseline: {currentStatute.statuteName}</span>
-                <span className="text-[10px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-semibold">
-                  AmLaw 100 Calibrated
+              <div className="flex items-center gap-2 font-medium text-zinc-200">
+                <span>Statutory Baseline: {currentStatute.statuteName}</span>
+                <span className="text-[10px] font-mono uppercase text-emerald-400">
+                  AmLaw 100
                 </span>
               </div>
-              <p className="text-zinc-300 text-[11.5px] mt-0.5">{currentStatute.summary}</p>
+              <p className="text-zinc-400 text-[11.5px] mt-0.5">{currentStatute.summary}</p>
             </div>
           </div>
         )}
 
         {/* State Statutory Compliance Bar (California, Texas, New York, Florida, and 50-State Multi-Jurisdiction) */}
         {selectedTemplate.category === 'real_estate' && (
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-zinc-950/90 via-zinc-900/70 to-black/90 border border-zinc-800 flex flex-col gap-3">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="p-3 rounded-lg bg-[#111115] border border-white/[0.08] flex flex-col gap-2.5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-zinc-300 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
-                  <MapPin size={13} className="text-emerald-400" />
-                  <span>State Compliance Rider:</span>
+                <span className="font-medium text-zinc-400 flex items-center gap-1.5 uppercase tracking-wider text-[10px] font-mono">
+                  <MapPin size={12} className="text-emerald-400" />
+                  <span>State Rider:</span>
                 </span>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {Object.values(STATE_SPECIFIC_RIDERS).map(rider => (
                     <button
                       key={rider.id}
                       onClick={() => handleSelectStateRider(rider.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 ${
                         selectedStateRider === rider.id
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.18)] font-bold'
-                          : 'text-zinc-400 hover:text-white bg-black/40 border border-zinc-800 hover:border-zinc-700'
+                          ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                          : 'text-zinc-400 hover:text-zinc-200 bg-[#09090B] border border-white/[0.06]'
                       }`}
                     >
                       <span>{rider.shortName}</span>
-                      {selectedStateRider === rider.id && <CheckCircle2 size={12} className="text-emerald-400" />}
+                      {selectedStateRider === rider.id && <CheckCircle2 size={11} className="text-emerald-400" />}
                     </button>
                   ))}
                 </div>
@@ -356,25 +346,24 @@ export default function LegalTemplatesView({
 
               <button
                 onClick={() => setShowStateDossierModal(true)}
-                className="self-start md:self-auto px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-sm"
+                className="self-start md:self-auto px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
               >
-                <Scale size={13} />
-                <span>50-State Statutory Dossier & Justifications</span>
+                <Scale size={12} className="text-sky-400" />
+                <span>50-State Statutory Dossier</span>
               </button>
             </div>
 
             {/* Active State Statutory Rationale Card */}
-            <div className="px-3.5 py-2.5 rounded-xl bg-zinc-900/80 border border-emerald-500/20 flex items-start gap-2.5 text-xs">
-              <ShieldCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" />
+            <div className="px-3 py-2 rounded-md bg-[#09090B] border border-white/[0.06] flex items-start gap-2 text-xs">
+              <ShieldCheck size={14} className="text-emerald-400 shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold text-white text-[12px]">{STATE_SPECIFIC_RIDERS[selectedStateRider]?.name}</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/30">
+                  <span className="font-medium text-zinc-200 text-xs">{STATE_SPECIFIC_RIDERS[selectedStateRider]?.name}</span>
+                  <span className="text-[10px] font-mono text-emerald-400">
                     {STATE_SPECIFIC_RIDERS[selectedStateRider]?.badge}
                   </span>
                 </div>
-                <p className="text-zinc-400 text-[11px] mt-1 leading-relaxed">
-                  <strong className="text-zinc-200">Legal Justification: </strong>
+                <p className="text-zinc-500 text-[11px] mt-0.5 leading-relaxed">
                   {STATE_SPECIFIC_RIDERS[selectedStateRider]?.legalReason}
                 </p>
               </div>
@@ -385,45 +374,45 @@ export default function LegalTemplatesView({
         {/* Split Screen Workspace */}
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[580px]">
           {/* Left Column: Quick-Fill Variables Form */}
-          <div className="lg:col-span-5 flex flex-col rounded-2xl liquid-glass-strong border border-white/5 p-4 overflow-y-auto custom-scrollbar">
-            <div className="mb-4 pb-3 border-b border-zinc-800">
-              <h4 className="text-sm font-bold text-white flex items-center justify-between">
-                <span>Dynamic Deal Parameters</span>
-                <span className={`text-[11px] font-mono ${isDemoMode ? 'text-amber-400' : 'text-cyan-400'}`}>
-                  {isDemoMode ? '🔒 Locked (Preview Mode)' : `${selectedTemplate.variables?.length || 0} Configurable Fields`}
+          <div className="lg:col-span-5 flex flex-col rounded-lg bg-[#111115] border border-white/[0.08] p-4 overflow-y-auto custom-scrollbar">
+            <div className="mb-4 pb-3 border-b border-white/[0.06]">
+              <h4 className="text-sm font-semibold text-zinc-100 flex items-center justify-between">
+                <span>Deal Parameters</span>
+                <span className={`text-[11px] font-mono ${isDemoMode ? 'text-amber-400' : 'text-zinc-400'}`}>
+                  {isDemoMode ? 'Preview Locked' : `${selectedTemplate.variables?.length || 0} Fields`}
                 </span>
               </h4>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-zinc-500 mt-1">
                 {isDemoMode 
-                  ? 'Variable customization is locked in demo mode. You can inspect all structural parameters below.'
-                  : 'Customize party names, purchase considerations, dates, and governing jurisdiction below. Changes compile into the agreement in real-time.'}
+                  ? 'Inspect structural parameters below. Export and editing unlock with a license.'
+                  : 'Update parties, considerations, and dates below for live compilation.'}
               </p>
             </div>
 
             {isDemoMode && (
-              <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2.5 text-xs">
-                <Lock size={15} className="text-amber-400 shrink-0 mt-0.5" />
+              <div className="mb-4 p-3 rounded-md bg-amber-500/[0.06] border border-amber-500/20 flex items-start gap-2.5 text-xs">
+                <Lock size={14} className="text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-bold text-amber-300">Template Customization Locked</div>
-                  <p className="text-[11px] text-zinc-300 mt-0.5 leading-relaxed">
-                    You can view the full agreement structure and clauses. To edit variables and download editable Word DOCX files, activate your lifetime license.
+                  <div className="font-medium text-amber-300">Customization Locked in Sandbox</div>
+                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
+                    Full clause preview is active. Editing and Word (.docx) export require a license.
                   </p>
                   <button
                     onClick={() => onTriggerUpgrade && onTriggerUpgrade('export')}
-                    className="mt-2 px-3 py-1 rounded-lg bg-amber-400 text-black text-[11px] font-bold hover:bg-white transition-colors cursor-pointer"
+                    className="mt-2 px-2.5 py-1 rounded bg-[#18181B] hover:bg-zinc-800 border border-white/[0.1] text-amber-300 text-[11px] font-medium transition-colors cursor-pointer"
                   >
-                    Unlock Full Templates ($199 / $299) →
+                    Unlock Templates ($199 / $299) →
                   </button>
                 </div>
               </div>
             )}
 
-            <div className="space-y-3.5 flex-1 pr-1">
+            <div className="space-y-3 flex-1 pr-1">
               {(selectedTemplate.variables || []).map(v => (
                 <div key={v.key} className="flex flex-col gap-1">
-                  <label className="text-[11px] font-mono uppercase font-semibold text-zinc-400 flex items-center justify-between">
+                  <label className="text-[10px] font-mono uppercase text-zinc-500 flex items-center justify-between">
                     <span>{v.label}</span>
-                    {isDemoMode && <Lock size={10} className="text-amber-400/80" />}
+                    {isDemoMode && <Lock size={10} className="text-amber-400/70" />}
                   </label>
                   <input
                     type="text"
@@ -432,41 +421,41 @@ export default function LegalTemplatesView({
                     disabled={isDemoMode}
                     onChange={(e) => !isDemoMode && handleVariableChange(v.key, e.target.value)}
                     placeholder={v.defaultVal}
-                    className={`w-full border rounded-xl px-3 py-2 text-xs font-mono outline-none transition-all ${
+                    className={`w-full border rounded-md px-3 py-1.5 text-xs font-mono outline-none transition-colors ${
                       isDemoMode 
-                        ? 'bg-black/40 border-zinc-800/80 text-zinc-400 cursor-not-allowed opacity-80' 
-                        : 'bg-black/60 border-zinc-800 focus:border-cyan-500 text-white placeholder-zinc-600'
+                        ? 'bg-[#09090B] border-white/[0.06] text-zinc-500 cursor-not-allowed' 
+                        : 'bg-[#09090B] border-white/[0.08] focus:border-white/[0.2] text-zinc-100 placeholder-zinc-600'
                     }`}
                   />
                 </div>
               ))}
             </div>
 
-            {/* Empowering Guidance Callout */}
-            <div className="mt-4 pt-3 border-t border-zinc-800 text-[11.5px] text-zinc-300 flex items-start gap-2.5 leading-relaxed bg-zinc-900/60 p-3 rounded-xl border border-zinc-700/60">
-              <SlidersHorizontal size={15} className="text-cyan-400 shrink-0 mt-0.5" />
+            {/* Institutional Guidance Callout */}
+            <div className="mt-4 p-3 rounded-md bg-[#09090B] border border-white/[0.06] text-[11px] text-zinc-400 flex items-start gap-2 leading-relaxed">
+              <SlidersHorizontal size={14} className="text-zinc-500 shrink-0 mt-0.5" />
               <div>
-                <span className="text-white font-semibold">Institutional Standard: </span>
+                <span className="text-zinc-200 font-medium">Institutional Standard: </span>
                 <span>{isDemoMode 
-                  ? 'This master draft adheres to Delaware corporate law and standard AmLaw 100 practice.'
-                  : 'You can edit all variables above, download the agreement in Word (.docx) to insert bespoke transaction covenants, or send directly to ContractGuard to audit for hidden liability gaps.'}</span>
+                  ? 'Master draft aligned with Delaware corporate law and AmLaw 100 practice.'
+                  : 'Edit parameters above, export to Word (.docx), or send directly into ContractGuard.'}</span>
               </div>
             </div>
           </div>
 
           {/* Right Column: Live Compiled Legal Document Preview */}
-          <div className="lg:col-span-7 flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
-            <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-emerald-400 font-mono flex items-center gap-1.5">
-                {isDemoMode ? <Lock size={13} className="text-amber-400" /> : <CheckCircle2 size={13} className="text-emerald-400" />}
-                {isDemoMode ? 'PREVIEW MODE · FULL CONTRACT TEXT (READ-ONLY)' : 'COMPILED CONTRACT PREVIEW (READY FOR EXECUTION & REDLINING)'}
+          <div className="lg:col-span-7 flex flex-col rounded-lg bg-[#0E0E12] border border-white/[0.08] overflow-hidden">
+            <div className="px-4 py-2.5 bg-[#111115] border-b border-white/[0.06] flex items-center justify-between">
+              <span className="text-[11px] font-mono text-zinc-300 flex items-center gap-1.5">
+                {isDemoMode ? <Lock size={12} className="text-amber-400" /> : <CheckCircle2 size={12} className="text-emerald-400" />}
+                {isDemoMode ? 'PREVIEW MODE · READ-ONLY' : 'COMPILED DRAFT · READY FOR EXPORT'}
               </span>
-              <span className="text-[11px] font-mono text-zinc-400">
+              <span className="text-[11px] font-mono text-zinc-500 tabular-nums">
                 {compiledText.split(/\s+/).filter(Boolean).length} Words
               </span>
             </div>
 
-            <div className="flex-1 bg-black/50 p-6 text-sm font-legal leading-relaxed text-zinc-200 overflow-y-auto custom-scrollbar select-text">
+            <div className="flex-1 bg-[#0E0E12] p-6 text-sm font-legal leading-relaxed text-zinc-200 overflow-y-auto custom-scrollbar select-text">
               <pre className="whitespace-pre-wrap font-legal text-[13.5px] leading-relaxed text-zinc-200">
                 {compiledText}
               </pre>
@@ -545,26 +534,12 @@ export default function LegalTemplatesView({
         </div>
       </div>
 
-      {/* Authoritative Drafting & Customization Workbench Banner (Empowering tone, zero diminishing language) */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/40 via-zinc-900/80 to-cyan-950/30 border border-cyan-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs">
-        <div className="flex items-start gap-3.5">
-          <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-            <ShieldCheck size={19} />
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-cyan-200 uppercase tracking-wide text-[11.5px]">
-                Institutional Drafting Workbench & Transaction Controls
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-bold">
-                Word (.docx) + PDF Export
-              </span>
-            </div>
-            <p className="text-zinc-200 text-xs leading-relaxed">
-              Customize dynamic deal variables, insert bespoke covenants, and tailor every agreement to your exact transaction structure. Download directly in <strong className="text-white">Microsoft Word (.docx)</strong> format for collaborative team redlining, or execute an instant in-RAM forensic audit in ContractGuard to catch broken targets and financial discrepancies prior to execution.
-            </p>
-          </div>
-        </div>
+      {/* Institutional Drafting Summary */}
+      <div className="px-4 py-3 rounded-lg bg-[#111115] border border-white/[0.08] flex items-center gap-3 text-xs">
+        <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
+        <p className="text-zinc-400 leading-relaxed">
+          <span className="font-medium text-zinc-200">Institutional Template Vault:</span> Customize deal parameters, export editable Word (.docx), or send directly to ContractGuard for forensic audit.
+        </p>
       </div>
 
       {/* Expandable Statutory Compliance Guide (FIRPTA, Lead Paint, DTSA, 409A, UCC, § 1542) */}
@@ -647,16 +622,16 @@ export default function LegalTemplatesView({
       )}
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl liquid-glass border border-white/5">
-        <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-3 p-3 rounded-lg bg-[#111115] border border-white/[0.08]">
+        <div className="flex flex-wrap items-center gap-1.5">
           {TEMPLATE_CATEGORIES.map(cat => (
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors cursor-pointer ${
                 selectedCategory === cat.id
-                  ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                  : 'text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10'
+                  ? 'bg-white/[0.1] text-white border border-white/[0.12]'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] border border-transparent'
               }`}
             >
               <span>{cat.label}</span>
@@ -670,7 +645,7 @@ export default function LegalTemplatesView({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search models (e.g. Land, APA, NDA)..."
-            className="w-full bg-black/60 border border-zinc-700 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-xs font-mono text-white placeholder-zinc-500 outline-none transition-all"
+            className="w-full bg-[#09090B] border border-white/[0.08] focus:border-white/[0.2] rounded-md px-3 py-1.5 text-xs font-mono text-zinc-200 placeholder-zinc-600 outline-none transition-colors"
           />
         </div>
       </div>
@@ -797,68 +772,68 @@ function StateDossierModal({ isOpen, onClose, selectedStateRider, onSelectStateR
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
       <div className="relative w-full max-w-4xl max-h-[92vh] bg-gradient-to-b from-zinc-950 via-zinc-900 to-black border border-cyan-500/30 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-zinc-200 font-ui">
         {/* Header */}
-        <div className="p-5 border-b border-zinc-800 bg-white/[0.02] flex items-center justify-between gap-4">
+        <div className="p-5 border-b border-white/[0.08] bg-[#111115] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-              <Scale size={20} />
+            <div className="w-9 h-9 rounded-lg bg-[#18181B] border border-white/[0.08] flex items-center justify-center text-sky-400 shrink-0">
+              <Scale size={18} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white tracking-tight">
+                <h3 className="text-sm font-semibold text-zinc-100 tracking-tight">
                   50-State Statutory Jurisprudence & Mandatory Contract Riders
                 </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/30">
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   Lex Loci Rei Sitae
                 </span>
               </div>
-              <p className="text-xs text-zinc-400 mt-0.5">
-                Jurisdictional compliance analysis: Mandatory state statutory overrides vs. 50-State commercial baseline
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Mandatory state statutory overrides vs. 50-State commercial baseline
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
             title="Close Dossier"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         {/* State Tabs Selector */}
-        <div className="px-5 pt-3.5 pb-2 bg-black/40 border-b border-zinc-800/80 flex items-center gap-2 overflow-x-auto custom-scrollbar">
+        <div className="px-5 py-2.5 bg-[#09090B] border-b border-white/[0.06] flex items-center gap-1.5 overflow-x-auto custom-scrollbar">
           {Object.values(STATE_SPECIFIC_RIDERS).map(rider => (
             <button
               key={rider.id}
               onClick={() => setActiveTab(rider.id)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
                 activeTab === rider.id
-                  ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)] font-bold'
-                  : 'text-zinc-400 hover:text-zinc-200 bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700'
+                  ? 'bg-white/[0.1] text-white border border-white/[0.12]'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] border border-transparent'
               }`}
             >
-              <MapPin size={12} className={activeTab === rider.id ? 'text-cyan-400' : 'text-zinc-500'} />
+              <MapPin size={12} className={activeTab === rider.id ? 'text-sky-400' : 'text-zinc-500'} />
               <span>{rider.shortName}</span>
               {selectedStateRider === rider.id && (
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" title="Active Draft Rider" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" title="Active Draft Rider" />
               )}
             </button>
           ))}
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
           {/* Top State Badge & Title */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-2xl bg-zinc-900/70 border border-zinc-800">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-lg bg-[#111115] border border-white/[0.08]">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h4 className="text-sm font-bold text-white">{activeRider.name}</h4>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 font-bold border border-cyan-500/25">
+                <h4 className="text-sm font-semibold text-zinc-100">{activeRider.name}</h4>
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-300 border border-white/[0.08]">
                   {activeRider.statute}
                 </span>
               </div>
-              <p className="text-xs text-zinc-300 mt-1">{activeRider.summary}</p>
+              <p className="text-xs text-zinc-400 mt-1">{activeRider.summary}</p>
             </div>
 
             {isEditorActive && (
@@ -867,16 +842,16 @@ function StateDossierModal({ isOpen, onClose, selectedStateRider, onSelectStateR
                   onSelectStateRider(activeTab);
                   onClose();
                 }}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shrink-0 shadow-sm ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 ${
                   selectedStateRider === activeTab
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
-                    : 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-[0_0_15px_rgba(16,185,129,0.25)]'
+                    ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 cursor-default'
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                 }`}
               >
                 {selectedStateRider === activeTab ? (
                   <>
                     <CheckCircle2 size={13} className="text-emerald-400" />
-                    <span>Currently Active In Agreement</span>
+                    <span>Active in Draft</span>
                   </>
                 ) : (
                   <>

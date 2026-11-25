@@ -143,297 +143,295 @@ export default function ContractCompare({ isDemoMode = false }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white font-sans flex flex-col md:flex-row relative overflow-hidden">
-      {/* Subtle Background Surface */}
-
-      {/* Sidebar — Professional Legal Dashboard */}
-      <aside className="w-full md:w-[280px] bg-[#050A0F] border-r border-zinc-800/60 flex flex-col shrink-0 z-20">
-        {/* Brand Header */}
-        <div className="px-5 py-5 border-b border-zinc-800/60">
-          <div className="flex items-center justify-between mb-3.5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#0A1A14] border border-emerald-500/30 flex items-center justify-center ">
-                <ShieldAlert className="text-emerald-400" size={18} />
+    <div className="min-h-screen bg-[#09090B] text-zinc-100 font-sans flex flex-col md:flex-row relative overflow-hidden">
+      {/* Executive Counsel Sidebar */}
+      <aside className="w-full md:w-[256px] bg-[#0C0C0F] border-b md:border-b-0 md:border-r border-white/[0.06] flex flex-col shrink-0 z-20">
+        {/* Compact Brand Header */}
+        <div className="px-4 py-4 border-b border-white/[0.06]">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center shrink-0">
+                <Scale className="text-emerald-400" size={16} />
               </div>
-              <div>
-                <h1 className="text-sm font-bold text-white tracking-tight">ContractGuard</h1>
-                <p className="text-[10px] text-zinc-400 font-mono tracking-wider uppercase">Air-Gapped Legal Studio</p>
+              <div className="min-w-0">
+                <h1 className="text-sm font-semibold text-zinc-100 tracking-tight truncate">ContractGuard</h1>
+                <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-zinc-500">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="truncate">Local RAM · ABA 1.6</span>
+                </div>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">
-              {isDemo ? 'Evaluation' : 'v2.4 Pro'}
+            <span className="text-[10px] font-medium text-zinc-400 bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 rounded-md shrink-0">
+              {isDemo ? 'Sandbox' : 'Pro'}
             </span>
           </div>
-
-          {/* Security Badge */}
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-emerald-500/8 border border-emerald-500/15 text-[10px] text-emerald-400/90 font-mono">
-            <ShieldCheck size={12} className="shrink-0 text-emerald-400" />
-            <span>Air-Gapped · RAM-Only · 0 Cloud</span>
-          </div>
-
-          {/* Subscriber Sign In for Demo Mode */}
-          {isDemo && (
-            <button
-              type="button"
-              onClick={() => navigate('/app/contractcompare')}
-              className="w-full mt-2.5 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/25 text-xs font-mono text-emerald-300 transition-colors cursor-pointer"
-              title="Already a subscriber? Sign in with your license key"
-            >
-              <Key size={12} className="text-emerald-400" />
-              <span>Subscriber Sign In</span>
-            </button>
-          )}
         </div>
 
         {/* Navigation Modules */}
-        <nav className="flex-1 px-3 py-3 flex flex-col gap-1 overflow-y-auto custom-scrollbar">
-          <p className="text-[9px] uppercase tracking-[0.15em] text-zinc-400 font-semibold px-2 mb-1">Modules</p>
+        <nav className="flex-1 px-3 py-3.5 flex flex-col gap-0.5 overflow-y-auto custom-scrollbar">
+          <p className="text-[11px] font-medium text-zinc-500 px-2.5 mb-1.5">Audit Studio</p>
 
-          {/* Module 1: Deterministic Fact-Checking Engine */}
+          {/* Module 1: Contract Audit */}
           <button
+            type="button"
             onClick={() => setActiveTool('analyzer')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
               activeTool === 'analyzer'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-white/[0.07] text-white'
+                : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
             }`}
           >
-            <ShieldCheck size={16} className={activeTool === 'analyzer' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
-            <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight truncate">Deterministic Fact-Checking Engine</p>
-              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">0% Hallucination · Mathematical Audit</p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <ShieldCheck size={15} className={activeTool === 'analyzer' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+              <span className="truncate">Contract Audit</span>
             </div>
-            {activeTool === 'analyzer' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
 
-          {/* Sub-Tools: Single Draft Audit, Redline Diff Mode, Linguistic Proofreader, Liability Reconciler (Permanently Pinned) */}
-          <div className="mx-1 mt-1 mb-2 p-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1">
+          {/* Permanently Pinned 4 Core Audit Modes */}
+          <div className="ml-3.5 pl-2.5 border-l border-zinc-800/80 my-1 space-y-0.5">
             <button
+              type="button"
               onClick={() => {
                 setActiveTool('analyzer');
                 setAnalysisMode('single');
               }}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors cursor-pointer ${
                 activeTool === 'analyzer' && analysisMode === 'single'
-                  ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                  ? 'bg-emerald-500/12 text-emerald-300 font-medium'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
               }`}
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <FileCheck size={13} className={activeTool === 'analyzer' && analysisMode === 'single' ? 'text-emerald-400' : 'text-zinc-500'} />
-                <span className="truncate">Single Draft Audit</span>
-              </div>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">AST</span>
+              <span className="truncate">Single Draft Audit</span>
+              <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                activeTool === 'analyzer' && analysisMode === 'single'
+                  ? 'bg-emerald-500/20 text-emerald-300'
+                  : 'text-zinc-500 bg-white/[0.03]'
+              }`}>AST</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setActiveTool('analyzer');
                 setAnalysisMode('comparative');
               }}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors cursor-pointer ${
                 activeTool === 'analyzer' && analysisMode === 'comparative'
-                  ? 'bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/30 '
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                  ? 'bg-emerald-500/12 text-emerald-300 font-medium'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
               }`}
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <Search size={13} className={activeTool === 'analyzer' && analysisMode === 'comparative' ? 'text-cyan-400' : 'text-zinc-500'} />
-                <span className="truncate">Redline Diff Mode</span>
-              </div>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">Myers</span>
+              <span className="truncate">Redline Diff Mode</span>
+              <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                activeTool === 'analyzer' && analysisMode === 'comparative'
+                  ? 'bg-emerald-500/20 text-emerald-300'
+                  : 'text-zinc-500 bg-white/[0.03]'
+              }`}>Myers</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setActiveTool('analyzer');
                 setAnalysisMode('harmonizer');
               }}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors cursor-pointer ${
                 activeTool === 'analyzer' && analysisMode === 'harmonizer'
-                  ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 '
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                  ? 'bg-emerald-500/12 text-emerald-300 font-medium'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
               }`}
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <Scale size={13} className={activeTool === 'analyzer' && analysisMode === 'harmonizer' ? 'text-emerald-400' : 'text-zinc-500'} />
-                <span className="truncate">Linguistic & Deed Proofreader</span>
-              </div>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Deed</span>
+              <span className="truncate">Linguistic & Deed Proofreader</span>
+              <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                activeTool === 'analyzer' && analysisMode === 'harmonizer'
+                  ? 'bg-emerald-500/20 text-emerald-300'
+                  : 'text-zinc-500 bg-white/[0.03]'
+              }`}>Deed</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 setActiveTool('analyzer');
                 setAnalysisMode('liability');
               }}
-              className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+              className={`w-full flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md text-xs transition-colors cursor-pointer ${
                 activeTool === 'analyzer' && analysisMode === 'liability'
-                  ? 'bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30 '
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                  ? 'bg-emerald-500/12 text-emerald-300 font-medium'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'
               }`}
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <ShieldAlert size={13} className={activeTool === 'analyzer' && analysisMode === 'liability' ? 'text-amber-400' : 'text-zinc-500'} />
-                <span className="truncate">Liability & Indemnity Reconciler</span>
-              </div>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Matrix</span>
+              <span className="truncate">Liability & Indemnity Reconciler</span>
+              <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                activeTool === 'analyzer' && analysisMode === 'liability'
+                  ? 'bg-emerald-500/20 text-emerald-300'
+                  : 'text-zinc-500 bg-white/[0.03]'
+              }`}>Matrix</span>
             </button>
           </div>
 
+          <p className="text-[11px] font-medium text-zinc-500 px-2.5 mt-3 mb-1">Tools</p>
+
           {/* Module 2: PII Redactor */}
           <button
+            type="button"
             onClick={() => setActiveTool('redact')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
               activeTool === 'redact'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-white/[0.07] text-white'
+                : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
             }`}
           >
-            <EyeOff size={16} className={activeTool === 'redact' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
-            <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight truncate">Smart PII Redactor</p>
-              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Identity & financial scrub</p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <EyeOff size={15} className={activeTool === 'redact' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+              <span className="truncate">Smart PII Redactor</span>
             </div>
-            {activeTool === 'redact' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
 
           {/* Module 3: Bates Stamping */}
           <button
+            type="button"
             onClick={() => setActiveTool('bates')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
               activeTool === 'bates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-white/[0.07] text-white'
+                : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
             }`}
           >
-            <Layers size={16} className={activeTool === 'bates' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
-            <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight truncate">Bates Stamping Suite</p>
-              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Court evidence numbering</p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Layers size={15} className={activeTool === 'bates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+              <span className="truncate">Bates Stamping</span>
             </div>
-            {activeTool === 'bates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
 
-          {/* Module 4: Legal Templates Vault */}
+          {/* Module 4: Template Vault */}
           <button
+            type="button"
             onClick={() => setActiveTool('templates')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
               activeTool === 'templates'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-white/[0.07] text-white'
+                : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
             }`}
           >
-            <BookOpen size={16} className={activeTool === 'templates' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
-            <div className="text-left flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <p className="text-[13px] font-semibold leading-tight truncate">Template Vault</p>
-                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">AmLaw 100</span>
-              </div>
-              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">US commercial contract library</p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <BookOpen size={15} className={activeTool === 'templates' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+              <span className="truncate">Template Vault</span>
             </div>
-            {activeTool === 'templates' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
+            <span className="text-[10px] font-mono text-zinc-500 shrink-0">AmLaw</span>
           </button>
 
           {/* Module 5: Audit Vault */}
           <button
+            type="button"
             onClick={() => setActiveTool('history')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
               activeTool === 'history'
-                ? 'bg-emerald-500/12 text-emerald-300 border border-emerald-500/25 '
-                : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                ? 'bg-white/[0.07] text-white'
+                : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
             }`}
           >
-            <Database size={16} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-400 shrink-0'} />
-            <div className="text-left flex-1 min-w-0">
-              <p className="text-[13px] font-semibold leading-tight truncate">Audit Vault</p>
-              <p className="text-[10px] text-zinc-400 mt-0.5 truncate">Encrypted local persistence</p>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Database size={15} className={activeTool === 'history' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+              <span className="truncate">Audit Vault</span>
             </div>
-            {activeTool === 'history' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />}
           </button>
         </nav>
 
-        {/* Workstation & License Settings Button */}
-        <div className="px-3.5 pt-2 pb-1.5 border-t border-zinc-800/60">
+        {/* Bottom Dock: License & Offline App */}
+        <div className="p-3 border-t border-white/[0.06] space-y-2">
           {isDemo ? (
             <button
               type="button"
               onClick={() => setShowPlanModal(true)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/15 border border-emerald-500/25 text-xs font-medium text-emerald-400 transition-colors cursor-pointer group"
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-xs font-semibold transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <Lock size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                <Lock size={13} className="shrink-0" />
                 <span className="truncate">Unlock License</span>
               </div>
-              <span className="text-[9px] font-mono uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.5 rounded font-bold shrink-0">
-                {auditsLeft} Left
+              <span className="text-[10px] font-mono tabular-nums bg-black/15 px-1.5 py-0.5 rounded font-bold shrink-0">
+                {auditsLeft} left
               </span>
             </button>
           ) : (
             <button
+              type="button"
               onClick={() => { setShowSettingsModal(true); loadDeviceLicenseData(); }}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/60 text-xs font-semibold text-zinc-200 transition-all cursor-pointer shadow-sm group"
+              className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <Settings size={14} className="text-emerald-400 group-hover:rotate-45 transition-transform" />
-                <span className="truncate">Workstation & License</span>
+                <Settings size={13} className="text-emerald-400 shrink-0" />
+                <span className="truncate">Workstation License</span>
               </div>
-              <span className="text-[9px] font-mono uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.2 rounded font-bold shrink-0">
+              <span className="text-[10px] font-mono text-zinc-400 shrink-0">
                 {licenseData?.plan === 'firm' ? 'Firm' : 'Solo'}
               </span>
             </button>
           )}
-        </div>
 
-        {/* Bottom: PWA Install */}
-        <div className="px-4 py-3 border-t border-zinc-800/40">
-          <button
-            onClick={handleInstallApp}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs px-4 py-2.5 rounded-lg transition-all  cursor-pointer"
-          >
-            <HardDriveDownload size={14} />
-            Install Offline App (PWA)
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Workspace */}
-      <main className="flex-1 p-5 md:p-7 overflow-y-auto z-10 custom-scrollbar flex flex-col">
-        {isDemo && (
-          <div className="mb-5 bg-[#090D14] border border-white/10 rounded-xl p-3 px-5 flex flex-wrap items-center justify-between gap-4 shrink-0 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[11px] font-mono text-emerald-400 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Evaluation Sandbox</span>
-              </div>
-              <p className="text-xs text-zinc-300">
-                You have <span className="font-semibold text-white font-mono tabular-nums">{auditsLeft} of 3</span> free full audits remaining in this evaluation session.
-              </p>
-            </div>
-            <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1.5">
+            {isDemo && (
               <button
                 type="button"
                 onClick={() => navigate('/app/contractcompare')}
-                className="px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-mono font-medium text-emerald-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] text-[11px] font-medium text-zinc-300 transition-colors cursor-pointer"
                 title="Sign In with your active license key"
               >
-                <Key size={12} className="text-emerald-400" />
-                <span>Subscriber Sign In</span>
+                <Key size={12} className="text-zinc-400" />
+                <span>Sign In</span>
               </button>
+            )}
+            <button
+              type="button"
+              onClick={handleInstallApp}
+              className={`${isDemo ? 'flex-1' : 'w-full'} flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] text-[11px] font-medium text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer`}
+              title="Install Offline Desktop App"
+            >
+              <HardDriveDownload size={12} />
+              <span>Install App</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Executive Workspace */}
+      <main className="flex-1 px-5 py-5 md:px-8 md:py-6 overflow-y-auto z-10 custom-scrollbar flex flex-col">
+        {/* Quiet Unified Top Utility Bar */}
+        {(isUnlocked || isDemo) && (
+          <div className="max-w-6xl w-full mx-auto mb-5 pb-3 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs">
+            <div className="flex items-center gap-2.5 text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              {isDemo ? (
+                <span>
+                  Evaluation Sandbox · <span className="text-zinc-200 font-medium tabular-nums">{auditsLeft} of 3</span> free audits remaining
+                </span>
+              ) : (
+                <span>Air-Gapped Local RAM Session · Zero Cloud Telemetry</span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              {isDemo && (
+                <button
+                  type="button"
+                  onClick={() => setShowPlanModal(true)}
+                  className="px-3 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
+                >
+                  View Plans ($199 / $299)
+                </button>
+              )}
               <button
                 type="button"
-                onClick={() => openSeamlessCheckout({ plan: 'solo', toolName: 'contractcompare' })}
-                className="px-3.5 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-zinc-200 transition-colors cursor-pointer"
+                onClick={() => {
+                  setGuideModalTab(activeTool === 'analyzer' ? 'analyzer' : activeTool);
+                  setShowGuideModal(true);
+                }}
+                className="px-2.5 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04] transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="How to use this module"
               >
-                Solo License ($199)
-              </button>
-              <button
-                type="button"
-                onClick={() => openSeamlessCheckout({ plan: 'firm', toolName: 'contractcompare' })}
-                className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition-colors flex items-center gap-1.5 cursor-pointer border-t border-white/20 active:scale-[0.98]"
-              >
-                <span>Unlock Firm Suite ($299)</span>
-                <Lock size={12} />
+                <HelpCircle size={13} />
+                <span>Guide</span>
               </button>
             </div>
           </div>
@@ -1108,6 +1106,9 @@ function ContractAnalyzerView({
       setDocumentTitle('Enterprise Cloud Master Subscription Agreement');
       setClientParty('Apex Global Logistics Inc.');
       setCounterparty('CloudScale Infrastructure Corp.');
+      if (analysisMode === 'comparative') {
+        setAnalysisMode('single');
+      }
       if (autoExecute) {
         handleExecuteAudit({
           text: SAAS_SAMPLE_CONTRACT,
@@ -1278,6 +1279,7 @@ function ContractAnalyzerView({
   // Workstation Navigation States
   const [showAltExports, setShowAltExports] = useState(false);
   const [noticeExpanded, setNoticeExpanded] = useState(false);
+  const [showMatterMeta, setShowMatterMeta] = useState(false);
 
   const handleJumpToLine = (lineNum) => {
     if (!lineNum) return;
@@ -1582,264 +1584,199 @@ function ContractAnalyzerView({
     });
   }, [auditResults, riskSeverityFilter]);
 
-  // Calculations for score badges
+  // Memoized secondary counts so tab switches never trigger redundant parses
+  const proofreaderCount = useMemo(() => {
+    if (harmonizedData?.improvements) return harmonizedData.improvements.length;
+    if (!auditResults || !text.trim()) return 0;
+    try {
+      return restateAndPolishContract(text).improvements.length;
+    } catch {
+      return 0;
+    }
+  }, [harmonizedData, auditResults, text]);
+
+  const liabilityTrapCount = useMemo(() => {
+    if (liabilityAuditData?.rules) return liabilityAuditData.rules.filter(r => r.status === 'FAIL').length;
+    if (!auditResults || !text.trim()) return 0;
+    try {
+      return analyzeLiabilityInterlocks(text).rules.filter(r => r.status === 'FAIL').length;
+    } catch {
+      return 0;
+    }
+  }, [liabilityAuditData, auditResults, text]);
+
+  // Calculations for score badges (Restrained Institutional Palette)
   const riskScore = auditResults?.overallRiskScore ?? 0;
   const riskLevel = auditResults?.riskLevel || 'low';
-  const riskScoreBadgeColor = riskScore >= 75 ? 'bg-red-500 text-white border-red-400' :
-                              riskScore >= 45 ? 'bg-orange-500 text-black border-orange-400' :
-                              riskScore >= 20 ? 'bg-amber-500 text-black border-amber-400' :
-                              'bg-emerald-500 text-black border-emerald-400';
+  const riskScoreBadgeColor = riskScore >= 75 ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
+                              riskScore >= 45 ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
+                              riskScore >= 20 ? 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30' :
+                              'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+
+  const modeMeta = {
+    single: {
+      title: 'Single Draft Audit',
+      desc: 'Inspect cross-references, defined terms, financials, and hidden liabilities.'
+    },
+    comparative: {
+      title: 'Redline Diff Mode',
+      desc: 'Compare your approved baseline against incoming counterparty revisions.'
+    },
+    harmonizer: {
+      title: 'Linguistic & Deed Proofreader',
+      desc: 'Refine archaic legalese while keeping every parcel, date, and figure locked.'
+    },
+    liability: {
+      title: 'Liability & Indemnity Reconciler',
+      desc: 'Audit indemnity caps, carve-outs, consequential waivers, and sole remedies.'
+    }
+  }[analysisMode] || { title: 'Contract Audit', desc: 'Deterministic contract inspection in local RAM.' };
 
   return (
-    <div className="max-w-7xl mx-auto h-full flex flex-col gap-6 font-ui">
-      {/* Top Header & Mode Toggle */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
+    <div className="max-w-6xl w-full mx-auto h-full flex flex-col gap-4 font-ui">
+      {/* Unified Executive Mode Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-              <ShieldCheck className="text-emerald-400 shrink-0" size={24} />
-              <span>Deterministic Fact-Checking Engine</span>
-            </h2>
-            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              100% IN-MEMORY RAM
-            </span>
-            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-              0% AI PROBABILITY
-            </span>
-          </div>
-          <p className="text-sm text-zinc-400 mt-1">
-            Mathematical AST & regex verification across cross-references, missing exhibits, defined terms, and financial figures. ABA Model Rule 1.6 Privileged.
+          <h2 className="text-xl font-semibold tracking-tight text-zinc-100">
+            {modeMeta.title}
+          </h2>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            {modeMeta.desc}
           </p>
         </div>
 
-        {/* Mode Selector only — Apple macOS Segmented Pill */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex apple-segmented-pill bg-black/60">
-            <button
-              onClick={() => {
-                setAnalysisMode('single');
-                setActiveHudTab('dealBreakers');
-              }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                analysisMode === 'single'
-                  ? 'apple-segmented-pill-active'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <FileCheck size={14} />
-              Single Draft Audit
-            </button>
-            <button
-              onClick={() => {
-                setAnalysisMode('comparative');
-                setActiveHudTab('diff');
-              }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                analysisMode === 'comparative'
-                  ? 'bg-cyan-500/15 border border-cyan-400/35 border-t-white/30 text-cyan-300 shadow-[0_2px_10px_rgba(0,240,255,0.15)]'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              <Search size={14} />
-              Redline Diff Mode
-            </button>
-            <button
-              onClick={() => {
-                setAnalysisMode('harmonizer');
-                if (!harmonizedData && text.trim()) {
-                  handleRunHarmonizer();
-                }
-              }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                analysisMode === 'harmonizer'
-                  ? 'bg-emerald-500/15 border border-emerald-400/35 border-t-white/30 text-emerald-300 shadow-[0_2px_10px_rgba(0,255,157,0.15)]'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-              title="Forensic Linguistic & Legal Proofreading with 100% Data Preservation"
-            >
-              <FileCheck size={14} className="text-emerald-400" />
-              Linguistic & Deed Proofreader
-            </button>
-            <button
-              onClick={() => {
-                setAnalysisMode('liability');
-                if (!liabilityAuditData && text.trim()) {
-                  handleRunLiabilityAudit();
-                }
-              }}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                analysisMode === 'liability'
-                  ? 'bg-amber-500/15 border border-amber-400/35 border-t-white/30 text-amber-300 shadow-[0_2px_10px_rgba(251,191,36,0.15)] font-bold'
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-              title="Audit Interlocking Liabilities, Caps, and Indemnity Carve-Outs"
-            >
-              <ShieldAlert size={14} className="text-amber-400" />
-              Liability & Indemnity Reconciler
-            </button>
-          </div>
-
-          {onOpenGuide && (
-            <button
-              onClick={() => onOpenGuide('analyzer')}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm group shrink-0"
-              title="How to Use & Mathematical Methodology"
-            >
-              <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
-              <span>How to Use</span>
-            </button>
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {isDemo && (
+            <>
+              <button
+                type="button"
+                onClick={() => handleLoadSampleCase('ma')}
+                className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                title="Load M&A Agreement with $45,000 clerical discrepancy and broken Section 14.2"
+              >
+                M&A Sample
+              </button>
+              <button
+                type="button"
+                onClick={() => handleLoadSampleCase('saas')}
+                className="px-2.5 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                title="Load SaaS MSA with broken Exhibit C and liability cap collision"
+              >
+                SaaS Sample
+              </button>
+            </>
           )}
+
+          <button
+            type="button"
+            onClick={() => setShowMatterMeta((v) => !v)}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
+              showMatterMeta
+                ? 'bg-white/[0.08] border-white/15 text-white'
+                : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.08] text-zinc-300'
+            }`}
+            title="Edit Agreement Title, Client Entity, and Counterparty Name"
+          >
+            <FileText size={13} className="text-zinc-400" />
+            <span className="max-w-[170px] truncate">{documentTitle || 'Matter Info'}</span>
+            <ChevronDown size={12} className={`text-zinc-500 transition-transform ${showMatterMeta ? 'rotate-180' : ''}`} />
+          </button>
         </div>
       </div>
 
-      {/* Zero-Cloud Privilege Shield Trust Bar */}
-      <div className="px-4 py-2.5 rounded-xl bg-emerald-500/8 border border-emerald-500/20 flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-xs font-mono">
-        <div className="flex items-center gap-2.5 text-emerald-300">
-          <ShieldCheck size={16} className="text-emerald-400 shrink-0" />
-          <span><strong>ZERO-CLOUD PRIVILEGE SHIELD:</strong> 100% In-Memory RAM execution. Client contracts, confidential party covenants, and financial terms never touch an external cloud server or LLM API.</span>
-        </div>
-        <span className="text-zinc-400 text-[11px] shrink-0 font-bold uppercase tracking-wider">ABA Model Rule 1.6 Certified</span>
-      </div>
-
-      {/* Clean Horizontal Matter Metadata Bar & Setup Inputs (Always Visible) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-zinc-900/40 border border-zinc-800/80 rounded-2xl">
-        <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1">Matter / Agreement Title</label>
-          <input
-            type="text"
-            value={documentTitle}
-            onChange={(e) => setDocumentTitle(e.target.value)}
-            placeholder="e.g. Master Services Agreement"
-            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-colors"
-          />
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1 flex items-center gap-1.5">
-            <User size={13} className="text-cyan-400" /> Client Entity (Your Side)
-          </label>
-          <input
-            type="text"
-            value={clientParty}
-            onChange={(e) => setClientParty(e.target.value)}
-            placeholder="e.g. Acme Corporation"
-            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-cyan-500 outline-none transition-colors"
-          />
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1 flex items-center gap-1.5">
-            <Users size={13} className="text-emerald-400" /> Counterparty Name
-          </label>
-          <input
-            type="text"
-            value={counterparty}
-            onChange={(e) => setCounterparty(e.target.value)}
-            placeholder="e.g. Globex Systems Inc"
-            className="w-full bg-black/50 border border-zinc-800 rounded-lg px-3 py-1.5 text-sm text-white focus:border-emerald-500 outline-none transition-colors"
-          />
-        </div>
-      </div>
-
-      {/* 1-Click Interactive Benchmark Contract Cases (Zero-Friction Test for Demo) */}
-      {isDemo && (
-        <div className="p-3 bg-[#090D14] border border-white/10 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-              <FileText size={15} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-semibold text-white">
-                  Interactive Benchmark Contracts
-                </span>
-                <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-white/[0.04] text-emerald-400 border border-white/10">
-                  Pre-loaded
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
-                Explore how the forensic engine discovers hidden clerical and cross-reference defects in real time:
-              </p>
-            </div>
+      {/* Collapsible Matter Details Drawer */}
+      {showMatterMeta && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3.5 bg-[#111115] border border-white/[0.08] rounded-xl">
+          <div>
+            <label className="text-[11px] font-medium text-zinc-400 block mb-1">Agreement Title</label>
+            <input
+              type="text"
+              value={documentTitle}
+              onChange={(e) => setDocumentTitle(e.target.value)}
+              placeholder="Master Services Agreement..."
+              className="w-full bg-[#09090B] border border-white/[0.08] focus:border-emerald-500/60 rounded-lg px-3 py-1.5 text-xs text-zinc-100 outline-none transition-colors"
+            />
           </div>
-
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            <button
-              type="button"
-              onClick={() => handleLoadSampleCase('ma')}
-              className="flex-1 md:flex-none px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-emerald-400 transition-colors flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
-              title="Load M&A Agreement with $45,000 words vs numbers discrepancy and broken Section 14.2 reference"
-            >
-              <FileText size={13} />
-              <span>M&A Deal ($45k Clerical Flaw)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleLoadSampleCase('saas')}
-              className="flex-1 md:flex-none px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-medium text-cyan-400 transition-colors flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.98]"
-              title="Load SaaS MSA with broken Exhibit C and liability cap collision"
-            >
-              <FileCode size={13} />
-              <span>SaaS MSA (Missing Exhibit C)</span>
-            </button>
+          <div>
+            <label className="text-[11px] font-medium text-zinc-400 block mb-1">Client Entity</label>
+            <input
+              type="text"
+              value={clientParty}
+              onChange={(e) => setClientParty(e.target.value)}
+              placeholder="Acme Corporation..."
+              className="w-full bg-[#09090B] border border-white/[0.08] focus:border-emerald-500/60 rounded-lg px-3 py-1.5 text-xs text-zinc-100 outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label className="text-[11px] font-medium text-zinc-400 block mb-1">Counterparty</label>
+            <input
+              type="text"
+              value={counterparty}
+              onChange={(e) => setCounterparty(e.target.value)}
+              placeholder="Globex Systems Inc..."
+              className="w-full bg-[#09090B] border border-white/[0.08] focus:border-emerald-500/60 rounded-lg px-3 py-1.5 text-xs text-zinc-100 outline-none transition-colors"
+            />
           </div>
         </div>
       )}
 
-      {/* Input Panes */}
+      {/* Document Workbench */}
       {analysisMode === 'single' || analysisMode === 'harmonizer' || analysisMode === 'liability' ? (
-        /* SINGLE DOCUMENT INTEGRITY AUDIT / HARMONIZER / LIABILITY MODE */
-        <div 
+        <div
           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
           onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
-          className={`flex flex-col rounded-2xl bg-zinc-900/50 border transition-all overflow-hidden shadow-xl relative ${
-            isDraggingTarget 
-              ? 'border-emerald-400 bg-emerald-500/10  ring-2 ring-emerald-400/50' 
-              : 'border-zinc-800'
+          className={`flex flex-col rounded-xl bg-[#111115] border transition-colors overflow-hidden relative ${
+            isDraggingTarget
+              ? 'border-emerald-500 bg-emerald-500/5'
+              : 'border-white/[0.08]'
           }`}
         >
           {isDraggingTarget && (
-            <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center ">
-                <Upload size={30} className="animate-bounce" />
-              </div>
-              <p className="text-sm font-bold text-white tracking-wide">Drop Contract Document Here</p>
-              <p className="text-xs text-zinc-400 font-mono">Supports .pdf, .docx, .txt, .md + Scanned Images (.png, .jpg)</p>
+            <div className="absolute inset-0 z-30 bg-[#09090B]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none gap-2">
+              <Upload size={26} className="text-emerald-400" />
+              <p className="text-sm font-medium text-white">Drop Contract Here</p>
+              <p className="text-xs text-zinc-400">.pdf, .docx, .txt, .md, or scanned image</p>
             </div>
           )}
 
-          <div className="px-4 py-3 bg-zinc-900/90 border-b border-zinc-800 flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-300 font-mono flex items-center gap-2">
-              {analysisMode === 'harmonizer' ? (
-                <>
-                  <FileCheck size={15} className="text-emerald-400" />
-                  LINGUISTIC & LEGAL PROOFREADER (Preserving 100% of Land Boundaries, Acreages & Covenants)
-                </>
-              ) : analysisMode === 'liability' ? (
-                <>
-                  <ShieldAlert size={15} className="text-amber-400" />
-                  CONTRACT DRAFT TO RECONCILE (Auditing Cap vs Indemnity & Consequential Waivers)
-                </>
-              ) : (
-                <>
-                  <FileCheck size={15} className="text-emerald-400" />
-                  CONTRACT DRAFT TO PROOFREAD (Drag & Drop or Import)
-                </>
-              )}
-            </span>
-            <div className="flex items-center gap-2">
-              {uploadStatus.target && (
-                <span className="text-xs font-mono text-cyan-400">{uploadStatus.target}</span>
-              )}
+          {parsingProgress.active && parsingProgress.statusKey === 'target' && (
+            <div className="absolute inset-0 z-30 bg-[#09090B]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+              <RefreshCw size={22} className="text-emerald-400 animate-spin mb-3" />
+              <p className="text-sm font-medium text-white mb-1">Reading Document in Local RAM</p>
+              <p className="text-xs font-mono text-zinc-400 mb-3">
+                {parsingProgress.message || `Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} (${parsingProgress.percent}%)`}
+              </p>
+              <div className="w-full max-w-xs h-1 bg-zinc-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-emerald-500 rounded-full transition-all duration-200"
+                  style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }}
+                />
+              </div>
+            </div>
+          )}
 
+          {/* Document Header Chrome */}
+          <div className="px-4 py-2.5 bg-[#15151A] border-b border-white/[0.06] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xs font-medium text-zinc-300 truncate">
+                Draft Document
+              </span>
+              {uploadStatus.target && (
+                <span className="text-[11px] font-mono text-emerald-400 truncate max-w-[240px]">
+                  · {uploadStatus.target}
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
               {text ? (
                 <button
                   type="button"
                   onClick={handleClearDraft}
-                  className="bg-white/5 hover:bg-rose-500/10 hover:border-rose-500/40 border border-zinc-800 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer"
-                  title="Clear draft text and inputs"
+                  className="px-2.5 py-1 rounded-md text-xs text-zinc-400 hover:text-rose-300 hover:bg-white/[0.04] transition-colors cursor-pointer"
                 >
-                  <Trash2 size={11} className="text-zinc-500 hover:text-rose-400" />
-                  Clear Draft
+                  Clear
                 </button>
               ) : (
                 <button
@@ -1851,15 +1788,15 @@ function ContractAnalyzerView({
                     setClientParty('Acme Holdings LLC');
                     setCounterparty('Globex International Corp');
                   }}
-                  className="bg-transparent hover:bg-white/5 border border-zinc-800 hover:border-zinc-700 px-2 py-1 rounded-md text-[11px] font-medium text-zinc-400 hover:text-zinc-200 transition-colors flex items-center gap-1 opacity-80 hover:opacity-100"
-                  title="Load sample demo contract"
+                  className="px-2.5 py-1 rounded-md text-xs text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors cursor-pointer"
                 >
-                  <FileText size={11} className="text-amber-400/80" /> Sample Demo
+                  Insert Sample
                 </button>
               )}
-              
-              <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-300 transition-colors flex items-center gap-1.5">
-                <Upload size={13} /> Import (.pdf / .docx / .txt / Scanned Image)
+
+              <label className="cursor-pointer px-3 py-1 rounded-md bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-medium text-zinc-200 transition-colors flex items-center gap-1.5">
+                <Upload size={12} />
+                <span>Import File</span>
                 <input
                   type="file"
                   accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
@@ -1869,6 +1806,7 @@ function ContractAnalyzerView({
               </label>
             </div>
           </div>
+
           <textarea
             id="contract-draft-textarea"
             value={text}
@@ -1896,857 +1834,643 @@ function ContractAnalyzerView({
                 if (meta.counterparty && !counterparty) setCounterparty(meta.counterparty);
               }
             }}
-            placeholder="Paste contract text here or drag & drop .pdf / .docx / .txt file to audit for broken references, missing exhibits, undefined terms, and financial mismatches..."
-            className="w-full bg-black/40 p-5 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[260px]"
+            placeholder="Paste contract text here, or drag & drop a .pdf, .docx, or .txt file..."
+            className="w-full bg-[#0E0E12] px-6 py-5 text-[15px] font-legal leading-[1.8] text-zinc-200 placeholder:text-zinc-600 outline-none resize-none custom-scrollbar min-h-[260px]"
           />
 
-          <div className="px-5 py-2.5 border-t border-zinc-800/80 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
-            <span>Air-gapped client RAM processing · Drag & Drop enabled</span>
-            <span className="font-semibold text-zinc-300">
-              {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words • {text.split('\n').length} lines
-            </span>
+          {/* Integrated Execution Bar */}
+          <div className="px-4 py-3 bg-[#15151A] border-t border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3 text-xs text-zinc-500">
+              <span className="font-mono tabular-nums text-zinc-400">
+                {text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words · {text.split('\n').length} lines
+              </span>
+              {saveStatus && (
+                <span className="text-emerald-400 flex items-center gap-1">
+                  <Check size={13} /> {saveStatus}
+                </span>
+              )}
+              {workerError && (
+                <span className="text-rose-400 flex items-center gap-1">
+                  <AlertCircle size={13} /> {workerError}
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              {isProcessing && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cancelAnalysis();
+                  }}
+                  className="px-3.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <StopCircle size={13} />
+                  <span>Cancel</span>
+                </button>
+              )}
+
+              {analysisMode === 'harmonizer' ? (
+                <button
+                  type="button"
+                  onClick={() => handleRunHarmonizer()}
+                  disabled={isHarmonizing || !text.trim()}
+                  className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 cursor-pointer"
+                >
+                  {isHarmonizing ? <RefreshCw className="animate-spin" size={14} /> : <Scale size={14} />}
+                  <span>{isHarmonizing ? 'Proofreading…' : 'Run Proofreading'}</span>
+                </button>
+              ) : analysisMode === 'liability' ? (
+                <button
+                  type="button"
+                  onClick={() => handleRunLiabilityAudit()}
+                  disabled={isAnalyzingLiability || !text.trim()}
+                  className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 cursor-pointer"
+                >
+                  {isAnalyzingLiability ? <RefreshCw className="animate-spin" size={14} /> : <ShieldAlert size={14} />}
+                  <span>{isAnalyzingLiability ? 'Auditing Caps…' : 'Reconcile Liabilities'}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleExecuteAudit()}
+                  disabled={isProcessing || !text.trim()}
+                  className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 cursor-pointer"
+                >
+                  {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <Play size={14} />}
+                  <span>{isProcessing ? 'Auditing…' : 'Run Integrity Audit'}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ) : (
-        /* COMPARATIVE REDLINE DIFF MODE (DUAL PANES - COLOR-CODED) */
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {/* Approved Baseline Draft (GREEN / EMERALD THEME) */}
-          <div 
-            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(true); }}
-            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(false); }}
-            onDrop={(e) => handleFileDrop(e, setBaselineText, 'baseline', setIsDraggingBaseline)}
-            className={`flex flex-col rounded-2xl bg-zinc-950/80 border transition-all overflow-hidden shadow-xl relative ${
-              isDraggingBaseline 
-                ? 'border-emerald-400 bg-emerald-500/10 ring-2 ring-emerald-400/50' 
-                : 'border-emerald-500/30 hover:border-emerald-500/50'
-            }`}
-          >
-            {isDraggingBaseline && (
-              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2 animate-in fade-in">
-                <Upload size={28} className="animate-bounce" />
-                <p className="text-sm font-bold text-white">Drop Approved Baseline Document Here</p>
-                <p className="text-xs text-zinc-400 font-mono">.pdf, .docx, .txt</p>
-              </div>
-            )}
-
-            {/* In-RAM Parsing Progress Bar Overlay (for 100+ pages & OCR) */}
-            {parsingProgress.active && parsingProgress.statusKey === 'baseline' && (
-              <div className="absolute inset-0 z-30 bg-[#04090e]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-3 animate-pulse">
-                  <Activity size={24} />
+        /* COMPARATIVE REDLINE DIFF MODE */
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Approved Baseline */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(true); }}
+              onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingBaseline(false); }}
+              onDrop={(e) => handleFileDrop(e, setBaselineText, 'baseline', setIsDraggingBaseline)}
+              className={`flex flex-col rounded-xl bg-[#111115] border transition-colors overflow-hidden relative ${
+                isDraggingBaseline ? 'border-emerald-500 bg-emerald-500/5' : 'border-white/[0.08]'
+              }`}
+            >
+              {isDraggingBaseline && (
+                <div className="absolute inset-0 z-30 bg-[#09090B]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none gap-2">
+                  <Upload size={24} className="text-emerald-400" />
+                  <p className="text-sm font-medium text-white">Drop Baseline Draft</p>
                 </div>
-                <h4 className="text-sm font-bold text-white mb-1">
-                  Parsing Baseline in Local RAM
-                </h4>
-                <p className="text-xs font-mono text-emerald-300 mb-3">
-                  {parsingProgress.message || `Reading Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} in local RAM (${parsingProgress.percent}%)...`}
-                </p>
-                <div className="w-full max-w-xs h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-2">
-                  <div 
-                    className="h-full bg-emerald-400 rounded-full transition-all duration-200" 
-                    style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }} 
-                  />
-                </div>
-                <span className="text-[10px] font-mono text-zinc-500">
-                  Zero Cloud Upload · 100% In-Memory RAM Stream
-                </span>
-              </div>
-            )}
+              )}
 
-            {/* Pane Header: Emerald */}
-            <div className="px-4 py-3 bg-emerald-950/30 border-b border-emerald-500/20 flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-emerald-400 font-mono flex items-center gap-2">
-                  <ShieldCheck size={15} className="text-emerald-400" />
-                  YOUR APPROVED DRAFT (Original / Internal Master)
-                </span>
-                <p className="text-[10.5px] text-zinc-400 font-sans mt-0.5">
-                  Your firm's clean, approved baseline version before counterparty changes
-                </p>
+              {parsingProgress.active && parsingProgress.statusKey === 'baseline' && (
+                <div className="absolute inset-0 z-30 bg-[#09090B]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                  <RefreshCw size={22} className="text-emerald-400 animate-spin mb-3" />
+                  <p className="text-sm font-medium text-white mb-1">Reading Baseline in Local RAM</p>
+                  <p className="text-xs font-mono text-zinc-400 mb-3">
+                    {parsingProgress.message || `Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} (${parsingProgress.percent}%)`}
+                  </p>
+                  <div className="w-full max-w-xs h-1 bg-zinc-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 rounded-full transition-all duration-200"
+                      style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="px-4 py-2.5 bg-[#15151A] border-b border-white/[0.06] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="text-xs font-medium text-zinc-200 truncate">Original Baseline</span>
+                  {uploadStatus.baseline && (
+                    <span className="text-[11px] font-mono text-zinc-400 truncate max-w-[120px]">{uploadStatus.baseline}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {baselineText && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBaselineText('');
+                        resetAnalysis();
+                        setDiffDecisions({});
+                      }}
+                      className="px-2 py-1 rounded text-xs text-zinc-400 hover:text-rose-300 transition-colors cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                  <label className="cursor-pointer bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] px-2.5 py-1 rounded-md text-xs font-medium text-zinc-200 transition-colors flex items-center gap-1">
+                    <Upload size={11} />
+                    <span>Import</span>
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
+                      className="hidden"
+                      onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')}
+                    />
+                  </label>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                {uploadStatus.baseline && (
-                  <span className="text-xs font-mono text-emerald-300 max-w-[130px] truncate" title={uploadStatus.baseline}>
-                    {uploadStatus.baseline}
-                  </span>
-                )}
-                
-                <label className="cursor-pointer bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs font-medium text-emerald-300 transition-colors flex items-center gap-1">
-                  <Upload size={12} /> Upload File
-                  <input
-                    type="file"
-                    accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
-                    className="hidden"
-                    onChange={(e) => handleFileUpload(e, setBaselineText, 'baseline')}
-                  />
-                </label>
-                {baselineText && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setBaselineText('');
-                      resetAnalysis();
-                      setDiffDecisions({});
-                    }}
-                    className="px-2 py-1 bg-white/5 hover:bg-rose-500/15 border border-zinc-800 hover:border-rose-500/30 rounded-lg text-[11px] font-mono text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer"
-                    title="Clear baseline text"
-                  >
-                    <Trash2 size={11} /> Clear
-                  </button>
-                )}
+              <textarea
+                value={baselineText}
+                onChange={(e) => {
+                  const newVal = e.target.value;
+                  setBaselineText(newVal);
+                  if (!newVal.trim() && analysisMode === 'comparative') {
+                    resetAnalysis();
+                    setDiffDecisions({});
+                  }
+                }}
+                placeholder="Paste your approved baseline draft or drop a file…"
+                className="w-full bg-[#0E0E12] p-5 text-[14.5px] font-legal leading-[1.8] text-zinc-200 placeholder:text-zinc-600 outline-none resize-none custom-scrollbar min-h-[250px]"
+              />
+              <div className="px-4 py-2 border-t border-white/[0.06] bg-[#15151A] text-[11px] font-mono tabular-nums text-zinc-500 flex items-center justify-between">
+                <span>Approved Draft</span>
+                <span>{baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words</span>
               </div>
             </div>
-            <textarea
-              value={baselineText}
-              onChange={(e) => {
-                const newVal = e.target.value;
-                setBaselineText(newVal);
-                if (!newVal.trim() && analysisMode === 'comparative') {
-                  resetAnalysis();
-                  setDiffDecisions({});
-                }
-              }}
-              placeholder="Paste your firm's approved baseline contract or drag & drop .pdf / .docx here..."
-              className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
-            />
-            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
-              <span className="text-[11px] text-zinc-500">Baseline Master Reference</span>
-              <span>{baselineText.trim() ? baselineText.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words</span>
+
+            {/* Counterparty Markup */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
+              onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
+              onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
+              className={`flex flex-col rounded-xl bg-[#111115] border transition-colors overflow-hidden relative ${
+                isDraggingTarget ? 'border-sky-500 bg-sky-500/5' : 'border-white/[0.08]'
+              }`}
+            >
+              {isDraggingTarget && (
+                <div className="absolute inset-0 z-30 bg-[#09090B]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none gap-2">
+                  <Upload size={24} className="text-sky-400" />
+                  <p className="text-sm font-medium text-white">Drop Counterparty Revision</p>
+                </div>
+              )}
+
+              {parsingProgress.active && parsingProgress.statusKey === 'target' && (
+                <div className="absolute inset-0 z-30 bg-[#09090B]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                  <RefreshCw size={22} className="text-sky-400 animate-spin mb-3" />
+                  <p className="text-sm font-medium text-white mb-1">Reading Revision in Local RAM</p>
+                  <p className="text-xs font-mono text-zinc-400 mb-3">
+                    {parsingProgress.message || `Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} (${parsingProgress.percent}%)`}
+                  </p>
+                  <div className="w-full max-w-xs h-1 bg-zinc-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-sky-500 rounded-full transition-all duration-200"
+                      style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="px-4 py-2.5 bg-[#15151A] border-b border-white/[0.06] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-sky-400 shrink-0" />
+                  <span className="text-xs font-medium text-zinc-200 truncate">Counterparty Markup</span>
+                  {uploadStatus.target && (
+                    <span className="text-[11px] font-mono text-zinc-400 truncate max-w-[120px]">{uploadStatus.target}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {text && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setText('');
+                        resetAnalysis();
+                        setDiffDecisions({});
+                      }}
+                      className="px-2 py-1 rounded text-xs text-zinc-400 hover:text-rose-300 transition-colors cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  )}
+                  <label className="cursor-pointer bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] px-2.5 py-1 rounded-md text-xs font-medium text-zinc-200 transition-colors flex items-center gap-1">
+                    <Upload size={11} />
+                    <span>Import</span>
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
+                      className="hidden"
+                      onChange={(e) => handleFileUpload(e, setText, 'target')}
+                    />
+                  </label>
+                </div>
+              </div>
+              <textarea
+                id="contract-draft-textarea"
+                value={text}
+                onChange={(e) => {
+                  const newVal = e.target.value;
+                  setText(newVal);
+                  if (!newVal.trim()) {
+                    resetAnalysis();
+                    setHarmonizedData(null);
+                    setLiabilityAuditData(null);
+                    setDiffDecisions({});
+                  }
+                }}
+                placeholder="Paste counterparty modified draft or drop a file…"
+                className="w-full bg-[#0E0E12] p-5 text-[14.5px] font-legal leading-[1.8] text-zinc-200 placeholder:text-zinc-600 outline-none resize-none custom-scrollbar min-h-[250px]"
+              />
+              <div className="px-4 py-2 border-t border-white/[0.06] bg-[#15151A] text-[11px] font-mono tabular-nums text-zinc-500 flex items-center justify-between">
+                <span>Proposed Revision</span>
+                <span>{text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words</span>
+              </div>
             </div>
           </div>
 
-          {/* Counterparty Markup (CYAN THEME) */}
-          <div 
-            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(true); }}
-            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingTarget(false); }}
-            onDrop={(e) => handleFileDrop(e, setText, 'target', setIsDraggingTarget)}
-            className={`flex flex-col rounded-2xl bg-zinc-950/80 border transition-all overflow-hidden shadow-xl relative ${
-              isDraggingTarget 
-                ? 'border-cyan-400 bg-cyan-500/10 ring-2 ring-cyan-400/50' 
-                : 'border-cyan-500/30 hover:border-cyan-500/50'
-            }`}
-          >
-            {isDraggingTarget && (
-              <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-cyan-400 gap-2 animate-in fade-in">
-                <Upload size={28} className="animate-bounce" />
-                <p className="text-sm font-bold text-white">Drop Counterparty Proposed Markup Here</p>
-                <p className="text-xs text-zinc-400 font-mono">.pdf, .docx, .txt, .png, .jpg</p>
-              </div>
-            )}
-
-            {/* In-RAM Parsing Progress Bar Overlay (for 100+ pages & OCR) */}
-            {parsingProgress.active && parsingProgress.statusKey === 'target' && (
-              <div className="absolute inset-0 z-30 bg-[#04090e]/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center animate-in fade-in">
-                <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400 mb-3 animate-pulse">
-                  <Activity size={24} />
-                </div>
-                <h4 className="text-sm font-bold text-white mb-1">
-                  Parsing Markup in Local RAM
-                </h4>
-                <p className="text-xs font-mono text-cyan-300 mb-3">
-                  {parsingProgress.message || `Reading Page ${parsingProgress.currentPage} of ${parsingProgress.totalPages} in local RAM (${parsingProgress.percent}%)...`}
-                </p>
-                <div className="w-full max-w-xs h-1.5 bg-zinc-800 rounded-full overflow-hidden mb-2">
-                  <div 
-                    className="h-full bg-cyan-400 rounded-full transition-all duration-200" 
-                    style={{ width: `${Math.max(parsingProgress.percent || 0, 10)}%` }} 
-                  />
-                </div>
-                <span className="text-[10px] font-mono text-zinc-500">
-                  Zero Cloud Upload · 100% In-Memory RAM Stream
-                </span>
-              </div>
-            )}
-
-            {/* Pane Header: Cyan */}
-            <div className="px-4 py-3 bg-cyan-950/30 border-b border-cyan-500/20 flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-cyan-400 font-mono flex items-center gap-2">
-                  <FileEdit size={15} className="text-cyan-400" />
-                  COUNTERPARTY'S MARKUP (Incoming Proposed Revision)
-                </span>
-                <p className="text-[10.5px] text-zinc-400 font-sans mt-0.5">
-                  The opposing counsel's modified, returned, or proposed draft to audit
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                {uploadStatus.target && (
-                  <span className="text-xs font-mono text-cyan-300 max-w-[130px] truncate" title={uploadStatus.target}>
-                    {uploadStatus.target}
-                  </span>
-                )}
-                <label className="cursor-pointer bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 px-2.5 py-1 rounded-lg text-xs font-medium text-cyan-300 transition-colors flex items-center gap-1">
-                  <Upload size={12} /> Upload File
-                  <input
-                    type="file"
-                    accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp"
-                    className="hidden"
-                    onChange={(e) => handleFileUpload(e, setText, 'target')}
-                  />
-                </label>
-                {text && (
+          {/* Unified Comparative Execution Bar */}
+          <div className="px-4 py-3 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-zinc-500">Precision:</span>
+                <div className="flex bg-[#09090B] p-0.5 rounded-lg border border-white/[0.08]">
                   <button
                     type="button"
-                    onClick={() => {
-                      setText('');
-                      resetAnalysis();
-                      setDiffDecisions({});
-                    }}
-                    className="px-2 py-1 bg-white/5 hover:bg-rose-500/15 border border-zinc-800 hover:border-rose-500/30 rounded-lg text-[11px] font-mono text-zinc-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer"
-                    title="Clear markup text"
+                    onClick={() => setDiffGranularity('word')}
+                    className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                      diffGranularity === 'word' ? 'bg-white/[0.1] text-white' : 'text-zinc-400 hover:text-zinc-200'
+                    }`}
                   >
-                    <Trash2 size={11} /> Clear
+                    Word
                   </button>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => setDiffGranularity('line')}
+                    className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer ${
+                      diffGranularity === 'line' ? 'bg-white/[0.1] text-white' : 'text-zinc-400 hover:text-zinc-200'
+                    }`}
+                  >
+                    Line
+                  </button>
+                </div>
               </div>
+
+              {saveStatus && (
+                <span className="text-xs text-emerald-400 flex items-center gap-1">
+                  <Check size={13} /> {saveStatus}
+                </span>
+              )}
+              {workerError && (
+                <span className="text-xs text-rose-400 flex items-center gap-1">
+                  <AlertCircle size={13} /> {workerError}
+                </span>
+              )}
             </div>
-            <textarea
-              value={text}
-              onChange={(e) => {
-                const newVal = e.target.value;
-                setText(newVal);
-                if (!newVal.trim()) {
-                  resetAnalysis();
-                  setHarmonizedData(null);
-                  setLiabilityAuditData(null);
-                  setDiffDecisions({});
-                }
-              }}
-              placeholder="Paste counterparty modified text or drag & drop returned redline here..."
-              className="w-full bg-black/40 p-4 text-[14.5px] font-legal leading-relaxed text-zinc-200 outline-none resize-none focus:bg-black/60 custom-scrollbar min-h-[240px]"
-            />
-            <div className="px-4 py-2 border-t border-zinc-800 bg-zinc-950/60 text-xs font-mono text-zinc-400 flex items-center justify-between">
-              <span className="text-[11px] text-zinc-500">Incoming Counterparty Draft</span>
-              <span>{text.trim() ? text.trim().split(/\s+/).length.toLocaleString('en-US') : 0} words</span>
+
+            <div className="flex items-center gap-2.5">
+              {(text.trim() || baselineText.trim()) && !isProcessing && (
+                <button
+                  type="button"
+                  onClick={handleClearDraft}
+                  className="px-3 py-1.5 rounded-lg text-xs text-zinc-400 hover:text-rose-300 hover:bg-white/[0.04] transition-colors cursor-pointer"
+                >
+                  Clear All
+                </button>
+              )}
+              {isProcessing && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    cancelAnalysis();
+                  }}
+                  className="px-3.5 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <StopCircle size={13} />
+                  <span>Cancel</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => handleExecuteAudit()}
+                disabled={isProcessing || !text.trim() || !baselineText.trim()}
+                className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 cursor-pointer"
+              >
+                {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <Play size={14} />}
+                <span>{isProcessing ? 'Comparing…' : 'Compare & Audit'}</span>
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Control Bar & Progress */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-        <div className="flex items-center gap-4">
-          {analysisMode === 'comparative' && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-zinc-400">Diff Precision:</span>
-              <div className="flex bg-black/60 p-1 rounded-xl border border-zinc-800">
-                <button
-                  onClick={() => setDiffGranularity('word')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                    diffGranularity === 'word' ? 'bg-emerald-500 text-black' : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  Word
-                </button>
-                <button
-                  onClick={() => setDiffGranularity('line')}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                    diffGranularity === 'line' ? 'bg-emerald-500 text-black' : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  Line
-                </button>
-              </div>
-            </div>
-          )}
-
-          {saveStatus && (
-            <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 animate-fade-in">
-              <Check size={14} /> {saveStatus}
-            </span>
-          )}
-
-          {workerError && (
-            <span className="text-xs font-mono text-red-400 flex items-center gap-1.5">
-              <AlertCircle size={14} /> {workerError}
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3">
-          {(text.trim() || baselineText.trim()) && !isProcessing && (
-            <button
-              type="button"
-              onClick={handleClearDraft}
-              className="px-3.5 py-2.5 bg-zinc-950 hover:bg-rose-950/20 border border-zinc-800 hover:border-rose-500/40 rounded-lg text-xs font-semibold text-zinc-400 hover:text-rose-300 transition-all flex items-center gap-1.5 cursor-pointer"
-              title="Clear active draft and reset audit findings"
-            >
-              <Trash2 size={13} />
-              <span>Clear Draft</span>
-            </button>
-          )}
-
-          {isProcessing && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                cancelAnalysis();
-              }}
-              className="px-5 py-3 bg-red-600 hover:bg-red-500 text-white font-extrabold text-sm rounded-xl transition-all flex items-center gap-2  cursor-pointer active:scale-95"
-            >
-              <StopCircle size={16} />
-              <span>Cancel Audit</span>
-            </button>
-          )}
-
-          {analysisMode === 'harmonizer' ? (
-            <button
-              type="button"
-              onClick={() => handleRunHarmonizer()}
-              disabled={isHarmonizing || !text.trim()}
-              className="px-7 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 border-t border-white/20 active:scale-[0.98] cursor-pointer shadow-sm"
-            >
-              {isHarmonizing ? <RefreshCw className="animate-spin" size={16} /> : <Scale size={16} />}
-              <span>{isHarmonizing ? 'Proofreading in Local Memory...' : 'Execute Linguistic & Legal Proofreading'}</span>
-            </button>
-          ) : analysisMode === 'liability' ? (
-            <button
-              type="button"
-              onClick={() => handleRunLiabilityAudit()}
-              disabled={isAnalyzingLiability || !text.trim()}
-              className="px-7 py-2.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 border-t border-white/20 active:scale-[0.98] cursor-pointer shadow-sm"
-            >
-              {isAnalyzingLiability ? <RefreshCw className="animate-spin" size={16} /> : <ShieldAlert size={16} />}
-              <span>{isAnalyzingLiability ? 'Auditing Liability Interlocks in RAM...' : 'Reconcile Liability & Indemnity Caps'}</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => handleExecuteAudit()}
-              disabled={isProcessing || !text.trim() || (analysisMode === 'comparative' && !baselineText.trim())}
-              className="px-7 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-sm rounded-lg transition-colors flex items-center gap-2 disabled:opacity-40 border-t border-white/20 active:scale-[0.98] cursor-pointer shadow-sm"
-            >
-              {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Play size={16} />}
-              <span>
-                {isProcessing
-                  ? 'Auditing in Local Memory...'
-                  : analysisMode === 'single'
-                  ? 'Run Integrity Audit'
-                  : 'Execute Redline Diff & Audit'}
-              </span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Live In-Memory Progress Bar */}
+      {/* Slim Local Progress Bar */}
       {isProcessing && (
-        <div className="p-4 rounded-2xl bg-zinc-900 border border-cyan-500/30 animate-pulse">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono font-bold text-cyan-400 flex items-center gap-2">
-              <RefreshCw className="animate-spin text-cyan-400" size={14} />
-              {progress?.msg || 'Auditing contract in local memory...'}
+        <div className="px-4 py-3 rounded-xl bg-[#111115] border border-white/[0.08]">
+          <div className="flex items-center justify-between mb-2 text-xs">
+            <span className="text-zinc-300 flex items-center gap-2">
+              <RefreshCw className="animate-spin text-emerald-400" size={13} />
+              <span>{progress?.msg || 'Auditing contract in local memory…'}</span>
             </span>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-bold text-white">
-                {progress?.percent || 0}%
-              </span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  cancelAnalysis();
-                }}
-                className="px-2.5 py-1 bg-red-600/80 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
+            <span className="font-mono tabular-nums text-zinc-400">{progress?.percent || 0}%</span>
           </div>
-          <div className="w-full bg-black/60 rounded-full h-2.5 overflow-hidden border border-zinc-800">
+          <div className="w-full bg-zinc-900 rounded-full h-1.5 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-2.5 rounded-full transition-all duration-150"
+              className="bg-emerald-500 h-1.5 rounded-full transition-all duration-150"
               style={{ width: `${progress?.percent || 0}%` }}
             />
           </div>
         </div>
       )}
 
-      {/* Analysis Results HUD & Dual-Pane Workstation */}
+      {/* Analysis Results HUD & Workstation */}
       {auditResults && text.trim() && (analysisMode === 'single' || analysisMode === 'comparative') && (
-        <div className="w-full flex flex-col gap-6 animate-fade-in mt-4">
-          {/* Executive Risk Score & Metrics Banner with Unified Action Dock */}
-          <div className="p-5 rounded-2xl bg-zinc-900/80 border border-zinc-800 flex flex-col xl:flex-row xl:items-center justify-between gap-5 shadow-2xl">
-                  <div className="flex items-center gap-5">
-                    <div className={`px-5 py-3 rounded-2xl border text-center ${riskScoreBadgeColor} shadow-lg shrink-0`}>
-                      <span className="text-3xl font-black block font-mono tracking-tight">{riskScore}</span>
-                      <span className="text-[11px] font-extrabold uppercase tracking-wider block mt-0.5">
-                        {riskLevel} RISK
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-white tracking-tight">
-                        {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
-                         riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
-                         riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
-                         'Clean Document Integrity Profile'}
-                      </h3>
-                      <p className="text-xs text-zinc-400 mt-1 max-w-lg leading-relaxed">
-                        {auditResults.meta?.wordCount || 0} words audited in {auditResults.meta?.processingTimeMs || 0}ms across 4 verification engines. 100% in-memory RAM processing.
-                      </p>
-                    </div>
+        <div className="w-full flex flex-col gap-5 animate-fade-in mt-1">
+          {/* Executive Verdict & Action Dock */}
+          <div className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className={`w-16 h-16 rounded-xl border flex flex-col items-center justify-center shrink-0 ${riskScoreBadgeColor}`}>
+                <span className="text-2xl font-bold font-mono tabular-nums leading-none">{riskScore}</span>
+                <span className="text-[10px] font-medium uppercase tracking-wider mt-1 opacity-80">{riskLevel}</span>
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-zinc-100 tracking-tight">
+                  {riskScore >= 75 ? 'Critical Drafting Defects Detected' :
+                   riskScore >= 45 ? 'High Risk Legal Anomalies Found' :
+                   riskScore >= 20 ? 'Moderate Drafting Gaps Identified' :
+                   'Clean Document Integrity Profile'}
+                </h3>
+                <p className="text-xs text-zinc-400 mt-1 tabular-nums">
+                  {auditResults.meta?.wordCount || 0} words · {auditResults.meta?.processingTimeMs || 0}ms local execution
+                </p>
+              </div>
+            </div>
+
+            {/* Unified Action Dock */}
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleGenerateCertificate}
+                disabled={isGeneratingCertificate}
+                className="px-3.5 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-200 font-medium rounded-lg text-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                title="Generate SHA-256 Pre-Signing Diligence Certificate"
+              >
+                {isGeneratingCertificate ? (
+                  <RefreshCw size={14} className="animate-spin text-emerald-400" />
+                ) : (
+                  <ShieldCheck size={14} className="text-emerald-400" />
+                )}
+                <span>Certificate</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDownloadWordRider}
+                disabled={isDownloadingWordRider}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold rounded-lg text-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                title="Download editable Microsoft Word Pre-Signing Amendment Rider (.docx)"
+              >
+                {isDownloadingWordRider ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <FileDown size={14} />
+                )}
+                <span>Word Rider (.docx)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCopyFullRider}
+                className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="Copy pre-signing amendment schedule"
+              >
+                {copiedRiderSuccess ? (
+                  <>
+                    <Check size={13} className="text-emerald-400" />
+                    <span className="text-emerald-300">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={13} className="text-zinc-400" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
+
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowAltExports(prev => !prev)}
+                  className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-xs font-medium text-zinc-300 transition-colors flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Export</span>
+                  <ChevronDown size={12} className={`text-zinc-400 transition-transform duration-150 ${showAltExports ? 'rotate-180' : ''}`} />
+                </button>
+
+                {showAltExports && (
+                  <div className="absolute right-0 mt-1.5 w-56 rounded-xl bg-[#16161B] border border-white/10 shadow-2xl p-1.5 z-40 flex flex-col gap-0.5 text-xs">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
+                        downloadDiligenceCertificatePDF(auditResults || {}, {
+                          contractTitle: documentTitle?.trim() || (isDemo ? 'Master Asset Purchase & Services Agreement' : 'Commercial Contract Agreement'),
+                          clientName: clientParty?.trim() || 'Retained Client Counsel',
+                          counterpartyName: counterparty?.trim() || 'Disclosed Counterparty',
+                          certificateHash: certificateHash,
+                          certificateDate: certificateDate,
+                          customFileUploaded: !isDemo && documentTitle !== 'Master Asset Purchase & Services Agreement',
+                          includeSeal: includeCertStamp
+                        });
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <Scale size={13} className="text-emerald-400" />
+                      <span>Diligence Certificate (PDF)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
+                        downloadAmendmentRiderPDF(auditResults, {
+                          contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+                          clientName: clientParty.trim() || 'Client',
+                          counterpartyName: counterparty.trim() || 'Counterparty'
+                        });
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <FileText size={13} className="text-rose-400" />
+                      <span>Court Rider (PDF)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
+                        exportExecutiveClientMemoHTML({
+                          contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
+                          clientName: clientParty.trim() || 'Client',
+                          counterpartyName: counterparty.trim() || 'Counterparty',
+                          auditData: auditResults
+                        });
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <Download size={13} className="text-zinc-400" />
+                      <span>Client Memo (PDF)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
+                        exportPreSigningAmendmentRiderHTML(auditResults, {
+                          contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
+                          clientName: clientParty.trim() || 'Client',
+                          counterpartyName: counterparty.trim() || 'Counterparty'
+                        });
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <FileCode size={13} className="text-zinc-400" />
+                      <span>Rider (HTML)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
+                        exportObligationsCSV(auditResults.obligations);
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <FileSpreadsheet size={13} className="text-zinc-400" />
+                      <span>Obligations (CSV)</span>
+                    </button>
+                    {auditResults.diff && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowAltExports(false);
+                          exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' });
+                        }}
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                      >
+                        <FileCode size={13} className="text-zinc-400" />
+                        <span>Redline HTML</span>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
+                        exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' });
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-400 hover:text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors border-t border-white/[0.06] mt-0.5 pt-2"
+                    >
+                      <span>JSON Compliance Data</span>
+                    </button>
                   </div>
-
-                  {/* Counsel Unified Action Dock */}
-                  <div className="flex flex-col gap-2.5 w-full xl:w-auto">
-                    <div className="flex flex-wrap items-center gap-2.5">
-                      {/* PRE-SIGNING DILIGENCE CERTIFICATE BUTTON */}
-                      <button
-                        type="button"
-                        onClick={handleGenerateCertificate}
-                        disabled={isGeneratingCertificate}
-                        className="px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-emerald-400 font-medium rounded-lg text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0"
-                        title="Generate Court-Grade Pre-Signing Diligence & Integrity Certificate with Cryptographic SHA-256 Checksum"
-                      >
-                        {isGeneratingCertificate ? (
-                          <RefreshCw size={15} className="animate-spin text-emerald-400" />
-                        ) : (
-                          <ShieldCheck size={16} className="text-emerald-400" />
-                        )}
-                        <span>Pre-Signing Certificate</span>
-                      </button>
-
-                      {/* PRIMARY ACTION: EDITABLE WORD RIDER (.DOCX) */}
-                      <button
-                        type="button"
-                        onClick={handleDownloadWordRider}
-                        disabled={isDownloadingWordRider}
-                        className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold rounded-lg text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shrink-0 border-t border-white/25 active:scale-[0.98]"
-                        title="Download editable Microsoft Word Pre-Signing Amendment Rider (.docx) for counsel customization"
-                      >
-                        {isDownloadingWordRider ? (
-                          <RefreshCw size={15} className="animate-spin" />
-                        ) : (
-                          <FileDown size={16} className="stroke-[2.5]" />
-                        )}
-                        <span>Download Word Rider (.docx)</span>
-                      </button>
-
-                      {/* FAST ACTION: COPY RIDER */}
-                      <button
-                        type="button"
-                        onClick={handleCopyFullRider}
-                        className="px-3.5 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                        title="Copy full pre-signing court amendment schedule to clipboard"
-                      >
-                        {copiedRiderSuccess ? (
-                          <>
-                            <Check size={14} className="text-emerald-400" />
-                            <span className="text-emerald-300">Copied! ✓</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy size={14} className="text-cyan-400" />
-                            <span>Copy Rider</span>
-                          </>
-                        )}
-                      </button>
-
-                      {/* ALTERNATIVE FORMATS DROPDOWN */}
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setShowAltExports(prev => !prev)}
-                          className="px-3 py-2.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-bold text-zinc-300 transition-all flex items-center gap-1.5 cursor-pointer"
-                        >
-                          <span>Formats</span>
-                          <ChevronDown size={13} className={`transition-transform duration-200 ${showAltExports ? 'rotate-180' : ''}`} />
-                        </button>
-
-                        {showAltExports && (
-                          <div className="absolute right-0 mt-1.5 w-56 rounded-xl bg-zinc-900 border border-zinc-700 shadow-2xl p-1.5 z-40 flex flex-col gap-1 text-xs animate-in fade-in slide-in-from-top-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAltExports(false);
-                                downloadDiligenceCertificatePDF(auditResults || {}, {
-                                  contractTitle: documentTitle?.trim() || (isDemo ? 'Master Asset Purchase & Services Agreement' : 'Commercial Contract Agreement'),
-                                  clientName: clientParty?.trim() || 'Retained Client Counsel',
-                                  counterpartyName: counterparty?.trim() || 'Disclosed Counterparty',
-                                  certificateHash: certificateHash,
-                                  certificateDate: certificateDate,
-                                  customFileUploaded: !isDemo && documentTitle !== 'Master Asset Purchase & Services Agreement',
-                                  includeSeal: includeCertStamp
-                                });
-                              }}
-                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
-                            >
-                              <Scale size={14} className="text-emerald-400" />
-                              <span>Official Diligence Certificate (PDF)</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAltExports(false);
-                                downloadAmendmentRiderPDF(auditResults, {
-                                  contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
-                                  clientName: clientParty.trim() || 'Client',
-                                  counterpartyName: counterparty.trim() || 'Counterparty'
-                                });
-                              }}
-                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
-                            >
-                              <FileText size={14} className="text-rose-400" />
-                              <span>Court Rider (PDF)</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAltExports(false);
-                                exportExecutiveClientMemoHTML({
-                                  contractTitle: documentTitle.trim() || 'Contract Integrity & Legal Audit',
-                                  clientName: clientParty.trim() || 'Client',
-                                  counterpartyName: counterparty.trim() || 'Counterparty',
-                                  auditData: auditResults
-                                });
-                              }}
-                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
-                            >
-                              <Download size={14} className="text-purple-400" />
-                              <span>Client Memo (PDF)</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAltExports(false);
-                                exportPreSigningAmendmentRiderHTML(auditResults, {
-                                  contractTitle: documentTitle.trim() || 'Contract Integrity Audit',
-                                  clientName: clientParty.trim() || 'Client',
-                                  counterpartyName: counterparty.trim() || 'Counterparty'
-                                });
-                              }}
-                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
-                            >
-                              <FileCode size={14} className="text-emerald-400" />
-                              <span>Rider (HTML)</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAltExports(false);
-                                exportObligationsCSV(auditResults.obligations);
-                              }}
-                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
-                            >
-                              <FileSpreadsheet size={14} className="text-cyan-400" />
-                              <span>Obligations (CSV)</span>
-                            </button>
-
-                            {auditResults.diff && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setShowAltExports(false);
-                                  exportRedlineToHTML(auditResults.diff, auditResults.risks, { title: documentTitle.trim() || 'Contract Redline Audit' });
-                                }}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
-                              >
-                                <FileCode size={14} />
-                                <span>Redline HTML</span>
-                              </button>
-                            )}
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setShowAltExports(false);
-                                exportAuditReportJSON(auditResults.diff, auditResults.risks, null, { title: documentTitle.trim() || 'Contract Integrity Audit' });
-                              }}
-                              className="w-full text-left px-3 py-2 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors border-t border-zinc-800 mt-0.5 pt-1.5"
-                            >
-                              <span>JSON Compliance Data</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Collapsible Practitioner Working Draft Notice */}
-                    <div className="text-[11px] text-zinc-400">
-                      <button
-                        type="button"
-                        onClick={() => setNoticeExpanded(prev => !prev)}
-                        className="text-[11px] text-amber-400/90 hover:text-amber-300 flex items-center gap-1 font-mono cursor-pointer"
-                      >
-                        <AlertCircle size={12} className="text-amber-400" />
-                        <span>⚖️ Practitioner Working Draft Notice</span>
-                        <span className="text-[10px] text-zinc-500 font-sans">({noticeExpanded ? 'hide' : 'show'})</span>
-                      </button>
-
-                      {noticeExpanded && (
-                        <div className="mt-1.5 p-2.5 rounded-lg bg-amber-500/8 border border-amber-500/25 text-[11px] text-amber-200/90 leading-relaxed font-sans animate-in fade-in">
-                          This schedule is generated in editable .docx format as a preliminary draft for reviewing legal counsel. Counsel must independently review, verify, and tailor all statutory remedies and covenants to match client instructions and specific transaction terms prior to execution or circulation to opposing counsel.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-          {/* Key Metrics Banner */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
-            <div 
-              onClick={() => setActiveHudTab('dealBreakers')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'dealBreakers' ? 'border-red-500 bg-red-950/20 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-red-500/20 hover:border-red-500/40'
-              } text-center`}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-red-400">Deal Breakers</p>
-              <p className="text-3xl font-black text-red-400 mt-1 font-mono">
-                {enrichedAudit?.dealBreakers?.length || 0}
-              </p>
-            </div>
-            <div 
-              onClick={() => setActiveHudTab('enforceability')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'enforceability' ? 'border-amber-500 bg-amber-950/20 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-amber-500/20 hover:border-amber-500/40'
-              } text-center`}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-400">Enforceability Hazards</p>
-              <p className="text-3xl font-black text-amber-400 mt-1 font-mono">
-                {enrichedAudit?.enforceabilityHazards?.length || 0}
-              </p>
-            </div>
-            <div 
-              onClick={() => setActiveHudTab('financialDates')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'financialDates' ? 'border-orange-500 bg-orange-950/20 shadow-[0_0_15px_rgba(249,115,22,0.2)]' : 'border-orange-500/20 hover:border-orange-500/40'
-              } text-center`}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">Financial Mismatches</p>
-              <p className="text-3xl font-black text-orange-400 mt-1 font-mono">
-                {auditResults.financialDates?.stats?.mismatchCount || 0}
-              </p>
-            </div>
-            <div 
-              onClick={() => setActiveHudTab('crossRefs')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'crossRefs' ? 'border-cyan-500 bg-cyan-950/20 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-cyan-500/20 hover:border-cyan-500/40'
-              } text-center`}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-cyan-400">Broken Citations</p>
-              <p className="text-3xl font-black text-cyan-400 mt-1 font-mono">
-                {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
-              </p>
-            </div>
-            <div 
-              onClick={() => setActiveHudTab('obligations')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'obligations' ? 'border-emerald-500 bg-emerald-950/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'border-emerald-500/20 hover:border-emerald-500/40'
-              } text-center`}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400">Contract Obligations</p>
-              <p className="text-3xl font-black text-emerald-400 mt-1 font-mono">
-                {auditResults.obligations?.stats?.totalObligations || 0}
-              </p>
-            </div>
-            <div 
-              onClick={() => setActiveHudTab('linguisticProofreader')}
-              className={`p-4 rounded-2xl bg-zinc-900/60 border transition-all cursor-pointer ${
-                activeHudTab === 'linguisticProofreader' ? 'border-emerald-400 bg-emerald-950/30 shadow-[0_0_15px_rgba(16,185,129,0.3)] ring-1 ring-emerald-400/50' : 'border-emerald-500/20 hover:border-emerald-500/40'
-              } text-center`}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center justify-center gap-1">
-                <FileCheck size={13} className="text-emerald-400" /> Proofreading
-              </p>
-              <p className="text-3xl font-black text-emerald-300 mt-1 font-mono">
-                {harmonizedData?.improvements?.length || (text.trim() ? restateAndPolishContract(text).improvements.length : 0)}
-              </p>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Complete HUD Sub-Tabs Navigation — Clustered by Forensic Domain */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-3 pt-1 border-b border-zinc-800/80 custom-scrollbar text-xs">
-            {/* Cluster 1: Malpractice & Liabilities */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-red-950/20 border border-red-500/20 shrink-0">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-red-400 font-bold px-2 flex items-center gap-1">
-                <ShieldAlert size={12} className="text-red-400" /> Hazards:
-              </span>
-              <button
-                onClick={() => setActiveHudTab('dealBreakers')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'dealBreakers'
-                    ? 'bg-red-500 text-white shadow-[0_0_12px_rgba(239,68,68,0.4)]'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span>Deal Breakers</span>
-                {(enrichedAudit?.dealBreakers?.length || 0) > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-red-950 text-red-200 border border-red-500/50 font-mono font-bold">
-                    {enrichedAudit.dealBreakers.length}
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => setActiveHudTab('enforceability')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'enforceability'
-                    ? 'bg-amber-500 text-black shadow-[0_0_12px_rgba(245,158,11,0.3)]'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <AlertTriangle size={13} />
-                <span>Enforceability Hazards</span>
-                {(enrichedAudit?.enforceabilityHazards?.length || 0) > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-950 text-amber-200 border border-amber-500/50 font-mono font-bold">
-                    {enrichedAudit.enforceabilityHazards.length}
-                  </span>
-                )}
-              </button>
-
-              {(auditResults.risks?.length || 0) > 0 && (
-                <button
-                  onClick={() => setActiveHudTab('risks')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                    activeHudTab === 'risks'
-                      ? 'bg-rose-500 text-white shadow-[0_0_12px_rgba(244,63,94,0.3)]'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <AlertCircle size={13} />
-                  <span>Risk Radar ({auditResults.risks.length})</span>
-                </button>
-              )}
-            </div>
-
-            {/* Cluster 2: Clerical & Cross-Verification */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-cyan-950/20 border border-cyan-500/20 shrink-0">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold px-2 flex items-center gap-1">
-                <Bookmark size={12} className="text-cyan-400" /> Verification:
-              </span>
-              <button
-                onClick={() => setActiveHudTab('crossRefs')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'crossRefs'
-                    ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(6,182,212,0.3)]'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span>Citations & Exhibits</span>
-                {((auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)) > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-cyan-950 text-cyan-200 border border-cyan-500/50 font-mono font-bold">
-                    {(auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0)}
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => setActiveHudTab('financialDates')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'financialDates'
-                    ? 'bg-orange-500 text-black shadow-[0_0_12px_rgba(249,115,22,0.3)]'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <DollarSign size={13} />
-                <span>Financial & Dates</span>
-                {((auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)) > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-orange-950 text-orange-200 border border-orange-500/50 font-mono font-bold">
-                    {(auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0)}
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => setActiveHudTab('definedTerms')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'definedTerms'
-                    ? 'bg-purple-500 text-white shadow-[0_0_12px_rgba(168,85,247,0.3)]'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <Tag size={13} />
-                <span>Defined Terms</span>
-                {(auditResults.definedTerms?.stats?.undefinedCount || 0) > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-purple-950 text-purple-200 border border-purple-500/50 font-mono font-bold">
-                    {auditResults.definedTerms?.stats?.undefinedCount}
-                  </span>
-                )}
-              </button>
-            </div>
-
-            {/* Cluster 3: Execution & Review */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-emerald-950/20 border border-emerald-500/20 shrink-0">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold px-2 flex items-center gap-1">
-                <CheckSquare size={12} className="text-emerald-400" /> Review:
-              </span>
-              <button
-                onClick={() => setActiveHudTab('obligations')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'obligations'
-                    ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                    : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span>Obligations ({auditResults.obligations?.stats?.totalObligations || 0})</span>
-              </button>
-
-              {auditResults.diff && (
-                <button
-                  onClick={() => setActiveHudTab('diff')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                    activeHudTab === 'diff'
-                      ? 'bg-teal-500 text-black shadow-[0_0_12px_rgba(20,184,166,0.3)]'
-                      : 'text-zinc-300 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Search size={13} />
-                  <span>Redline Diff ({auditResults.diff.stats?.similarity}% Sim)</span>
-                </button>
-              )}
-            </div>
-
-            {/* Cluster 4: Forensic Linguistic Proofreader */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-emerald-950/30 border border-emerald-500/40 shrink-0">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold px-2 flex items-center gap-1">
-                <FileCheck size={12} className="text-emerald-400" /> Proofreader:
-              </span>
-              <button
-                onClick={() => setActiveHudTab('linguisticProofreader')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'linguisticProofreader'
-                    ? 'bg-emerald-500 text-zinc-950 font-semibold border-t border-white/20'
-                    : 'text-emerald-300 hover:text-white hover:bg-emerald-500/10'
-                }`}
-              >
-                <FileCheck size={13} />
-                <span>Linguistic & Deed Proofreading</span>
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-400/50 font-mono font-bold">
-                  {harmonizedData?.improvements?.length || (text.trim() ? restateAndPolishContract(text).improvements.length : 0)}
-                </span>
-              </button>
-            </div>
-
-            {/* Cluster 5: Liability & Indemnity Matrix */}
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-amber-950/30 border border-amber-500/40 shrink-0">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold px-2 flex items-center gap-1">
-                <ShieldAlert size={12} className="text-amber-400" /> Liabilities:
-              </span>
-              <button
-                onClick={() => {
-                  setActiveHudTab('liabilityReconciler');
+          {/* Single Unified Underline HUD Tab Bar */}
+          <div className="flex items-center gap-1 overflow-x-auto border-b border-white/[0.08] custom-scrollbar text-xs">
+            {[
+              {
+                id: 'dealBreakers',
+                label: 'Deal Breakers',
+                count: enrichedAudit?.dealBreakers?.length || 0,
+                alertTone: 'rose'
+              },
+              {
+                id: 'enforceability',
+                label: 'Enforceability',
+                count: enrichedAudit?.enforceabilityHazards?.length || 0,
+                alertTone: 'amber'
+              },
+              ...(auditResults.diff ? [{
+                id: 'diff',
+                label: 'Redline Diff',
+                badgeText: `${auditResults.diff.stats?.similarity}%`,
+                alertTone: 'neutral'
+              }] : []),
+              {
+                id: 'crossRefs',
+                label: 'Citations & Exhibits',
+                count: (auditResults.crossRefs?.stats?.brokenCount || 0) + (auditResults.crossRefs?.stats?.missingExhibitCount || 0),
+                alertTone: 'amber'
+              },
+              {
+                id: 'financialDates',
+                label: 'Financial & Dates',
+                count: (auditResults.financialDates?.stats?.mismatchCount || 0) + (auditResults.financialDates?.stats?.dateIssuesCount || 0),
+                alertTone: 'rose'
+              },
+              {
+                id: 'definedTerms',
+                label: 'Defined Terms',
+                count: auditResults.definedTerms?.stats?.undefinedCount || 0,
+                alertTone: 'amber'
+              },
+              {
+                id: 'obligations',
+                label: 'Obligations',
+                count: auditResults.obligations?.stats?.totalObligations || 0,
+                alertTone: 'neutral'
+              },
+              {
+                id: 'linguisticProofreader',
+                label: 'Proofreading',
+                count: proofreaderCount,
+                alertTone: 'neutral'
+              },
+              {
+                id: 'liabilityReconciler',
+                label: 'Liability Matrix',
+                count: liabilityTrapCount,
+                alertTone: liabilityTrapCount > 0 ? 'rose' : 'neutral',
+                onClickExtra: () => {
                   if (!liabilityAuditData && text.trim()) {
                     handleRunLiabilityAudit();
                   }
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
-                  activeHudTab === 'liabilityReconciler'
-                    ? 'bg-amber-500 text-zinc-950 font-semibold border-t border-white/20'
-                    : 'text-amber-300 hover:text-white hover:bg-amber-500/10'
-                }`}
-              >
-                <ShieldAlert size={13} />
-                <span>Liability & Indemnity Matrix</span>
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-950 text-amber-300 border border-amber-400/50 font-mono font-bold">
-                  {liabilityAuditData?.rules?.filter(r => r.status === 'FAIL').length || (text.trim() ? analyzeLiabilityInterlocks(text).rules.filter(r => r.status === 'FAIL').length : 0)} Traps
-                </span>
-              </button>
-            </div>
+                }
+              },
+              ...((auditResults.risks?.length || 0) > 0 ? [{
+                id: 'risks',
+                label: 'Risk Radar',
+                count: auditResults.risks.length,
+                alertTone: 'amber'
+              }] : [])
+            ].map((tab) => {
+              const isActive = activeHudTab === tab.id;
+              const badgeClass =
+                tab.alertTone === 'rose' && tab.count > 0
+                  ? 'bg-rose-500/15 text-rose-400'
+                  : tab.alertTone === 'amber' && tab.count > 0
+                  ? 'bg-amber-500/15 text-amber-400'
+                  : 'bg-white/[0.06] text-zinc-400';
+
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveHudTab(tab.id);
+                    if (tab.onClickExtra) tab.onClickExtra();
+                  }}
+                  className={`px-3 py-2.5 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'border-emerald-500 text-white font-medium'
+                      : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  {(tab.count !== undefined || tab.badgeText) && (
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono tabular-nums ${badgeClass}`}>
+                      {tab.badgeText || tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* TAB: LINGUISTIC & DEED PROOFREADER */}
@@ -2797,317 +2521,123 @@ function ContractAnalyzerView({
             </div>
           )}
 
-          {/* TAB: CRITICAL DEAL BREAKERS */}
-          {activeHudTab === 'dealBreakers' && (
-            <div className="flex flex-col gap-5">
-              <div className="p-4 rounded-2xl bg-red-950/20 border border-red-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-bold text-red-300 flex items-center gap-2">
-                    <ShieldAlert size={18} className="text-red-400 shrink-0" />
-                    <span>Critical Deal Breakers & Malpractice Liabilities ({enrichedAudit?.dealBreakers?.length || 0})</span>
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    Severe drafting defects that threaten transaction enforceability, expose counsel to malpractice liability, or establish unilateral walk-away rights under Delaware & UCC jurisprudence.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-red-500/20 text-red-400 border border-red-500/30">
-                    Mandatory Pre-Signing Redlines
+          {/* TABS: CRITICAL DEAL BREAKERS & ENFORCEABILITY HAZARDS (Unified Clean Layout) */}
+          {(activeHudTab === 'dealBreakers' || activeHudTab === 'enforceability') && (() => {
+            const isCritical = activeHudTab === 'dealBreakers';
+            const items = isCritical ? (enrichedAudit?.dealBreakers || []) : (enrichedAudit?.enforceabilityHazards || []);
+            const accentBorder = isCritical ? 'border-l-rose-500' : 'border-l-amber-500';
+            const badgeStyle = isCritical
+              ? 'bg-rose-500/12 text-rose-400 border-rose-500/25'
+              : 'bg-amber-500/12 text-amber-400 border-amber-500/25';
+
+            if (items.length === 0) {
+              return (
+                <div className="p-8 text-center text-xs text-zinc-400 bg-[#111115] border border-white/[0.08] rounded-xl flex flex-col items-center gap-2">
+                  <CheckCircle2 size={20} className="text-emerald-400" />
+                  <span className="text-zinc-200 font-medium">
+                    {isCritical
+                      ? 'No critical deal-breaker defects detected.'
+                      : 'All cross-references and capitalized terms resolve cleanly.'}
                   </span>
                 </div>
-              </div>
+              );
+            }
 
-              {(!enrichedAudit?.dealBreakers || enrichedAudit.dealBreakers.length === 0) ? (
-                <div className="p-8 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl flex flex-col items-center gap-2">
-                  <CheckCircle2 size={24} className="text-emerald-400" />
-                  <span>✓ Zero critical deal-breaker defects detected. All conditions precedent, consideration terms, and party entities are legally sound.</span>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {enrichedAudit.dealBreakers.map((item, idx) => (
-                    <div key={item.id || idx} className="p-5 rounded-2xl bg-zinc-900/80 border border-red-500/35 hover:border-red-500/60 transition-all flex flex-col gap-4">
-                      {/* Card Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-red-500 text-white shadow-sm">
-                            {item.legalSeverityLabel || 'CRITICAL DEAL BREAKER'}
+            return (
+              <div className="space-y-3.5">
+                {items.map((item, idx) => (
+                  <div
+                    key={item.id || idx}
+                    className={`p-5 rounded-xl bg-[#111115] border border-white/[0.08] border-l-2 ${accentBorder} flex flex-col gap-3.5`}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase border ${badgeStyle}`}>
+                          {item.legalSeverityLabel || (isCritical ? 'Critical Trap' : 'Hazard')}
+                        </span>
+                        {item.line ? (
+                          <button
+                            type="button"
+                            onClick={() => handleJumpToLine(item.line)}
+                            className="px-2 py-0.5 rounded text-[11px] font-mono bg-white/[0.04] hover:bg-white/[0.09] text-zinc-300 border border-white/[0.08] transition-colors flex items-center gap-1 cursor-pointer"
+                            title={`Jump to line ${item.line}`}
+                          >
+                            <Crosshair size={11} className="text-zinc-400" />
+                            <span>Line {item.line}</span>
+                          </button>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded text-[11px] font-mono text-zinc-400 bg-white/[0.03] border border-white/[0.06]">
+                            {item.clauseRef || item.clause || 'Clause'}
                           </span>
-                          {item.line ? (
-                            <button
-                              type="button"
-                              onClick={() => handleJumpToLine(item.line)}
-                              className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-red-500/20 hover:bg-red-500/35 text-red-300 border border-red-500/40 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
-                              title={`Locate line ${item.line} in contract draft`}
-                            >
-                              <Crosshair size={12} className="text-red-400" />
-                              <span>Line {item.line}</span>
-                            </button>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
-                              {item.clauseRef || item.clause || 'Operative Clause'}
-                            </span>
-                          )}
-                          {item.occurrences > 1 && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                              Cited {item.occurrences}x across document
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs font-mono text-red-400/90 font-bold flex items-center gap-1.5">
-                          <AlertTriangle size={14} className="text-red-400" />
-                          <span>Pre-Execution Stop</span>
-                        </span>
-                      </div>
-
-                      {/* Title & Malpractice Risk */}
-                      <div>
-                        <h4 className="text-sm font-bold text-white mb-1.5">{item.title}</h4>
-                        <div className="p-3 rounded-xl bg-red-950/30 border border-red-500/30 text-xs text-red-200/90 leading-relaxed font-sans flex items-start gap-2.5">
-                          <AlertCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
-                          <div>
-                            <span className="font-bold text-red-300">Malpractice & Litigation Exposure: </span>
-                            <span>{item.malpracticeRisk}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Statutory Authority */}
-                      <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                        <span className="text-zinc-400 font-semibold">Governing Doctrine:</span>
-                        <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
-                          ⚖️ {item.statutoryCitation}
-                        </span>
-                        {item.precedent && (
-                          <span className="text-zinc-400 italic">
-                            ({item.precedent})
+                        )}
+                        {item.occurrences > 1 && (
+                          <span className="text-[11px] font-mono text-zinc-500">
+                            {item.occurrences}× cited
                           </span>
                         )}
                       </div>
-
-                      {/* Defective Snippet with Visual Redline Deletion */}
-                      {item.snippet && (
-                        <div className="p-3.5 rounded-xl bg-black/60 border border-red-500/25 text-xs font-mono flex flex-col gap-1.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-red-400/90 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                              Defective Draft Language (Strikeout)
-                            </span>
-                            {item.line && (
-                              <button
-                                type="button"
-                                onClick={() => handleJumpToLine(item.line)}
-                                className="text-[10px] text-red-400 hover:text-red-300 font-mono font-bold underline cursor-pointer"
-                              >
-                                Locate Line {item.line} ↗
-                              </button>
-                            )}
-                          </div>
-                          <div className="p-2.5 bg-red-950/20 rounded-lg border border-red-500/20 text-red-300/90 leading-relaxed font-legal">
-                            <span className="line-through decoration-red-400 decoration-2">"{item.snippet}"</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Court-Grade Redline Replacement with Insertion */}
-                      {item.courtGradeRedline && (
-                        <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                              <CheckCircle2 size={14} className="text-emerald-400" />
-                              AmLaw 100 Court-Grade Replacement Language (Insertion)
-                            </span>
-                            <button
-                              onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
-                              className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
-                            >
-                              {copiedRedlineId === (item.id || idx) ? (
-                                <>
-                                  <Check size={13} className="text-black" />
-                                  <span>Copied! ✓</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy size={13} />
-                                  <span>Copy Redline Clause</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all font-legal">
-                            <ins className="no-underline text-emerald-300">
-                              {item.courtGradeRedline}
-                            </ins>
-                          </div>
-                          {item.actionableAdvice && (
-                            <p className="text-[11px] text-zinc-400 font-sans italic">
-                              <span className="text-emerald-400/90 font-bold">Counsel Guidance: </span>
-                              {item.actionableAdvice}
-                            </p>
-                          )}
-                        </div>
+                      {item.statutoryCitation && (
+                        <span className="text-[11px] font-mono text-zinc-400">
+                          {item.statutoryCitation}
+                        </span>
                       )}
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
-          {/* TAB: ENFORCEABILITY HAZARDS */}
-          {activeHudTab === 'enforceability' && (
-            <div className="flex flex-col gap-5">
-              <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-bold text-amber-300 flex items-center gap-2">
-                    <AlertTriangle size={18} className="text-amber-400 shrink-0" />
-                    <span>Enforceability Hazards & Ambiguity Traps ({enrichedAudit?.enforceabilityHazards?.length || 0})</span>
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    Citations to nonexistent sections, undefined operative capitalized terms, and procedural voids vulnerable to contra proferentem interpretation.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                    Remedial Redlines Available
-                  </span>
-                </div>
-              </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-zinc-100">{item.title}</h4>
+                      <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{item.malpracticeRisk}</p>
+                    </div>
 
-              {(!enrichedAudit?.enforceabilityHazards || enrichedAudit.enforceabilityHazards.length === 0) ? (
-                <div className="p-8 text-center text-xs font-mono text-emerald-400 bg-emerald-950/10 border border-emerald-500/20 rounded-2xl flex flex-col items-center gap-2">
-                  <CheckCircle2 size={24} className="text-emerald-400" />
-                  <span>✓ All internal cross-references resolve cleanly and all operative capitalized terms are formally defined.</span>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {enrichedAudit.enforceabilityHazards.map((item, idx) => (
-                    <div key={item.id || idx} className="p-5 rounded-2xl bg-zinc-900/80 border border-amber-500/35 hover:border-amber-500/60 transition-all flex flex-col gap-4">
-                      {/* Card Header */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-extrabold uppercase bg-amber-500 text-black shadow-sm">
-                            {item.legalSeverityLabel || 'ENFORCEABILITY HAZARD'}
-                          </span>
-                          {item.line ? (
-                            <button
-                              type="button"
-                              onClick={() => handleJumpToLine(item.line)}
-                              className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-500/40 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
-                              title={`Locate line ${item.line} in contract draft`}
-                            >
-                              <Crosshair size={12} className="text-amber-400" />
-                              <span>Line {item.line}</span>
-                            </button>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-white/5 text-zinc-300 border border-white/10">
-                              {item.clauseRef || item.clause || 'Operative Clause'}
-                            </span>
-                          )}
-                          {item.occurrences > 1 && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                              Referenced {item.occurrences}x
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-xs font-mono text-amber-400 font-bold flex items-center gap-1.5">
-                          <Bookmark size={14} className="text-amber-400" />
-                          <span>Procedural Hazard</span>
+                    {item.snippet && (
+                      <div className="px-3.5 py-2.5 rounded-lg bg-[#0A0A0D] border border-white/[0.06] border-l-2 border-l-rose-500/50 text-xs font-legal text-zinc-300 leading-relaxed">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block mb-1">
+                          Draft Language
+                        </span>
+                        <span className={isCritical ? 'line-through decoration-rose-400/70 text-rose-200/80' : 'text-amber-200/90'}>
+                          &ldquo;{item.snippet}&rdquo;
                         </span>
                       </div>
+                    )}
 
-                      {/* Title & Malpractice Risk */}
-                      <div>
-                        <h4 className="text-sm font-bold text-white mb-1.5">{item.title}</h4>
-                        <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-500/30 text-xs text-amber-200/90 leading-relaxed font-sans flex items-start gap-2.5">
-                          <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                          <div>
-                            <span className="font-bold text-amber-300">Litigation & Interpretation Risk: </span>
-                            <span>{item.malpracticeRisk}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Statutory Authority */}
-                      <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
-                        <span className="text-zinc-400 font-semibold">Governing Rule:</span>
-                        <span className="px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-300 font-bold">
-                          ⚖️ {item.statutoryCitation}
-                        </span>
-                        {item.precedent && (
-                          <span className="text-zinc-400 italic">
-                            ({item.precedent})
+                    {item.courtGradeRedline && (
+                      <div className="px-3.5 py-3 rounded-lg bg-[#0A0A0D] border border-white/[0.06] border-l-2 border-l-emerald-500/60 flex flex-col gap-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-medium text-emerald-400">
+                            Suggested Redline Replacement
                           </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
+                            className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                          >
+                            {copiedRedlineId === (item.id || idx) ? (
+                              <>
+                                <Check size={12} className="text-emerald-400" />
+                                <span className="text-emerald-300">Copied</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={12} className="text-zinc-400" />
+                                <span>Copy Clause</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <div className="text-xs font-legal text-zinc-200 leading-relaxed select-all">
+                          {item.courtGradeRedline}
+                        </div>
+                        {item.actionableAdvice && (
+                          <p className="text-[11px] text-zinc-500 pt-1 border-t border-white/[0.05]">
+                            {item.actionableAdvice}
+                          </p>
                         )}
                       </div>
-
-                      {/* Operative Draft Context */}
-                      {item.snippet && (
-                        <div className="p-3.5 rounded-xl bg-black/60 border border-amber-500/25 text-xs font-mono flex flex-col gap-1.5">
-                          <div className="flex items-center justify-between">
-                            <span className="text-amber-400/90 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                              Operative Draft Context
-                            </span>
-                            {item.line && (
-                              <button
-                                type="button"
-                                onClick={() => handleJumpToLine(item.line)}
-                                className="text-[10px] text-amber-400 hover:text-amber-300 font-mono font-bold underline cursor-pointer"
-                              >
-                                Locate Line {item.line} ↗
-                              </button>
-                            )}
-                          </div>
-                          <div className="p-2.5 bg-amber-950/20 rounded-lg border border-amber-500/20 text-amber-300/90 leading-relaxed font-legal">
-                            "{item.snippet}"
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Court-Grade Redline Replacement */}
-                      {item.courtGradeRedline && (
-                        <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/35 flex flex-col gap-2.5">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                              <CheckCircle2 size={14} className="text-emerald-400" />
-                              AmLaw 100 Court-Grade Replacement Language (Insertion)
-                            </span>
-                            <button
-                              onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
-                              className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm shrink-0"
-                            >
-                              {copiedRedlineId === (item.id || idx) ? (
-                                <>
-                                  <Check size={13} className="text-black" />
-                                  <span>Copied! ✓</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy size={13} />
-                                  <span>Copy Redline Clause</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                          <div className="p-3 bg-black/70 rounded-lg text-xs font-mono text-emerald-300/90 leading-relaxed border border-emerald-500/20 select-all font-legal">
-                            <ins className="no-underline text-emerald-300">
-                              {item.courtGradeRedline}
-                            </ins>
-                          </div>
-                          {item.actionableAdvice && (
-                            <p className="text-[11px] text-zinc-400 font-sans italic">
-                              <span className="text-emerald-400/90 font-bold">Counsel Guidance: </span>
-                              {item.actionableAdvice}
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* TAB 1: CROSS-REFERENCES & EXHIBITS (R1) */}
           {activeHudTab === 'crossRefs' && (
@@ -3668,36 +3198,36 @@ function ContractAnalyzerView({
           {activeHudTab === 'obligations' && (
             <div className="flex flex-col gap-4">
               {/* Party Breakdown Filters & CSV Export */}
-              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl liquid-glass border border-white/5">
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="text-gray-400 font-mono mr-1">Party:</span>
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg bg-[#111115] border border-white/[0.08]">
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  <span className="text-zinc-500 font-mono mr-1">Party:</span>
                   <button
                     onClick={() => setObligationPartyFilter('all')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'all' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${obligationPartyFilter === 'all' ? 'bg-white/[0.1] text-white border border-white/[0.12]' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'}`}
                   >
                     All ({auditResults.obligations?.stats?.totalObligations || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Client')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Client' ? 'bg-sky-500 text-white' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${obligationPartyFilter === 'Client' ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'}`}
                   >
                     Client ({auditResults.obligations?.partyBreakdown?.clientCount || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Counterparty')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Counterparty' ? 'bg-amber-500 text-black' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${obligationPartyFilter === 'Counterparty' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'}`}
                   >
                     Counterparty ({auditResults.obligations?.partyBreakdown?.counterpartyCount || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Mutual')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Mutual' ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${obligationPartyFilter === 'Mutual' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'}`}
                   >
                     Mutual ({auditResults.obligations?.partyBreakdown?.mutualCount || 0})
                   </button>
                   <button
                     onClick={() => setObligationPartyFilter('Third Party')}
-                    className={`px-3 py-1 rounded-lg font-bold transition-all ${obligationPartyFilter === 'Third Party' ? 'bg-gray-400 text-black' : 'text-gray-400 hover:text-white bg-white/5'}`}
+                    className={`px-2.5 py-1 rounded-md font-medium transition-colors cursor-pointer ${obligationPartyFilter === 'Third Party' ? 'bg-white/[0.1] text-zinc-200 border border-white/[0.12]' : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04]'}`}
                   >
                     Third Party ({auditResults.obligations?.partyBreakdown?.thirdPartyCount || 0})
                   </button>
@@ -3705,14 +3235,14 @@ function ContractAnalyzerView({
 
                 <button
                   onClick={() => exportObligationsCSV(auditResults.obligations)}
-                  className="px-3 py-1.5 bg-nexus-emerald text-black text-xs font-bold rounded-xl hover:bg-white transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(0,255,157,0.2)]"
+                  className="px-3 py-1.5 bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Download size={13} /> Export CSV
+                  <Download size={13} className="text-emerald-400" /> Export CSV
                 </button>
               </div>
 
               {/* Obligations Table */}
-              <div className="rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
+              <div className="rounded-lg bg-[#111115] border border-white/[0.08] overflow-hidden">
                 <div className="overflow-x-auto max-h-[500px] custom-scrollbar">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
@@ -4023,14 +3553,14 @@ function ContractAnalyzerView({
               </div>
 
               {/* Diff Container Viewport with Heatmap Minimap Rail */}
-              <div className="relative flex rounded-2xl liquid-glass-strong border border-white/5 bg-black/60 overflow-hidden">
-                <div id="diff-container-viewport" className="flex-1 p-6 font-mono text-xs leading-relaxed max-h-[500px] overflow-y-auto custom-scrollbar">
+              <div className="relative flex rounded-lg bg-[#0E0E12] border border-white/[0.08] overflow-hidden">
+                <div id="diff-container-viewport" className="flex-1 p-6 font-legal text-sm leading-relaxed max-h-[500px] overflow-y-auto custom-scrollbar">
                   {auditResults.diff.segments.map((seg) => {
                     if (seg.type === 'added') {
                       return (
                         <span 
                           key={seg.id} 
-                          className="diff-target-segment bg-emerald-500/25 text-emerald-300 font-semibold px-1 py-0.5 mx-0.5 rounded border border-emerald-500/30"
+                          className="diff-target-segment bg-emerald-500/15 text-emerald-300 px-1 py-0.5 mx-0.5 rounded border border-emerald-500/25"
                           title="Added in modified draft"
                         >
                           {seg.value}
@@ -4041,23 +3571,23 @@ function ContractAnalyzerView({
                       return (
                         <span 
                           key={seg.id} 
-                          className="diff-target-segment bg-red-500/25 text-red-300 line-through px-1 py-0.5 mx-0.5 rounded border border-red-500/30 opacity-75"
+                          className="diff-target-segment bg-rose-500/15 text-rose-300 line-through px-1 py-0.5 mx-0.5 rounded border border-rose-500/25 opacity-80"
                           title="Removed from original draft"
                         >
                           {seg.value}
                         </span>
                       );
                     }
-                    return <span key={seg.id} className="text-gray-300">{seg.value}</span>;
+                    return <span key={seg.id} className="text-zinc-300">{seg.value}</span>;
                   })}
                 </div>
 
                 {/* Vertical Minimap / Heatmap Rail (One-Click Jump Track) */}
                 <div 
-                  className="w-7 border-l border-white/10 bg-zinc-950/90 flex flex-col items-center py-2 relative select-none shrink-0" 
+                  className="w-7 border-l border-white/[0.06] bg-[#09090B] flex flex-col items-center py-2 relative select-none shrink-0" 
                   title="Visual Diff Minimap: Click any tick to jump to difference"
                 >
-                  <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-tighter mb-1">MAP</span>
+                  <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter mb-1">MAP</span>
                   <div className="relative w-full flex-1">
                     {auditResults.diff.segments.filter(s => s.type !== 'unchanged').map((seg, sIdx, allDiffs) => {
                       const topPercent = (sIdx / Math.max(allDiffs.length - 1, 1)) * 92 + 4;
@@ -4073,8 +3603,8 @@ function ContractAnalyzerView({
                             }
                           }}
                           style={{ top: `${topPercent}%` }}
-                          className={`absolute left-1/2 -translate-x-1/2 w-4 h-1.5 rounded-full cursor-pointer hover:scale-150 transition-transform ${
-                            seg.type === 'added' ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-rose-400 shadow-[0_0_6px_rgba(244,63,94,0.8)]'
+                          className={`absolute left-1/2 -translate-x-1/2 w-3.5 h-1 rounded-full cursor-pointer hover:scale-150 transition-transform ${
+                            seg.type === 'added' ? 'bg-emerald-400' : 'bg-rose-400'
                           }`}
                           title={`Diff #${sIdx + 1}: ${seg.type === 'added' ? 'Added' : 'Deleted'} "${(seg.value || '').substring(0, 30)}..."`}
                         />
@@ -4086,17 +3616,17 @@ function ContractAnalyzerView({
 
               {/* Clause Breakdown */}
               {auditResults.diff.clauseDiffs && (
-                <div className="space-y-2.5 max-h-[400px] overflow-y-auto custom-scrollbar">
-                  <h4 className="text-xs font-mono uppercase text-gray-400 font-bold mb-2">
+                <div className="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+                  <h4 className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">
                     Clause-by-Clause Modifications ({auditResults.diff.clauseDiffs.length} Clauses)
                   </h4>
                   {auditResults.diff.clauseDiffs.map((clause) => {
-                    const badge = clause.status === 'modified' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                                  clause.status === 'inserted' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                                  clause.status === 'deleted' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-white/5 text-gray-400 border-white/10';
+                    const badge = clause.status === 'modified' ? 'bg-amber-500/15 text-amber-300 border-amber-500/25' :
+                                  clause.status === 'inserted' ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/25' :
+                                  clause.status === 'deleted' ? 'bg-rose-500/15 text-rose-300 border-rose-500/25' : 'bg-white/[0.04] text-zinc-400 border-white/[0.08]';
 
                     return (
-                      <div key={clause.index} className="p-3.5 rounded-xl liquid-glass border border-white/5">
+                      <div key={clause.index} className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08]">
                         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-bold text-gray-200">Clause / Paragraph #{clause.index}</span>
@@ -4174,34 +3704,22 @@ function ContractAnalyzerView({
             </div>
           )}
 
-          {/* ========================================================================= */}
-          {/* LEGAL PROTECTION SHIELD & MALPRACTICE VERIFICATION NOTICE                 */}
-          {/* ========================================================================= */}
-          <div className="p-4 rounded-xl bg-[#090D14] border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4 shadow-sm">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
-                <ShieldCheck size={20} />
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                    Legal Protection Shield · Malpractice & Quality Control Notice
-                  </h4>
-                  <span className="text-[9px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">
-                    VERIFICATION MANDATE
-                  </span>
-                </div>
-                <p className="text-[11px] text-zinc-300 leading-relaxed max-w-3xl">
-                  <strong>Mandatory Counsel Verification Notice:</strong> Automated audit flags, redlines, and suggested remediation clauses are AI-assisted decision heuristics designed for preliminary analytical support. Under ABA Model Rule 1.1 (Competence) and standard professional conduct codes, the reviewing attorney must independently review and verify all contract provisions, statutory citations, and defined terms prior to client execution or court filing.
-                </p>
-              </div>
-            </div>
-            <div className="shrink-0 self-end md:self-center">
-              <span className="text-[10px] font-mono text-emerald-400/80 bg-black/40 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5">
-                <Lock size={11} />
-                <span>Zero Cloud Liability</span>
-              </span>
-            </div>
+          {/* Quiet Collapsible Counsel Verification Notice */}
+          <div className="pt-2 border-t border-white/[0.06] text-[11px] text-zinc-500">
+            <button
+              type="button"
+              onClick={() => setNoticeExpanded(prev => !prev)}
+              className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer"
+            >
+              <ShieldCheck size={12} className="text-zinc-500" />
+              <span>ABA Model Rule 1.1 Verification Standard · Preliminary drafting support</span>
+              <span className="text-zinc-600">({noticeExpanded ? 'Hide' : 'Details'})</span>
+            </button>
+            {noticeExpanded && (
+              <p className="mt-2 p-3 rounded-lg bg-[#111115] border border-white/[0.06] text-zinc-400 leading-relaxed max-w-3xl">
+                Automated audit flags, redlines, and suggested remediation clauses are analytical heuristics for preliminary review. Under ABA Model Rule 1.1 (Competence), reviewing counsel must independently verify all provisions, statutory citations, and defined terms prior to client execution or filing.
+              </p>
+            )}
           </div>
         </div>
       )}
@@ -4612,21 +4130,21 @@ Counsel of Record for ${clientParty || 'Client Principal'}`}
                   </pre>
                 </div>
 
-                <div className="p-4 rounded-xl bg-[#040C12] border border-emerald-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full border-2 border-dashed border-emerald-400 flex items-center justify-center text-emerald-400 font-black text-xs font-mono shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    <div className="w-10 h-10 rounded-full border border-emerald-500/40 bg-emerald-500/[0.06] flex items-center justify-center text-emerald-400 font-semibold text-[10px] font-mono">
                       SEAL
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white">AUTHENTIC AIR-GAPPED FORENSIC AUDIT SEAL</div>
-                      <div className="text-[10px] text-zinc-400 font-mono">
-                        Validated under ABA Model Rule 1.6 Privileged Work Product Standards · Zero Network Leakage
+                      <div className="text-xs font-medium text-zinc-100">Air-Gapped Forensic Audit Seal</div>
+                      <div className="text-[11px] text-zinc-500 font-mono">
+                        ABA Model Rule 1.6 Privileged Work Product · Zero Cloud Transmission
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] font-mono text-zinc-500 block">SYSTEM VERDICT</span>
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-mono text-zinc-500 block">VERDICT</span>
+                    <span className="text-xs font-medium text-emerald-400 uppercase tracking-wider">
                       CERTIFIED FOR COUNSEL EXECUTION
                     </span>
                   </div>
@@ -4831,41 +4349,28 @@ function PIIRedactorView({ onOpenGuide }) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto h-full flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="max-w-6xl w-full mx-auto h-full flex flex-col gap-5 font-ui">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
-            <span>Air-Gapped Smart PII Redactor</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              Confidentiality Safe
-            </span>
+          <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+            Smart PII Redactor
           </h2>
-          <p className="text-gray-400 text-xs mt-1">
-            Irreversibly sanitize Social Security numbers, payment cards, banking info, and confidential names in-memory before sharing documents.
+          <p className="text-zinc-400 text-xs mt-0.5">
+            Permanently sanitize Social Security numbers, banking info, and confidential names locally in memory.
           </p>
         </div>
-        {onOpenGuide && (
-          <button
-            onClick={() => onOpenGuide('redact')}
-            className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm group shrink-0"
-            title="How to Use Smart PII Redactor"
-          >
-            <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
-            <span>How to Use</span>
-          </button>
-        )}
       </div>
 
       {/* Rules Selector Bar */}
-      <div className="p-4 rounded-2xl liquid-glass border border-white/5 flex flex-col gap-3">
+      <div className="p-4 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-300 uppercase tracking-wider">Active Detection Rules:</span>
+          <span className="text-xs font-medium text-zinc-300">Detection Rules</span>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">Masking Style:</span>
+            <span className="text-xs text-zinc-400">Masking Style:</span>
             <select
               value={maskStyle}
               onChange={(e) => setMaskStyle(e.target.value)}
-              className="bg-black/60 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white outline-none focus:border-nexus-emerald"
+              className="bg-[#09090B] border border-white/[0.08] rounded-lg px-2.5 py-1 text-xs text-zinc-200 outline-none focus:border-emerald-500/60"
             >
               <option value="block">Black Block (█████)</option>
               <option value="label">Descriptive Tag ([REDACTED-SSN])</option>
@@ -4874,16 +4379,20 @@ function PIIRedactorView({ onOpenGuide }) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {PII_RULES.map(rule => {
             const active = activeRuleIds.includes(rule.id);
             return (
               <button
                 key={rule.id}
                 onClick={() => toggleRule(rule.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-mono font-medium transition-all flex items-center gap-1.5 ${active ? 'bg-nexus-emerald/20 text-nexus-emerald border border-nexus-emerald/40 shadow-[0_0_10px_rgba(0,255,157,0.1)]' : 'bg-white/5 text-gray-500 border border-white/5 hover:bg-white/10'}`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  active
+                    ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                    : 'bg-white/[0.03] text-zinc-400 border border-white/[0.06] hover:bg-white/[0.06] hover:text-zinc-200'
+                }`}
               >
-                {active ? <CheckCircle2 size={13} /> : <div className="w-3 h-3 rounded-full border border-gray-600" />}
+                {active ? <CheckCircle2 size={12} /> : <div className="w-3 h-3 rounded-full border border-zinc-600" />}
                 {rule.label}
               </button>
             );
@@ -4930,24 +4439,22 @@ function PIIRedactorView({ onOpenGuide }) {
           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
           onDrop={handleFileDrop}
-          className={`flex flex-col rounded-2xl liquid-glass-strong border transition-all overflow-hidden relative ${
+          className={`flex flex-col rounded-lg bg-[#0E0E12] border transition-colors overflow-hidden relative ${
             isDragging 
-              ? 'border-emerald-400 bg-emerald-500/10  ring-2 ring-emerald-400/50' 
-              : 'border-white/5'
+              ? 'border-emerald-500/60 bg-emerald-500/[0.04]' 
+              : 'border-white/[0.08]'
           }`}
         >
           {isDragging && (
-            <div className="absolute inset-0 z-30 bg-[#030712]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-3 animate-in fade-in">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center ">
-                <Upload size={28} className="animate-bounce" />
-              </div>
-              <p className="text-sm font-bold text-white tracking-wide">Drop Document to Redact Here</p>
-              <p className="text-xs text-zinc-400 font-mono">Supports .docx, .txt, .pdf</p>
+            <div className="absolute inset-0 z-30 bg-[#09090B]/92 backdrop-blur-sm flex flex-col items-center justify-center pointer-events-none text-emerald-400 gap-2.5">
+              <Upload size={24} />
+              <p className="text-sm font-medium text-white">Drop Document to Redact</p>
+              <p className="text-xs text-zinc-500 font-mono">Supports .docx, .txt, .pdf</p>
             </div>
           )}
-          <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-300 font-mono">INPUT TEXT (Drag & Drop or Import)</span>
-            <label className="cursor-pointer bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-300 transition-colors">
+          <div className="px-3.5 py-2.5 bg-[#111115] border-b border-white/[0.06] flex items-center justify-between">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Input Text</span>
+            <label className="cursor-pointer bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] px-2.5 py-1 rounded text-xs font-medium text-zinc-300 transition-colors">
               Upload (.docx/.txt/.pdf)
               <input type="file" accept=".txt,.docx,.md,.pdf" className="hidden" onChange={handleFileUpload} />
             </label>
@@ -4956,44 +4463,44 @@ function PIIRedactorView({ onOpenGuide }) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste contract or memo text containing confidential information or drop file here to redact..."
-            className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 outline-none resize-none focus:bg-black/60 custom-scrollbar"
+            className="flex-1 bg-[#0E0E12] p-4 text-sm font-legal leading-relaxed text-zinc-200 placeholder-zinc-600 outline-none resize-none custom-scrollbar"
           />
         </div>
 
         {/* Right: Sanitized Preview */}
-        <div className="flex flex-col rounded-2xl liquid-glass-strong border border-white/5 overflow-hidden">
-          <div className="p-3 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-nexus-emerald font-mono">
-              SANITIZED PREVIEW {sanitizedResult ? `(${sanitizedResult.totalRedactions} items redacted)` : ''}
+        <div className="flex flex-col rounded-lg bg-[#0E0E12] border border-white/[0.08] overflow-hidden">
+          <div className="px-3.5 py-2.5 bg-[#111115] border-b border-white/[0.06] flex items-center justify-between">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">
+              Sanitized Output {sanitizedResult ? `· ${sanitizedResult.totalRedactions} Redacted` : ''}
             </span>
             {sanitizedResult && (
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleDownloadSanitizedPdf}
                   disabled={isGeneratingPdf}
-                  className="bg-emerald-500 hover:bg-emerald-400 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-50"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                   title="Export court-grade redacted PDF (Letter format, headers, pagination, ABA Rule 1.6)"
                 >
-                  {isGeneratingPdf ? <RefreshCw className="animate-spin" size={13} /> : <FileDown size={13} />}
-                  <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Redacted PDF'}</span>
+                  {isGeneratingPdf ? <RefreshCw className="animate-spin" size={12} /> : <FileDown size={12} />}
+                  <span>{isGeneratingPdf ? 'Generating...' : 'Download Redacted PDF'}</span>
                 </button>
                 <button
                   onClick={handleDownloadSanitizedTxt}
-                  className="bg-white/5 hover:bg-white/10 text-zinc-300 border border-zinc-700 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                  className="bg-[#18181B] hover:bg-zinc-800 text-zinc-300 border border-white/[0.08] px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1 cursor-pointer"
                   title="Export raw text"
                 >
-                  <Download size={13} /> Text
+                  <Download size={12} /> Text
                 </button>
               </div>
             )}
           </div>
-          <div className="flex-1 bg-black/40 p-4 text-xs font-mono leading-relaxed text-gray-200 overflow-y-auto custom-scrollbar select-text">
+          <div className="flex-1 bg-[#0E0E12] p-4 text-sm font-legal leading-relaxed text-zinc-200 overflow-y-auto custom-scrollbar select-text">
             {sanitizedResult ? (
-              <pre className="whitespace-pre-wrap font-mono">{sanitizedResult.sanitizedText}</pre>
+              <pre className="whitespace-pre-wrap font-legal">{sanitizedResult.sanitizedText}</pre>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-gray-600 gap-2">
-                <EyeOff size={32} className="opacity-40" />
-                <p>Click "Sanitize Document" to preview redacted text.</p>
+              <div className="h-full flex flex-col items-center justify-center text-zinc-600 gap-2">
+                <EyeOff size={24} className="opacity-40" />
+                <p className="text-xs">Click "Sanitize Document" to preview redacted text.</p>
               </div>
             )}
           </div>
@@ -5001,11 +4508,11 @@ function PIIRedactorView({ onOpenGuide }) {
       </div>
 
       {/* Action Footer */}
-      <div className="flex items-center justify-between p-4 rounded-2xl liquid-glass border border-white/5">
+      <div className="flex items-center justify-between p-3.5 rounded-lg bg-[#111115] border border-white/[0.08]">
         <div className="flex items-center gap-2">
           {saveStatus && (
-            <span className="text-xs font-mono text-nexus-emerald flex items-center gap-1">
-              <Check size={14} /> {saveStatus}
+            <span className="text-xs font-mono text-emerald-400 flex items-center gap-1">
+              <Check size={13} /> {saveStatus}
             </span>
           )}
         </div>
@@ -5013,10 +4520,10 @@ function PIIRedactorView({ onOpenGuide }) {
         <button
           onClick={handleExecuteRedaction}
           disabled={isProcessing || !text.trim()}
-          className="px-8 py-3.5 bg-nexus-emerald text-black font-extrabold text-sm rounded-xl hover:bg-white transition-all flex items-center gap-2 disabled:opacity-40 shadow-[0_0_20px_rgba(0,255,157,0.25)]"
+          className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-md transition-colors flex items-center gap-2 disabled:opacity-40 cursor-pointer"
         >
-          {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <EyeOff size={16} />}
-          {isProcessing ? 'Sanitizing...' : 'Sanitize Document (Zero-Latency)'}
+          {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <EyeOff size={14} />}
+          {isProcessing ? 'Sanitizing...' : 'Sanitize Document'}
         </button>
       </div>
     </div>
@@ -5153,68 +4660,41 @@ function BatesStamperView({ onOpenGuide, isDemo = false, onTriggerUpgrade }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="max-w-5xl w-full mx-auto h-full flex flex-col gap-5 font-ui">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
-            <span>Enterprise Bates Stamping & Binder</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-cyan/10 text-nexus-cyan border border-nexus-cyan/30">
-              pdf-lib Native
-            </span>
+          <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+            Bates Stamping Suite
           </h2>
-          <p className="text-gray-400 text-xs mt-1">
-            Sequentially number trial exhibits and production binders locally. High-contrast backing pill ensures readability on dark scans.
+          <p className="text-zinc-400 text-xs mt-0.5">
+            Sequentially number trial exhibits and production binders locally in browser memory.
           </p>
         </div>
-        {onOpenGuide && (
-          <button
-            onClick={() => onOpenGuide('bates')}
-            className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-300 hover:text-white transition-all cursor-pointer shadow-sm group shrink-0"
-            title="How to Use Bates Stamping"
-          >
-            <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
-            <span>How to Use</span>
-          </button>
+        {isDemo && (
+          <div className="flex items-center gap-2.5 text-xs shrink-0">
+            <span className="text-zinc-400 font-mono tabular-nums">{batesRunsLeft} of 2 runs left</span>
+            <button
+              type="button"
+              onClick={() => onTriggerUpgrade?.('firm')}
+              className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition-colors cursor-pointer"
+            >
+              Unlock Firm Suite
+            </button>
+          </div>
         )}
       </div>
 
-      {/* Evaluation Sandbox Notice */}
-      {isDemo && (
-        <div className="p-4 rounded-xl bg-[#090D14] border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center shrink-0">
-              <Lock size={14} className="text-amber-400" />
-            </div>
-            <div>
-              <p className="font-bold text-amber-300">
-                Bates Stamping Evaluation Sandbox ({batesRunsLeft} of 2 Trial Runs Remaining)
-              </p>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
-                Trial mode is limited to single-document testing. Master multi-document binders (up to 5,000+ pages) and unlimited batch numbering require the Firm Suite.
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onTriggerUpgrade?.('firm')}
-            className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold text-xs transition-colors shrink-0 cursor-pointer border-t border-white/20 active:scale-[0.98]"
-          >
-            Unlock Firm Suite ($299)
-          </button>
-        </div>
-      )}
-
       {/* Configuration Grid */}
-      <div className="p-6 rounded-2xl liquid-glass-strong border border-white/5 flex flex-col gap-4">
+      <div className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col gap-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">Bates Prefix</label>
+            <label className="block text-[11px] font-medium text-zinc-400 mb-1.5">Bates Prefix</label>
             <input
               type="text"
               value={prefix}
               onChange={(e) => setPrefix(e.target.value)}
-              className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-nexus-emerald outline-none font-mono"
-              placeholder="e.g. PLTF-, CONF-"
+              className="w-full bg-[#09090B] border border-white/[0.08] rounded-lg px-3 py-2 text-xs text-zinc-100 focus:border-emerald-500/60 outline-none font-mono"
+              placeholder="PLTF-"
             />
           </div>
 
@@ -5310,41 +4790,41 @@ function BatesStamperView({ onOpenGuide, isDemo = false, onTriggerUpgrade }) {
         onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
         onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
         onDrop={handleFileDrop}
-        className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all relative cursor-pointer ${
+        className={`border border-dashed rounded-lg p-8 flex flex-col items-center justify-center transition-colors relative cursor-pointer ${
           isDragging 
-            ? 'border-nexus-emerald bg-nexus-emerald/15 shadow-[0_0_30px_rgba(0,255,157,0.3)] scale-[1.01]' 
-            : 'border-white/10 hover:border-nexus-emerald/40 bg-black/20 hover:bg-black/40'
+            ? 'border-emerald-500/60 bg-emerald-500/[0.05]' 
+            : 'border-white/[0.12] hover:border-white/[0.22] bg-[#0E0E12]'
         }`}
       >
-        <Layers className={`mb-3 transition-transform duration-300 ${isDragging ? 'text-nexus-emerald scale-125 animate-bounce' : 'text-nexus-emerald'}`} size={40} />
-        <p className="font-bold text-sm text-white">
+        <Layers className="mb-2.5 text-emerald-400" size={28} />
+        <p className="font-medium text-sm text-zinc-100">
           {isDragging ? 'Release to Add Exhibit PDFs' : 'Drop Exhibit PDFs Here'}
         </p>
-        <p className="text-xs text-gray-500 mb-4">Click to browse multiple documents for sequential stamping</p>
+        <p className="text-xs text-zinc-500 mt-1 mb-4">Click to browse multiple documents for sequential stamping</p>
         <input type="file" multiple accept=".pdf" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAddFiles} />
-        <span className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs font-semibold text-gray-300">
+        <span className="px-3.5 py-1.5 bg-[#18181B] border border-white/[0.08] rounded-md text-xs font-medium text-zinc-300">
           Browse PDF Files
         </span>
       </div>
 
       {/* Selected Files List & Reorder */}
       {files.length > 0 && (
-        <div className="p-4 rounded-2xl liquid-glass border border-white/5 flex flex-col gap-2">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-gray-300">Stamping Queue ({files.length} documents)</span>
-            <span className="text-[11px] font-mono text-gray-500">Preview: {prefix}{String(startNum).padStart(padLength, '0')}</span>
+        <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] flex flex-col gap-2">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-zinc-200">Stamping Queue ({files.length} documents)</span>
+            <span className="text-[11px] font-mono text-zinc-500 tabular-nums">Preview: {prefix}{String(startNum).padStart(padLength, '0')}</span>
           </div>
 
           <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar pr-1">
             {files.map((f, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-black/40 border border-white/5 text-xs font-mono">
-                <span className="truncate max-w-[340px] text-gray-200">
+              <div key={idx} className="flex items-center justify-between px-3 py-2 rounded-md bg-[#09090B] border border-white/[0.06] text-xs font-mono">
+                <span className="truncate max-w-[340px] text-zinc-200">
                   {idx + 1}. {f.name} ({(f.size / 1024).toFixed(0)} KB)
                 </span>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => moveFile(idx, -1)} disabled={idx === 0} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded disabled:opacity-20 text-[10px]">▲</button>
-                  <button onClick={() => moveFile(idx, 1)} disabled={idx === files.length - 1} className="px-2 py-1 bg-white/5 hover:bg-white/10 rounded disabled:opacity-20 text-[10px]">▼</button>
-                  <button onClick={() => removeFile(idx)} className="p-1 text-red-400 hover:text-red-300 ml-2"><X size={14} /></button>
+                  <button onClick={() => moveFile(idx, -1)} disabled={idx === 0} className="px-2 py-0.5 bg-[#18181B] hover:bg-zinc-800 border border-white/[0.06] rounded disabled:opacity-25 text-[10px]">▲</button>
+                  <button onClick={() => moveFile(idx, 1)} disabled={idx === files.length - 1} className="px-2 py-0.5 bg-[#18181B] hover:bg-zinc-800 border border-white/[0.06] rounded disabled:opacity-25 text-[10px]">▼</button>
+                  <button onClick={() => removeFile(idx)} className="p-1 text-rose-400 hover:text-rose-300 ml-1.5 cursor-pointer"><X size={13} /></button>
                 </div>
               </div>
             ))}
@@ -5353,28 +4833,28 @@ function BatesStamperView({ onOpenGuide, isDemo = false, onTriggerUpgrade }) {
       )}
 
       {/* Progress & Submit */}
-      <div className="p-4 rounded-2xl liquid-glass border border-white/5 flex items-center justify-between">
-        <div className="text-xs text-gray-400">
+      <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] flex items-center justify-between">
+        <div className="text-xs text-zinc-400">
           {isProcessing ? (
-            <span className="text-nexus-cyan font-mono animate-pulse">
+            <span className="text-zinc-200 font-mono">
               Stamping in progress: {progress.current} pages written...
             </span>
           ) : lastBundle ? (
-            <span className="text-nexus-emerald font-mono">
-              Completed! Range: {lastBundle.batesRange} ({lastBundle.totalPages} pages)
+            <span className="text-emerald-400 font-mono">
+              Completed · Range: {lastBundle.batesRange} ({lastBundle.totalPages} pages)
             </span>
           ) : (
-            <span>Ready to process. All stamping happens locally in RAM.</span>
+            <span>Ready to process locally in RAM.</span>
           )}
         </div>
 
         <button
           onClick={handleProcessPdfs}
           disabled={isProcessing || files.length === 0}
-          className="px-8 py-3.5 bg-nexus-emerald text-black font-extrabold text-sm rounded-xl hover:bg-white transition-all flex items-center gap-2 disabled:opacity-40 shadow-[0_0_20px_rgba(0,255,157,0.3)]"
+          className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-md transition-colors flex items-center gap-2 disabled:opacity-40 cursor-pointer"
         >
-          {isProcessing ? <RefreshCw className="animate-spin" size={16} /> : <Download size={16} />}
-          {isProcessing ? 'Stamping...' : 'Merge, Stamp & Download Bundle'}
+          {isProcessing ? <RefreshCw className="animate-spin" size={14} /> : <Download size={14} />}
+          {isProcessing ? 'Stamping...' : 'Merge & Stamp Bundle'}
         </button>
       </div>
     </div>
@@ -5422,78 +4902,73 @@ function AuditVaultView({ onSelectDiff, onOpenGuide }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto h-full flex flex-col gap-6">
-      <div className="flex items-center justify-between border-b border-white/5 pb-4">
+    <div className="max-w-5xl w-full mx-auto h-full flex flex-col gap-5 font-ui">
+      <div className="flex items-center justify-between border-b border-white/[0.06] pb-3.5">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
-            <span>Air-Gapped Audit Vault</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-nexus-emerald/10 text-nexus-emerald border border-nexus-emerald/30">
-              IndexedDB Storage
-            </span>
+          <h2 className="text-xl font-semibold text-zinc-100 tracking-tight">
+            Audit Vault
           </h2>
-          <p className="text-gray-400 text-xs mt-1">
-            All audits, diff sessions, and redaction records are retained 100% locally in your browser sandbox. Survives tab refresh without cloud syncing.
+          <p className="text-zinc-400 text-xs mt-0.5">
+            Local IndexedDB storage for saved audits, diff sessions, and redaction logs. Zero cloud sync.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {onOpenGuide && (
-            <button
-              onClick={() => onOpenGuide('history')}
-              className="px-3.5 py-2 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm group"
-              title="How to Use Audit Vault"
-            >
-              <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
-              <span>How to Use</span>
-            </button>
-          )}
-          <button
-            onClick={handleClearAll}
-            className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl text-xs font-bold text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer"
-          >
-            <Trash2 size={14} /> Clear Local Vault
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className="px-3 py-1.5 bg-white/[0.04] hover:bg-rose-500/15 border border-white/[0.08] hover:border-rose-500/30 rounded-lg text-xs font-medium text-zinc-300 hover:text-rose-300 transition-colors flex items-center gap-1.5 cursor-pointer"
+        >
+          <Trash2 size={13} /> Clear Vault
+        </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-1 border-b border-white/[0.06]">
         <button
+          type="button"
           onClick={() => setActiveSection('diffs')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeSection === 'diffs' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`px-3.5 py-2 border-b-2 text-xs font-medium transition-colors cursor-pointer ${
+            activeSection === 'diffs' ? 'border-emerald-500 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
+          }`}
         >
           Saved Audits ({diffSessions.length})
         </button>
         <button
+          type="button"
           onClick={() => setActiveSection('redacts')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeSection === 'redacts' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`px-3.5 py-2 border-b-2 text-xs font-medium transition-colors cursor-pointer ${
+            activeSection === 'redacts' ? 'border-emerald-500 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
+          }`}
         >
           Redaction Logs ({redactionLogs.length})
         </button>
         <button
+          type="button"
           onClick={() => setActiveSection('bates')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeSection === 'bates' ? 'bg-nexus-emerald text-black' : 'text-gray-400 hover:text-white'}`}
+          className={`px-3.5 py-2 border-b-2 text-xs font-medium transition-colors cursor-pointer ${
+            activeSection === 'bates' ? 'border-emerald-500 text-white' : 'border-transparent text-zinc-400 hover:text-zinc-200'
+          }`}
         >
           Bates Jobs ({batesJobs.length})
         </button>
       </div>
 
       {/* Section Content */}
-      <div className="p-4 rounded-2xl liquid-glass-strong border border-white/5 flex-1 overflow-y-auto custom-scrollbar">
+      <div className="p-4 rounded-xl bg-[#111115] border border-white/[0.08] flex-1 overflow-y-auto custom-scrollbar">
         {activeSection === 'diffs' && (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {diffSessions.length === 0 ? (
-              <p className="text-center text-gray-500 text-xs py-8">No saved diff sessions yet. Run an audit to record history.</p>
+              <p className="text-center text-zinc-500 text-xs py-8">No saved diff sessions yet. Run an audit to record history.</p>
             ) : (
               diffSessions.map(session => (
-                <div key={session.id} className="p-4 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between">
+                <div key={session.id} className="p-4 rounded-lg bg-[#0E0E12] border border-white/[0.06] flex items-center justify-between gap-3">
                   <div>
-                    <h4 className="text-sm font-bold text-white">{session.title}</h4>
-                    <p className="text-[11px] font-mono text-gray-400 mt-1">
-                      {new Date(session.updatedAt).toLocaleString('en-US')} | +{session.stats?.additions || 0} / -{session.stats?.deletions || 0} words | {session.risksCount || 0} liabilities {typeof session.overallRiskScore === 'number' ? `| Score: ${session.overallRiskScore}/100` : ''}
+                    <h4 className="text-sm font-medium text-zinc-100">{session.title}</h4>
+                    <p className="text-[11px] font-mono tabular-nums text-zinc-400 mt-1">
+                      {new Date(session.updatedAt).toLocaleString('en-US')} · +{session.stats?.additions || 0} / -{session.stats?.deletions || 0} words · {session.risksCount || 0} liabilities{typeof session.overallRiskScore === 'number' ? ` · Score ${session.overallRiskScore}/100` : ''}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <button
                       onClick={() => onSelectDiff && onSelectDiff(session)}
                       className="px-3 py-1.5 text-xs font-semibold text-nexus-emerald hover:text-white bg-nexus-emerald/10 hover:bg-nexus-emerald/20 border border-nexus-emerald/30 rounded-lg flex items-center gap-1.5 transition-colors"

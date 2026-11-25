@@ -47,71 +47,49 @@ export default function HarmonizerResultsHUD({
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in mt-4">
-      {/* 1. Executive Data Integrity & AmLaw 100 Restatement Banner */}
-      <div className="p-6 rounded-2xl bg-zinc-900/80 border border-emerald-500/30 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="flex items-start gap-4 z-10">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-[0_0_25px_rgba(16,185,129,0.25)]">
-            <Sparkles className="text-emerald-400" size={28} />
+    <div className="flex flex-col gap-5 animate-fade-in mt-2 font-ui">
+      {/* 1. Executive Data Integrity Verdict Bar */}
+      <div className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center shrink-0 mt-0.5">
+            <ShieldCheck className="text-emerald-400" size={20} />
           </div>
           <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                Deed & Contract Forensic Harmonizer
-              </h3>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/40">
-                100% DATA PRESERVED
-              </span>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/40">
-                AMLAW 100 COVENANTS
-              </span>
-            </div>
-            <p className="text-sm text-zinc-300 mt-1 max-w-2xl leading-relaxed">
-              {verification.statusText || '100% Mathematical Data Integrity Verified'}. All parcel numbers, acreage, boundary bearings, purchase prices, and escrow dates are strictly locked and preserved.
+            <h3 className="text-base font-semibold text-zinc-100 tracking-tight">
+              {verification.statusText || '100% Factual Anchors Preserved'}
+            </h3>
+            <p className="text-xs text-zinc-400 mt-1 tabular-nums">
+              {verification.preservedCount || 0} / {verification.totalAnchors || 0} anchors locked · {improvements.length} improvements applied · {processingTimeMs}ms local
             </p>
-            <div className="flex items-center gap-4 mt-3 text-xs font-mono text-zinc-400 flex-wrap">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                <CheckCircle2 size={14} />
-                {verification.preservedCount || 0} / {verification.totalAnchors || 0} Anchors Locked
-              </span>
-              <span>•</span>
-              <span className="text-cyan-300 font-bold">
-                {improvements.length} Court Improvements Applied
-              </span>
-              <span>•</span>
-              <span className="text-zinc-500">
-                {processingTimeMs}ms in-memory RAM
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 z-10 shrink-0">
+        {/* Clean Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
+            type="button"
             onClick={handleDownload}
             disabled={isDownloading}
-            className="px-5 py-3 bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 hover:opacity-95 text-black font-extrabold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(16,185,129,0.35)] cursor-pointer disabled:opacity-50 shrink-0"
-            title="Download court-grade restated Word document (.docx)"
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold rounded-lg text-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            title="Download restated Word document (.docx)"
           >
-            {isDownloading ? <RefreshCw size={16} className="animate-spin" /> : <Download size={16} className="stroke-[2.5]" />}
-            <span>Download Court-Grade Word (.docx)</span>
+            {isDownloading ? <RefreshCw size={14} className="animate-spin" /> : <Download size={14} />}
+            <span>Word Draft (.docx)</span>
           </button>
 
           <button
+            type="button"
             onClick={handleCopy}
-            className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-xs font-medium text-zinc-200 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             {copiedSuccess ? (
               <>
-                <Check size={14} className="text-emerald-400" />
-                <span className="text-emerald-300">Copied! ✓</span>
+                <Check size={13} className="text-emerald-400" />
+                <span className="text-emerald-300">Copied</span>
               </>
             ) : (
               <>
-                <Copy size={14} className="text-zinc-400" />
+                <Copy size={13} className="text-zinc-400" />
                 <span>Copy Draft</span>
               </>
             )}
@@ -119,117 +97,87 @@ export default function HarmonizerResultsHUD({
 
           {onReAuditRestated && (
             <button
+              type="button"
               onClick={onReAuditRestated}
-              className="px-4 py-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl text-xs font-bold text-emerald-300 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
-              title="Audit the restated contract draft in Single Draft mode"
+              className="px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-xs font-medium text-zinc-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Run Single Draft Audit on the restated text"
             >
-              <Eye size={14} />
-              <span>Audit Restated Draft</span>
+              <Eye size={13} className="text-emerald-400" />
+              <span>Re-Audit Draft</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* 2. Immutable Factual Anchors Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col gap-1">
-          <span className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5 uppercase font-semibold">
-            <MapPin size={13} className="text-cyan-400" /> Tax Parcels (APN)
-          </span>
-          <span className="text-base font-bold text-white font-mono">
-            {originalAnchors.parcels?.length > 0
-              ? originalAnchors.parcels.map(p => p.id).join(', ')
-              : 'N/A'}
-          </span>
-          <span className="text-[10px] text-emerald-400 font-mono">100% Immutable</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col gap-1">
-          <span className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5 uppercase font-semibold">
-            <Layers size={13} className="text-emerald-400" /> Acreage / Bounds
-          </span>
-          <span className="text-base font-bold text-white font-mono">
-            {originalAnchors.acreages?.length > 0
-              ? `${originalAnchors.acreages[0].quantity} ${originalAnchors.acreages[0].unit}`
-              : 'Described Tract'}
-          </span>
-          <span className="text-[10px] text-emerald-400 font-mono">Strictly Locked</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col gap-1">
-          <span className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5 uppercase font-semibold">
-            <DollarSign size={13} className="text-amber-400" /> Consideration
-          </span>
-          <span className="text-base font-bold text-white font-mono">
-            {originalAnchors.financials?.length > 0
-              ? originalAnchors.financials[0].raw
-              : 'Mutual Covenants'}
-          </span>
-          <span className="text-[10px] text-emerald-400 font-mono">Zero Discrepancy</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col gap-1">
-          <span className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5 uppercase font-semibold">
-            <Calendar size={13} className="text-purple-400" /> Closing Date
-          </span>
-          <span className="text-base font-bold text-white font-mono">
-            {originalAnchors.dates?.length > 0
-              ? originalAnchors.dates[0].raw
-              : 'Per Stipulation'}
-          </span>
-          <span className="text-[10px] text-emerald-400 font-mono">Preserved</span>
-        </div>
-
-        <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col gap-1 col-span-2 md:col-span-1">
-          <span className="text-[11px] font-mono text-zinc-400 flex items-center gap-1.5 uppercase font-semibold">
-            <ShieldCheck size={13} className="text-emerald-400" /> Legal Doctrine
-          </span>
-          <span className="text-base font-bold text-emerald-300 font-mono">
-            AmLaw 100
-          </span>
-          <span className="text-[10px] text-zinc-400 font-mono">Restatement § 234</span>
-        </div>
+      {/* 2. Compact Immutable Anchors Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          {
+            label: 'Tax Parcels (APN)',
+            value: originalAnchors.parcels?.length > 0 ? originalAnchors.parcels.map(p => p.id).join(', ') : 'N/A'
+          },
+          {
+            label: 'Acreage / Bounds',
+            value: originalAnchors.acreages?.length > 0 ? `${originalAnchors.acreages[0].quantity} ${originalAnchors.acreages[0].unit}` : 'Described Tract'
+          },
+          {
+            label: 'Consideration',
+            value: originalAnchors.financials?.length > 0 ? originalAnchors.financials[0].raw : 'Mutual Covenants'
+          },
+          {
+            label: 'Closing Date',
+            value: originalAnchors.dates?.length > 0 ? originalAnchors.dates[0].raw : 'Per Stipulation'
+          }
+        ].map((anchor) => (
+          <div key={anchor.label} className="px-3.5 py-2.5 rounded-xl bg-[#111115] border border-white/[0.08]">
+            <span className="text-[11px] text-zinc-500 block">{anchor.label}</span>
+            <span className="text-xs font-mono font-medium text-zinc-200 mt-0.5 block truncate tabular-nums">{anchor.value}</span>
+          </div>
+        ))}
       </div>
 
       {/* 3. Studio Tabs Navigation */}
-      <div className="flex border-b border-zinc-800 gap-2">
+      <div className="flex border-b border-white/[0.08] gap-1 text-xs">
         <button
+          type="button"
           onClick={() => setActiveTab('redline')}
-          className={`px-4 py-2 text-xs font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-3.5 py-2 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'redline'
-              ? 'border-emerald-400 text-emerald-400'
-              : 'border-transparent text-zinc-400 hover:text-white'
+              ? 'border-emerald-500 text-white font-medium'
+              : 'border-transparent text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Layers size={14} />
-          <span>Track-Changes Redline</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-500/10 text-emerald-300 font-mono">
-            Diff
-          </span>
+          <Layers size={13} />
+          <span>Track Changes</span>
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('clean')}
-          className={`px-4 py-2 text-xs font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-3.5 py-2 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'clean'
-              ? 'border-emerald-400 text-emerald-400'
-              : 'border-transparent text-zinc-400 hover:text-white'
+              ? 'border-emerald-500 text-white font-medium'
+              : 'border-transparent text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <FileText size={14} />
-          <span>Restated Clean Draft</span>
+          <FileText size={13} />
+          <span>Clean Draft</span>
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('improvements')}
-          className={`px-4 py-2 text-xs font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-3.5 py-2 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'improvements'
-              ? 'border-emerald-400 text-emerald-400'
-              : 'border-transparent text-zinc-400 hover:text-white'
+              ? 'border-emerald-500 text-white font-medium'
+              : 'border-transparent text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Sparkles size={14} />
-          <span>Applied Legal Polish ({improvements.length})</span>
+          <Sparkles size={13} />
+          <span>Applied Polish</span>
+          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono tabular-nums bg-white/[0.06] text-zinc-300">
+            {improvements.length}
+          </span>
         </button>
       </div>
 
@@ -281,20 +229,21 @@ export default function HarmonizerResultsHUD({
       )}
 
       {activeTab === 'clean' && (
-        <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 flex flex-col gap-4">
-          <div className="flex items-center justify-between text-xs text-zinc-400 font-mono pb-3 border-b border-zinc-800">
-            <span className="text-emerald-400 font-bold uppercase tracking-wider">
-              Court-Grade Restated Document (Ready for Review & Execution)
+        <div className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col gap-3">
+          <div className="flex items-center justify-between text-xs text-zinc-400 pb-3 border-b border-white/[0.06]">
+            <span className="text-zinc-200 font-medium">
+              Restated Clean Document
             </span>
             <button
+              type="button"
               onClick={handleCopy}
-              className="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs rounded-md transition-colors flex items-center gap-1"
+              className="px-2.5 py-1 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-200 text-xs rounded-md transition-colors flex items-center gap-1 cursor-pointer"
             >
               {copiedSuccess ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-              <span>{copiedSuccess ? 'Copied!' : 'Copy'}</span>
+              <span>{copiedSuccess ? 'Copied' : 'Copy'}</span>
             </button>
           </div>
-          <div className="font-serif text-sm leading-relaxed text-zinc-200 whitespace-pre-wrap max-h-[500px] overflow-y-auto pr-2 custom-scrollbar bg-black/40 p-4 rounded-xl border border-zinc-800/80">
+          <div className="font-legal text-sm leading-[1.8] text-zinc-200 whitespace-pre-wrap max-h-[500px] overflow-y-auto pr-2 custom-scrollbar bg-[#0E0E12] p-5 rounded-lg border border-white/[0.06]">
             {restatedText}
           </div>
         </div>
@@ -305,21 +254,21 @@ export default function HarmonizerResultsHUD({
           {improvements.map((imp, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-zinc-900/70 border border-zinc-800 hover:border-emerald-500/30 transition-all flex flex-col justify-between gap-2"
+              className="p-4 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col justify-between gap-2"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-zinc-100 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                   {imp.name}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 uppercase">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-zinc-400 uppercase">
                   {imp.category}
                 </span>
               </div>
               <p className="text-xs text-zinc-400 leading-relaxed">
                 {imp.reason}
               </p>
-              <div className="text-[11px] font-mono text-emerald-400/90 pt-2 border-t border-zinc-800/60">
+              <div className="text-[11px] font-mono tabular-nums text-zinc-500 pt-2 border-t border-white/[0.05]">
                 {imp.occurrences} instance(s) addressed
               </div>
             </div>
@@ -327,13 +276,11 @@ export default function HarmonizerResultsHUD({
         </div>
       )}
 
-      {/* 5. Attorney Disclaimer */}
-      <div className="p-3 rounded-xl bg-amber-500/8 border border-amber-500/20 text-[11px] text-amber-200/90 leading-relaxed font-sans flex items-start gap-2.5">
-        <ShieldCheck size={15} className="text-amber-400 shrink-0 mt-0.5" />
-        <span>
-          <strong>Counsel Verification Notice:</strong> This restated document is synthesized in-memory to enforce syntactic precision, eliminate common-law redundancies, and bind concurrent closing obligations while preserving 100% of underlying parcel, acreage, and financial coordinates. Counsel must independently verify all statutory covenants prior to execution.
-        </span>
-      </div>
+      {/* Quiet Counsel Notice */}
+      <p className="text-[11px] text-zinc-500 flex items-center gap-1.5 pt-1">
+        <ShieldCheck size={13} className="text-zinc-500 shrink-0" />
+        <span>All underlying parcel coordinates, acreages, and financial terms are locked. Verify statutory covenants prior to execution.</span>
+      </p>
     </div>
   );
 }
