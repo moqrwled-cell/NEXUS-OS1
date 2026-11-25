@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,21 +8,13 @@ import {
   Lock,
   Briefcase,
   AlertTriangle,
-  AlertCircle,
   CheckCircle2,
   ArrowRight,
   Play,
   Pause,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
-  FileText,
-  FileCode,
-  Sliders,
-  ExternalLink,
-  ShieldAlert,
-  Zap,
-  Check
+  FileText
 } from 'lucide-react';
 
 const CHAPTERS = [
@@ -32,14 +24,14 @@ const CHAPTERS = [
     tabTitle: 'Liability Reconciler',
     tabSubtitle: '$5M Carve-Out Gap',
     icon: Scale,
-    badge: 'CRITICAL CONFLICT DETECTED',
+    badge: 'Conflict Detected',
     badgeType: 'danger',
-    headline: 'Can a $50,000 Liability Cap Gut a $5,000,000 Indemnity?',
-    summary: 'Under standard US commercial interpretation, a blanket Limitation of Liability caps third-party indemnity payouts unless an express carve-out is present.',
+    headline: 'Can a $50,000 Cap Gut a $5,000,000 Indemnity?',
+    summary: 'Under standard commercial law, a blanket Limitation of Liability caps third-party indemnity payouts unless an express carve-out is present.',
     metricVal: '$4.95M',
-    metricLabel: 'Litigation Exposure Neutralized',
+    metricLabel: 'Unhedged Exposure Flagged',
     speed: '240ms',
-    statute: 'Delaware Chancery • UCC § 2-719'
+    statute: 'Delaware Chancery · UCC § 2-719'
   },
   {
     id: 'diff',
@@ -47,59 +39,59 @@ const CHAPTERS = [
     tabTitle: 'Forensic Redline Diff',
     tabSubtitle: 'Stealth Edits Detector',
     icon: Search,
-    badge: 'UNTRACKED MODIFICATIONS FOUND',
+    badge: 'Unmarked Edits',
     badgeType: 'warning',
-    headline: 'Catch Stealth Alterations Slipped into Clean Copies',
-    summary: 'Counterparties sometimes return unmarked Word drafts with subtle clause shifts. ContractGuard performs character-level forensic diffing client-side in RAM.',
+    headline: 'Catch Stealth Alterations in Clean Drafts',
+    summary: 'Counterparties frequently return unmarked Word files with subtle clause shifts. ContractGuard isolates every word change locally in RAM.',
     metricVal: '180ms',
-    metricLabel: 'Granular Diff Execution Speed',
+    metricLabel: 'Character-Level Diff Pass',
     speed: '180ms',
-    statute: 'Character-Level RAM Comparator'
+    statute: 'Myers LCS Engine'
   },
   {
     id: 'audit',
     num: '03',
     tabTitle: 'Deterministic AST Audit',
-    tabSubtitle: 'Zero-Hallucination Graph',
+    tabSubtitle: 'Zero Hallucinations',
     icon: ShieldCheck,
-    badge: '416/416 TESTS VERIFIED',
+    badge: 'Structural Graph',
     badgeType: 'success',
-    headline: 'Formal Syntactic Graph Verification Without AI Hallucinations',
-    summary: 'General LLMs guess probabilistically. ContractGuard constructs a deterministic AST graph verifying every clause node, dangling reference, and missing schedule.',
+    headline: 'Formal Syntactic Verification Without Probabilistic Guessing',
+    summary: 'Public LLMs predict text and miss dangling references. ContractGuard builds an Abstract Syntax Tree verifying sections, exhibits, and figures.',
     metricVal: '100%',
-    metricLabel: 'Deterministic Proof (0 Hallucinations)',
+    metricLabel: 'Deterministic Parity Check',
     speed: '310ms',
-    statute: 'Formal Syntactic Contract Parser'
+    statute: 'UCC § 3-114 · AST Graph'
   },
   {
     id: 'privacy',
     num: '04',
-    tabTitle: '100% In-RAM Privilege',
-    tabSubtitle: 'Zero-Leak Client Armor',
+    tabTitle: 'In-RAM Privilege',
+    tabSubtitle: 'Zero-Cloud Sanitizer',
     icon: Lock,
-    badge: '0 CLOUD PACKETS • LOCAL RAM',
+    badge: 'Zero Cloud Packets',
     badgeType: 'emerald',
-    headline: 'Privileged Deal Data Never Leaves Your Device Memory',
-    summary: 'Complies with ABA Model Rule 1.6 (Client Confidentiality). Instant pattern detection redacts SSNs, corporate banking coordinates, and deal figures before external sharing.',
+    headline: 'Client Drafts Never Leave Local Browser Memory',
+    summary: 'Preserves attorney-client privilege under ABA Model Rule 1.6. Pattern detectors scrub SSNs, routing codes, and sensitive figures locally.',
     metricVal: '0 Bytes',
-    metricLabel: 'Transmitted to Remote Cloud',
+    metricLabel: 'Sent to External Servers',
     speed: '95ms',
-    statute: 'ABA Model Rule 1.6 • GDPR Ready'
+    statute: 'ABA Model Rule 1.6 · Fed. R. Civ. P. 5.2'
   },
   {
     id: 'vault',
     num: '05',
     tabTitle: '50-State Statutory Vault',
-    tabSubtitle: 'Real-Time Judicial Accord',
+    tabSubtitle: 'Jurisdictional Rules',
     icon: Briefcase,
-    badge: 'MULTI-STATE JUDICIAL MATRIX',
-    badgeType: 'cyan',
-    headline: 'Real-Time Statutory Compliance Across 50 US Jurisdictions',
-    summary: 'Automatically evaluates restrictive covenants and indemnities against state-specific statutes, flagging California Business & Professions § 16600 void provisions instantly.',
+    badge: 'Statutory Benchmark',
+    badgeType: 'info',
+    headline: 'Real-Time Compliance Across 50 US Jurisdictions',
+    summary: 'Cross-checks non-competes, indemnities, and survival limits against state statutes—flagging California § 16600 void provisions prior to signing.',
     metricVal: '50 States',
-    metricLabel: 'Statutory Coverage Matrix',
+    metricLabel: 'Statutory Riders Covered',
     speed: '150ms',
-    statute: 'Cal. Bus. & Prof. § 16600 • Del. GCL'
+    statute: 'Cal. B&P § 16600 · DGCL'
   }
 ];
 
@@ -114,7 +106,6 @@ export default function ContractGuardMasterShowcase() {
   const DURATION_MS = 6500;
   const INTERVAL_TICK = 50;
 
-  // Auto-advance loop with progress tracking
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -153,10 +144,9 @@ export default function ContractGuardMasterShowcase() {
   const activeChapter = CHAPTERS[activeIdx];
 
   return (
-    <div className="w-full max-w-7xl mx-auto font-body select-none">
-      
-      {/* Category Navigation Pills with Filling Progress Bars (Apple / Linear Caliber) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-6">
+    <div className="w-full max-w-6xl mx-auto font-sans">
+      {/* Chapter Selector Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
         {CHAPTERS.map((ch, idx) => {
           const isActive = idx === activeIdx;
           const Icon = ch.icon;
@@ -164,32 +154,31 @@ export default function ContractGuardMasterShowcase() {
           return (
             <button
               key={ch.id}
+              type="button"
               onClick={() => handleSelectTab(idx)}
-              className={`relative text-left p-3.5 rounded-xl border transition-colors duration-200 overflow-hidden cursor-pointer ${
+              className={`relative text-left p-3 rounded-lg border transition-colors overflow-hidden cursor-pointer ${
                 isActive
-                  ? 'bg-white/[0.06] border-emerald-500/40 text-white'
-                  : 'bg-white/[0.02] border-white/10 hover:bg-white/[0.04] hover:border-white/20 text-zinc-400'
+                  ? 'bg-[#111115] border-white/[0.16] text-zinc-100'
+                  : 'bg-[#0C0C0F] border-white/[0.06] hover:bg-[#111115] text-zinc-400'
               }`}
             >
-              {/* Active Progress Bar at the top of the pill */}
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/5">
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/[0.04]">
                 {isActive && (
-                  <motion.div
-                    className="h-full bg-emerald-400"
+                  <div
+                    className="h-full bg-emerald-500 transition-[width] duration-75"
                     style={{ width: `${progress}%` }}
-                    transition={{ ease: 'linear' }}
                   />
                 )}
               </div>
 
-              <div className="flex items-center justify-between mb-1.5 pt-0.5">
-                <span className={`font-mono text-[11px] font-bold ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`}>
+              <div className="flex items-center justify-between mb-1 pt-0.5">
+                <span className={`font-mono text-[10px] tabular-nums ${isActive ? 'text-emerald-400' : 'text-zinc-600'}`}>
                   {ch.num}
                 </span>
-                <Icon size={14} className={isActive ? 'text-emerald-400' : 'text-zinc-500'} />
+                <Icon size={13} className={isActive ? 'text-emerald-400' : 'text-zinc-500'} />
               </div>
 
-              <div className={`text-xs font-semibold leading-snug truncate ${isActive ? 'text-white' : 'text-zinc-300'}`}>
+              <div className={`text-xs font-medium leading-snug truncate ${isActive ? 'text-zinc-100' : 'text-zinc-300'}`}>
                 {ch.tabTitle}
               </div>
               <div className="text-[11px] text-zinc-500 truncate mt-0.5 font-mono">
@@ -200,55 +189,45 @@ export default function ContractGuardMasterShowcase() {
         })}
       </div>
 
-      {/* Main Studio Hardware Chassis */}
-      <div className="relative rounded-2xl border border-white/10 bg-[#090D14] shadow-xl overflow-hidden">
-
-        {/* Chassis Window Topbar */}
-        <div className="relative z-10 px-5 py-3 bg-[#070A0F] border-b border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-          
-          <div className="flex items-center gap-2.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-            
-            <div className="ml-3 hidden sm:flex items-center gap-2 text-zinc-400">
-              <FileCode size={13} className="text-emerald-400" />
-              <span className="text-zinc-200 font-medium font-mono text-[11px]">
-                ContractGuard_Studio_v2.4_Audit.docx
-              </span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] bg-white/5 border border-white/10 text-zinc-400">
-                100% IN-RAM
-              </span>
-            </div>
+      {/* Main Workstation Viewport */}
+      <div className="rounded-xl border border-white/[0.08] bg-[#111115] overflow-hidden shadow-2xl">
+        {/* Topbar */}
+        <div className="px-5 py-2.5 bg-[#15151A] border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2 text-zinc-400">
+            <FileText size={13} className="text-emerald-400" />
+            <span className="text-zinc-200 font-medium text-[11px]">
+              ContractGuard Studio · Interactive Walkthrough
+            </span>
           </div>
 
-          {/* Right Status & Playback Controls */}
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/10 text-[10px] text-emerald-400 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>Air-gapped local sandbox</span>
-            </div>
+            <span className="hidden md:inline-flex items-center gap-1.5 text-[11px] text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Local Browser RAM
+            </span>
 
-            {/* Play/Pause & Arrow Nav */}
-            <div className="flex items-center gap-1 bg-white/[0.05] border border-white/10 rounded-lg p-0.5">
+            <div className="flex items-center gap-0.5 bg-[#09090B] border border-white/[0.08] rounded-md p-0.5">
               <button
+                type="button"
                 onClick={handlePrev}
-                className="p-1.5 hover:bg-white/10 text-zinc-400 hover:text-white rounded transition-colors cursor-pointer"
-                title="Previous Slide"
+                aria-label="Previous engine"
+                className="p-1 hover:bg-white/[0.06] text-zinc-400 hover:text-zinc-100 rounded transition-colors cursor-pointer"
               >
                 <ChevronLeft size={13} />
               </button>
               <button
+                type="button"
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="p-1.5 hover:bg-white/10 text-zinc-300 hover:text-white rounded transition-colors cursor-pointer"
-                title={isPlaying ? 'Pause Auto-Play' : 'Resume Auto-Play'}
+                aria-label={isPlaying ? 'Pause showcase' : 'Play showcase'}
+                className="p-1 hover:bg-white/[0.06] text-zinc-300 hover:text-white rounded transition-colors cursor-pointer"
               >
                 {isPlaying ? <Pause size={13} /> : <Play size={13} className="text-emerald-400" />}
               </button>
               <button
+                type="button"
                 onClick={handleNext}
-                className="p-1.5 hover:bg-white/10 text-zinc-400 hover:text-white rounded transition-colors cursor-pointer"
-                title="Next Slide"
+                aria-label="Next engine"
+                className="p-1 hover:bg-white/[0.06] text-zinc-400 hover:text-zinc-100 rounded transition-colors cursor-pointer"
               >
                 <ChevronRight size={13} />
               </button>
@@ -256,104 +235,99 @@ export default function ContractGuardMasterShowcase() {
           </div>
         </div>
 
-        {/* Dynamic Chapter Slide Viewport with Smooth Animated Transitions */}
-        <div className="relative z-10 p-6 md:p-8 lg:p-10">
+        {/* Slide Body */}
+        <div className="p-6 md:p-8 bg-[#09090B]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeChapter.id}
-              initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -12, filter: 'blur(4px)' }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-center"
             >
-
-              {/* Left Column: Visual Interactive Simulation Screen (7 cols) */}
-              <div className="lg:col-span-7 bg-[#050914] rounded-2xl border border-white/10 p-5 md:p-6 shadow-inner relative overflow-hidden">
-                
-                {/* Visual Header Tag */}
-                <div className="flex items-center justify-between pb-3.5 border-b border-white/10 mb-4 text-xs font-mono">
-                  <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                      activeChapter.badgeType === 'danger'
-                        ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
-                        : activeChapter.badgeType === 'warning'
-                        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
-                        : activeChapter.badgeType === 'cyan'
-                        ? 'bg-nexus-cyan/15 text-nexus-cyan border border-nexus-cyan/30'
-                        : 'bg-emerald-500/15 text-nexus-emerald border border-emerald-500/30'
-                    }`}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                      {activeChapter.badge}
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-zinc-500 font-mono">
+              {/* Left Column: Interactive Evidence Pane (7 cols) */}
+              <div className="lg:col-span-7 bg-[#111115] rounded-lg border border-white/[0.08] p-5">
+                <div className="flex items-center justify-between pb-3 border-b border-white/[0.06] mb-4 text-xs font-mono">
+                  <span className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded border ${
+                    activeChapter.badgeType === 'danger'
+                      ? 'bg-rose-500/10 text-rose-400 border-rose-500/25'
+                      : activeChapter.badgeType === 'warning'
+                      ? 'bg-amber-500/10 text-amber-400 border-amber-500/25'
+                      : activeChapter.badgeType === 'info'
+                      ? 'bg-sky-500/10 text-sky-400 border-sky-500/25'
+                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
+                  }`}>
+                    {activeChapter.badge}
+                  </span>
+                  <span className="text-[11px] text-zinc-500 tabular-nums">
                     Parsed in {activeChapter.speed}
                   </span>
                 </div>
 
-                {/* 1. Chapter Specific Interactive Previews */}
-
                 {/* SLIDE 1: LIABILITY RECONCILER */}
                 {activeChapter.id === 'liability' && (
-                  <div className="space-y-3.5 font-mono text-xs">
-                    <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="font-bold text-zinc-200">SECTION 11.2 — AGGREGATE LIABILITY CAP</span>
-                        <span className="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-                          FEES CAPPED AT $50,000
-                        </span>
+                  <div className="space-y-3 text-xs">
+                    <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                      <div className="flex items-center justify-between mb-1.5 font-mono">
+                        <span className="text-[11px] text-zinc-300">Section 11.2 · Aggregate Cap</span>
+                        <span className="text-[10px] text-amber-400">Capped at $50,000</span>
                       </div>
-                      <p className="text-zinc-300 text-[13px] leading-relaxed font-sans">
-                        "In no event shall either party's total aggregate liability arising out of or related to this Agreement exceed <span className="text-amber-300 bg-amber-500/20 px-1 py-0.5 rounded font-mono font-bold">the total fees paid in the preceding twelve (12) months</span>."
+                      <p className="text-zinc-300 text-[13px] leading-relaxed font-legal">
+                        “In no event shall either party’s total aggregate liability exceed{' '}
+                        <span className="text-amber-300 bg-amber-500/10 px-1 rounded">
+                          total fees paid in the preceding twelve (12) months
+                        </span>.”
                       </p>
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="font-bold text-zinc-200">SECTION 14.1 — IP & THIRD-PARTY INDEMNIFICATION</span>
-                        <span className="text-[10px] text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30">
-                          POTENTIAL $5,000,000 EXPOSURE
-                        </span>
+                    <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                      <div className="flex items-center justify-between mb-1.5 font-mono">
+                        <span className="text-[11px] text-zinc-300">Section 14.1 · IP Indemnity</span>
+                        <span className="text-[10px] text-rose-400">$5,000,000 Exposure</span>
                       </div>
-                      <p className="text-zinc-300 text-[13px] leading-relaxed font-sans">
-                        "Vendor shall defend, indemnify, and hold harmless Client against any claims, losses, or judgments <span className="text-rose-300 bg-rose-500/20 px-1 py-0.5 rounded font-mono font-bold">up to Five Million Dollars ($5,000,000)</span> arising from intellectual property infringement."
+                      <p className="text-zinc-300 text-[13px] leading-relaxed font-legal">
+                        “Vendor shall indemnify and hold harmless Client{' '}
+                        <span className="text-rose-300 bg-rose-500/10 px-1 rounded">
+                          up to Five Million Dollars ($5,000,000)
+                        </span>{' '}
+                        against third-party IP claims.”
                       </p>
                     </div>
 
-                    {/* Interactive Solution Accordion */}
-                    <div className={`p-4 rounded-xl transition-all duration-300 border ${
-                      reconciled 
-                        ? 'bg-nexus-emerald/10 border-nexus-emerald/40 shadow-[0_0_20px_rgba(0,255,157,0.15)]' 
-                        : 'bg-rose-500/10 border-rose-500/30'
+                    <div className={`p-3.5 rounded-lg border transition-colors ${
+                      reconciled
+                        ? 'bg-emerald-500/[0.06] border-emerald-500/30'
+                        : 'bg-rose-500/[0.05] border-rose-500/25'
                     }`}>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           {reconciled ? (
-                            <CheckCircle2 size={16} className="text-nexus-emerald shrink-0" />
+                            <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
                           ) : (
-                            <AlertTriangle size={16} className="text-rose-400 shrink-0" />
+                            <AlertTriangle size={14} className="text-rose-400 shrink-0" />
                           )}
-                          <span className={`font-bold text-xs ${reconciled ? 'text-nexus-emerald' : 'text-rose-300'}`}>
-                            {reconciled ? 'CARVE-OUT HARMONIZED & SECURED' : 'FATAL DRAFTING GAP: MISSING EXPRESS CARVE-OUT'}
+                          <span className={`font-medium text-xs ${reconciled ? 'text-emerald-300' : 'text-rose-300'}`}>
+                            {reconciled ? 'Express Carve-Out Harmonized' : 'Missing Carve-Out Subordinates $5M Indemnity'}
                           </span>
                         </div>
                         <button
+                          type="button"
                           onClick={() => setReconciled(!reconciled)}
-                          className={`px-3 py-1 rounded-lg text-[11px] font-bold cursor-pointer transition-all ${
+                          className={`px-2.5 py-1 rounded text-[11px] font-medium cursor-pointer transition-colors shrink-0 ${
                             reconciled
-                              ? 'bg-white/10 text-white hover:bg-white/20'
-                              : 'bg-nexus-emerald text-black hover:bg-white font-black shadow-[0_0_15px_rgba(0,255,157,0.3)]'
+                              ? 'bg-[#18181B] text-zinc-200 border border-white/[0.1] hover:bg-zinc-800'
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                           }`}
                         >
-                          {reconciled ? 'Reset Demo' : '⚡ 1-Click Harmonize'}
+                          {reconciled ? 'Reset' : 'Apply Rider Fix'}
                         </button>
                       </div>
 
-                      <p className="text-[11px] text-zinc-300 mt-2 font-sans leading-relaxed">
+                      <p className="text-[11.5px] text-zinc-400 mt-1.5 leading-relaxed">
                         {reconciled
-                          ? 'Express Carve-Out Rider inserted: "Notwithstanding Section 11.2, indemnity obligations under Section 14.1 shall not be subject to any monetary liability ceiling."'
-                          : 'Without an express carve-out, Delaware & New York courts routinely enforce the $50k cap on your $5M indemnity, gutting client recovery.'}
+                          ? 'Rider inserted: “Notwithstanding Section 11.2, indemnification under Section 14.1 is excluded from the aggregate liability cap.”'
+                          : 'Without an express carve-out, courts enforce the $50k fee cap across indemnity claims.'}
                       </p>
                     </div>
                   </div>
@@ -361,107 +335,104 @@ export default function ContractGuardMasterShowcase() {
 
                 {/* SLIDE 2: FORENSIC REDLINE DIFF */}
                 {activeChapter.id === 'diff' && (
-                  <div className="space-y-3 font-mono text-xs">
+                  <div className="space-y-3 text-xs">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="p-3 rounded-xl bg-black/40 border border-white/5">
-                        <div className="text-[10px] text-zinc-400 font-bold mb-1.5 flex items-center justify-between">
-                          <span>ORIGINAL (DRAFT V3)</span>
-                          <span className="text-zinc-500">11:42 AM</span>
+                      <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                        <div className="text-[10px] font-mono text-zinc-500 mb-1.5 flex items-center justify-between">
+                          <span>BASELINE (DRAFT V3)</span>
+                          <span>11:42 AM</span>
                         </div>
-                        <p className="text-zinc-300 font-sans text-xs leading-relaxed">
-                          "Buyer may terminate this Agreement upon thirty (30) days notice in the event Seller commits a <span className="bg-white/10 px-1 py-0.5 rounded text-zinc-200">material breach</span> that remains uncured."
+                        <p className="text-zinc-300 font-legal text-[13px] leading-relaxed">
+                          “Buyer may terminate upon thirty (30) days notice if Seller commits an uncured{' '}
+                          <span className="bg-white/[0.08] px-1 rounded text-zinc-100">material breach</span>.”
                         </p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20">
-                        <div className="text-[10px] text-rose-300 font-bold mb-1.5 flex items-center justify-between">
-                          <span>COUNTERPARTY CLEAN COPY (V4)</span>
-                          <span className="text-rose-400">UNMARKED</span>
+                      <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06] border-l-2 border-l-rose-500/70">
+                        <div className="text-[10px] font-mono text-rose-400 mb-1.5 flex items-center justify-between">
+                          <span>RETURNED CLEAN COPY (V4)</span>
+                          <span>UNMARKED</span>
                         </div>
-                        <p className="text-zinc-300 font-sans text-xs leading-relaxed">
-                          "Buyer may terminate this Agreement upon <span className="bg-rose-500/20 text-rose-300 line-through px-1">thirty (30)</span> <span className="bg-emerald-500/20 text-emerald-300 font-bold px-1">ninety (90)</span> days notice <span className="bg-rose-500/20 text-rose-300 line-through px-1">only in Seller's sole discretion</span>."
+                        <p className="text-zinc-300 font-legal text-[13px] leading-relaxed">
+                          “Buyer may terminate upon{' '}
+                          <span className="bg-rose-500/15 text-rose-300 line-through px-1">thirty (30)</span>{' '}
+                          <span className="bg-emerald-500/15 text-emerald-300 px-1">ninety (90)</span> days notice{' '}
+                          <span className="bg-emerald-500/15 text-emerald-300 px-1">in Seller’s sole discretion</span>.”
                         </p>
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                        <span className="text-zinc-200 text-xs font-sans">
-                          2 Stealth modifications detected (Cure period tripled + Unilateral discretion injected)
-                        </span>
-                      </div>
-                      <span className="text-nexus-cyan font-bold font-mono text-[11px]">
-                        0 Discrepancies Missed
+                    <div className="p-3 rounded-lg bg-[#09090B] border border-white/[0.06] flex items-center justify-between gap-2 text-xs">
+                      <span className="text-zinc-300">
+                        2 silent alterations detected: cure period tripled + unilateral discretion added.
                       </span>
+                      <span className="text-emerald-400 font-mono text-[11px] shrink-0">0 Missed</span>
                     </div>
                   </div>
                 )}
 
                 {/* SLIDE 3: DETERMINISTIC AST AUDIT */}
                 {activeChapter.id === 'audit' && (
-                  <div className="space-y-2.5 font-mono text-xs">
-                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-start justify-between">
+                  <div className="space-y-2.5 text-xs">
+                    <div className="p-3 rounded-lg bg-[#09090B] border border-white/[0.06] flex items-start justify-between gap-3">
                       <div>
-                        <div className="font-bold text-white mb-0.5">Section 14.4 Cross-Reference</div>
-                        <div className="text-zinc-400 text-[11px] font-sans">Section 8.2 points to Section 14.4 (Deleted during negotiation)</div>
+                        <div className="font-medium text-zinc-100">Section 14.4 Cross-Reference</div>
+                        <div className="text-zinc-400 text-[11.5px] mt-0.5">Section 8.2 cites Section 14.4, which was deleted during redlining.</div>
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                        DANGLING CITATION
-                      </span>
+                      <span className="text-[10px] font-mono text-rose-400 shrink-0">Broken Ref</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-start justify-between">
+                    <div className="p-3 rounded-lg bg-[#09090B] border border-white/[0.06] flex items-start justify-between gap-3">
                       <div>
-                        <div className="font-bold text-white mb-0.5">Exhibit C (IP Escrow Protocol)</div>
-                        <div className="text-zinc-400 text-[11px] font-sans">Referenced in Section 3.1 but missing from final document binder</div>
+                        <div className="font-medium text-zinc-100">Exhibit C (IP Escrow Protocol)</div>
+                        <div className="text-zinc-400 text-[11.5px] mt-0.5">Referenced in Section 3.1 but omitted from closing binder.</div>
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        MISSING ATTACHMENT
-                      </span>
+                      <span className="text-[10px] font-mono text-amber-400 shrink-0">Missing Exhibit</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-start justify-between">
+                    <div className="p-3 rounded-lg bg-[#09090B] border border-white/[0.06] flex items-start justify-between gap-3">
                       <div>
-                        <div className="font-bold text-white mb-0.5">Purchase Price Numerical Audit</div>
-                        <div className="text-zinc-400 text-[11px] font-sans">Spelled: "Two Hundred Fifty Thousand" vs Digits: "($205,000)"</div>
+                        <div className="font-medium text-zinc-100">Purchase Price Parity</div>
+                        <div className="text-zinc-400 text-[11.5px] mt-0.5">Prose reads “Two Hundred Fifty Thousand” while figures read “($205,000)”.</div>
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                        UCC § 3-114 CLASH
-                      </span>
+                      <span className="text-[10px] font-mono text-rose-400 shrink-0">UCC § 3-114</span>
                     </div>
 
-                    <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between text-[11px] text-nexus-emerald">
-                      <span>Deterministic Parser Status:</span>
-                      <span className="font-bold font-mono">416 / 416 Algorithmic Checks Passed</span>
+                    <div className="px-3 py-2 rounded-lg bg-emerald-500/[0.05] border border-emerald-500/20 flex items-center justify-between text-[11px] font-mono text-emerald-400">
+                      <span>Deterministic Rule Verification</span>
+                      <span>100% Parity Validated</span>
                     </div>
                   </div>
                 )}
 
-                {/* SLIDE 4: 100% IN-RAM PRIVILEGE */}
+                {/* SLIDE 4: IN-RAM PRIVILEGE */}
                 {activeChapter.id === 'privacy' && (
-                  <div className="space-y-3 font-mono text-xs">
-                    <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                      <span className="font-bold text-zinc-300 block mb-2 text-[11px]">
-                        CLIENT PRIVILEGED DOCUMENT (LOCAL IN-MEMORY PROCESSING)
+                  <div className="space-y-3 text-xs">
+                    <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 block mb-2">
+                        Client Document · Sanitized Locally in Browser RAM
                       </span>
-                      <p className="text-zinc-300 font-sans text-xs leading-relaxed">
-                        "Acme Executive Officer <span className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono font-bold border border-emerald-500/40">[REDACTED_ENTITY_01]</span> (SSN: <span className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono font-bold border border-emerald-500/40">[REDACTED_SSN_8492]</span>) authorizes wiring of <span className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded font-mono font-bold border border-emerald-500/40">[REDACTED_FIN_CONSIDERATION]</span> to escrow routing."
+                      <p className="text-zinc-300 font-legal text-[13px] leading-relaxed">
+                        “Acme Executive Officer{' '}
+                        <span className="bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded font-mono text-[11px]">[REDACTED_ENTITY]</span>{' '}
+                        (SSN:{' '}
+                        <span className="bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded font-mono text-[11px]">[REDACTED_SSN]</span>) authorizes wire of{' '}
+                        <span className="bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded font-mono text-[11px]">[REDACTED_SUM]</span>.”
                       </p>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2.5 text-center">
-                      <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
-                        <div className="text-[10px] text-zinc-500">HTTP Calls</div>
-                        <div className="text-base font-black text-nexus-emerald font-mono">0</div>
+                      <div className="p-2.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                        <div className="text-[10px] text-zinc-500 font-mono">Network Calls</div>
+                        <div className="text-base font-semibold text-emerald-400 font-mono tabular-nums mt-0.5">0</div>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
-                        <div className="text-[10px] text-zinc-500">Cloud Storage</div>
-                        <div className="text-base font-black text-nexus-emerald font-mono">0 MB</div>
+                      <div className="p-2.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                        <div className="text-[10px] text-zinc-500 font-mono">Cloud Storage</div>
+                        <div className="text-base font-semibold text-zinc-200 font-mono tabular-nums mt-0.5">0 MB</div>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
-                        <div className="text-[10px] text-zinc-500">ABA Rule 1.6</div>
-                        <div className="text-base font-black text-nexus-cyan font-mono">100% PASS</div>
+                      <div className="p-2.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                        <div className="text-[10px] text-zinc-500 font-mono">ABA Rule 1.6</div>
+                        <div className="text-base font-semibold text-emerald-400 font-mono mt-0.5">Preserved</div>
                       </div>
                     </div>
                   </div>
@@ -469,129 +440,115 @@ export default function ContractGuardMasterShowcase() {
 
                 {/* SLIDE 5: 50-STATE STATUTORY VAULT */}
                 {activeChapter.id === 'vault' && (
-                  <div className="space-y-3 font-mono text-xs">
-                    {/* State Selector Buttons */}
-                    <div className="flex gap-2">
+                  <div className="space-y-3 text-xs">
+                    <div className="flex flex-wrap gap-1.5">
                       {['CA', 'DE', 'NY', 'TX'].map((st) => (
                         <button
                           key={st}
+                          type="button"
                           onClick={() => setSelectedState(st)}
-                          className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                          className={`px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors ${
                             selectedState === st
-                              ? 'bg-nexus-cyan text-black font-black shadow-[0_0_15px_rgba(0,240,255,0.3)]'
-                              : 'bg-white/5 text-zinc-400 hover:text-white border border-white/10'
+                              ? 'bg-white/[0.1] text-white border border-white/[0.14]'
+                              : 'bg-[#09090B] text-zinc-400 hover:text-zinc-200 border border-white/[0.06]'
                           }`}
                         >
-                          {st === 'CA' ? 'California (B&P § 16600)' : st === 'DE' ? 'Delaware (DGCL)' : st === 'NY' ? 'New York' : 'Texas'}
+                          {st === 'CA' ? 'California (§ 16600)' : st === 'DE' ? 'Delaware (DGCL)' : st === 'NY' ? 'New York' : 'Texas'}
                         </button>
                       ))}
                     </div>
 
-                    <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="font-bold text-zinc-200">
-                          {selectedState === 'CA' && 'CALIFORNIA RESTRICTIVE COVENANTS AUDIT'}
-                          {selectedState === 'DE' && 'DELAWARE GENERAL CORPORATION LAW ACCORD'}
-                          {selectedState === 'NY' && 'NEW YORK EMPLOYMENT STANDARDS'}
-                          {selectedState === 'TX' && 'TEXAS COVENANTS NOT TO COMPETE ACT'}
+                    <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06]">
+                      <div className="flex items-center justify-between mb-1.5 font-mono gap-2">
+                        <span className="text-[11px] text-zinc-200">
+                          {selectedState === 'CA' && 'California Restrictive Covenants'}
+                          {selectedState === 'DE' && 'Delaware General Corporation Law'}
+                          {selectedState === 'NY' && 'New York Restraint Standards'}
+                          {selectedState === 'TX' && 'Texas Covenants Not to Compete Act'}
                         </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                        <span className={`text-[10px] px-2 py-0.5 rounded border ${
                           selectedState === 'CA'
-                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                            : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                            ? 'bg-rose-500/10 text-rose-400 border-rose-500/25'
+                            : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
                         }`}>
-                          {selectedState === 'CA' ? 'VOID PER SE & PENALTY' : 'COMPLIANT WITH CARVE-OUTS'}
+                          {selectedState === 'CA' ? 'Void Per Se' : 'Valid With Carve-Outs'}
                         </span>
                       </div>
 
-                      <p className="text-zinc-300 font-sans text-xs leading-relaxed">
-                        {selectedState === 'CA' && (
-                          'California Business & Professions Code § 16600 & AB 1076 treat non-competes as unlawful per se, imposing statutory penalties. ContractGuard flags the clause and drafts a compliant confidentiality and trade secret substitute.'
-                        )}
-                        {selectedState === 'DE' && (
-                          'Delaware Chancery Court strictly reviews scope reasonableness in sale-of-business covenants. Pre-signing reconciliation ensures geographical limitations are legally defensible.'
-                        )}
-                        {selectedState === 'NY' && (
-                          'New York enforces non-competes only to protect legitimate business interests without imposing undue hardship on employees.'
-                        )}
-                        {selectedState === 'TX' && (
-                          'Texas Business & Commerce Code § 15.50 requires covenant to be ancillary to an otherwise enforceable agreement.'
-                        )}
+                      <p className="text-zinc-300 text-xs leading-relaxed">
+                        {selectedState === 'CA' &&
+                          'Cal. Bus. & Prof. Code § 16600 and AB 1076 render employment non-competes void and trigger statutory penalties. Flags invalid language for replacement with compliant confidentiality protection.'}
+                        {selectedState === 'DE' &&
+                          'Delaware Chancery scrutinizes sale-of-business scope reasonableness. Validates geographic boundaries and survival covenants prior to closing.'}
+                        {selectedState === 'NY' &&
+                          'New York enforces restrictive covenants only when narrowly tailored to legitimate business interests without imposing undue hardship.'}
+                        {selectedState === 'TX' &&
+                          'Tex. Bus. & Com. Code § 15.50 requires covenants to be ancillary to an otherwise enforceable agreement at the time made.'}
                       </p>
                     </div>
                   </div>
                 )}
-
               </div>
 
-              {/* Right Column: Editorial Value Proposition & Direct CTAs (5 cols) */}
-              <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+              {/* Right Column: Concise Context & Action (5 cols) */}
+              <div className="lg:col-span-5 flex flex-col justify-between space-y-5">
                 <div>
-                  
-                  {/* Category Accent Number & Title */}
-                  <div className="flex items-center gap-2 mb-2 font-mono text-xs font-medium text-emerald-400">
-                    <ShieldCheck size={14} />
-                    <span>Chapter {activeChapter.num} · Pre-signing defense</span>
+                  <div className="text-[11px] font-mono text-zinc-500 uppercase tracking-wider mb-1.5">
+                    Module {activeChapter.num} · Pre-Signing Review
                   </div>
 
-                  <h3 className="text-2xl md:text-3xl font-heading font-normal text-white leading-tight mb-3">
+                  <h3 className="text-xl md:text-2xl font-serif font-normal text-white leading-snug mb-2.5">
                     {activeChapter.headline}
                   </h3>
 
-                  <p className="text-sm text-zinc-300 leading-relaxed font-body mb-6">
+                  <p className="text-xs md:text-sm text-zinc-400 leading-relaxed mb-5">
                     {activeChapter.summary}
                   </p>
 
-                  {/* High-Impact Stat Highlight */}
-                  <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 mb-6 flex items-center justify-between">
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] flex items-center justify-between gap-3">
                     <div>
-                      <div className="text-[11px] font-mono text-zinc-400">Statutory Benchmark</div>
-                      <div className="text-xs font-mono font-medium text-zinc-200 mt-0.5">
+                      <div className="text-[10px] font-mono uppercase text-zinc-500">Benchmark</div>
+                      <div className="text-xs font-mono text-zinc-300 mt-0.5">
                         {activeChapter.statute}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-xl font-bold font-mono text-emerald-400 tabular-nums">
+                    <div className="text-right shrink-0">
+                      <div className="text-lg font-semibold font-mono text-emerald-400 tabular-nums">
                         {activeChapter.metricVal}
                       </div>
-                      <div className="text-[10px] font-mono text-zinc-400 mt-0.5">
+                      <div className="text-[10px] text-zinc-500 mt-0.5">
                         {activeChapter.metricLabel}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Primary Action Suite */}
-                <div className="space-y-3 pt-2">
+                <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5">
                   <button
+                    type="button"
                     onClick={() => navigate('/demo')}
-                    className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 py-3 px-5 rounded-lg font-semibold text-xs md:text-sm transition-colors flex items-center justify-center gap-2 cursor-pointer font-body border-t border-white/20 active:scale-[0.98]"
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 px-4 rounded-md font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <FileText size={15} />
-                    <span>Audit Contract Draft Free</span>
-                    <ArrowRight size={15} />
+                    <span>Try This in Live Studio</span>
+                    <ArrowRight size={14} />
                   </button>
 
                   <button
+                    type="button"
                     onClick={() => {
                       const el = document.getElementById('pricing');
                       if (el) el.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="w-full bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white py-2.5 px-5 rounded-lg font-medium text-xs border border-white/10 transition-colors flex items-center justify-center gap-2 cursor-pointer font-mono active:scale-[0.98]"
+                    className="w-full bg-[#18181B] hover:bg-zinc-800 text-zinc-200 py-2.5 px-4 rounded-md font-medium text-xs border border-white/[0.08] transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <span>View Perpetual Licensing Plans</span>
-                    <ArrowRight size={13} className="text-zinc-400" />
+                    <span>See Perpetual Plans ($199 / $299)</span>
                   </button>
                 </div>
-
               </div>
-
             </motion.div>
           </AnimatePresence>
         </div>
-
       </div>
-
     </div>
   );
 }

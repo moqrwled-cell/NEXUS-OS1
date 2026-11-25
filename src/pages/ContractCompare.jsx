@@ -1533,12 +1533,15 @@ function ContractAnalyzerView({
     }
   };
 
-  // In Demo mode, populate M&A benchmark deal text on mount without auto-running
+  // In Demo mode, populate selected sample (?sample=saas|ma) or default M&A benchmark deal text on mount
   const hasLoadedInitialDemoRef = useRef(false);
   useEffect(() => {
     if (isDemo && !hasLoadedInitialDemoRef.current && !text) {
       hasLoadedInitialDemoRef.current = true;
-      handleLoadSampleCase('ma', false);
+      const sampleParam = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('sample')
+        : null;
+      handleLoadSampleCase(sampleParam === 'saas' ? 'saas' : 'ma', false);
     }
   }, [isDemo]);
 
