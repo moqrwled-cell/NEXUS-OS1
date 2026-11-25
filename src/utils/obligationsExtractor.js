@@ -217,8 +217,21 @@ export function extractObligations(text = '', clientPartyName = '', counterparty
           dutyType = 'conditional';
         }
 
-        // Party Attribution
-        const responsibleParty = attributeObligationParty(subjectChunk, clientPartyName, counterpartyName);
+        // Party Attribution (subject first, with passive-voice "by <Agent>" fallback)
+        let responsibleParty = attributeObligationParty(subjectChunk, clientPartyName, counterpartyName);
+        if (
+          responsibleParty === 'Third Party' &&
+          /\b(?:be|have\s+been)\s+\w+(?:ed|en|t)\b/i.test(action)
+        ) {
+          const agentMatches = [...action.matchAll(/\bby\s+(?:the\s+)?([A-Za-z][A-Za-z0-9&.'-]*(?:\s+[A-Za-z0-9&.'-]+){0,3}?)(?=\s+(?:within|prior|upon|under|pursuant|for|before|after|unless|except|to|without|in|on|at|\d+)\b|[.,;]|$)/gi)];
+          for (const am of agentMatches) {
+            const candidate = attributeObligationParty(am[1], clientPartyName, counterpartyName);
+            if (candidate !== 'Third Party') {
+              responsibleParty = candidate;
+              break;
+            }
+          }
+        }
 
         // Severity Scoring
         let severity = 'medium';

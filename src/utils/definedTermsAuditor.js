@@ -127,7 +127,17 @@ const LEGAL_STOPWORDS = new Set([
   'Without', 'Under', 'Over', 'All', 'Any', 'Each', 'Every', 'Either', 'Neither',
   'Both', 'Such', 'No', 'Not', 'If', 'Unless', 'Provided', 'Except', 'Subject',
   'Upon', 'Following', 'During', 'After', 'Before', 'Between', 'Among',
-  'To', 'From', 'As', 'Or', 'And', 'Via', 'Per', 'Into', 'Onto', 'Against', 'About', 'Across'
+  'To', 'From', 'As', 'Or', 'And', 'Via', 'Per', 'Into', 'Onto', 'Against', 'About', 'Across',
+  // Standard Non-Term Headings, Billing & Timing Words
+  'Fee', 'Fees', 'Compensation', 'Payment', 'Net', 'Seats', 'Months', 'Days', 'Weeks', 'Years', 'Hours',
+  'Quarterly', 'Monthly', 'Annual', 'Annually', 'Weekly', 'Daily',
+  'Term', 'Scope', 'Services', 'Definitions', 'Confidentiality', 'Indemnification', 'Mutual Indemnification',
+  'Liability', 'Limitation', 'Limitation of Liability', 'Expiration', 'Termination', 'Representations', 'Warranties',
+  'Remedies', 'Severability', 'Counterparts', 'Notices', 'Notice', 'Waiver', 'Assignment', 'Jurisdiction',
+  'Arbitration', 'Mediation', 'Integration', 'Governing', 'Miscellaneous', 'Execution', 'Title', 'Default',
+  'Intellectual Property', 'Proprietary Information', 'Personal Data', 'Personal Information', 'Work Product',
+  'Customer Data', 'Applicable Law', 'Applicable Laws', 'Data Protection', 'Privacy', 'Security',
+  'Service Order', 'Order Form', 'Statement', 'EU', 'AI Act', 'EU AI Act', 'DSA', 'DMA', 'HITECH', 'SOX', 'CCPA', 'CPRA'
 ]);
 
 function escapeRegex(str) {
@@ -224,14 +234,18 @@ export function auditDefinedTerms(text = '', options = {}) {
     }
   });
 
-  // Auto-extract corporate entities from text into userParties to prevent flagging them as undefined terms
+  // Auto-extract corporate entities from text into userParties safely line-by-line (avoids single-line ReDoS)
   const RE_PREAMBLE_ENTITIES = /\b([A-Z][A-Za-z0-9&',.-]+(?:\s+[A-Z][A-Za-z0-9&',.-]+){0,4})\s+(LLC|L\.L\.C\.|Inc\.?|Incorporated|Corp\.?|Corporation|Ltd\.?|Limited|LLP|L\.L\.P\.)\b/g;
-  let entMatch;
-  while ((entMatch = RE_PREAMBLE_ENTITIES.exec(text)) !== null) {
-    const full = entMatch[0].trim().toLowerCase();
-    const stem = entMatch[1].trim().toLowerCase();
-    userParties.add(full);
-    userParties.add(stem);
+  for (const lineText of lines) {
+    if (!/\b(?:LLC|L\.L\.C\.|Inc|Incorporated|Corp|Corporation|Ltd|Limited|LLP|L\.L\.P\.)\b/i.test(lineText)) continue;
+    RE_PREAMBLE_ENTITIES.lastIndex = 0;
+    let entMatch;
+    while ((entMatch = RE_PREAMBLE_ENTITIES.exec(lineText)) !== null) {
+      const full = entMatch[0].trim().toLowerCase();
+      const stem = entMatch[1].trim().toLowerCase();
+      userParties.add(full);
+      userParties.add(stem);
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -258,7 +272,7 @@ export function auditDefinedTerms(text = '', options = {}) {
     while ((parenMatch = RE_PAREN_BLOCK.exec(lineText)) !== null) {
       const inner = parenMatch[1];
       if (
-        /^(?:the|hereinafter|collectively|individually|each|such|["“'‘])/i.test(inner.trim()) ||
+        /^(?:this|the|hereinafter|collectively|individually|each|such|["“'‘])/i.test(inner.trim()) ||
         /\b(?:collectively|individually|hereinafter|together\s+with|each)\b/i.test(inner)
       ) {
         const RE_QUOTED = /["“'‘]([A-Za-z0-9\s\-_,.'()]{2,40}?)["”'’]/g;
@@ -292,6 +306,63 @@ export function auditDefinedTerms(text = '', options = {}) {
 
   const definedTerms = Array.from(definedTermsMap.values());
 
+  // Extract natural-person / preamble counterparty names & formal job titles introduced in opening lines (e.g., "between Arthur Pendelton ... and Beatrice Christopher")
+  const preamblePartyNames = new Set([
+    'chief legal officer', 'general counsel', 'chief executive officer', 'chief financial officer',
+    'chief operating officer', 'chief technology officer', 'managing member', 'managing partner',
+    'authorised signatory', 'authorized signatory', 'authorized representative', 'dr', 'courts', 'letter'
+  ]);
+  lines.slice(0, 14).forEach((lineText) => {
+    // Capture natural-person & corporate party names introduced in opening lines, TO/FROM blocks, or "by and between ... and ..."
+    const cleanAddParty = (rawStr) => {
+      const cleaned = rawStr
+        .replace(/\([^)]*\)/g, ' ')
+        .replace(/,?\s*\b(?:a|an)\s+[A-Za-z\s]+?(?:corporation|company|limited\s+liability\s+company|limited\s+partnership|partnership|individual|resident|trust|national\s+banking\s+association)\b[\s\S]*$/i, '')
+        .replace(/\s+\bas\s+(?:Manager|Member|Borrower|Lender|Seller|Buyer|Landlord|Tenant|Company|Executive|Contractor|Provider|Customer|Agent)\b[\s\S]*$/i, '')
+        .replace(/\b(?:the\s+undersigned|collectively|individually|hereinafter)\b/gi, '')
+        .replace(/^(?:between|by\s+and\s+between|and|by|to|from|(?:Dr|Mr|Ms|Mrs)\.?)\s+/gi, '')
+        .replace(/[.,;:'’"]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (cleaned.length >= 3 && /^[A-Z]/.test(cleaned)) {
+        const low = cleaned.toLowerCase();
+        preamblePartyNames.add(low);
+        const withoutSuffix = low.replace(/,?\s*\b(?:llc|l\.l\.c\.|inc\.?|incorporated|corp\.?|corporation|ltd\.?|limited|llp|lp|l\.p\.|gmbh)\b\.?$/i, '').replace(/,+$/, '').trim();
+        if (withoutSuffix.length >= 3) preamblePartyNames.add(withoutSuffix);
+        const partyToks = cleaned.split(/\s+/).map(tok => tok.replace(/[.,;:'’"()]/g, '')).filter(Boolean);
+        for (let i = 0; i < partyToks.length; i++) {
+          const t = partyToks[i];
+          if (t.length >= 3 && !/^(?:and|the|for|of|in|at|by|to|as)$/i.test(t)) preamblePartyNames.add(t.toLowerCase());
+          // Also index right-aligned multi-word tails so CamelCase first tokens (e.g. "BioHealth Diagnostics Laboratories Inc") don't trigger partial misses
+          if (i > 0 && i < partyToks.length) {
+            const tail = partyToks.slice(i).join(' ').toLowerCase();
+            if (tail.length >= 6) preamblePartyNames.add(tail);
+          }
+        }
+      }
+    };
+
+    const roleMatchIter = lineText.matchAll(/\b(?:(?:Dr|Mr|Ms|Mrs)\.?\s+)?([A-Z][a-zA-Z.'-]+(?:\s+[A-Z][a-zA-Z.'-]+){0,6})(?:,\s*(?:LLC|Inc\.?|Corp\.?|LP|LLP|Ltd\.?))?\s*(?:,?\s*(?:a\s+[A-Za-z\s]+?(?:corporation|company|partnership|individual|resident|trust)[^()]{0,40})?)?\(\s*(?:the\s+)?["“'‘]?([A-Za-z\s]{2,30})["”'’]?\s*\)/gi);
+    for (const rm of roleMatchIter) {
+      cleanAddParty(rm[1]);
+    }
+    const toFromMatch = lineText.match(/^\s*(?:TO|FROM|RE|ATTN|LANDLORD|TENANT|BORROWER|LENDER|BUYER|SELLER|COMPANY|PROVIDER|CUSTOMER|CLIENT|VENDOR)\s*:\s*(.+)$/i);
+    if (toFromMatch) cleanAddParty(toFromMatch[1]);
+
+    if (/\b(?:by\s+and\s+between|by\s+and\s+among|entered\s+into\s+(?:as\s+of[^,]+\s+)?(?:by\s+and\s+)?(?:between|among)|between|made\s+as\s+of[^,]+by\s+and\s+(?:between|among)|promises\s+to\s+pay\s+to\s+the\s+order\s+of|the\s+undersigned)\b/i.test(lineText)) {
+      const segs = lineText.split(/\b(?:by\s+and\s+between|by\s+and\s+among|between|among|promises\s+to\s+pay\s+to\s+the\s+order\s+of|the\s+undersigned)\b/i).slice(1);
+      for (const seg of segs) {
+        seg.split(/,\s+and\s+|\s+and\s+(?=[A-Z])|\s*&\s*/i).forEach(part => {
+          const strippedPart = part.replace(/,\s*(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|LP|L\.P\.|LLP|Ltd\.?)/gi, '');
+          const head = strippedPart.split(/[,;(]/)[0].trim();
+          if (head) cleanAddParty(head);
+          const rawHead = part.split(/[,;(]/)[0].trim();
+          if (rawHead) cleanAddParty(rawHead);
+        });
+      }
+    }
+  });
+
   // --------------------------------------------------------------------------
   // PIPELINE 2: TERM USAGE FREQUENCY & UNUSED DEFINED TERMS
   // --------------------------------------------------------------------------
@@ -304,10 +375,14 @@ export function auditDefinedTerms(text = '', options = {}) {
 
     lines.forEach((lineText, idx) => {
       const lineNum = idx + 1;
-      // Exclude the definition line itself from usage count
-      if (lineNum === item.line) return;
       const matches = lineText.match(termRegex);
-      if (matches) occurrences += matches.length;
+      if (!matches) return;
+      // On the definition line itself, subtract 1 for the single parenthetical/means definition header so subsequent sentences in the same paragraph still count as valid usage
+      if (lineNum === item.line) {
+        occurrences += Math.max(0, matches.length - 1);
+      } else {
+        occurrences += matches.length;
+      }
     });
 
     item.count = occurrences;
@@ -328,7 +403,7 @@ export function auditDefinedTerms(text = '', options = {}) {
   // PIPELINE 3: UNDEFINED CAPITALIZED TERMS SCANNER (6-LAYER FILTER)
   // --------------------------------------------------------------------------
   const candidateOccurrences = new Map(); // term -> { count, firstLine, snippet }
-  const RE_CAPITALIZED = /\b[A-Z][a-z]+(?:['’]s)?(?:[-\s]+[A-Z][a-z]+(?:['’]s)?)*\b/g;
+  const RE_CAPITALIZED = /\b[A-Z][a-z]+(?:['’]s)?(?:[-\s]+[A-Z][a-z]+(?:['’]s)?){0,6}\b/g;
 
   let inSignatureBlock = false;
   let inExhibitsSchedule = false;
@@ -351,70 +426,108 @@ export function auditDefinedTerms(text = '', options = {}) {
       }
     }
 
-    // Skip signatory lines and exhibit notes
-    if (/^(By|Name|Title|BUYER|SELLER)\s*:\s*/i.test(trimmed)) return;
+    // Skip signatory lines, memo subject lines (RE:/TO:/FROM:), and exhibit notes
+    if (/^(?:By|Name|Title|BUYER|SELLER|RE|TO|FROM)\s*:\s*/i.test(trimmed)) return;
     if (/\(Attached\)|\[Note:/i.test(trimmed)) return;
 
-    // Layer 5: Skip all-caps headings and short uppercase lines
-    if (trimmed.length < 120 && trimmed === trimmed.toUpperCase()) return;
+    // Layer 5: Skip all-caps headings and standalone short Article/Section title lines
+    const isStandaloneHeading =
+      (trimmed.length < 120 && trimmed === trimmed.toUpperCase()) ||
+      (/^(?:#{1,6}\s+)?(?:ARTICLE|SECTION|CLAUSE|PART|EXHIBIT|SCHEDULE|APPENDIX|ANNEX|ATTACHMENT)\s+[0-9IVXLCDM]+(?:\.[0-9]+)*[.\-:\s]/i.test(trimmed) &&
+        trimmed.split(/\s+/).length <= 12 &&
+        !/\b(?:shall|must|may|will|agrees?|covenants?)\b/i.test(trimmed));
+    if (isStandaloneHeading) return;
 
     // Detect subsection heading title prefix: "2.1 Performance of Services. Provider shall..." or "(c) Environmental Compliance. To Seller's..."
     const headingPrefixMatch = trimmed.match(/^(?:[0-9]+(?:\.[0-9]+)+|[IVXLCDM]+\.|\([a-z0-9]+\))\s+([A-Za-z0-9\s—–\-_/]+?)\.\s+/i);
     const headingEndIndex = headingPrefixMatch ? lineText.indexOf(headingPrefixMatch[0]) + headingPrefixMatch[0].length : -1;
 
-    // Detect judicial case citation spans: e.g. "Oppenheimer & Co. v. Oppenheim, Appel, Dixon & Co., 86 N.Y.2d 685" or "In re Caremark"
+    // Detect judicial case citation spans safely (only invoke regex when marker exists; flattened to prevent ReDoS)
     const caseSpans = [];
-    const RE_CASE_LAW = /\b(?:[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|ex\s+rel\.|[0-9]+|[A-Z]\.))*\s+(?:v\.|vs\.|v)\s+[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|ex\s+rel\.|[0-9]+|[A-Z]\.))*(?:,\s*\d+\s+[A-Za-z0-9\.\s]+(?:\s+\d+)?)?(?:\s*\(\s*(?:[A-Za-z\s]+)?\d{4}\s*\))?|In\s+re\s+[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|Litig\.|Corp\.|Inc\.|LLC|[0-9]+|[A-Z]\.))*)\b/g;
-    let cm;
-    while ((cm = RE_CASE_LAW.exec(lineText)) !== null) {
-      caseSpans.push({ start: cm.index, end: cm.index + cm[0].length });
+    if (/(?:\bv\.|\bvs\.|\bIn\s+re\b)/.test(lineText)) {
+      const RE_CASE_LAW = /\b(?:[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|Litig\.|Corp\.|Inc\.|LLC|[0-9]+)){0,5}\s+(?:v\.|vs\.)\s+[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|for|in|al\.|Corp\.|Inc\.|LLC|[0-9]+)){0,5}(?:,\s*\d+\s+[A-Za-z0-9.]+(?:\s+\d+)?)?(?:\s*\([^)]{2,25}\d{4}\))?|In\s+re\s+[A-Z][A-Za-z0-9',.-]*(?:\s+(?:[A-Z][A-Za-z0-9',.-]*|&|and|of|the|Litig\.|Corp\.|Inc\.|LLC|[0-9]+)){0,5})\b/g;
+      let cm;
+      while ((cm = RE_CASE_LAW.exec(lineText)) !== null) {
+        caseSpans.push({ start: cm.index, end: cm.index + cm[0].length });
+      }
+    }
+
+    // Detect regulatory / statutory multi-word citations (GDPR Article 28 ..., EU AI Act Article 50, HIPAA Section ...)
+    const statuteSpans = [];
+    if (/\b(?:GDPR|HIPAA|EU\s+AI\s+Act|AI\s+Act|CCPA|CPRA|ERISA|SOX|CERCLA|FIRPTA|Internal\s+Revenue\s+Code)\b/i.test(lineText)) {
+      const RE_STAT_SPAN = /\b(?:(?:EU\s+)?AI\s+Act|GDPR|HIPAA|CCPA|CPRA|ERISA|CERCLA|FIRPTA|Internal\s+Revenue\s+Code)\s+(?:Articles?|Sections?|§§?)\s+[0-9A-Za-z.-]+(?:\s+[A-Z][a-z]+){0,3}/g;
+      let sm;
+      while ((sm = RE_STAT_SPAN.exec(lineText)) !== null) {
+        statuteSpans.push({ start: sm.index, end: sm.index + sm[0].length });
+      }
     }
 
     let m;
     while ((m = RE_CAPITALIZED.exec(lineText)) !== null) {
-      // Skip if token falls within a judicial case law citation
+      // Skip if token falls within a judicial case law or regulatory statutory citation
       if (caseSpans.some(span => m.index >= span.start && m.index < span.end)) continue;
+      if (statuteSpans.some(span => m.index >= span.start && m.index < span.end)) continue;
 
       // Skip if token is part of subsection heading title
       if (headingEndIndex !== -1 && m.index < headingEndIndex) continue;
 
-      // Skip if preceded by standard labels or cross-ref prefixes
-      const precedingText = lineText.substring(0, m.index).trim();
+      // Skip if preceded by standard labels, exhibit parenthetical tags, or cross-ref prefixes (bounded slice to prevent O(N^2) on 100k single lines)
+      const precedingText = lineText.slice(Math.max(0, m.index - 180), m.index).trim();
+      const followingRaw = lineText.slice(m.index + m[0].length, m.index + m[0].length + 48).trim();
+      // Skip quoted booklet/pamphlet titles (e.g. EPA pamphlet "Protect Your Family from Lead in Your Home")
+      if (/\b(?:pamphlet|booklet|publication|brochure|manual|titled|entitled)\s+["“][^"”\n]*$/i.test(precedingText)) continue;
+      if (/^\(\s*(?:this|the)\s+["“'‘][A-Za-z0-9\s-]{2,35}["”'’]\s*\)/i.test(followingRaw)) continue;
       if (/(?:Exhibits?|Schedules?|Appendices?|Sections?|Articles?|Clauses?|Account|Routing|Wire|Escrow|Beneficiary|Bank|Tax|EIN|Phone|Mobile|Email|State\s+of|County\s+of)\s*[:—–-]?\s*$/i.test(precedingText)) continue;
+      if (/(?:Exhibits?|Schedules?|Appendices?|Annex(?:es)?)\s+[A-Z0-9]+(?:\([A-Za-z0-9]+\))?\s*\($/i.test(precedingText)) continue;
 
       // Skip physical addresses, property parcels, and tax description clauses
-      if (/(?:situated\s+at|located\s+at|situated\s+within|located\s+within|designated\s+as|known\s+as|consisting\s+of)\s*[^;\.\n]*$/i.test(precedingText)) {
-        if (/(?:Parkway|Boulevard|Street|Avenue|Drive|Lane|Way|Road|Court|Plaza|District|County|State|Acres|Gross\s+Acres|Square\s+Feet|Parcel|APN|Identification\s+Number)\b/i.test(m[0])) {
+      if (/(?:situated\s+at|located\s+at|with\s+an\s+address\s+at|premises\s+at|situated\s+within|located\s+within|designated\s+as|known\s+as|consisting\s+of)\s*[^;.\n]*$/i.test(precedingText)) {
+        if (/(?:Parkway|Boulevard|Street|Avenue|Drive|Lane|Way|Road|Court|Terrace|Circle|Highway|Square|Plaza|Center|Crossing|District|County|State|Acres|Gross\s+Acres|Square\s+Feet|Parcel|APN|Identification\s+Number)\b/i.test(m[0])) {
           continue;
         }
       }
 
-      // Skip forum selection and venue phrases (e.g. brought exclusively in the Franklin County Court of Common Pleas)
-      if (/(?:brought\s+exclusively\s+in|venue\s+(?:in|of)|jurisdiction\s+of)\s*[^;\.\n]*$/i.test(precedingText)) {
-        if (/(?:Court|Common\s+Pleas|Chancery|Judicial\s+District|Circuit\s+Court)\b/i.test(m[0])) {
+      // Skip forum selection and venue phrases
+      if (/(?:brought\s+exclusively\s+in|venue\s+(?:in|of)|jurisdiction\s+of)\s*[^;.\n]*$/i.test(precedingText)) {
+        if (/(?:Court|Courts|Common\s+Pleas|Chancery|Judicial\s+District|Circuit\s+Court|Superior\s+Court|Supreme\s+Court|District\s+Court)\b/i.test(m[0])) {
           continue;
         }
       }
 
       let phrase = m[0].trim();
 
-      // Layer 0: If full phrase is already a recognized legal stopword / standard document, skip immediately
-      if (LEGAL_STOPWORDS.has(phrase)) continue;
+      // Layer 0: If full phrase (or without trailing 's) is already a recognized legal stopword, skip
+      const phraseNoPoss = phrase.replace(/['’]s$/i, '').trim();
+      if (LEGAL_STOPWORDS.has(phrase) || LEGAL_STOPWORDS.has(phraseNoPoss) || preamblePartyNames.has(phraseNoPoss.toLowerCase())) continue;
 
-      // If multi-word phrase starts with leading legal determiner/preposition (e.g. "All Proprietary Software", "To Seller"), strip leading word
+      // Skip generic self-referential instrument words preceded by "this" ("this Lease", "this Note", "this Letter")
+      if (/\bthis$/i.test(precedingText) && /^(?:Agreement|Contract|Lease|Note|Letter|Amendment|Addendum|Deed|Policy|Guaranty|Instrument)$/i.test(phraseNoPoss)) {
+        continue;
+      }
+
+      // Strip leading legal determiner, preposition, conditional, or possessive party determiner
       let tokens = phrase.split(/\s+/);
-      while (tokens.length > 1 && /^(?:The|This|That|These|Those|All|Any|Each|Every|Either|Neither|Both|Such|No|To|From|In|On|At|By|For|With|Without|Under|Over)$/i.test(tokens[0])) {
+      while (
+        tokens.length > 1 &&
+        /^(?:The|This|That|These|Those|All|Any|Each|Every|Either|Neither|Both|Such|No|To|From|In|On|At|By|For|With|Without|Under|Over|If|When|Whenever|Where|Wherever|Unless|Until|While|Your|Our|Their|Its|His|Her|Party['’]s|Parties['’]?|Client['’]s|Customer['’]s|Provider['’]s|Vendor['’]s|Buyer['’]s|Seller['’]s|Company['’]s|Employer['’]s|Employee['’]s|Licensor['’]s|Licensee['’]s|Contractor['’]s|Grantor['’]s|Grantee['’]s)$/i.test(tokens[0])
+      ) {
         tokens.shift();
       }
-      phrase = tokens.join(' ');
-      if (LEGAL_STOPWORDS.has(phrase)) continue;
+      phrase = tokens.join(' ').replace(/['’]s$/i, '').trim();
+      if (!phrase || LEGAL_STOPWORDS.has(phrase) || preamblePartyNames.has(phrase.toLowerCase())) continue;
 
       const lower = phrase.toLowerCase();
       const baseStem = lower.replace(/['’]s$/, '').replace(/s$/, '').replace(/es$/, '');
 
-      // Skip field descriptors / form labels followed by colon (e.g. "Docket No:", "Principal Amount:", "Earnest Money Deposit:")
-      const followingChar = lineText.substring(m.index + phrase.length).trim();
-      if (followingChar.startsWith(':')) continue;
+      // Skip field descriptors / form labels followed by colon (e.g. "Docket No:", "Principal Amount:")
+      if (followingRaw.startsWith(':')) continue;
+
+      // Layer 0b: Check multi-word defined term containing lowercase connector words ("Event of Default", "Right of First Refusal", "Letter of Intent")
+      const extendedOfMatch = lineText.slice(m.index).match(/^[A-Z][a-z]+(?:\s+(?:of|and|for|the)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3})+/);
+      if (extendedOfMatch) {
+        const extKey = extendedOfMatch[0].toLowerCase();
+        if (definedTermsMap.has(extKey) || LEGAL_STOPWORDS.has(extendedOfMatch[0])) continue;
+      }
 
       // Layer 1: Already defined in contract (including possessive 's, plural, and singular variations)
       if (
@@ -424,29 +537,31 @@ export function auditDefinedTerms(text = '', options = {}) {
         definedTermsMap.has(baseStem + 's')
       ) continue;
 
-      // Skip phrase immediately preceding a parenthetical definition (e.g. "Master Services Agreement" (the 'Agreement') or "Alpha Corp" ("Buyer"))
-      const followingText = lineText.substring(m.index + phrase.length).trim();
-      if (/^["”'’]?\s*\(\s*(?:the|hereinafter|collectively|individually|each|such|["“'‘])/i.test(followingText)) continue;
+      // Skip phrase immediately preceding a parenthetical definition
+      if (/^["”'’]?\s*\(\s*(?:the|hereinafter|collectively|individually|each|such|["“'‘])/i.test(followingRaw)) continue;
 
       // Layer 2: Explicit known parties (including possessives)
       if (userParties.has(lower) || userParties.has(baseStem)) continue;
 
-      // Layer 3: Comprehensive Legal Stopwords Filter
-      if (tokens.every(t => LEGAL_STOPWORDS.has(t))) continue;
+      // Layer 3: Comprehensive Legal Stopwords Filter (normalizing possessives per token)
+      if (tokens.every(t => {
+        const cleanTok = t.replace(/['’]s$/i, '');
+        return LEGAL_STOPWORDS.has(t) || LEGAL_STOPWORDS.has(cleanTok);
+      })) continue;
 
-      // Layer 4: Sentence Starter Check (for single capitalized words)
+      // Layer 4: Sentence Starter & Quantity Unit Check (for single capitalized words)
       if (tokens.length === 1) {
-        const precedingText = lineText.substring(0, m.index).trim();
         const isSentenceStart = !precedingText ||
                                 /[.!?]\s*$/.test(precedingText) ||
                                 /^\([a-z0-9]+\)$/i.test(precedingText) ||
-                                /^(?:[0-9]+(?:\.[0-9]+)*|\#+)\s*$/i.test(precedingText);
-        if (isSentenceStart) continue;
+                                /^(?:[0-9]+(?:\.[0-9]+)*|#+)\s*$/i.test(precedingText);
+        const followsCardinal = /\b\d+$/.test(precedingText);
+        if (isSentenceStart || followsCardinal) continue;
       }
 
       // Record valid candidate
       const start = Math.max(0, m.index - 35);
-      const end = Math.min(lineText.length, m.index + phrase.length + 35);
+      const end = Math.min(lineText.length, m.index + m[0].length + 35);
       const snippet = (start > 0 ? '...' : '') + lineText.substring(start, end).trim() + (end < lineText.length ? '...' : '');
 
       if (!candidateOccurrences.has(phrase)) {
@@ -495,55 +610,79 @@ export function auditDefinedTerms(text = '', options = {}) {
     'internaltreaty'
   ]);
 
-  // Determine preamble boundary (first line with SECTION, ARTICLE, WITNESSETH, RECITALS, or max 25 lines)
-  let preambleEndLine = lines.length;
+  // Determine preamble boundary (explicit header OR last non-operative preamble party line)
+  let preambleEndLine = -1;
   for (let i = 0; i < lines.length; i++) {
     if (/^\s*(?:SECTION|ARTICLE|CLAUSE|WITNESSETH|RECITALS|NOW,?\s+THEREFORE)\b/i.test(lines[i])) {
       preambleEndLine = i + 1;
       break;
     }
   }
-  if (preambleEndLine > 25) preambleEndLine = 25;
+  if (preambleEndLine === -1) {
+    // Compact document without explicit SECTION/ARTICLE headings: stop preamble right before the first operative obligation line
+    preambleEndLine = Math.min(25, lines.length);
+    for (let i = 0; i < Math.min(25, lines.length); i++) {
+      if (/\b(?:shall|must|agrees?\s+to|in\s+no\s+event)\b/i.test(lines[i]) && !/\bbetween\b/i.test(lines[i])) {
+        preambleEndLine = Math.max(1, i);
+        break;
+      }
+    }
+  } else if (preambleEndLine > 25) {
+    preambleEndLine = 25;
+  }
 
   lines.forEach((lineText, idx) => {
-    let m;
-    while ((m = RE_ENTITY.exec(lineText)) !== null) {
-      // Exclude statutory citations where suffix is immediately followed by Law, Act, Code, Statute, etc.
-      const matchEnd = m.index + m[0].length;
-      const followingText = lineText.slice(matchEnd);
-      if (/^\s+(?:Law|Laws|Act|Acts|Code|Codes|Statute|Statutes|Rules?|Regulation|Regulations|Commission|Department|Division|Board|Governance|Jurisprudence|Section|§)\b/i.test(followingText)) {
-        continue;
+    if (!/\b(?:LLC|L\.L\.C\.|Inc|Incorporated|Corp|Corporation|Ltd|Limited|LLP|L\.L\.P\.|GmbH)\b/i.test(lineText)) return;
+    // Split multi-column signature/schedule lines (3+ spaces or tabs) so adjacent signatory names never glue into one fake entity
+    const cols = lineText.split(/\s{3,}|\t|\|/);
+    for (const colText of cols) {
+      RE_ENTITY.lastIndex = 0;
+      let m;
+      while ((m = RE_ENTITY.exec(colText)) !== null) {
+        // Exclude statutory/organizational descriptors like "Delaware Limited Liability Company" or "... Corp. Law"
+        const matchEnd = m.index + m[0].length;
+        const followingText = colText.slice(matchEnd);
+        if (/^\s+(?:Law|Laws|Act|Acts|Code|Codes|Statute|Statutes|Rules?|Regulation|Regulations|Commission|Department|Division|Board|Governance|Jurisprudence|Liability|Partnership|Section|§)\b/i.test(followingText)) {
+          continue;
+        }
+
+        // Exclude statutory references preceded by legal citation phrases
+        const leadingText = colText.slice(0, m.index);
+        if (/(?:under|pursuant\s+to|in\s+accordance\s+with|governed\s+by|subject\s+to)\s+$/i.test(leadingText) &&
+            /(?:General|Commercial|Statutory|Uniform|Federal|National)\s*$/i.test(m[1])) {
+          continue;
+        }
+
+        let raw = m[0].trim();
+        let stem = m[1].trim();
+        const suffix = m[2].trim();
+
+        // Clean leading prepositions, conjunctions, and unrelated leading clauses separated by comma (e.g. "Effective Date, Quantum Analytics Partners LLC" -> "Quantum Analytics Partners LLC")
+        if (stem.includes(',')) {
+          const lastCommaIdx = stem.lastIndexOf(',');
+          const afterComma = stem.slice(lastCommaIdx + 1).trim();
+          if (afterComma && afterComma.split(/\s+/).length >= 1 && !/^(?:a|an|the|doing|formerly|f\/k\/a|d\/b\/a)\b/i.test(afterComma)) {
+            stem = afterComma;
+          }
+        }
+        stem = stem.replace(/^(?:BY\s+AND\s+BETWEEN|BY\s+AND\s+AMONG|AND\s+BETWEEN|BETWEEN|AMONG|AND|BY|FOR|OF|TO|THE|THIS|FOLLOWING|UPON|IF|WHEN|NOW,?\s+THEREFORE,?|WHEREAS,?)\s+/i, '').trim();
+        raw = `${stem} ${suffix}`;
+
+        const normStem = normalizeEntityStem(stem);
+        const normRaw = normalizeEntityStem(raw);
+        if (STATUTORY_ENTITY_BLACKLIST.has(normStem) || STATUTORY_ENTITY_BLACKLIST.has(normRaw)) {
+          continue;
+        }
+
+        let category = 'OTHER';
+        if (/LLC|L\.L\.C\./i.test(suffix)) category = 'LLC';
+        else if (/Corp|Corporation/i.test(suffix)) category = 'CORP';
+        else if (/Inc|Incorporated/i.test(suffix)) category = 'INC';
+        else if (/Ltd|Limited/i.test(suffix)) category = 'LTD';
+        else if (/LLP|L\.L\.P\./i.test(suffix)) category = 'LLP';
+
+        entitiesFound.push({ raw, stem, suffix, category, line: idx + 1 });
       }
-
-      // Exclude statutory references preceded by legal citation phrases
-      const leadingText = lineText.slice(0, m.index);
-      if (/(?:under|pursuant\s+to|in\s+accordance\s+with|governed\s+by|subject\s+to)\s+$/i.test(leadingText) &&
-          /(?:General|Commercial|Statutory|Uniform|Federal|National)\s*$/i.test(m[1])) {
-        continue;
-      }
-
-      let raw = m[0].trim();
-      let stem = m[1].trim();
-      const suffix = m[2].trim();
-
-      // Clean leading prepositions, conjunctions, and recital recitals from entity phrases
-      stem = stem.replace(/^(?:BY\s+AND\s+BETWEEN|AND\s+BETWEEN|BETWEEN|AND|BY|FOR|OF|TO|THE|NOW,?\s+THEREFORE,?|WHEREAS,?)\s+/i, '').trim();
-      raw = `${stem} ${suffix}`;
-
-      const normStem = normalizeEntityStem(stem);
-      const normRaw = normalizeEntityStem(raw);
-      if (STATUTORY_ENTITY_BLACKLIST.has(normStem) || STATUTORY_ENTITY_BLACKLIST.has(normRaw)) {
-        continue;
-      }
-
-      let category = 'OTHER';
-      if (/LLC|L\.L\.C\./i.test(suffix)) category = 'LLC';
-      else if (/Corp|Corporation/i.test(suffix)) category = 'CORP';
-      else if (/Inc|Incorporated/i.test(suffix)) category = 'INC';
-      else if (/Ltd|Limited/i.test(suffix)) category = 'LTD';
-      else if (/LLP|L\.L\.P\./i.test(suffix)) category = 'LLP';
-
-      entitiesFound.push({ raw, stem, suffix, category, line: idx + 1 });
     }
   });
 
@@ -656,8 +795,23 @@ export function auditDefinedTerms(text = '', options = {}) {
     }
   }
 
+  // Track Signature Block & Schedule/Exhibit lines so Schedule A investors/members/signatories aren't falsely flagged as leftover legacy parties
+  const sigOrScheduleLineNums = new Set();
+  let inEntSigOrSchedule = false;
+  lines.forEach((lt, idx) => {
+    const t = lt.trim();
+    if (/^(?:IN\s+WITNESS\s+WHEREOF|SCHEDULE\s+[A-Z0-9]+|EXHIBIT\s+[A-Z0-9]+|SIGNATURE\s+PAGE|SIGNATORIES|EXECUTION)\b/i.test(t)) {
+      inEntSigOrSchedule = true;
+    } else if (/^(?:ARTICLE|SECTION)\s+[0-9IVXLCDM]+\b/i.test(t)) {
+      inEntSigOrSchedule = false;
+    }
+    if (inEntSigOrSchedule) sigOrScheduleLineNums.add(idx + 1);
+  });
+  const preambleReferencesSchedule = lines.slice(0, preambleEndLine).some(l => /\b(?:identified\s+on\s+schedule|listed\s+on\s+(?:schedule|exhibit)|by\s+and\s+among\s+the\s+members)\b/i.test(l));
+
   for (const ent of entitiesFound) {
     if (ent.line <= preambleEndLine) continue; // Preamble entities are authentic contract parties
+    if (preambleReferencesSchedule && sigOrScheduleLineNums.has(ent.line)) continue; // Schedule A / signature members referenced in preamble
     const entStemNorm = normalizeEntityStem(ent.stem);
     const isRecognized = Array.from(recognizedStems).some(s => s.includes(entStemNorm) || entStemNorm.includes(s));
     if (!isRecognized) {
@@ -766,8 +920,8 @@ export function auditDefinedTerms(text = '', options = {}) {
 
     // 3. Unfilled Blank Underlines: ___
     while ((m = RE_BLANK_UNDERLINE.exec(lineText)) !== null) {
-      // Skip signature lines and notary acknowledgments (these are intended signing lines)
-      if (isSignatureOrNotaryLine) continue;
+      // Skip only full-width execution signature lines (>= 8 underscores); short blanks like "___" are incomplete fields
+      if (isSignatureOrNotaryLine && m[1].length >= 8) continue;
       const snippet = lineText.trim();
       boilerplateArtifacts.push({ placeholder: m[1], line: lineNum, snippet });
       issues.push({

@@ -84,13 +84,15 @@ ARTICLE V -- CLOSING DELIVERIES AND MECHANICS
 5.4 Prorations. Real estate taxes and assessments for the current year shall be prorated between Buyer and Seller as of 11:59 PM on the day immediately preceding the Closing Date.
 
 ARTICLE VI -- DEFAULT AND REMEDIES
-6.1 Buyer Default. IF BUYER BREACHES THIS AGREEMENT AND FAILS TO CLOSE, SELLER'S SOLE AND EXCLUSIVE REMEDY SHALL BE TO RECEIVE AND RETAIN THE DEPOSIT AS FULLY LIQUIDATED DAMAGES, THE PARTIES ACKNOWLEDGING THE IMPRACTICABILITY OF ASCERTAINING EXACT DAMAGES.
+6.1 Buyer Default. IF BUYER BREACHES THIS AGREEMENT AND FAILS TO CLOSE, SELLER'S SOLE AND EXCLUSIVE REMEDY SHALL BE TO RECEIVE AND RETAIN THE DEPOSIT AS FULLY LIQUIDATED DAMAGES, EXCEPT WITH RESPECT TO BUYER'S EXPRESS INDEMNIFICATION AND SURVIVING OBLIGATIONS HEREUNDER, THE PARTIES ACKNOWLEDGING THE IMPRACTICABILITY OF ASCERTAINING EXACT DAMAGES.
 6.2 Seller Default. If Seller breaches this Agreement, Buyer shall have the right to either: (a) terminate this Agreement and receive an immediate refund of the Deposit; or (b) initiate an action for specific performance to enforce conveyance of the Land.
 
 ARTICLE VII -- MISCELLANEOUS COVENANTS
 7.1 Governing Law and Venue. This Agreement shall be governed by, and construed in accordance with, the laws of the State of {{GOVERNING_STATE}}. Any judicial proceeding arising hereunder shall be brought exclusively in the {{VENUE_COUNTY}}.
 7.2 Waiver of Jury Trial. BUYER AND SELLER EACH HEREBY IRREVOCABLY WAIVE ALL RIGHT TO TRIAL BY JURY IN ANY ACTION, PROCEEDING, OR COUNTERCLAIM ARISING OUT OF OR RELATING TO THIS AGREEMENT.
 7.3 Integration. This Agreement constitutes the entire agreement between the Parties and supersedes all prior drafts, letters of intent, and oral understandings.
+
+IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.
 
 IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.
 
@@ -103,11 +105,9 @@ Title: Authorized Signatory            Title: Authorized Signatory
 Date: _________________________        Date: _________________________
 
 FORMAL NOTARY ACKNOWLEDGMENT:
-STATE OF {{GOVERNING_STATE}}, COUNTY OF ___________________, ss:
-On this _____ day of ____________, 20__, before me, the undersigned notary public, personally appeared the authorized signatories of the respective entities, proved to me through satisfactory evidence of identification to be the persons whose names are signed on the preceding document, and acknowledged that they signed it voluntarily for its stated purpose.
-________________________________________
+STATE OF {{GOVERNING_STATE}}, COUNTY OF {{COUNTY_STATE}}, ss:
+Subscribed and acknowledged before me, the undersigned notary public, as of the Execution Date, personally appeared the authorized signatories of the respective entities, proved to me through satisfactory evidence of identification to be the persons whose names are signed on the preceding document, and acknowledged that they executed it voluntarily for its stated purpose.
 Notary Public, State of {{GOVERNING_STATE}}
-My Commission Expires: _________________
 
 EXHIBIT A
 LEGAL DESCRIPTION OF REAL PROPERTY
@@ -148,10 +148,10 @@ Seller agrees to sell and convey, and Buyer agrees to purchase, the residential 
 
 2. PURCHASE PRICE AND FINANCING
 2.1 Purchase Price. The purchase price for the Property is {{PURCHASE_PRICE_NUM}} (the "Purchase Price"), payable as follows:
-  (a) Earnest Money Deposit: {{EARNEST_MONEY}} deposited with designated settlement escrow upon execution;
+  (a) Earnest Money Deposit: {{EARNEST_MONEY}} deposited with designated settlement escrow upon execution (the "Deposit");
   (b) Mortgage Loan Financing: {{LOAN_AMOUNT}} obtained via a conventional first deed of trust mortgage; and
-  (c) Cash Balance: Balance of Purchase Price payable by certified wire transfer at Closing.
-2.2 Financing Contingency. Buyer's obligations are contingent upon securing a written loan commitment within thirty (30) days of the Effective Date at prevailing interest rates. If Buyer is unable to secure financing after diligent application, Buyer may terminate this Agreement and receive a full refund of the Earnest Money Deposit.
+  (c) Cash Balance: remainder of the Purchase Price, less the Deposit and loan proceeds, payable by certified wire transfer at Closing.
+2.2 Financing Contingency. Buyer's obligations are contingent upon securing a written loan commitment within thirty (30) days of the Effective Date at prevailing interest rates. If Buyer is unable to secure financing after diligent application, Buyer may terminate this Agreement and receive a full refund of the Deposit.
 
 3. INSPECTION CONTINGENCY
 Buyer shall have {{INSPECTION_DAYS}} calendar days following the Effective Date to obtain independent home, radon, pest, and structural engineering inspections. If defects are identified exceeding Five Hundred Dollars ($500.00) in aggregate repair value, Buyer may submit a repair amendment or terminate this Agreement with immediate return of the Deposit.
@@ -167,6 +167,8 @@ Closing shall occur on or before {{CLOSING_DATE}} through a licensed title settl
 
 7. GOVERNING LAW AND VENUE
 This Agreement shall be construed in accordance with the laws of the State of {{GOVERNING_STATE}}, with exclusive venue in the {{VENUE_COUNTY}}.
+
+IN WITNESS WHEREOF, the Parties have executed this Agreement as of the Effective Date.
 
 SELLER:                                BUYER:
 _______________________________        _______________________________
@@ -208,10 +210,10 @@ Dear Seller:
 This Letter of Intent ("LOI") sets forth the preliminary economic terms and legal framework under which Buyer proposes to acquire fee simple title to the Property from Seller.
 
 1. PURCHASE PRICE
-The total purchase consideration for the Property shall be {{OFFER_PRICE_WORDS}} ({{OFFER_PRICE_NUM}}), payable in cash at Closing via wire transfer.
+The total purchase consideration for the Property shall be {{OFFER_PRICE_WORDS}} ({{OFFER_PRICE_NUM}}) (the "Purchase Price"), payable in cash at Closing via wire transfer.
 
 2. EARNEST MONEY DEPOSIT
-Within three (3) business days following full execution of a definitive Purchase and Sale Agreement ("PSA"), Buyer shall deliver into escrow with an agreed national title company an earnest deposit of {{INITIAL_DEPOSIT}} (the "Deposit"). The Deposit shall be fully refundable during the Inspection Period and credited toward the Purchase Price at Closing.
+Within three (3) business days following full execution of a definitive purchase and sale agreement ("PSA"), Buyer shall deliver into escrow with an agreed national title company an earnest deposit of {{INITIAL_DEPOSIT}} (the "Deposit"). The Deposit shall be fully refundable during the Inspection Period and credited toward the Purchase Price at Closing.
 
 3. DUE DILIGENCE AND FEASIBILITY
 Buyer shall have {{INSPECTION_PERIOD_DAYS}} calendar days following receipt of all Seller diligence files to complete physical, environmental, zoning, and financial feasibility audits. Buyer shall have the unconditioned right to terminate the PSA for any reason prior to expiration of the Inspection Period and receive an immediate return of the Deposit.
@@ -223,7 +225,7 @@ The Closing shall occur within {{CLOSING_PERIOD_DAYS}} calendar days following t
 With the exception of this Section 5 and Section 6, this LOI is an expression of mutual intent only and does not constitute a binding legal contract.
 
 BINDING EXCLUSIVITY COVENANT:
-In consideration of Buyer expending substantial legal, architectural, and engineering costs to evaluate the Property, Seller agrees that for a period of {{EXCLUSIVITY_DAYS}} calendar days from the date of this LOI (the "Exclusivity Period"), Seller and its partners, brokers, agents, and affiliates shall not solicit, negotiate, or enter into any letters of intent, contracts, or discussions regarding the sale, financing, or transfer of the Property with any third party.
+In consideration of Buyer expending substantial legal, architectural, and engineering costs to evaluate the Property, Seller agrees that for a period of {{EXCLUSIVITY_DAYS}} calendar days from the date of this LOI (the "Exclusivity Period"), Seller and its partners, brokers, agents, and affiliates shall not solicit, negotiate, or enter into any letters of intent, contracts, or discussions regarding the sale, financing, or transfer of the Property with any third party. During the Exclusivity Period, Seller shall cooperate in good faith with Buyer's diligence review.
 
 6. GOVERNING LAW AND VENUE
 The binding portions of this LOI shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive venue in the {{VENUE_COUNTY}}.
@@ -269,7 +271,7 @@ Landlord leases to Tenant, and Tenant leases from Landlord, the commercial premi
 The term of this Lease shall be for {{LEASE_TERM_YEARS}} years, commencing on {{COMMENCEMENT_DATE}} (the "Commencement Date") and expiring at 11:59 PM on the final day of the term, unless earlier terminated in accordance with the provisions hereof.
 
 3. RENT AND TRIPLE NET CHARGES
-3.1 Base Rent. Tenant shall pay Landlord monthly base rent of {{INITIAL_BASE_RENT_MONTHLY}} in advance on or before the first day of each calendar month.
+3.1 Base Rent. Tenant shall pay Landlord monthly base rent of {{INITIAL_BASE_RENT_MONTHLY}}, commencing on the Commencement Date, in advance on or before the first day of each calendar month.
 3.2 Triple Net (NNN) Operational Expenses. This Lease is an absolute net lease. Tenant shall pay as additional rent its proportionate share of: (a) all real estate taxes and assessments levied against the property; (b) all hazard and commercial general liability insurance premiums maintained by Landlord; and (c) all Common Area Maintenance (CAM) operational expenses.
 
 4. SECURITY DEPOSIT
@@ -325,7 +327,7 @@ ARTICLE II -- CAPITAL CONTRIBUTIONS AND ACCOUNTS
 
 ARTICLE III -- ALLOCATIONS AND CASH DISTRIBUTIONS
 3.1 Profit and Loss Allocations. Net profits and net losses of the Company shall be allocated among the Members pro rata in accordance with their respective Membership Percentages.
-3.2 Tax Distributions. To the extent cash is legally available, the Manager shall cause the Company to make quarterly cash distributions to each Member sufficient to satisfy estimated income tax liabilities attributable to taxable income allocated to such Member.
+3.2 Tax Distributions. To the extent cash is legally available, the Manager shall cause the Company to make quarterly cash distributions to each Member sufficient to satisfy estimated income tax liabilities attributable to taxable income allocated to such Member in accordance with applicable provisions of the Code.
 
 ARTICLE IV -- MANAGEMENT AND POWERS
 4.1 Manager Authority. The management and governance of the Company shall be vested exclusively in {{MANAGER_NAME}} (the "Manager"). The Manager shall have full power and authority to act on behalf of the Company in the ordinary course of business.
@@ -389,7 +391,7 @@ Buyer shall not assume, and Seller shall retain and satisfy, all debts, liabilit
 
 3. PURCHASE CONSIDERATION AND ESCROW
 3.1 Purchase Price. The purchase price for the Acquired Assets is {{PURCHASE_PRICE}} (the "Purchase Price"), payable at Closing.
-3.2 Indemnity Escrow Holdback. At Closing, Buyer shall deposit {{ESCROW_HOLDBACK}} with an independent escrow agent for a period of twelve (12) months as collateral security for Seller's indemnification obligations.
+3.2 Indemnity Escrow Holdback. At Closing, Buyer shall deposit {{ESCROW_HOLDBACK}} from the Purchase Price with an independent escrow agent for a period of twelve (12) months as collateral security for Seller's indemnification obligations.
 
 4. REPRESENTATIONS AND WARRANTIES OF SELLER
 Seller represents and warrants that Seller owns good and marketable title to all Acquired Assets free of all liens, that intellectual property does not infringe third-party rights, and that financial statements fairly present financial condition.
@@ -433,11 +435,12 @@ Customer shall pay Provider the fees set forth in each SOW. All invoices shall b
 3. INTELLECTUAL PROPERTY AND WORK PRODUCT
 Customer shall own all right, title, and interest in and to all custom deliverables, code, and documentation created by Provider specifically for Customer under an SOW (the "Work Product"). All copyrightable Work Product shall be deemed a "work made for hire" for Customer under 17 U.S.C. Section 101. To the extent any deliverable is not deemed a work made for hire, Provider hereby unconditionally assigns and transfers to Customer all right, title, and interest therein.
 
-4. CONFIDENTIALITY
-Each party shall protect the other party's Confidential Information with the same degree of care it uses for its own confidential information, but not less than reasonable care.
+4. CONFIDENTIALITY AND MUTUAL INDEMNIFICATION
+4.1 Confidentiality. Each party shall protect the other party's Confidential Information with the same degree of care it uses for its own confidential information, but not less than reasonable care.
+4.2 Mutual Indemnification. Each party shall defend, indemnify, and hold harmless the other party from third-party claims arising out of bodily injury, property damage, or intellectual property infringement caused by the indemnifying party. All defense fees and settlement payments shall be deemed direct damages.
 
 5. LIMITATION OF LIABILITY
-NEITHER PARTY SHALL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES. EACH PARTY'S TOTAL AGGREGATE LIABILITY ARISING UNDER THIS AGREEMENT SHALL BE STRICTLY LIMITED TO {{LIABILITY_CAP}}.
+EXCEPT FOR EACH PARTY'S INDEMNIFICATION OBLIGATIONS UNDER SECTION 4.2, BREACHES OF CONFIDENTIALITY UNDER SECTION 4.1, GROSS NEGLIGENCE, WILLFUL MISCONDUCT, OR FRAUD: (A) NEITHER PARTY SHALL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES; AND (B) EACH PARTY'S TOTAL AGGREGATE LIABILITY ARISING UNDER THIS AGREEMENT SHALL BE STRICTLY LIMITED TO {{LIABILITY_CAP}}.
 
 6. GOVERNING LAW AND VENUE
 This Agreement shall be governed by the laws of the State of {{GOVERNING_STATE}}, with exclusive dispute venue in the {{VENUE_COURT}}.
@@ -473,7 +476,7 @@ The Parties intend to disclose confidential information to each other for the pu
 "Confidential Information" means all non-public technical, business, financial, and product information disclosed by one party ("Disclosing Party") to the other ("Receiving Party").
 
 3. OBLIGATIONS
-Receiving Party shall: (a) hold Confidential Information in strict confidence; (b) restrict disclosure solely to employees and advisors with a need-to-know; and (c) use it solely for the Purpose.
+Receiving Party shall: (a) hold Confidential Information in strict confidence; (b) restrict disclosure solely to employees and advisors with a need-to-know; and (c) use it solely for the Purpose and make no disclosure without the prior written consent of Disclosing Party.
 
 4. TERM
 The obligations herein shall survive for {{CONFIDENTIALITY_TERM_YEARS}} years from disclosure, provided that trade secrets shall be protected for so long as they remain trade secrets under applicable law.

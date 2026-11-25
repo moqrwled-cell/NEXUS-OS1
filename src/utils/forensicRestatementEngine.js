@@ -413,7 +413,9 @@ export function restateAndPolishContract(rawText = '', options = {}) {
   // Check if deed/sale agreement lacks concurrent conditions or proration clauses
   const hasGrantorGrantee = /\b(Grantor|Grantee)\b/i.test(rawText);
   const hasBuyerSeller = /\b(Buyer|Seller)\b/i.test(rawText);
-  const isConveyanceDoc = hasGrantorGrantee || hasBuyerSeller || originalAnchors.parcels.length > 0;
+  const hasRealEstateContext = /\b(land\s+purchase|real\s+(?:property|estate)|tract|parcel|deed|lot\s+of\s+land|conveyance|ad\s+valorem|metes\s+and\s+bounds|fee\s+simple|easement|title\s+(?:defects?|insurance)|escrow)\b/i.test(rawText);
+  const hasSoftwareOrCommercialMarkers = /\b(saas|software|subscription|api|cloud|licensee|licensor|data\s+processing|deliverables|Statement\s+of\s+Work)\b/i.test(rawText);
+  const isConveyanceDoc = hasGrantorGrantee || originalAnchors.parcels.length > 0 || originalAnchors.acreages.length > 0 || originalAnchors.metesAndBounds.length > 0 || (hasBuyerSeller && hasRealEstateContext && !hasSoftwareOrCommercialMarkers);
 
   if (isConveyanceDoc) {
     // Detect existing section numbering style if present

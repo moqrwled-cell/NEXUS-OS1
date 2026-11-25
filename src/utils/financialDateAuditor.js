@@ -94,14 +94,21 @@ export function parseWordsToNumber(text) {
 }
 
 /**
- * Cleans and converts numeric currency string to float.
+ * Cleans and converts numeric currency string to float, supporting K/M/B and million/billion shorthands.
  * @param {string} str 
  * @returns {number}
  */
 export function parseNumericAmount(str) {
   if (!str) return 0;
   const cleaned = str.replace(/[^0-9.]/g, '');
-  return parseFloat(cleaned) || 0;
+  let val = parseFloat(cleaned) || 0;
+  if (val > 0) {
+    if (/\btrillion\b/i.test(str)) val *= 1e12;
+    else if (/\bbillion\b|\d\s*bn?\b/i.test(str)) val *= 1e9;
+    else if (/\bmillion\b|\d\s*(?:mn|mm|m)\b/i.test(str)) val *= 1e6;
+    else if (/\bthousand\b|\d\s*k\b/i.test(str)) val *= 1e3;
+  }
+  return val;
 }
 
 /**
@@ -139,12 +146,25 @@ export function extractDateFromText(text) {
     return { rawDate: isoMatch[0], parsedDate: isoMatch[0] };
   }
 
-  // 4. US Slash/Dash format: MM/DD/YYYY
-  const slashMatch = text.match(/\b(0?[1-9]|1[0-2])[\/\-](0?[1-9]|[12]\d|3[01])[\/\-](\d{4})\b/);
+  // 4. US MM/DD/YYYY or unambiguous European DD/MM/YYYY (e.g. 31/12/2027)
+  const slashMatch = text.match(/\b(0?[1-9]|[12]\d|3[01])[\/\-](0?[1-9]|[12]\d|3[01])[\/\-](\d{4})\b/);
   if (slashMatch) {
-    const m = slashMatch[1].padStart(2, '0');
-    const d = slashMatch[2].padStart(2, '0');
-    return { rawDate: slashMatch[0], parsedDate: `${slashMatch[3]}-${m}-${d}` };
+    const first = parseInt(slashMatch[1], 10);
+    const second = parseInt(slashMatch[2], 10);
+    let mNum, dNum;
+    if (first > 12 && second <= 12) {
+      dNum = first;
+      mNum = second;
+    } else if (first <= 12 && second <= 31) {
+      mNum = first;
+      dNum = second;
+    }
+    if (mNum && dNum) {
+      return {
+        rawDate: slashMatch[0],
+        parsedDate: `${slashMatch[3]}-${String(mNum).padStart(2, '0')}-${String(dNum).padStart(2, '0')}`
+      };
+    }
   }
 
   return null;
@@ -270,16 +290,27 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
   });
 
   // --------------------------------------------------------------------------
-  // 2. DETECT FINANCIAL PAIRINGS & NUMBER-WORD DISCREPANCIES
+  // 2. DETECT FINANCIAL PAIRINGS & NUMBER-WORD DISCREPANCIES (Anti-ReDoS + Multi-Line)
   // --------------------------------------------------------------------------
-  lines.forEach((lineText, index) => {
+  const RE_WORDS_PAREN_NUM = /((?:[A-Za-z-]+\s+){0,14}[A-Za-z-]+(?:\s+(?:dollars?|euros?|pounds?|cents?))?(?:\s+and\s+(?:\d{1,2}|no|xx)\/100)?)\s*\(\s*([$€£¥₹A-Za-z]*\s*[\d,]+(?:\.\d{1,2})?\s*(?:billion|million|thousand|[kmb]\b)?[A-Za-z]*)\s*\)/gi;
+  const RE_NUM_PAREN_WORDS = /([$€£¥₹A-Za-z]*\s*[\d,]+(?:\.\d{1,2})?\s*(?:billion|million|thousand|[kmb]\b)?[A-Za-z]*)\s*\(\s*((?:[A-Za-z-]+\s+){0,14}[A-Za-z-]+(?:\s+(?:dollars?|euros?|pounds?|cents?))?(?:\s+and\s+(?:\d{1,2}|no|xx)\/100)?)\s*\)/gi;
+
+  lines.forEach((rawLineText, index) => {
     const lineNum = index + 1;
+    // Support word amount wrapping onto parenthetical numeric figure on the very next line
+    const nextTrimmed = lines[index + 1]?.trim() || '';
+    const isWrappedNumOnNextLine =
+      !rawLineText.includes('(') &&
+      /(?:dollars?|euros?|pounds?|thousand|million|billion)\s*$/i.test(rawLineText.trim()) &&
+      /^\(\s*[$€£¥₹]?\s*[\d,]+/.test(nextTrimmed);
+
+    const lineText = isWrappedNumOnNextLine ? `${rawLineText.trim()} ${nextTrimmed}` : rawLineText;
+    if (!lineText.includes('(') || !/\d/.test(lineText)) return;
 
     // Pattern A: Words followed by ($Digits)
-    // e.g. "Ten Thousand Dollars ($10,000)" or "Twenty Thousand ($10,000) Dollars"
-    const patternA = /([A-Za-z\s-]+(?:dollars?|euros?|pounds?|cents?)?)\s*\(\s*([$€£¥₹A-Za-z]*\s*[\d,]+(?:\.\d{1,2})?\s*[A-Za-z]*)\s*\)/gi;
+    RE_WORDS_PAREN_NUM.lastIndex = 0;
     let match;
-    while ((match = patternA.exec(lineText)) !== null) {
+    while ((match = RE_WORDS_PAREN_NUM.exec(lineText)) !== null) {
       const wordsPart = match[1].trim();
       const numPart = match[2].trim();
 
@@ -290,13 +321,12 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
         const cleanWords = extractCleanNumberWords(wordsPart);
         const textAfter = lineText.substring(match.index + match[0].length);
         const isDurationOrCount = /^\s*(?:calendar\s+|business\s+)?(?:days?|months?|weeks?|years?|shares?|units?|percent|%|hours?)\b/i.test(textAfter);
-        const isMonetary = /[$€£¥₹]|(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(numPart) ||
+        const isMonetary = /[$€£¥₹]|(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp|million|billion)\b/i.test(numPart) ||
                            /(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(wordsPart);
 
         const isMatch = Math.abs(wordsVal - numVal) < 0.01;
 
         if (!isMonetary && isDurationOrCount) {
-          // Duration/count pairing (e.g. "thirty (30) days notice")
           if (!isMatch) {
             issues.push({
               type: 'timeline_contradiction',
@@ -308,7 +338,6 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
             });
           }
         } else {
-          // Monetary pairing
           const currency = (numPart.includes('€') || /euros?\b/i.test(wordsPart)) ? 'EUR' : ((numPart.includes('£') || /pounds?\b/i.test(wordsPart)) ? 'GBP' : 'USD');
           const currencySymbol = currency === 'EUR' ? '€' : (currency === 'GBP' ? '£' : '$');
 
@@ -344,9 +373,8 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     }
 
     // Pattern B: $Digits followed by (Words)
-    // e.g. "$10,000 (Twenty Thousand Dollars)"
-    const patternB = /([$€£¥₹A-Za-z]*\s*[\d,]+(?:\.\d{1,2})?\s*[A-Za-z]*)\s*\(\s*([A-Za-z\s-]+(?:dollars?|euros?|pounds?|cents?)?)\s*\)/gi;
-    while ((match = patternB.exec(lineText)) !== null) {
+    RE_NUM_PAREN_WORDS.lastIndex = 0;
+    while ((match = RE_NUM_PAREN_WORDS.exec(lineText)) !== null) {
       const numPart = match[1].trim();
       const wordsPart = match[2].trim();
 
@@ -357,11 +385,10 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
         const cleanWords = extractCleanNumberWords(wordsPart);
         const textAfter = lineText.substring(match.index + match[0].length);
         const isDurationOrCount = /^\s*(?:calendar\s+|business\s+)?(?:days?|months?|weeks?|years?|shares?|units?|percent|%|hours?)\b/i.test(textAfter);
-        const isMonetary = /[$€£¥₹]|(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(numPart) ||
+        const isMonetary = /[$€£¥₹]|(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp|million|billion)\b/i.test(numPart) ||
                            /(?:dollars?|euros?|pounds?|cents?|usd|eur|gbp)\b/i.test(wordsPart);
 
-        // Avoid duplicate if already matched by Pattern A
-        const existing = financialPairings.find(p => p.line === lineNum && p.numericVal === numVal);
+        const existing = financialPairings.find(p => p.line === lineNum && Math.abs(p.numericVal - numVal) < 0.01);
         if (!existing) {
           const isMatch = Math.abs(wordsVal - numVal) < 0.01;
 
@@ -414,7 +441,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
   });
 
   // --------------------------------------------------------------------------
-  // 3. TIMELINE & CHRONOLOGY AUDIT
+  // 3. TIMELINE & CHRONOLOGY AUDIT (Keyword-Sliced Per Clause)
   // --------------------------------------------------------------------------
   let effectiveDateIso = null;
   let expirationDateIso = null;
@@ -439,7 +466,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     // Effective Date
     const effMatch = lineText.match(/(?:Effective Date|commences on|commencing on|effective as of)/i);
     if (effMatch) {
-      const dateInfo = extractDateFromText(lineText);
+      const dateInfo = extractDateFromText(lineText.slice(effMatch.index));
       if (dateInfo) {
         effectiveDateIso = dateInfo.parsedDate;
         timeline.push({
@@ -455,7 +482,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     // Expiration Date
     const expMatch = lineText.match(/(?:expiration date|shall terminate on|shall expire on|expires on|expire on|ending on|end on|term expires on)/i);
     if (expMatch) {
-      const dateInfo = extractDateFromText(lineText);
+      const dateInfo = extractDateFromText(lineText.slice(expMatch.index));
       if (dateInfo) {
         expirationDateIso = dateInfo.parsedDate;
         const isPast = dateInfo.parsedDate < refDateStr;
@@ -484,7 +511,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     // Execution Date
     const execMatch = lineText.match(/(?:executed on|signed on|made and entered into as of|execution date)/i);
     if (execMatch) {
-      const dateInfo = extractDateFromText(lineText);
+      const dateInfo = extractDateFromText(lineText.slice(execMatch.index));
       if (dateInfo) {
         timeline.push({
           event: 'Execution Date',
@@ -496,10 +523,10 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
       }
     }
 
-    // General Milestone / Target Date (e.g. "completed by March 15, 2021")
+    // General Milestone / Target Date
     const milestoneMatch = lineText.match(/(?:completed by|deployed by|delivered on|due on|deadline is)/i);
     if (milestoneMatch) {
-      const dateInfo = extractDateFromText(lineText);
+      const dateInfo = extractDateFromText(lineText.slice(milestoneMatch.index));
       if (dateInfo) {
         const isPast = dateInfo.parsedDate < refDateStr;
         timeline.push({

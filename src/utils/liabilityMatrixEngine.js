@@ -117,12 +117,12 @@ export function extractLiabilityCapIntel(text) {
   const hasLoL = matches.length > 0;
   const fullLoLText = matches.map(m => m.snippet).join('\n\n');
 
-  // Extract Dollar Amount if present
+  // Extract Dollar Amount if present (including shorthand e.g. $5M, $2.5 million, $500K)
   let capDollarAmount = null;
-  const dollarMatch = fullLoLText.match(/\$\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})?)/i) || 
-                      fullLoLText.match(/([0-9]{1,3}(?:,[0-9]{3})*)\s*(?:dollars|usd)/i);
+  const dollarMatch = fullLoLText.match(/\$\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?\s*(?:million|billion|thousand|[kmb]\b)?)/i) || 
+                      fullLoLText.match(/([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?)\s*(?:dollars|usd|million\s+dollars)/i);
   if (dollarMatch) {
-    capDollarAmount = dollarMatch[1];
+    capDollarAmount = dollarMatch[1].trim();
   }
 
   // Formula cap detection (e.g. fees in past 12 months)
@@ -131,9 +131,12 @@ export function extractLiabilityCapIntel(text) {
   // Uncapped check
   const isUncapped = /(?:shall not be limited|uncapped|no limitation on liability|unlimited liability)/i.test(fullLoLText);
 
-  // Asymmetry detection (Unilateral vendor cap vs customer uncapped)
-  const isUnilateral = /(?:vendor|contractor|seller|licensor|company)'s\s*(?:aggregate|cumulative|maximum|total)?\s*liability\b.*?(?:shall not exceed|exceed)/is.test(fullLoLText) &&
-                       !/(?:customer|buyer|client|licensee)'s\s*(?:aggregate|cumulative|maximum|total)?\s*liability\b.*?(?:shall not exceed|exceed)/is.test(fullLoLText);
+  // Asymmetry detection (Unilateral service provider/vendor cap vs customer/buyer uncapped)
+  const providerSideCap = /(?:vendor|provider|supplier|contractor|seller|licensor|consultant|company)'s\s*(?:total\s*|aggregate\s*|cumulative\s*|maximum\s*)?liability\b[^.]*?(?:shall not exceed|exceed|capped at|limited to)/is.test(fullLoLText);
+  const customerSideCap = /(?:customer|buyer|client|purchaser|licensee|each party|neither party)'s\s*(?:total\s*|aggregate\s*|cumulative\s*|maximum\s*)?liability\b[^.]*?(?:shall not exceed|exceed|capped at|limited to)/is.test(fullLoLText) ||
+                          /\b(?:each party|neither party)\s+shall\s+be\s+liable\b/i.test(fullLoLText);
+  const customerExplicitlyUncapped = /(?:customer|buyer|client|purchaser|licensee)'s\s*(?:aggregate\s*|total\s*)?liability\b[^.]*?(?:unconditioned|unlimited|uncapped|shall not be limited)/is.test(fullLoLText);
+  const isUnilateral = (providerSideCap && !customerSideCap) || customerExplicitlyUncapped;
 
   return {
     detected: hasLoL,
@@ -157,7 +160,11 @@ export function extractConsequentialWaiverIntel(text) {
   const matches = [];
 
   for (const block of blocks) {
-    if (/(?:consequential|indirect|special|punitive|exemplary|incidental|loss of profits|loss of revenue|loss of business|loss of goodwill)/i.test(block)) {
+    // Require actual damages/liability/loss-of-profits waiver context so words like "indirectly" in non-competes or "special" in adjectives don't false-trigger
+    if (
+      /\b(?:(?:consequential|indirect|special|punitive|exemplary|incidental)\s+damages|loss\s+of\s+(?:profits|revenue|revenues|business|goodwill))\b/i.test(block) ||
+      (/\b(?:consequential|indirect|special|punitive|exemplary|incidental)\b/i.test(block) && /\b(?:damages|liable|liability|waiver)\b/i.test(block))
+    ) {
       matches.push({
         sectionNum: extractSectionNumber(block),
         snippet: block
@@ -207,7 +214,7 @@ export function extractSoleRemedyIntel(text) {
   const fullText = matches.map(m => m.snippet).join('\n\n');
 
   // Check if sole remedy subordinates to indemnification or equitable relief
-  const isSubordinated = /(?:subject to section|except as provided in section|without limiting section|notwithstanding the foregoing|saving and excepting)/i.test(fullText);
+  const isSubordinated = /(?:subject\s+(?:and\s+subordinate\s+)?to\s+section|except\s+as\s+provided\s+in\s+section|except\s+(?:with\s+respect\s+)?to\s+(?:[\w'’\s]+?\s+)?indemnif|without\s+limiting\s+(?:section|[\w'’\s]*\s*indemnif)|notwithstanding\s+the\s+foregoing|saving\s+and\s+excepting)/i.test(fullText);
   const appliesToAllBreaches = /(?:for any breach of this agreement|under this agreement|for all claims|arising out of or relating to this agreement)/i.test(fullText);
   const appliesToWarrantyOnly = /(?:for breach of warranty|for defective deliverables|service level credit)/i.test(fullText);
 
@@ -244,9 +251,9 @@ export function extractInsuranceIntel(text) {
   const fullText = matches.map(m => m.snippet).join('\n\n');
 
   let policyLimitAmount = null;
-  const dollarMatch = fullText.match(/\$\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{2})?)/i);
+  const dollarMatch = fullText.match(/\$\s*([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?(?:\s*(?:million|billion|thousand|[kmb]))?)/i);
   if (dollarMatch) {
-    policyLimitAmount = dollarMatch[1];
+    policyLimitAmount = dollarMatch[1].trim();
   }
 
   return {
@@ -259,12 +266,14 @@ export function extractInsuranceIntel(text) {
 }
 
 /**
- * Scans for Carve-Outs inside LoL, Consequential Waiver, and overall contract texts.
+ * Scans for Carve-Outs and hostile subordinations strictly per logical block/paragraph
+ * to avoid cross-section false positives across unrelated parts of an agreement.
  */
-export function extractCarveOutIntel(fullText) {
+export function extractCarveOutIntel(fullText, targetBlocks = null) {
   if (!fullText || typeof fullText !== 'string') {
     return {
       hasIndemnityCarveOut: false,
+      hasHostileCapSubordination: false,
       hasConfidentialityCarveOut: false,
       hasGrossNegligenceCarveOut: false,
       hasIPCarveOut: false,
@@ -273,34 +282,74 @@ export function extractCarveOutIntel(fullText) {
     };
   }
 
-  // 1. Indemnity carve-out
-  const hasIndemnityCarveOut = 
-    /(?:limitations?|exclusions?|liability|section\s*12|article\s*12).*?(?:shall not apply to|except for|excluding|carved out|other than|notwithstanding).*?(?:indemnif|defense obligations|section\s*(?:8|9|10|11|13|14))/is.test(fullText) ||
-    /notwithstanding anything to the contrary.*?(?:shall not apply to|except for|excluding).*?(?:indemnif|defense obligations|section\s*(?:8|9|10|11|13|14))/is.test(fullText);
+  const allBlocks = Array.isArray(targetBlocks) && targetBlocks.length > 0
+    ? targetBlocks
+    : getDocumentBlocks(fullText);
+
+  // Inspect blocks relevant to liability caps, waivers, exceptions, or indemnity rules
+  const liabilityBlocks = allBlocks.filter(b =>
+    /(?:limitation|liability|cap|exceed|consequential|indirect|carve[- ]out|except|notwithstanding|uncapped|super[- ]?cap|nothing\s+in\s+this)/i.test(b)
+  );
+  // Break blocks at section/article boundaries and sentence boundaries so clauses in Section 6 cannot bleed into Section 8
+  const candidateSpans = [];
+  for (const blk of liabilityBlocks) {
+    const subBlocks = blk.split(/\r?\n(?=\s*(?:Section|Article|Clause|\d+(?:\.\d+)+[.\s])\s*)/i);
+    for (const sb of subBlocks) {
+      const cleanedSub = sb.trim();
+      if (!cleanedSub) continue;
+      if (subBlocks.length === 1 && !/\r?\n\s*(?:Section|Article)\s+/i.test(cleanedSub)) {
+        // Safe single-section block (e.g. multi-line (a)...; (b)... bulleted carve-out list)
+        candidateSpans.push(cleanedSub);
+      }
+      const sentences = cleanedSub.split(/(?<=[.!?])\s+(?=[A-Z0-9(\[])/);
+      for (const s of sentences) {
+        if (s.trim().length > 15) candidateSpans.push(s.trim());
+      }
+    }
+  }
+
+  const hasHostileCapSubordination = candidateSpans.some(span =>
+    /(?:notwithstanding\s+(?:the\s+)?(?:indemnif|provisions?\s+of\s+(?:section|article)\s*(?:\d+(?:\.\d+)?)|(?:section|article)\s*(?:\d+(?:\.\d+)?))[\s\S]{0,80}(?:aggregate|total|cumulative|provider|vendor|seller|licensor|supplier|party)?'?s?\s*(?:aggregate|total|cumulative|maximum)?\s*liability\s+(?:shall\s+not\s+exceed|is\s+capped|shall\s+be\s+limited))/i.test(span) ||
+    /(?:subject\s+to|limited\s+by)\s+(?:section|article)\s*\d+(?:\.\d+)?\s*(?:\([^)]*limitation\s+of\s+liability[^)]*\))?[\s\S]{0,120}\b(?:indemnif|hold\s+harmless)\b/i.test(span)
+  );
+
+  // 1. Indemnity carve-out (exempts indemnity FROM the liability cap, not the reverse)
+  const hasIndemnityCarveOut = !hasHostileCapSubordination && candidateSpans.some(span =>
+    /(?:limitations?|exclusions?|cap|caps|provisions?|section\s*(?:12|\d+(?:\.\d+)?)|article\s*(?:12|\d+)|nothing\s+(?:herein|in\s+this\s+(?:agreement|section)))[\s\S]{0,180}(?:shall\s+not\s+apply\s+to|do(?:es)?\s+not\s+apply\s+to|not\s+limit|except\s+for|excluding|carved\s+out|other\s+than|shall\s+limit)[\s\S]{0,200}(?:indemnif|defense\s+obligations|section\s*(?:8|9|10|11|13|14)|article\s*\d+)/i.test(span) ||
+    /(?:notwithstanding\s+anything\s+to\s+the\s+contrary)[\s\S]{0,140}(?:shall\s+not\s+apply\s+to|except\s+for|excluding|not\s+limit)[\s\S]{0,200}(?:indemnif|defense\s+obligations|section\s*(?:8|9|10|11|13|14)|article\s*\d+)/i.test(span) ||
+    /\b(?:indemnif(?:y|ication)|defense\s+obligations?)\b[\s\S]{0,120}(?:shall\s+not\s+be\s+(?:subject\s+to|limited\s+by|capped)|(?:are|is)\s+(?:uncapped|carved\s+out|excluded\s+from\s+(?:the\s+)?cap))/i.test(span)
+  );
 
   // 2. Gross negligence / fraud carve-out
-  const hasGrossNegligenceCarveOut = 
-    /(?:limitations?|exclusions?|liability|section\s*12|article\s*12|notwithstanding).*?(?:shall not apply to|except for|excluding|nothing in this agreement shall limit).*?(?:gross negligence|willful misconduct|fraud|intentional)/is.test(fullText);
+  const hasGrossNegligenceCarveOut = candidateSpans.some(span =>
+    /(?:limitations?|exclusions?|cap|section\s*\d+(?:\.\d+)?|article\s*\d+|notwithstanding|nothing\s+(?:herein|in\s+this\s+(?:agreement|section)))[\s\S]{0,180}(?:shall\s+not\s+apply\s+to|except\s+for|excluding|shall\s+limit|not\s+limit)[\s\S]{0,220}(?:gross\s+negligence|willful\s+misconduct|fraud|intentional)/i.test(span) ||
+    /\b(?:gross\s+negligence|willful\s+misconduct|fraud)\b[\s\S]{0,80}\b(?:is|are|shall\s+be|remain)\s+(?:uncapped|unlimited|excluded\s+from)/i.test(span)
+  );
 
   // 3. Confidentiality carve-out
-  const hasConfidentialityCarveOut = 
-    /(?:limitations?|exclusions?|liability|section\s*12|article\s*12|notwithstanding).*?(?:shall not apply to|except for|excluding).*?(?:confidential|secrecy|non-disclosure)/is.test(fullText);
+  const hasConfidentialityCarveOut = candidateSpans.some(span =>
+    /(?:limitations?|exclusions?|cap|caps|section\s*\d+(?:\.\d+)?|article\s*\d+|notwithstanding|nothing\s+(?:herein|in\s+this))[\s\S]{0,180}(?:shall\s+not\s+apply\s+to|except\s+for|excluding|not\s+limit|shall\s+limit)[\s\S]{0,200}(?:confidential|secrecy|non-disclosure)/i.test(span)
+  );
 
   // 4. IP Infringement carve-out
-  const hasIPCarveOut = 
-    /(?:limitations?|exclusions?|liability|section\s*12|article\s*12|notwithstanding).*?(?:shall not apply to|except for|excluding).*?(?:intellectual property|infringement|patent|copyright)/is.test(fullText);
+  const hasIPCarveOut = candidateSpans.some(span =>
+    /(?:limitations?|exclusions?|cap|caps|section\s*\d+(?:\.\d+)?|article\s*\d+|notwithstanding)[\s\S]{0,180}(?:shall\s+not\s+apply\s+to|except\s+for|excluding|not\s+limit)[\s\S]{0,200}(?:intellectual\s+property|infringement|patent|copyright)/i.test(span)
+  );
 
   // 5. Data breach / cyber carve-out or super-cap
-  const hasDataBreachCarveOut = 
-    /(?:data protection|data breach|personal data|privacy|security incident).*?(?:super-cap|separate cap|not be subject to|shall not apply)/is.test(fullText) ||
-    /(?:super-cap|super cap).*?(?:data|cyber|security)/is.test(fullText);
+  const hasDataBreachCarveOut = candidateSpans.some(span =>
+    /(?:data\s+protection|data\s+breach|personal\s+data|privacy|security\s+incident)[\s\S]{0,140}(?:super-cap|super\s+cap|separate\s+cap|not\s+be\s+subject\s+to|shall\s+not\s+apply)/i.test(span) ||
+    /(?:super-cap|super\s+cap)[\s\S]{0,120}(?:data|cyber|security)/i.test(span)
+  );
 
   // 6. Payment carve-out
-  const hasPaymentCarveOut = 
-    /(?:limitations?|exclusions?|liability).*?(?:shall not apply to|except for).*?(?:payment obligations|fees owed|fees due)/is.test(fullText);
+  const hasPaymentCarveOut = candidateSpans.some(span =>
+    /(?:limitations?|exclusions?|cap|caps|liability)[\s\S]{0,160}(?:shall\s+not\s+apply\s+to|except\s+for|not\s+limit)[\s\S]{0,160}(?:payment\s+obligations|fees\s+owed|fees\s+due)/i.test(span)
+  );
 
   return {
     hasIndemnityCarveOut,
+    hasHostileCapSubordination,
     hasConfidentialityCarveOut,
     hasGrossNegligenceCarveOut,
     hasIPCarveOut,
@@ -411,9 +460,25 @@ export function analyzeLiabilityInterlocks(contractText) {
 
   // RULE 2: The "Consequential Damages Poison Pill" (Defense Costs Carve-Out)
   if (consequentialIntel.detected && indemnityIntel.detected) {
-    const defenseSpecificallyProtected = /(?:defense costs|attorney'?s fees|settlement amounts|indemnif).*?(?:shall be deemed direct|direct damages|not be deemed consequential|carved out from.*waiver)/is.test(contractText);
-    const consequentialExplicitlyCarvesIndemnity = /(?:consequential|indirect).*?(?:shall not apply to|except for).*?(?:indemnif|section\s*8)/is.test(contractText) ||
-      /(?:indemnif).*?(?:notwithstanding).*?(?:consequential|indirect)/is.test(contractText);
+    const blocks = contractText
+      .split(/\r?\n\s*\r?\n|(?<=[.;])\s+(?=[A-Z0-9(])/)
+      .map((b) => b.replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+
+    const defenseSpecificallyProtected = blocks.some((b) =>
+      /(?:defense\s+(?:costs?|fees?)|attorneys?'?\s*fees|settlement\s+(?:amounts?|payments?)|indemnif)/i.test(b) &&
+      /(?:shall\s+be\s+deemed\s+direct|direct\s+damages|not\s+be\s+deemed\s+consequential|carved\s+out\s+from\b[^.;]*\bwaiver)/i.test(b)
+    );
+    const consequentialExplicitlyCarvesIndemnity = blocks.some((b) =>
+      (
+        /(?:consequential|indirect|special|incidental)/i.test(b) &&
+        /(?:shall\s+not\s+apply\s+to|does\s+not\s+apply\s+to|except(?:ing)?\s+for|excluding|carved\s+out)/i.test(b) &&
+        /(?:indemnif|defense|section\s*\d+)/i.test(b)
+      ) ||
+      /(?:indemnif|defense\s+obligation)/i.test(b) &&
+        /(?:notwithstanding|excluded\s+from|shall\s+not\s+be\s+limited\s+by)/i.test(b) &&
+        /(?:consequential|indirect|waiver)/i.test(b)
+    );
 
     if (consequentialExplicitlyCarvesIndemnity || defenseSpecificallyProtected) {
       rules.push({
@@ -689,9 +754,15 @@ export function analyzeLiabilityInterlocks(contractText) {
 
 function parseDollarAmount(str) {
   if (!str) return null;
-  const cleaned = str.replace(/[^0-9\.]/g, '');
-  const num = parseFloat(cleaned);
-  return isNaN(num) ? null : num;
+  const raw = String(str).trim().toLowerCase();
+  const numMatch = raw.match(/([0-9,]+(?:\.[0-9]+)?)/);
+  if (!numMatch) return null;
+  const base = parseFloat(numMatch[1].replace(/,/g, ''));
+  if (isNaN(base)) return null;
+  if (/\bbillion\b|\d\s*b(?![a-z])/i.test(raw)) return base * 1_000_000_000;
+  if (/\bmillion\b|\d\s*m(?![a-z])/i.test(raw)) return base * 1_000_000;
+  if (/\bthousand\b|\d\s*k(?![a-z])/i.test(raw)) return base * 1_000;
+  return base;
 }
 
 /**
