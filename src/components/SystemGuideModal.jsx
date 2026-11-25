@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   X, ShieldCheck, FileCheck, Search, Sparkles,
   EyeOff, Layers, BookOpen, Database, ArrowRight,
-  CheckCircle2, Scale, Lock, Download, AlertTriangle,
-  FileCode, Terminal, Cpu, ShieldAlert
+  CheckCircle2, Scale, Lock, Download, ShieldAlert
 } from 'lucide-react';
 
 export default function SystemGuideModal({
@@ -14,7 +13,6 @@ export default function SystemGuideModal({
   onSelectTab,
   onLaunchTool
 }) {
-  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -29,74 +27,74 @@ export default function SystemGuideModal({
 
   const tabs = [
     { id: 'analyzer', label: 'Fact-Checking Engine', icon: ShieldCheck, badge: '4 Engines' },
-    { id: 'redact', label: 'Smart PII Redactor', icon: EyeOff, badge: 'Zero-Cloud' },
-    { id: 'bates', label: 'Bates Stamping Suite', icon: Layers, badge: 'Discovery' },
-    { id: 'templates', label: 'Legal Templates Vault', icon: BookOpen, badge: 'AmLaw 100' },
-    { id: 'history', label: 'Audit Vault & Storage', icon: Database, badge: 'Encrypted' },
+    { id: 'redact', label: 'PII Redactor', icon: EyeOff, badge: 'Zero-Cloud' },
+    { id: 'bates', label: 'Bates Stamping', icon: Layers, badge: 'Discovery' },
+    { id: 'templates', label: 'Template Vault', icon: BookOpen, badge: 'AmLaw 100' },
+    { id: 'history', label: 'Audit Vault', icon: Database, badge: 'Local DB' },
   ];
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
-        {/* Backdrop click */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div className="fixed inset-0" onClick={onClose} />
 
-        {/* Modal Window */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 12 }}
+          initial={{ opacity: 0, scale: 0.97, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 12 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="relative w-full max-w-4xl max-h-[90vh] bg-[#070B12] border border-zinc-800 rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden z-10"
+          exit={{ opacity: 0, scale: 0.97, y: 8 }}
+          transition={{ duration: 0.16, ease: 'easeOut' }}
+          className="relative w-full max-w-4xl max-h-[88vh] bg-[#09090B] border border-white/[0.08] rounded-xl shadow-2xl flex flex-col overflow-hidden z-10"
         >
           {/* Header */}
-          <div className="px-6 py-4.5 border-b border-zinc-800/80 bg-zinc-900/60 flex items-center justify-between gap-4 shrink-0">
+          <div className="px-6 py-4 bg-[#111115] border-b border-white/[0.06] flex items-center justify-between gap-4 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-                <ShieldCheck size={20} />
+              <div className="w-9 h-9 rounded-lg bg-[#18181B] border border-white/[0.08] flex items-center justify-center text-emerald-400 shrink-0">
+                <ShieldCheck size={18} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-white tracking-tight">ContractGuard Operator Guide</h3>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold">
-                    v2.4 Institutional
+                  <h3 className="text-sm font-semibold text-zinc-100 tracking-tight">
+                    ContractGuard Operator Guide
+                  </h3>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-400 border border-white/[0.08]">
+                    v2.4
                   </span>
                 </div>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  Deterministic legal verification, zero-cloud confidentiality, and AmLaw 100 practitioner workflows
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Deterministic legal verification, zero-cloud confidentiality, and practitioner workflows
                 </p>
               </div>
             </div>
 
             <button
+              type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-zinc-800/60 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700/60 flex items-center justify-center transition-colors cursor-pointer"
+              className="w-7 h-7 rounded-md text-zinc-400 hover:text-white hover:bg-white/[0.06] border border-transparent hover:border-white/[0.08] flex items-center justify-center transition-colors cursor-pointer"
               title="Close guide (Esc)"
             >
-              <X size={16} />
+              <X size={15} />
             </button>
           </div>
 
-          {/* Module Selector Navigation Tabs */}
-          <div className="px-6 py-2.5 bg-zinc-950/70 border-b border-zinc-800/60 flex items-center gap-2 overflow-x-auto custom-scrollbar shrink-0">
+          {/* Minimalist Underline Navigation Tabs */}
+          <div className="px-6 bg-[#0C0C0F] border-b border-white/[0.06] flex items-center gap-5 overflow-x-auto custom-scrollbar shrink-0">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => onSelectTab && onSelectTab(tab.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                  className={`flex items-center gap-2 py-3 text-xs font-medium whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
                     isActive
-                      ? 'bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/60 border border-transparent'
+                      ? 'border-emerald-500 text-zinc-100'
+                      : 'border-transparent text-zinc-500 hover:text-zinc-300'
                   }`}
                 >
-                  <Icon size={14} className={isActive ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <Icon size={13} className={isActive ? 'text-emerald-400' : 'text-zinc-500'} />
                   <span>{tab.label}</span>
-                  <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded ${
-                    isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-zinc-800 text-zinc-400'
-                  }`}>
+                  <span className={`text-[10px] font-mono ${isActive ? 'text-zinc-400' : 'text-zinc-600'}`}>
                     {tab.badge}
                   </span>
                 </button>
@@ -105,215 +103,207 @@ export default function SystemGuideModal({
           </div>
 
           {/* Tab Content Body */}
-          <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+          <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-5 bg-[#09090B]">
             {/* TAB 1: Fact-Checking Engine */}
             {activeTab === 'analyzer' && (
-              <div className="space-y-6">
-                {/* Executive Summary Card */}
-                <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 via-zinc-900/50 to-cyan-950/20 border border-emerald-500/25 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                      <Cpu size={14} /> Deterministic Mathematical Forensics
+              <div className="space-y-5">
+                <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-emerald-500/70 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">
+                      Deterministic Mathematical Forensics
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
+                    <span className="text-[10px] font-mono text-zinc-400">
                       ABA Model Rule 1.6 Privileged
                     </span>
                   </div>
                   <p className="text-xs text-zinc-300 leading-relaxed">
-                    ContractGuard replaces unpredictable LLM hallucinations with deterministic Abstract Syntax Tree (AST) parsing, formal cross-reference graphing, and strict regex verification. Audits execute 100% in local memory across 4 verification engines in under 100 milliseconds.
+                    Executes Abstract Syntax Tree (AST) parsing, cross-reference graphing, and deterministic statutory rule validation across 4 verification modes in local browser RAM — zero cloud calls and zero AI hallucinations.
                   </p>
                 </div>
 
-                {/* 3 Sub-Tools Breakdown */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Available Verification Modes
+                  <h4 className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-3">
+                    Verification Modes
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                    {/* Tool 1 */}
-                    <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
+                    <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] hover:border-white/[0.15] flex flex-col justify-between transition-colors">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                            <FileCheck size={14} />
-                          </span>
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-bold">AST Engine</span>
+                          <FileCheck size={14} className="text-emerald-400" />
+                          <span className="text-[10px] font-mono text-zinc-500">AST</span>
                         </div>
-                        <h5 className="text-xs font-bold text-white">Single Draft Audit</h5>
+                        <h5 className="text-xs font-semibold text-zinc-100">Single Draft Audit</h5>
                         <p className="text-[11px] text-zinc-400 leading-relaxed">
-                          Audits standalone contracts for broken cross-references, missing exhibits, undefined terms, and financial/date contradictions.
+                          Flags broken cross-references, missing exhibits, undefined capitalized terms, and numerical contradictions.
                         </p>
                       </div>
                       <button
+                        type="button"
                         onClick={() => onLaunchTool && onLaunchTool('analyzer', 'single')}
-                        className="mt-3 w-full py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                        className="mt-3 w-full py-1.5 rounded-md bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] text-zinc-200 text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
                       >
-                        Launch Single Audit <ArrowRight size={11} />
+                        Open Single Audit <ArrowRight size={11} className="text-zinc-400" />
                       </button>
                     </div>
 
-                    {/* Tool 2 */}
-                    <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col justify-between hover:border-cyan-500/40 transition-colors">
+                    <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] hover:border-white/[0.15] flex flex-col justify-between transition-colors">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                            <Search size={14} />
-                          </span>
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-bold">Myers LCS</span>
+                          <Search size={14} className="text-sky-400" />
+                          <span className="text-[10px] font-mono text-zinc-500">Myers</span>
                         </div>
-                        <h5 className="text-xs font-bold text-white">Redline Diff Mode</h5>
+                        <h5 className="text-xs font-semibold text-zinc-100">Redline Diff Mode</h5>
                         <p className="text-[11px] text-zinc-400 leading-relaxed">
-                          Performs dual-pane comparative diffing between baseline and counterparty drafts, exposing stealth edits and altered covenants.
+                          Compares baseline vs. counterparty drafts word-by-word, isolating stealth edits and shifted covenants.
                         </p>
                       </div>
                       <button
+                        type="button"
                         onClick={() => onLaunchTool && onLaunchTool('analyzer', 'comparative')}
-                        className="mt-3 w-full py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                        className="mt-3 w-full py-1.5 rounded-md bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] text-zinc-200 text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
                       >
-                        Launch Redline Diff <ArrowRight size={11} />
+                        Open Redline Diff <ArrowRight size={11} className="text-zinc-400" />
                       </button>
                     </div>
 
-                    {/* Tool 3 */}
-                    <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
+                    <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] hover:border-white/[0.15] flex flex-col justify-between transition-colors">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                            <Sparkles size={14} />
-                          </span>
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-bold">Deed Harmonizer</span>
+                          <Sparkles size={14} className="text-emerald-400" />
+                          <span className="text-[10px] font-mono text-zinc-500">Deed</span>
                         </div>
-                        <h5 className="text-xs font-bold text-white">Linguistic Proofreader</h5>
+                        <h5 className="text-xs font-semibold text-zinc-100">Linguistic Proofreader</h5>
                         <p className="text-[11px] text-zinc-400 leading-relaxed">
-                          Forensic deed polishing, correcting archaic legalisms and punctuation while strictly preserving 100% of underlying covenants.
+                          Resolves archaic legalisms, inconsistent numbering, and drafting ambiguities without altering substantive rights.
                         </p>
                       </div>
                       <button
+                        type="button"
                         onClick={() => onLaunchTool && onLaunchTool('analyzer', 'harmonizer')}
-                        className="mt-3 w-full py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                        className="mt-3 w-full py-1.5 rounded-md bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] text-zinc-200 text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
                       >
-                        Launch Proofreader <ArrowRight size={11} />
+                        Open Proofreader <ArrowRight size={11} className="text-zinc-400" />
                       </button>
                     </div>
 
-                    {/* Tool 4 */}
-                    <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
+                    <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] hover:border-white/[0.15] flex flex-col justify-between transition-colors">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                            <ShieldAlert size={14} />
-                          </span>
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 font-bold">Risk Matrix</span>
+                          <ShieldAlert size={14} className="text-amber-400" />
+                          <span className="text-[10px] font-mono text-zinc-500">Matrix</span>
                         </div>
-                        <h5 className="text-xs font-bold text-white">Liability Reconciler</h5>
+                        <h5 className="text-xs font-semibold text-zinc-100">Liability Reconciler</h5>
                         <p className="text-[11px] text-zinc-400 leading-relaxed">
-                          Audits 7 interlocking liability vectors, pinpointing gutted indemnities, consequential waiver traps, and sole remedy overreach.
+                          Audits 7 interlocking liability vectors for gutted indemnities, super-cap omissions, and sole-remedy traps.
                         </p>
                       </div>
                       <button
+                        type="button"
                         onClick={() => onLaunchTool && onLaunchTool('analyzer', 'liability')}
-                        className="mt-3 w-full py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                        className="mt-3 w-full py-1.5 rounded-md bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] text-zinc-200 text-[11px] font-medium flex items-center justify-center gap-1 transition-colors cursor-pointer"
                       >
-                        Launch Reconciler <ArrowRight size={11} />
+                        Open Reconciler <ArrowRight size={11} className="text-zinc-400" />
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* 3-Step Guided Workflow */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Standard Practitioner Workflow
+                  <h4 className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-2.5">
+                    Practitioner Workflow
                   </h4>
-                  <div className="space-y-2.5">
-                    <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70 flex items-start gap-3">
-                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+                  <div className="divide-y divide-white/[0.06] rounded-lg bg-[#111115] border border-white/[0.08]">
+                    <div className="p-3 flex items-start gap-3">
+                      <span className="text-[11px] font-mono text-zinc-500 tabular-nums mt-0.5">01</span>
                       <div>
-                        <p className="text-xs font-bold text-zinc-200">Import Contract Draft</p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">Upload a .docx or .pdf file, or paste draft text. Contract title and client/counterparty legal entities are detected automatically.</p>
+                        <p className="text-xs font-medium text-zinc-200">Load or Paste Draft</p>
+                        <p className="text-[11px] text-zinc-400 mt-0.5">
+                          Upload .docx, .pdf, or .txt directly into browser RAM, or load an institutional benchmark case.
+                        </p>
                       </div>
                     </div>
-                    <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70 flex items-start gap-3">
-                      <span className="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+                    <div className="p-3 flex items-start gap-3">
+                      <span className="text-[11px] font-mono text-zinc-500 tabular-nums mt-0.5">02</span>
                       <div>
-                        <p className="text-xs font-bold text-zinc-200">Execute Deterministic Audit</p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">Click "Audit Contract Integrity". The 4 engines parse structural trees, cross-references, and financial terms, displaying flagged issues in the interactive HUD.</p>
+                        <p className="text-xs font-medium text-zinc-200">Run Deterministic Audit</p>
+                        <p className="text-[11px] text-zinc-400 mt-0.5">
+                          Review structural errors, undefined terms, financial mismatches, and liability interlocks across unified tabs.
+                        </p>
                       </div>
                     </div>
-                    <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70 flex items-start gap-3">
-                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+                    <div className="p-3 flex items-start gap-3">
+                      <span className="text-[11px] font-mono text-zinc-500 tabular-nums mt-0.5">03</span>
                       <div>
-                        <p className="text-xs font-bold text-zinc-200">Export Pre-Signing Court Rider & Redlines</p>
-                        <p className="text-[11px] text-zinc-400 mt-0.5">Download a complete Pre-Signing Amendment Rider in Microsoft Word (.docx), export an executive client memo, or copy specific strikeout/insertion clauses directly into counsel redlines.</p>
+                        <p className="text-xs font-medium text-zinc-200">Export Amendment Rider or Redline</p>
+                        <p className="text-[11px] text-zinc-400 mt-0.5">
+                          Generate a court-ready Pre-Signing Rider (.docx), Forensic Certificate, or copy counter-language directly.
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Statutory Reference Callout */}
-                <div className="p-3 rounded-lg bg-zinc-900/80 border border-zinc-800 text-[11px] text-zinc-400 flex items-center gap-2">
-                  <Scale size={15} className="text-emerald-400 shrink-0" />
-                  <span>Governing Doctrines: Delaware General Corporation Law (DGCL § 106), Uniform Commercial Code (UCC § 2-201), Restatement (Second) of Contracts § 33.</span>
+                <div className="px-3.5 py-2.5 rounded-lg bg-[#111115] border border-white/[0.06] text-[11px] text-zinc-500 flex items-center gap-2">
+                  <Scale size={14} className="text-emerald-400 shrink-0" />
+                  <span>Governing Doctrines: DGCL § 106 · Uniform Commercial Code § 2-201 · Restatement (Second) of Contracts § 33.</span>
                 </div>
               </div>
             )}
 
             {/* TAB 2: Smart PII Redactor */}
             {activeTab === 'redact' && (
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 via-zinc-900/50 to-blue-950/20 border border-emerald-500/25 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                      <EyeOff size={14} /> Client-Side Identity & Financial Sanitizer
+              <div className="space-y-5">
+                <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-emerald-500/70 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">
+                      Client-Side Identity & Financial Sanitizer
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
-                      Fed. R. Civ. P. 5.2 Safe
-                    </span>
+                    <span className="text-[10px] font-mono text-zinc-400">Fed. R. Civ. P. 5.2</span>
                   </div>
                   <p className="text-xs text-zinc-300 leading-relaxed">
-                    Compliant with Federal Rule of Civil Procedure 5.2 privacy mandates. Masks Social Security Numbers, Bank Routing codes, Credit Cards, Tax IDs, and proprietary transaction codenames entirely within browser memory before court filing or disclosure.
+                    Compliant with Federal Rule of Civil Procedure 5.2 privacy mandates. Masks SSNs, EINs, routing numbers, credit cards, and custom codenames in local browser RAM prior to court filing or disclosure.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-2">
-                    <h5 className="text-xs font-bold text-white flex items-center gap-2">
-                      <CheckCircle2 size={13} className="text-emerald-400" /> Automated Detection Filters
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100 flex items-center gap-2">
+                      <CheckCircle2 size={13} className="text-emerald-400" /> Pattern Detectors
                     </h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Toggle standard filters for Social Security Numbers (SSN), Employer Identification Numbers (EIN), Bank Accounts, Credit Cards, Phone Numbers, and IP addresses.
+                      Toggle structural matchers for Social Security Numbers, Employer IDs, bank accounts, card numbers, phone lines, and IP addresses.
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-2">
-                    <h5 className="text-xs font-bold text-white flex items-center gap-2">
-                      <CheckCircle2 size={13} className="text-cyan-400" /> Custom Keyword Scrubbing
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100 flex items-center gap-2">
+                      <CheckCircle2 size={13} className="text-sky-400" /> Custom Entity Scrubbing
                     </h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Add specific client names, confidential project code words, or subsidiary corporate identities to batch-scrub proprietary information instantly.
+                      Define client names, transaction codenames, or subsidiary entities to scrub proprietary strings across entire exhibits.
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Redaction Output Styles
+                  <h4 className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 mb-2.5">
+                    Masking Styles
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
-                    <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70">
-                      <p className="font-bold text-zinc-200">Solid Black Block</p>
+                    <div className="p-3 rounded-lg bg-[#111115] border border-white/[0.08]">
+                      <p className="font-medium text-zinc-200">Solid Block</p>
                       <p className="text-[11px] text-zinc-400 mt-1 font-mono">John Doe (██████████)</p>
-                      <p className="text-[10px] text-zinc-500 mt-1">Recommended for official court discovery exhibits</p>
+                      <p className="text-[10px] text-zinc-500 mt-1">Court discovery filings</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70">
-                      <p className="font-bold text-zinc-200">Semantic Tag</p>
+                    <div className="p-3 rounded-lg bg-[#111115] border border-white/[0.08]">
+                      <p className="font-medium text-zinc-200">Semantic Tag</p>
                       <p className="text-[11px] text-zinc-400 mt-1 font-mono">[REDACTED: SSN]</p>
-                      <p className="text-[10px] text-zinc-500 mt-1">Preserves context for internal review</p>
+                      <p className="text-[10px] text-zinc-500 mt-1">Internal counsel review</p>
                     </div>
-                    <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70">
-                      <p className="font-bold text-zinc-200">Asterisk Mask</p>
+                    <div className="p-3 rounded-lg bg-[#111115] border border-white/[0.08]">
+                      <p className="font-medium text-zinc-200">Asterisk Mask</p>
                       <p className="text-[11px] text-zinc-400 mt-1 font-mono">***-**-1234</p>
-                      <p className="text-[10px] text-zinc-500 mt-1">Standard banking verification format</p>
+                      <p className="text-[10px] text-zinc-500 mt-1">Partial verification display</p>
                     </div>
                   </div>
                 </div>
@@ -322,38 +312,36 @@ export default function SystemGuideModal({
 
             {/* TAB 3: Bates Stamping */}
             {activeTab === 'bates' && (
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-950/30 via-zinc-900/50 to-blue-950/20 border border-cyan-500/25 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                      <Layers size={14} /> Native pdf-lib Trial Stamping Suite
+              <div className="space-y-5">
+                <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-sky-500/70 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-sky-400">
+                      Native pdf-lib Production Stamping
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">
-                      Evidentiary Standard
-                    </span>
+                    <span className="text-[10px] font-mono text-zinc-400">Evidentiary Standard</span>
                   </div>
                   <p className="text-xs text-zinc-300 leading-relaxed">
-                    Sequentially stamps and binds multi-document discovery productions directly in your browser. Generates court-ready PDF exhibits without uploading unfiled evidence to third-party cloud converters.
+                    Sequentially stamps and binds multi-PDF discovery productions inside local browser memory. Unfiled client evidence never touches third-party cloud converters.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1.5">
-                    <h5 className="text-xs font-bold text-white">Party Attribution</h5>
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100">Party Prefixes</h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Set custom prefixes: PLTF- (Plaintiff), DEF- (Defendant), CONF- (Confidential exhibit), or custom docket numbers.
+                      Set custom docket prefixes such as PLTF-, DEF-, EX-, or confidential designations.
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1.5">
-                    <h5 className="text-xs font-bold text-white">Zero Padding</h5>
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100">Zero Padding</h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Customizable 4-digit (0001) through 8-digit padding ensures consistent filing indices across large discovery binders.
+                      Configure 4-digit (0001) through 8-digit sequence padding for structured trial binders.
                     </p>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1.5">
-                    <h5 className="text-xs font-bold text-white">Contrast Backing</h5>
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100">Contrast Backing</h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Renders an opaque white backing pill to ensure serial stamp readability across dark or degraded historical scans.
+                      Draws an opaque white backing pill beneath every stamp so numbers remain legible on dark scans.
                     </p>
                   </div>
                 </div>
@@ -362,42 +350,40 @@ export default function SystemGuideModal({
 
             {/* TAB 4: Legal Templates Vault */}
             {activeTab === 'templates' && (
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 via-zinc-900/50 to-cyan-950/20 border border-emerald-500/25 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                      <BookOpen size={14} /> AmLaw 100 Institutional Drafting Library
+              <div className="space-y-5">
+                <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-emerald-500/70 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400">
+                      AmLaw 100 Institutional Drafting Library
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
-                      Delaware & UCC Compliant
-                    </span>
+                    <span className="text-[10px] font-mono text-zinc-400">Delaware & UCC</span>
                   </div>
                   <p className="text-xs text-zinc-300 leading-relaxed">
-                    Pre-assembled, battle-tested commercial contract models adhering to Delaware corporate law, the Uniform Commercial Code (UCC), FIRPTA real estate withholding (IRC § 1445), and American commercial jurisprudence.
+                    Structured transaction agreements aligned with Delaware corporate law, Uniform Commercial Code (UCC), and IRC § 1445 FIRPTA commercial standards.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1.5">
-                    <h5 className="text-xs font-bold text-white">Commercial Real Estate & Leases</h5>
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100">Real Estate & Commercial Leases</h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Includes Land Purchase and Sale Agreements with FIRPTA certifications and Phase I Environmental contingencies, plus Triple Net (NNN) commercial leases with CAM prorations.
+                      Land Purchase & Sale Agreements with FIRPTA & environmental contingencies, plus Triple Net (NNN) leases with 50-state statutory riders.
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 space-y-1.5">
-                    <h5 className="text-xs font-bold text-white">Corporate M&A & Technology</h5>
+                  <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] space-y-1.5">
+                    <h5 className="text-xs font-semibold text-zinc-100">Corporate M&A & Technology</h5>
                     <p className="text-[11px] text-zinc-400 leading-relaxed">
-                      Delaware Asset Purchase Agreements (SEC EDGAR model APA), Delaware LLC Operating Agreements (IRC § 704(b)), and Tech MSAs with present IP assignment (17 U.S.C. § 101).
+                      Delaware Asset Purchase Agreements (APA), Delaware LLC Operating Agreements (IRC § 704(b)), and Enterprise MSAs with present IP assignment (17 U.S.C. § 101).
                     </p>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70 text-xs text-zinc-300 flex items-start gap-2.5">
-                  <Download size={15} className="text-cyan-400 shrink-0 mt-0.5" />
+                <div className="p-3 rounded-lg bg-[#111115] border border-white/[0.06] text-xs text-zinc-400 flex items-start gap-2.5">
+                  <Download size={14} className="text-sky-400 shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-bold text-white">Direct Audit Integration: </span>
-                    <span>Fill variables in real-time, export to Word (.docx) for custom covenant authoring, or click "Send to Audit" to run forensic verification directly in ContractGuard.</span>
+                    <span className="font-medium text-zinc-200">Direct Audit Handoff: </span>
+                    <span>Compile deal parameters live, export to Word (.docx), or send directly into ContractGuard for forensic audit.</span>
                   </div>
                 </div>
               </div>
@@ -405,35 +391,37 @@ export default function SystemGuideModal({
 
             {/* TAB 5: Audit Vault */}
             {activeTab === 'history' && (
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-gradient-to-r from-blue-950/30 via-zinc-900/50 to-zinc-950 border border-blue-500/25 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-                      <Database size={14} /> Encrypted In-Browser Sandbox Persistence
+              <div className="space-y-5">
+                <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-sky-500/70 space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-sky-400">
+                      Encrypted Local Sandbox Persistence
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
-                      Zero Server Retention
-                    </span>
+                    <span className="text-[10px] font-mono text-zinc-400">Zero Server Retention</span>
                   </div>
                   <p className="text-xs text-zinc-300 leading-relaxed">
-                    All audit results, redline comparisons, and Bates stamping jobs are stored inside your browser's private IndexedDB database. Records survive tab refreshes and system restarts without transmitting a single byte to external cloud servers.
+                    Every audit report, redline comparison, and Bates production job persists inside your browser's local IndexedDB vault with zero cloud transmission.
                   </p>
                 </div>
 
-                <div className="space-y-2.5">
-                  <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70 flex items-start gap-3">
-                    <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                <div className="divide-y divide-white/[0.06] rounded-lg bg-[#111115] border border-white/[0.08]">
+                  <div className="p-3 flex items-start gap-3">
+                    <CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-zinc-200">Session Restoration</p>
-                      <p className="text-[11px] text-zinc-400 mt-0.5">Reopen any prior contract review session to inspect liability redlines, re-verify defined terms, or download fresh Word riders.</p>
+                      <p className="text-xs font-medium text-zinc-200">Instant Session Restoration</p>
+                      <p className="text-[11px] text-zinc-400 mt-0.5">
+                        Reopen past contract reviews to inspect redlines, review undefined terms, or export fresh counter-riders.
+                      </p>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/70 flex items-start gap-3">
-                    <CheckCircle2 size={15} className="text-red-400 shrink-0 mt-0.5" />
+                  <div className="p-3 flex items-start gap-3">
+                    <CheckCircle2 size={14} className="text-rose-400 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-zinc-200">One-Click Client Purge</p>
-                      <p className="text-[11px] text-zinc-400 mt-0.5">Immediately purge all cached drafts, client memos, and Bates stamping jobs from your machine to comply with strict confidentiality and record-destruction protocols.</p>
+                      <p className="text-xs font-medium text-zinc-200">One-Click Client Data Purge</p>
+                      <p className="text-[11px] text-zinc-400 mt-0.5">
+                        Clear cached drafts and production logs from your machine immediately to satisfy matter-closing destruction policies.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -442,13 +430,14 @@ export default function SystemGuideModal({
           </div>
 
           {/* Footer Action */}
-          <div className="px-6 py-4 border-t border-zinc-800/80 bg-zinc-950 flex items-center justify-between gap-4 shrink-0">
-            <div className="flex items-center gap-2 text-xs text-zinc-400">
-              <Lock size={13} className="text-emerald-400" />
-              <span>100% In-Memory Sandbox · Privileged & Confidential</span>
+          <div className="px-6 py-3.5 border-t border-white/[0.06] bg-[#0C0C0F] flex items-center justify-between gap-4 shrink-0">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-500">
+              <Lock size={12} className="text-emerald-500" />
+              <span>100% In-Memory Sandbox · ABA Rule 1.6 Compliant</span>
             </div>
 
             <button
+              type="button"
               onClick={() => {
                 if (onLaunchTool) {
                   onLaunchTool(activeTab);
@@ -456,9 +445,9 @@ export default function SystemGuideModal({
                   onClose();
                 }
               }}
-              className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(16,185,129,0.25)] cursor-pointer"
+              className="px-4 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <span>Launch {tabs.find(t => t.id === activeTab)?.label || 'Tool'}</span>
+              <span>Open {tabs.find(t => t.id === activeTab)?.label || 'Workspace'}</span>
               <ArrowRight size={13} />
             </button>
           </div>
