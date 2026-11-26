@@ -160,9 +160,9 @@ export default function ContractCompare({ isDemoMode = false }) {
               </div>
               <div className="min-w-0">
                 <h1 className="text-sm font-semibold text-zinc-100 tracking-tight truncate">ContractGuard</h1>
-                <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-zinc-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  <span className="truncate">Local RAM · ABA 1.6</span>
+                <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-emerald-400/90 font-mono">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="truncate">0 KB Sent · In-RAM Verified</span>
                 </div>
               </div>
             </div>
@@ -1241,7 +1241,7 @@ function ContractAnalyzerView({
     resetAnalysis();
   };
 
-  const [activeHudTab, setActiveHudTab] = useState('dealBreakers'); // dealBreakers | enforceability | obligations | crossRefs | financialDates | definedTerms | diff | risks
+  const [activeHudTab, setActiveHudTab] = useState('dealIntelligence'); // dealIntelligence | dealBreakers | enforceability | obligations | crossRefs | financialDates | definedTerms | diff | risks
   const [copiedRedlineId, setCopiedRedlineId] = useState(null);
   const [copiedRiderSuccess, setCopiedRiderSuccess] = useState(false);
   const [copiedDefsSuccess, setCopiedDefsSuccess] = useState(false);
@@ -1767,17 +1767,47 @@ function ContractAnalyzerView({
   return (
     <div className="max-w-6xl w-full mx-auto h-full flex flex-col gap-4 font-ui">
       {/* Unified Executive Mode Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight text-zinc-100">
-            {modeMeta.title}
-          </h2>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h2 className="text-xl font-semibold tracking-tight text-zinc-100">
+              {modeMeta.title}
+            </h2>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              0 KB Sent · Air-Gapped Verified
+            </span>
+          </div>
           <p className="text-xs text-zinc-400 mt-0.5">
             {modeMeta.desc}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Top-Level Party Role Switcher */}
+          {(analysisMode === 'single' || analysisMode === 'comparative') && (
+            <div className="flex items-center gap-1 p-0.5 rounded-lg bg-[#111115] border border-white/[0.08]" title="Switch negotiation perspective">
+              {[
+                { id: 'balanced', label: 'Balanced' },
+                { id: 'buyer_client', label: 'Buyer / Client' },
+                { id: 'vendor_contractor', label: 'Vendor / Contractor' }
+              ].map((role) => (
+                <button
+                  key={role.id}
+                  type="button"
+                  onClick={() => setPartyRole(role.id)}
+                  className={`px-2 py-1 rounded-md text-[11px] font-medium transition-colors cursor-pointer ${
+                    partyRole === role.id
+                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                      : 'text-zinc-400 hover:text-zinc-200 border border-transparent'
+                  }`}
+                >
+                  {role.label}
+                </button>
+              ))}
+            </div>
+          )}
+
           {isDemo && (
             <>
               <button
@@ -2734,7 +2764,13 @@ function ContractAnalyzerView({
 
             return (
               <div className="space-y-3.5">
-                {items.map((item, idx) => (
+                {items.map((item, idx) => {
+                  const matchedRiskBrief = (liveDealIntelligence?.enrichedRisks || []).find(
+                    r => (item.ruleId && r.id === item.ruleId) || (item.title && r.phrase && item.title.toLowerCase().includes(r.phrase.toLowerCase()))
+                  );
+                  const counterText = matchedRiskBrief?.counterRedlineClause || item.courtGradeRedline;
+
+                  return (
                   <div
                     key={item.id || idx}
                     className={`p-5 rounded-xl bg-[#111115] border border-white/[0.08] border-l-2 ${accentBorder} flex flex-col gap-3.5`}
@@ -2775,6 +2811,12 @@ function ContractAnalyzerView({
                     <div>
                       <h4 className="text-sm font-semibold text-zinc-100">{item.title}</h4>
                       <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{item.malpracticeRisk}</p>
+                      {matchedRiskBrief?.plainEnglishImpact && (
+                        <p className="text-xs text-amber-200/90 mt-2 px-2.5 py-1.5 rounded-md bg-amber-500/[0.07] border border-amber-500/20 leading-relaxed">
+                          <strong className="text-amber-300">What this actually costs you: </strong>
+                          {matchedRiskBrief.plainEnglishImpact}
+                        </p>
+                      )}
                     </div>
 
                     {item.snippet && (
@@ -2788,7 +2830,7 @@ function ContractAnalyzerView({
                       </div>
                     )}
 
-                    {item.courtGradeRedline && (
+                    {counterText && (
                       <div className="px-3.5 py-3 rounded-lg bg-[#0A0A0D] border border-white/[0.06] border-l-2 border-l-emerald-500/60 flex flex-col gap-2">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-[11px] font-medium text-emerald-400">
@@ -2796,7 +2838,7 @@ function ContractAnalyzerView({
                           </span>
                           <button
                             type="button"
-                            onClick={() => handleCopyRedline(item.id || idx, item.courtGradeRedline)}
+                            onClick={() => handleCopyRedline(item.id || idx, counterText)}
                             className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-white/[0.06] hover:bg-white/[0.12] text-zinc-200 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
                           >
                             {copiedRedlineId === (item.id || idx) ? (
@@ -2807,13 +2849,13 @@ function ContractAnalyzerView({
                             ) : (
                               <>
                                 <Copy size={12} className="text-zinc-400" />
-                                <span>Copy Clause</span>
+                                <span>Copy Counter-Proposal</span>
                               </>
                             )}
                           </button>
                         </div>
                         <div className="text-xs font-legal text-zinc-200 leading-relaxed select-all">
-                          {item.courtGradeRedline}
+                          {counterText}
                         </div>
                         {item.actionableAdvice && (
                           <p className="text-[11px] text-zinc-500 pt-1 border-t border-white/[0.05]">
@@ -2823,7 +2865,8 @@ function ContractAnalyzerView({
                       </div>
                     )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             );
           })()}

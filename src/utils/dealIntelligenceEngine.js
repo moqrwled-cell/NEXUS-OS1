@@ -114,6 +114,20 @@ const MISSING_SHIELD_RULES = [
     fallbackClause: `Force Majeure. Neither Party shall be liable for delay or nonperformance (excluding payment obligations) caused by acts of God, war, terrorism, civil unrest, natural disasters, utility or telecommunications failures, or governmental orders beyond its reasonable control, provided the affected Party gives prompt written notice and uses commercially reasonable efforts to resume performance. If such event persists beyond thirty (30) consecutive days, either Party may terminate the affected obligation upon written notice.`
   },
   {
+    id: 'missing-inspection',
+    title: 'Missing Due Diligence / Physical Inspection Contingency',
+    appliesTo: ['real_estate'],
+    testPresence: (t) => /\blease\b/i.test(t) || /\b(?:inspection\s+period|feasibility|due\s+diligence|home\s+inspection|physical\s+inspection)\b/i.test(t),
+    severityByRole: { balanced: 'warning', buyer_client: 'critical', vendor_contractor: 'info' },
+    plainEnglish: {
+      buyer_client: 'Without a written inspection or feasibility contingency, you risk forfeiting earnest money even if environmental or structural defects appear.',
+      vendor_contractor: 'Defining an exact cutoff date for inspection prevents buyers from stalling closing indefinitely.',
+      balanced: 'Real estate acquisition draft lacks an explicit inspection or due diligence contingency window.'
+    },
+    rationale: 'Purchase agreements require a defined inspection window during which Buyer may inspect title, survey, and physical condition or cancel with full deposit refund.',
+    fallbackClause: `Inspection Period. Buyer shall have thirty (30) calendar days following the Effective Date (the "Inspection Period") to inspect physical condition, title, survey, and environmental compliance. Prior to expiration of the Inspection Period, Buyer may terminate this Agreement for any reason upon written notice and receive an immediate refund of the Earnest Money.`
+  },
+  {
     id: 'missing-governing-law',
     title: 'Missing Governing Law & Exclusive Venue Clause',
     appliesTo: ['services_msa', 'nda', 'real_estate', 'employment_contractor', 'corporate_ma', 'lending', 'settlement', 'general'],
