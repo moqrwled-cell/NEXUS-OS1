@@ -220,6 +220,13 @@ export default function WarRoom() {
     return candidate.charAt(0).toUpperCase() + candidate.slice(1).toLowerCase();
   };
 
+  const buildCreatorSalutation = (name) => {
+    if (!name || typeof name !== 'string') return 'Dear Partner';
+    const trimmed = name.trim();
+    if (/(Team|Network)$/i.test(trimmed)) return `Dear ${trimmed}`;
+    return `Dear ${trimmed}`;
+  };
+
   // Generate Email Content with Strict Unicode LTR Markers & Nationwide B2B Legal Formatting
   const generateEmailData = (lead, type, overrideAngle) => {
     const isCreator = type === 'creators';
@@ -237,39 +244,42 @@ export default function WarRoom() {
     let body = '';
 
     if (isCreator) {
+      const greeting = buildCreatorSalutation(fullName);
       if (angle === 'followup') {
-        subject = `${LRM}quick follow-up — ${firmName} partnership`;
-        body = `${LRM}Hi ${firstName},
+        subject = `${LRM}Following Up — Partnership Inquiry for ${firmName}`;
+        body = `${LRM}${greeting},
 
-${LRM}Just floating this back up — would you like me to send over a complimentary lifetime license of ContractGuard so you can test it on a sample agreement (zero cloud uploads)?
+${LRM}I hope this note finds you well. I am writing to respectfully follow up on my earlier message regarding Nexus ContractGuard™.
 
-${LRM}If your audience finds it helpful, we offer a flat 40%–50% partner commission ($80–$150 per lifetime license). Happy to send a test key either way.
+${LRM}Out of respect for your editorial independence, I would be honored to provide a complimentary lifetime license for your private evaluation—with zero obligation whatsoever unless you feel it genuinely benefits your audience. Should you ever decide to feature it, we offer a 40%–50% partner revenue share ($80–$150 per lifetime license).
 
-${LRM}Best,
+${LRM}Thank you sincerely for your time and for everything you contribute to the legal community.
+
+${LRM}With sincere respect,
 ${LRM}Mohammed Qaraman
 ${LRM}Founder, Nexus ContractGuard™
 ${LRM}nexus-os.store`;
       } else {
-        subject = `${LRM}partnership idea for ${firmName} (100% offline contract checker · 40-50% rev share)`;
-        body = `${LRM}Hi ${firstName},
+        subject = `${LRM}Partnership Proposal for ${firmName} — Complimentary License & 40-50% Revenue Share`;
+        body = `${LRM}${greeting},
 
-${LRM}I follow your work at ${firmName} and wanted to share a quick partnership idea made specifically for solo lawyers and commercial creators who hate paying recurring SaaS fees or risking client data in cloud AI.
+${LRM}I hope this message finds you well. Thank you for the consistently thoughtful education and practical insight you bring to the legal profession through ${firmName}. Because practitioners look to voices they trust before adopting any new legal tool, I wanted to share a partnership proposal with you respectfully.
 
-${LRM}We built Nexus ContractGuard™ — a browser-local contract audit and drafting tool (100% in-RAM, zero server uploads, ABA Model Rule 1.6 safe) with:
-${LRM}• 15-second detection of broken cross-references, missing exhibits, financial mismatches, and liability-cap traps
-${LRM}• 12 ready-to-customize AmLaw 100 U.S. templates (CA/TX/NY/FL riders) with Word (.docx) & PDF export
-${LRM}• Simple one-time pricing ($199 Solo / $299 5-Seat Firm lifetime — no subscriptions)
+${LRM}We built Nexus ContractGuard™ — a 100% browser-local, air-gapped contract audit and drafting suite engineered strictly for ABA Model Rule 1.6 confidentiality (all processing occurs in local RAM with zero cloud uploads):
+${LRM}• 15-Second Forensic Review: Detects broken cross-references, missing exhibits, financial mismatches, and liability-cap vs. indemnity traps locally
+${LRM}• 12 AmLaw 100 U.S. Precedent Templates: Editable Word (.docx) & PDF agreements with state-specific statutory riders (CA/TX/NY/FL)
+${LRM}• Transparent Lifetime Licensing: One-time $199 Solo / $299 5-Seat Firm license with zero recurring SaaS subscriptions
 
-${LRM}How we can partner cleanly:
-${LRM}1. I will send you a free lifetime license today so you can verify everything yourself (check the Network Tab — 0 bytes leave the browser).
-${LRM}2. If you like it enough to mention or review, we set up a 40%–50% affiliate link ($80–$150 payout per sale) for ${firmName}'s audience.
+${LRM}Proposed Collaboration Terms:
+${LRM}1. Complimentary Review License: I would be pleased to send you a full lifetime key immediately so you can audit the tool yourself (including verifying in your browser Network Tab that zero bytes leave your machine). There is no pressure or obligation to cover it unless it earns your confidence.
+${LRM}2. Creator Revenue Share: If you choose to recommend or review it for ${firmName}'s audience, we provide a dedicated 40%–50% affiliate share ($80–$150 per lifetime license).
 
-${LRM}You can test the instant sandbox with no signup here:
+${LRM}You are also welcome to inspect the live sandbox without signing up at:
 ${LRM}nexus-os.store/demo
 
-${LRM}Want me to send over your complimentary test key?
+${LRM}May I send over a complimentary lifetime license key for your evaluation? Thank you very much for your time and consideration.
 
-${LRM}Best regards,
+${LRM}With sincere respect,
 ${LRM}Mohammed Qaraman
 ${LRM}Founder, Nexus ContractGuard™
 ${LRM}nexus-os.store`;
