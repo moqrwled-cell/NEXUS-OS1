@@ -51,7 +51,7 @@ export default function WarRoom() {
   const [authError, setAuthError] = useState('');
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState('attorneys'); // 'attorneys' | 'firms'
+  const [activeTab, setActiveTab] = useState('attorneys'); // 'attorneys' | 'firms' | 'creators'
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -86,7 +86,7 @@ export default function WarRoom() {
   const [previewModalLead, setPreviewModalLead] = useState(null);
 
   // Dynamic Leads Intelligence Database (Loaded in-memory ONLY after clearance)
-  const [leadsData, setLeadsData] = useState({ attorneys: [], firms: [] });
+  const [leadsData, setLeadsData] = useState({ attorneys: [], firms: [], creators: [] });
   const [isLeadsLoading, setIsLeadsLoading] = useState(false);
 
   // 1. Initial Load & URL Key Check
@@ -125,15 +125,19 @@ export default function WarRoom() {
     }
   }, []);
 
-  // 1.1 Lazy-load 20,012 leads dataset ONLY when authenticated
+  // 1.1 Lazy-load leads datasets ONLY when authenticated
   useEffect(() => {
     if (isAuthenticated && leadsData.attorneys.length === 0) {
       setIsLeadsLoading(true);
-      import('../data/warRoomLeads')
-        .then((mod) => {
+      Promise.all([
+        import('../data/warRoomLeads'),
+        import('../data/warRoomCreators')
+      ])
+        .then(([leadsMod, creatorsMod]) => {
           setLeadsData({
-            attorneys: mod.ATTORNEYS_DATA || [],
-            firms: mod.FIRMS_DATA || []
+            attorneys: leadsMod.ATTORNEYS_DATA || [],
+            firms: leadsMod.FIRMS_DATA || [],
+            creators: creatorsMod.CREATORS_DATA || []
           });
           setIsLeadsLoading(false);
         })
@@ -218,10 +222,11 @@ export default function WarRoom() {
 
   // Generate Email Content with Strict Unicode LTR Markers & Nationwide B2B Legal Formatting
   const generateEmailData = (lead, type, overrideAngle) => {
+    const isCreator = type === 'creators';
     const isAttorney = type === 'attorneys';
-    const fullName = isAttorney ? lead.name : (lead.managingPartner || 'Counsel');
+    const fullName = isCreator ? lead.name : (isAttorney ? lead.name : (lead.managingPartner || 'Counsel'));
     const firstName = extractCleanFirstName(fullName);
-    const firmName = isAttorney ? lead.firm : lead.name;
+    const firmName = isCreator ? lead.firm : (isAttorney ? lead.firm : lead.name);
     const email = lead.email;
     const angle = overrideAngle || selectedAngle;
 
@@ -230,6 +235,47 @@ export default function WarRoom() {
 
     let subject = '';
     let body = '';
+
+    if (isCreator) {
+      if (angle === 'followup') {
+        subject = `${LRM}quick follow-up — ${firmName} partnership`;
+        body = `${LRM}Hi ${firstName},
+
+${LRM}Just floating this back up — would you like me to send over a complimentary lifetime license of ContractGuard so you can test it on a sample agreement (zero cloud uploads)?
+
+${LRM}If your audience finds it helpful, we offer a flat 40%–50% partner commission ($80–$150 per lifetime license). Happy to send a test key either way.
+
+${LRM}Best,
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard™
+${LRM}nexus-os.store`;
+      } else {
+        subject = `${LRM}partnership idea for ${firmName} (100% offline contract checker · 40-50% rev share)`;
+        body = `${LRM}Hi ${firstName},
+
+${LRM}I follow your work at ${firmName} and wanted to share a quick partnership idea made specifically for solo lawyers and commercial creators who hate paying recurring SaaS fees or risking client data in cloud AI.
+
+${LRM}We built Nexus ContractGuard™ — a browser-local contract audit and drafting tool (100% in-RAM, zero server uploads, ABA Model Rule 1.6 safe) with:
+${LRM}• 15-second detection of broken cross-references, missing exhibits, financial mismatches, and liability-cap traps
+${LRM}• 12 ready-to-customize AmLaw 100 U.S. templates (CA/TX/NY/FL riders) with Word (.docx) & PDF export
+${LRM}• Simple one-time pricing ($199 Solo / $299 5-Seat Firm lifetime — no subscriptions)
+
+${LRM}How we can partner cleanly:
+${LRM}1. I will send you a free lifetime license today so you can verify everything yourself (check the Network Tab — 0 bytes leave the browser).
+${LRM}2. If you like it enough to mention or review, we set up a 40%–50% affiliate link ($80–$150 payout per sale) for ${firmName}'s audience.
+
+${LRM}You can test the instant sandbox with no signup here:
+${LRM}nexus-os.store/demo
+
+${LRM}Want me to send over your complimentary test key?
+
+${LRM}Best regards,
+${LRM}Mohammed Qaraman
+${LRM}Founder, Nexus ContractGuard™
+${LRM}nexus-os.store`;
+      }
+      return { name: fullName, firstName, firmName, email, subject, body };
+    }
 
     if (isAttorney) {
       // SOLO PRACTITIONER & TRANSACTIONAL PARTNER OUTREACH
@@ -449,7 +495,11 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
   // Locations Extract (Adaptive to selected Time Zone)
   const locationsList = useMemo(() => {
-    const data = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
+    const data = activeTab === 'attorneys'
+      ? leadsData.attorneys
+      : activeTab === 'creators'
+        ? leadsData.creators
+        : leadsData.firms;
     let states = Array.from(new Set(data.map(d => d.state || 'Other'))).sort();
     if (selectedTimeZone !== 'ALL' && US_TIME_ZONES[selectedTimeZone]) {
       const allowed = new Set(US_TIME_ZONES[selectedTimeZone].states);
@@ -460,7 +510,11 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
   // Filtered Leads
   const filteredLeads = useMemo(() => {
-    const dataset = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
+    const dataset = activeTab === 'attorneys'
+      ? leadsData.attorneys
+      : activeTab === 'creators'
+        ? leadsData.creators
+        : leadsData.firms;
     const q = searchQuery.toLowerCase().trim();
 
     return dataset.filter(item => {
@@ -468,6 +522,7 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
       const matchesSearch = !q || (
         (item.name && item.name.toLowerCase().includes(q)) ||
         (item.firm && item.firm.toLowerCase().includes(q)) ||
+        (item.platform && item.platform.toLowerCase().includes(q)) ||
         (item.managingPartner && item.managingPartner.toLowerCase().includes(q)) ||
         (item.email && item.email.toLowerCase().includes(q)) ||
         (item.city && item.city.toLowerCase().includes(q)) ||
@@ -509,10 +564,16 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
   // Export CSV
   const handleExportCSV = () => {
-    const dataset = activeTab === 'attorneys' ? leadsData.attorneys : leadsData.firms;
-    const headers = activeTab === 'attorneys' 
+    const dataset = activeTab === 'attorneys'
+      ? leadsData.attorneys
+      : activeTab === 'creators'
+        ? leadsData.creators
+        : leadsData.firms;
+    const headers = activeTab === 'attorneys'
       ? ['ID', 'Name', 'Title', 'Firm', 'Email', 'City', 'State', 'Specialty', 'Status', 'ContactedAt', 'Website']
-      : ['ID', 'Firm Name', 'Managing Partner', 'Email', 'City', 'State', 'Specialty', 'Status', 'ContactedAt', 'Website'];
+      : activeTab === 'creators'
+        ? ['ID', 'Creator Name', 'Role', 'Channel / Outlet', 'Platform', 'Email', 'City', 'State', 'Focus', 'Status', 'ContactedAt', 'Website']
+        : ['ID', 'Firm Name', 'Managing Partner', 'Email', 'City', 'State', 'Specialty', 'Status', 'ContactedAt', 'Website'];
 
     const rows = dataset.map(item => {
       const isContacted = contactedMap[item.id];
@@ -525,6 +586,21 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
           `"${item.name || ''}"`,
           `"${item.title || ''}"`,
           `"${item.firm || ''}"`,
+          item.email,
+          `"${item.city || ''}"`,
+          item.state,
+          `"${item.specialty || ''}"`,
+          status,
+          contactedAt,
+          item.website
+        ].join(',');
+      } else if (activeTab === 'creators') {
+        return [
+          item.id,
+          `"${item.name || ''}"`,
+          `"${item.title || ''}"`,
+          `"${item.firm || ''}"`,
+          `"${item.platform || ''}"`,
           item.email,
           `"${item.city || ''}"`,
           item.state,
@@ -677,7 +753,9 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
                   Private Directive
                 </span>
               </div>
-              <p className="text-xs text-slate-400">1,000 Verified Attorneys + 500 Boutique Law Firms</p>
+              <p className="text-xs text-slate-400">
+                {leadsData.attorneys.length.toLocaleString()} Attorneys · {leadsData.firms.length.toLocaleString()} Firms · {leadsData.creators.length} US Legal Creators
+              </p>
             </div>
           </div>
 
@@ -777,50 +855,69 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => {
-                setSelectedAngle('15sec');
-                showToast('🎯 Switched to Hidden Liability Traps Angle (Highest Reply Rate)');
-              }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                selectedAngle === '15sec'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-              title="Focuses on 11 PM fatigue, unilateral indemnity expansion, uncarved waivers, and instant 15-second demo"
-            >
-              <span>🎯 Liability Traps (Recommended)</span>
-            </button>
+            {activeTab === 'creators' ? (
+              <button
+                onClick={() => {
+                  setSelectedAngle('15sec');
+                  showToast('🤝 Switched to Creator Partnership Pitch (40-50% Affiliate Rev Share)');
+                }}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  selectedAngle !== 'followup'
+                    ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30'
+                    : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                }`}
+                title="Simple creator partnership pitch offering free test license + 40-50% revenue share"
+              >
+                <span>🤝 Creator Partnership (40-50% Rev Share)</span>
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setSelectedAngle('15sec');
+                    showToast('🎯 Switched to Hidden Liability Traps Angle (Highest Reply Rate)');
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    selectedAngle === '15sec'
+                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                      : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Focuses on 11 PM fatigue, unilateral indemnity expansion, uncarved waivers, and instant 15-second demo"
+                >
+                  <span>🎯 Liability Traps (Recommended)</span>
+                </button>
 
-            <button
-              onClick={() => {
-                setSelectedAngle('aba');
-                showToast('🛡️ Switched to ABA Model Rule 1.6 Ethics Shield Angle');
-              }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                selectedAngle === 'aba'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-              title="Focuses on state bar ethics warnings, subpoena risks, and 100% in-RAM air-gapped compliance"
-            >
-              <span>🛡️ ABA 1.6 Ethics Shield</span>
-            </button>
+                <button
+                  onClick={() => {
+                    setSelectedAngle('aba');
+                    showToast('🛡️ Switched to ABA Model Rule 1.6 Ethics Shield Angle');
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    selectedAngle === 'aba'
+                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                      : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Focuses on state bar ethics warnings, subpoena risks, and 100% in-RAM air-gapped compliance"
+                >
+                  <span>🛡️ ABA 1.6 Ethics Shield</span>
+                </button>
 
-            <button
-              onClick={() => {
-                setSelectedAngle('roi');
-                showToast('💰 Switched to Anti-SaaS Lifetime ROI Angle ($199 / $299)');
-              }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                selectedAngle === 'roi'
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-              title="Focuses on eliminating $1,800/yr per-seat subscriptions with perpetual lifetime license + continuous evolution"
-            >
-              <span>💰 Anti-SaaS Lifetime ($199 / $299)</span>
-            </button>
+                <button
+                  onClick={() => {
+                    setSelectedAngle('roi');
+                    showToast('💰 Switched to Anti-SaaS Lifetime ROI Angle ($199 / $299)');
+                  }}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    selectedAngle === 'roi'
+                      ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30'
+                      : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Focuses on eliminating $1,800/yr per-seat subscriptions with perpetual lifetime license + continuous evolution"
+                >
+                  <span>💰 Anti-SaaS Lifetime ($199 / $299)</span>
+                </button>
+              </>
+            )}
 
             <button
               onClick={() => {
@@ -841,10 +938,27 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
         {/* Navigation Tabs */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
-          <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-2xl">
+          <div className="flex flex-wrap items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-2xl">
+            <button
+              onClick={() => setActiveTab('creators')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'creators'
+                  ? 'bg-amber-400 text-slate-950 font-semibold shadow-md shadow-amber-400/20'
+                  : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              US Legal Creators (Affiliate)
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
+                activeTab === 'creators' ? 'bg-slate-950/20 text-slate-950' : 'bg-amber-500/20 text-amber-300'
+              }`}>
+                {leadsData.creators.length}
+              </span>
+            </button>
+
             <button
               onClick={() => setActiveTab('attorneys')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'attorneys'
                   ? 'bg-emerald-500 text-slate-950 font-semibold shadow-md shadow-emerald-500/20'
                   : 'text-slate-400 hover:text-white'
@@ -855,13 +969,13 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
                 activeTab === 'attorneys' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
               }`}>
-                1,000
+                {leadsData.attorneys.length.toLocaleString()}
               </span>
             </button>
 
             <button
               onClick={() => setActiveTab('firms')}
-              className={`px-5 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'firms'
                   ? 'bg-emerald-500 text-slate-950 font-semibold shadow-md shadow-emerald-500/20'
                   : 'text-slate-400 hover:text-white'
@@ -872,7 +986,7 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
                 activeTab === 'firms' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
               }`}>
-                500
+                {leadsData.firms.length.toLocaleString()}
               </span>
             </button>
           </div>
@@ -961,7 +1075,7 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`Search ${activeTab === 'attorneys' ? '1,000 attorneys' : '500 firms'} by name, firm, email, city...`}
+              placeholder={`Search ${activeTab === 'attorneys' ? 'attorneys' : activeTab === 'creators' ? 'US legal creators' : 'law firms'} by name, channel, email, city...`}
               className="w-full bg-[#0a0f1d] border border-white/10 focus:border-emerald-500/50 rounded-xl pl-10 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none transition-all"
             />
             {searchQuery && (
@@ -990,10 +1104,10 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
                 <tr className="border-b border-white/10 bg-white/[0.02] text-slate-400 font-mono text-[11px] uppercase tracking-wider">
                   <th className="py-3.5 px-4 w-12 text-center">Status</th>
                   <th className="py-3.5 px-4">
-                    {activeTab === 'attorneys' ? 'Attorney / Title' : 'Law Firm Name'}
+                    {activeTab === 'attorneys' ? 'Attorney / Title' : activeTab === 'creators' ? 'Creator / Role' : 'Law Firm Name'}
                   </th>
                   <th className="py-3.5 px-4">
-                    {activeTab === 'attorneys' ? 'Firm & Specialty' : 'Managing Partner'}
+                    {activeTab === 'attorneys' ? 'Firm & Specialty' : activeTab === 'creators' ? 'Channel / Focus' : 'Managing Partner'}
                   </th>
                   <th className="py-3.5 px-4">Direct Email</th>
                   <th className="py-3.5 px-4">Location</th>
@@ -1049,7 +1163,7 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
                         {/* Name / Title or Firm Name */}
                         <td className="py-3.5 px-4">
-                          {activeTab === 'attorneys' ? (
+                          {activeTab === 'attorneys' || activeTab === 'creators' ? (
                             <div>
                               <div className="font-medium text-white flex items-center gap-1.5">
                                 {item.name}
@@ -1086,7 +1200,12 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
 
                         {/* Firm & Specialty or Managing Partner */}
                         <td className="py-3.5 px-4">
-                          {activeTab === 'attorneys' ? (
+                          {activeTab === 'creators' ? (
+                            <div>
+                              <span className="text-amber-300 block font-medium">{item.firm}</span>
+                              <span className="text-[11px] text-slate-400 block">{item.platform} · {item.specialty}</span>
+                            </div>
+                          ) : activeTab === 'attorneys' ? (
                             <div>
                               <span className="text-slate-300 block">{item.firm}</span>
                               <span className="text-[11px] text-slate-400 block">{item.specialty}</span>
@@ -1234,39 +1353,55 @@ ${LRM}ABA Model Rule 1.6 Compliant | Zero Network Transmission`;
                 Strategy Angle:
               </span>
               <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setSelectedAngle('15sec')}
-                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
-                    selectedAngle === '15sec'
-                      ? 'bg-emerald-500 text-slate-950'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  🎯 Liability Traps
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedAngle('aba')}
-                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
-                    selectedAngle === 'aba'
-                      ? 'bg-emerald-500 text-slate-950'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  🛡️ ABA 1.6 Ethics
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedAngle('roi')}
-                  className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
-                    selectedAngle === 'roi'
-                      ? 'bg-emerald-500 text-slate-950'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  💰 Anti-SaaS Lifetime
-                </button>
+                {previewModalLead.type === 'creators' ? (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAngle('15sec')}
+                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                      selectedAngle !== 'followup'
+                        ? 'bg-amber-400 text-slate-950'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    🤝 Creator Partnership (40-50%)
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAngle('15sec')}
+                      className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                        selectedAngle === '15sec'
+                          ? 'bg-emerald-500 text-slate-950'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      🎯 Liability Traps
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAngle('aba')}
+                      className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                        selectedAngle === 'aba'
+                          ? 'bg-emerald-500 text-slate-950'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      🛡️ ABA 1.6 Ethics
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAngle('roi')}
+                      className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all cursor-pointer ${
+                        selectedAngle === 'roi'
+                          ? 'bg-emerald-500 text-slate-950'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      💰 Anti-SaaS Lifetime
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={() => setSelectedAngle('followup')}
