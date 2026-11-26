@@ -17,6 +17,7 @@ import { auditFinancialAndDates } from '../utils/financialDateAuditor.js';
 import { extractObligations } from '../utils/obligationsExtractor.js';
 import { computeContractDiff } from '../utils/diffEngine.js';
 import { scanLegalRisks } from '../utils/legalRiskRules.js';
+import { analyzeDealIntelligence } from '../utils/dealIntelligenceEngine.js';
 
 /**
  * Calculates a holistic risk score (0-100) based on detected issues across all proofreading engines.
@@ -150,6 +151,17 @@ export async function executeContractAnalysis(payload = {}, onProgress = () => {
   }
   checkAbort();
 
+  const dealIntelligence = analyzeDealIntelligence({
+    text,
+    financialDates,
+    obligations,
+    risks,
+    contractTitle: options.title || payload.title || '',
+    clientParty,
+    counterparty,
+    partyRole: options.partyRole || 'balanced'
+  });
+
   // Calculate holistic risk score
   const riskAssessment = calculateOverallRiskScore({
     crossRefs,
@@ -173,6 +185,7 @@ export async function executeContractAnalysis(payload = {}, onProgress = () => {
     obligations,
     diff,
     risks,
+    dealIntelligence,
     overallRiskScore: riskAssessment.score,
     riskLevel: riskAssessment.level,
     riskBreakdown: riskAssessment.breakdown,

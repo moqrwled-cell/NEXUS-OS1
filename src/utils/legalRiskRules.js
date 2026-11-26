@@ -445,7 +445,7 @@ export const LEGAL_RISK_RULES = [
     phrase: 'as is, where is',
     category: 'Warranties & Remedies',
     severity: 'warning',
-    regex: /\b(?:as\s+is|where\s+is|with\s+all\s+faults)\b/i,
+    regex: /\b(?:as[\s-]+is|where[\s-]+is|with\s+all\s+faults)\b/i,
     description: 'Total disclaimer of fitness and performance. Common in software, leaves buyer with zero performance guarantee.',
     recommendation: 'Buyers must demand a performance warranty guaranteeing software conforms to published documentation.'
   },
@@ -511,6 +511,60 @@ export const LEGAL_RISK_RULES = [
     regex: /\b(?:unilateral(?:ly)?\s+(?:amend|modify)|modify\s+(?:these\s+)?terms\s+at\s+any\s+time(?:\s+upon\s+posting)?|unilateral\s+amendment\s+at\s+any\s+time)\b/i,
     description: 'Allows counterparty to unilaterally rewrite contract obligations by updating an online URL.',
     recommendation: 'Require bilateral written amendments signed by authorized representatives of both parties.'
+  },
+  {
+    id: 'liab-07',
+    phrase: 'personal guarantee',
+    category: 'Liability & Damages',
+    severity: 'critical',
+    regex: /\b(?:personal\s+guarant(?:ee|y)|personally\s+guarantees?|jointly\s+and\s+severally\s+liable\s+(?:in\s+)?(?:an\s+)?individual)\b/i,
+    description: 'Pierces corporate limited liability protection, exposing personal home, bank accounts, and individual assets.',
+    recommendation: 'Strike personal guarantee clauses; bind solely the contracting LLC or corporate entity.'
+  },
+  {
+    id: 'term-07',
+    phrase: 'automatic renewal lock-in',
+    category: 'Termination & Suspension',
+    severity: 'warning',
+    regex: /\b(?:automatically\s+renew|shall\s+renew\s+for\s+successive)\b[^.;\n]{0,120}\b(?:thirty|sixty|ninety|30|60|90)\s*(?:\(\d+\)\s*)?days?\b/i,
+    description: 'Long auto-renewal notice window locks counterparty into another full multi-month or annual billing cycle.',
+    recommendation: 'Replace silent annual lock-in with month-to-month renewal or explicit opt-in renewal.'
+  },
+  {
+    id: 'misc-06',
+    phrase: 'incorporation by online URL',
+    category: 'Unilateral Rights & Boilerplate',
+    severity: 'warning',
+    regex: /\b(?:posted\s+at\s+https?:\/\/|available\s+at\s+https?:\/\/|updated\s+(?:online|from\s+time\s+to\s+time)\s+at\s+(?:https?:\/\/|our\s+website))\b/i,
+    description: 'Incorporates external web pages that the counterparty can silently modify after you sign.',
+    recommendation: 'Attach static exhibits directly to the contract and subordinate URLs to the executed text.'
+  },
+  {
+    id: 'disp-06',
+    phrase: 'binding arbitration & class waiver',
+    category: 'Dispute Resolution & Venue',
+    severity: 'warning',
+    regex: /\b(?:waives?\s+(?:any\s+)?right\s+to\s+participate\s+in\s+(?:a\s+)?class\s+action|mandatory\s+binding\s+arbitration)\b/i,
+    description: 'Forces costly private arbitration filing fees while eliminating class or collective litigation rights.',
+    recommendation: 'Permit small-claims opt-out and fee shifting for the prevailing party, or retain neutral court venue.'
+  },
+  {
+    id: 'ip-07',
+    phrase: 'worldwide perpetual non-compete',
+    category: 'Intellectual Property',
+    severity: 'critical',
+    regex: /\b(?:anywhere\s+in\s+the\s+world|worldwide)\b[^.;\n]{0,80}\b(?:non-?compet|not\s+(?:directly\s+or\s+indirectly\s+)?engage\s+in\s+any\s+(?:competing|similar)\s+business)\b/i,
+    description: 'Excessively broad geographic or temporal non-compete restriction unenforceable in California and risky nationwide.',
+    recommendation: 'Narrow scope strictly to active service geography and direct customer non-solicitation for 12 months max.'
+  },
+  {
+    id: 'pay-05',
+    phrase: 'compounded default acceleration',
+    category: 'Payment & Commercial',
+    severity: 'warning',
+    regex: /\b(?:compound(?:ed)?\s+monthly|1\.5%\s+per\s+month|18%\s+per\s+annum|all\s+remaining\s+installments\s+(?:shall\s+)?immediately\s+(?:become\s+)?due)\b/i,
+    description: 'Aggressive late interest (18%+ APR) or immediate acceleration triggers punitive lump-sum invoices upon minor billing delays.',
+    recommendation: 'Limit late interest strictly on undisputed overdue balances after 10 business days written notice.'
   }
 ];
 

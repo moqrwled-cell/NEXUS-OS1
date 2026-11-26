@@ -55,6 +55,9 @@ import { detectContractMetadata } from '../utils/contractMetadataDetector';
 import LegalTemplatesView from '../components/LegalTemplatesView';
 import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
 import LiabilityReconcilerHUD from '../components/LiabilityReconcilerHUD';
+import DealIntelligenceHUD from '../components/DealIntelligenceHUD';
+import ClausePlaybookView from '../components/ClausePlaybookView';
+import { analyzeDealIntelligence, downloadDealCalendarICS } from '../utils/dealIntelligenceEngine';
 import SystemGuideModal from '../components/SystemGuideModal';
 import LicensePlanModal from '../components/LicensePlanModal';
 import ContactModal from '../components/ContactModal';
@@ -323,7 +326,24 @@ export default function ContractCompare({ isDemoMode = false }) {
             <span className="text-[10px] font-mono text-zinc-500 shrink-0">AmLaw</span>
           </button>
 
-          {/* Module 5: Audit Vault */}
+          {/* Module 5: Personal Clause Playbook */}
+          <button
+            type="button"
+            onClick={() => setActiveTool('playbook')}
+            className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
+              activeTool === 'playbook'
+                ? 'bg-white/[0.07] text-white'
+                : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Bookmark size={15} className={activeTool === 'playbook' ? 'text-emerald-400 shrink-0' : 'text-zinc-500 shrink-0'} />
+              <span className="truncate">Clause Playbook</span>
+            </div>
+            <span className="text-[10px] font-mono text-zinc-500 shrink-0">Daily</span>
+          </button>
+
+          {/* Module 6: Audit Vault */}
           <button
             type="button"
             onClick={() => setActiveTool('history')}
@@ -526,6 +546,17 @@ export default function ContractCompare({ isDemoMode = false }) {
                   onOpenGuide={() => {
                     setGuideModalTab('history');
                     setShowGuideModal(true);
+                  }}
+                />
+              </motion.div>
+            )}
+            {activeTool === 'playbook' && (
+              <motion.div key="playbook" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                <ClausePlaybookView
+                  onSendClauseToAudit={(clauseText, clauseTitle) => {
+                    setRestoredSession({ originalText: clauseText, title: clauseTitle, _sessionKey: Date.now() });
+                    setAnalysisMode('single');
+                    setActiveTool('analyzer');
                   }}
                 />
               </motion.div>
@@ -1088,6 +1119,7 @@ function ContractAnalyzerView({
   const [isHarmonizing, setIsHarmonizing] = useState(false);
   const [liabilityAuditData, setLiabilityAuditData] = useState(null);
   const [isAnalyzingLiability, setIsAnalyzingLiability] = useState(false);
+  const [partyRole, setPartyRole] = useState('balanced'); // 'balanced' | 'buyer_client' | 'vendor_contractor'
 
   // Pre-Signing Diligence Certificate State
   const [showCertificateModal, setShowCertificateModal] = useState(false);
@@ -1319,6 +1351,20 @@ function ContractAnalyzerView({
     if (!auditResults) return null;
     return enrichAllAuditFindings(auditResults);
   }, [auditResults]);
+
+  const liveDealIntelligence = useMemo(() => {
+    if (!auditResults || !text?.trim()) return null;
+    return analyzeDealIntelligence({
+      text,
+      financialDates: auditResults.financialDates,
+      obligations: auditResults.obligations,
+      risks: auditResults.risks,
+      contractTitle: documentTitle,
+      clientParty,
+      counterparty,
+      partyRole
+    });
+  }, [auditResults, text, documentTitle, clientParty, counterparty, partyRole]);
 
   // Workstation Navigation States
   const [showAltExports, setShowAltExports] = useState(false);
@@ -2437,6 +2483,22 @@ function ContractAnalyzerView({
                       type="button"
                       onClick={() => {
                         setShowAltExports(false);
+                        downloadDealCalendarICS({
+                          economics: liveDealIntelligence?.economics || { dates: [], noticeWindows: [] },
+                          title: documentTitle?.trim() || 'Commercial Contract',
+                          clientParty: clientParty?.trim() || 'Client',
+                          counterparty: counterparty?.trim() || 'Counterparty'
+                        });
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
+                    >
+                      <Calendar size={13} className="text-sky-400" />
+                      <span>Deadlines Calendar (.ics)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAltExports(false);
                         exportObligationsCSV(auditResults.obligations);
                       }}
                       className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/[0.06] text-zinc-200 flex items-center gap-2 cursor-pointer transition-colors"
@@ -2476,6 +2538,12 @@ function ContractAnalyzerView({
           {/* Single Unified Underline HUD Tab Bar */}
           <div className="flex items-center gap-1 overflow-x-auto border-b border-white/[0.08] custom-scrollbar text-xs">
             {[
+              {
+                id: 'dealIntelligence',
+                label: 'Deal Shield & Brief',
+                count: (liveDealIntelligence?.missingShields?.length || 0),
+                alertTone: (liveDealIntelligence?.missingShields?.length || 0) > 0 ? 'rose' : 'neutral'
+              },
               {
                 id: 'dealBreakers',
                 label: 'Deal Breakers',
@@ -2574,6 +2642,25 @@ function ContractAnalyzerView({
               );
             })}
           </div>
+
+          {/* TAB: DEAL INTELLIGENCE, MISSING SHIELDS & DAILY NEGOTIATION KIT */}
+          {activeHudTab === 'dealIntelligence' && (
+            <DealIntelligenceHUD
+              contractText={text}
+              auditResults={auditResults}
+              contractTitle={documentTitle}
+              clientParty={clientParty}
+              counterparty={counterparty}
+              partyRole={partyRole}
+              onPartyRoleChange={setPartyRole}
+              isDemoMode={isDemo}
+              onInsertClause={(clauseText) => {
+                const nextText = `${text.trim()}\n\n${clauseText}`;
+                setText(nextText);
+                handleExecuteAudit({ text: nextText, mode: analysisMode });
+              }}
+            />
+          )}
 
           {/* TAB: LINGUISTIC & DEED PROOFREADER */}
           {activeHudTab === 'linguisticProofreader' && (
