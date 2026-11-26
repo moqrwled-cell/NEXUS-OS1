@@ -83,9 +83,9 @@ export async function downloadContractDOCX(contractText, options = {}) {
   children.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 120, after: 100 },
+      spacing: { before: 120, after: 320 },
       border: {
-        bottom: { style: BorderStyle.DOUBLE, size: 6, color: '111111', space: 6 }
+        bottom: { style: BorderStyle.DOUBLE, size: 6, color: '111111', space: 8 }
       },
       children: [
         new TextRun({
@@ -93,23 +93,6 @@ export async function downloadContractDOCX(contractText, options = {}) {
           bold: true,
           size: 26, // 13pt
           font: 'Times New Roman'
-        })
-      ]
-    })
-  );
-
-  // Jurisdiction Subtitle Caption
-  children.push(
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing: { before: 80, after: 320 },
-      children: [
-        new TextRun({
-          text: `Governing Jurisdiction: ${jurisdiction}`,
-          italics: true,
-          size: 19, // 9.5pt
-          font: 'Times New Roman',
-          color: '444444'
         })
       ]
     })

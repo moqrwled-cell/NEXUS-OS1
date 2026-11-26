@@ -238,14 +238,11 @@ function LegalDocumentPaper({ compiledText, title, jurisdiction }) {
 
   return (
     <div className="max-w-[760px] mx-auto bg-[#FAF9F5] text-[#141414] shadow-[0_14px_42px_rgba(0,0,0,0.55)] border border-stone-300/80 px-7 sm:px-12 py-10 font-legal selection:bg-emerald-200 selection:text-black rounded-sm">
-      {/* Formal US BigLaw Header & Caption */}
+      {/* Formal US BigLaw Title Caption */}
       <div className="text-center pb-4 mb-6 border-b-2 border-stone-900">
         <h3 className="text-[15px] sm:text-[16px] font-bold uppercase tracking-[0.05em] text-stone-950 leading-snug">
           {title}
         </h3>
-        <p className="text-[11.5px] italic text-stone-600 mt-1.5">
-          Governing Jurisdiction: {jurisdiction}
-        </p>
       </div>
 
       <div>{blocks}</div>
@@ -278,21 +275,22 @@ export default function LegalTemplatesView({
   const filteredTemplates = useMemo(() => {
     return LEGAL_TEMPLATES.filter(tpl => {
       const matchCat = selectedCategory === 'all' || tpl.category === selectedCategory;
+      const descText = (tpl.description || tpl.summary || '').toLowerCase();
       const matchSearch = !searchQuery.trim() || 
         tpl.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tpl.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        descText.includes(searchQuery.toLowerCase()) ||
         (tpl.jurisdiction && tpl.jurisdiction.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchCat && matchSearch;
     });
   }, [selectedCategory, searchQuery]);
 
-  // When opening a template, seed default values
+  // When opening a template, seed default values cleanly
   const handleOpenTemplate = (tpl) => {
     setSelectedTemplateId(tpl.id);
     setSelectedStateRider('general');
     const initialVals = {};
     (tpl.variables || []).forEach(v => {
-      initialVals[v.key] = v.defaultVal || '';
+      initialVals[v.key] = v.defaultValue ?? v.defaultVal ?? '';
     });
     setTemplateValues(initialVals);
   };
@@ -300,12 +298,10 @@ export default function LegalTemplatesView({
   const handleSelectStateRider = (riderId) => {
     setSelectedStateRider(riderId);
     const rider = STATE_SPECIFIC_RIDERS[riderId];
-    if (rider && rider.defaults) {
+    if (rider && rider.defaults && selectedTemplate?.variables?.some(v => v.key === 'GOVERNING_STATE')) {
       setTemplateValues(prev => ({
         ...prev,
         GOVERNING_STATE: rider.defaults.GOVERNING_STATE || prev.GOVERNING_STATE,
-        COUNTY_STATE: rider.defaults.COUNTY_STATE || prev.COUNTY_STATE,
-        VENUE_COUNTY: rider.defaults.VENUE_COUNTY || prev.VENUE_COUNTY,
       }));
     }
   };
@@ -317,8 +313,13 @@ export default function LegalTemplatesView({
   // Live compiled text with dynamic state statutory rider
   const compiledText = useMemo(() => {
     if (!selectedTemplate) return '';
-    return compileTemplateText(selectedTemplate, templateValues, selectedStateRider);
+    return compileTemplateText(selectedTemplate, templateValues, { stateRider: selectedStateRider });
   }, [selectedTemplate, templateValues, selectedStateRider]);
+
+  const resolvedJurisdiction = useMemo(() => {
+    if (!selectedTemplate) return 'United States Commercial Law';
+    return templateValues.GOVERNING_STATE || selectedTemplate.jurisdiction || 'United States Commercial Law';
+  }, [selectedTemplate, templateValues.GOVERNING_STATE]);
 
   const handleCopyText = () => {
     if (!compiledText) return;
@@ -333,7 +334,7 @@ export default function LegalTemplatesView({
     try {
       await downloadRedactedPDF(compiledText, {
         title: selectedTemplate.title,
-        jurisdiction: selectedTemplate.jurisdiction || 'United States Commercial Law',
+        jurisdiction: resolvedJurisdiction,
         isDraft: true,
         totalRedactions: 0,
         date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -351,7 +352,7 @@ export default function LegalTemplatesView({
     try {
       await downloadContractDOCX(compiledText, {
         title: selectedTemplate.title,
-        jurisdiction: selectedTemplate.jurisdiction || 'United States Commercial Law',
+        jurisdiction: resolvedJurisdiction,
         category: selectedTemplate.category
       });
     } catch (err) {

@@ -181,19 +181,6 @@ export async function generateRedactedPDFBytes(rawText = '', metadata = {}) {
       font: fontBold,
       color: blackColor
     });
-    cursorY -= 14;
-
-    // Subtitle Line (Jurisdiction & Date, Centered 8.5pt Italic)
-    const subLine = `Governing Jurisdiction: ${jurisdiction}  |  Effective Date: ${dateStr}`;
-    const subWidth = fontItalic.widthOfTextAtSize(subLine, 8.5);
-    const subX = Math.max(marginX, (pageWidth - subWidth) / 2);
-    currentPage.drawText(subLine, {
-      x: subX,
-      y: cursorY,
-      size: 8.5,
-      font: fontItalic,
-      color: blackColor
-    });
     cursorY -= 12;
 
     // Bottom decorative line of title block

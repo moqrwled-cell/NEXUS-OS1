@@ -20,7 +20,7 @@ export const LEGAL_TEMPLATES = [
     id: 'commercial_land_psa',
     title: 'Commercial Land Purchase and Sale Agreement',
     category: 'real_estate',
-    jurisdiction: 'State of Governing Real Estate Law (50-State)',
+    jurisdiction: '50-State U.S. Commercial Real Property',
     description: 'Institutional commercial real estate PSA featuring due diligence feasibility, ALTA survey requirements, title commitment review, as-is disclaimers, and subordinated earnest money remedies.',
     variables: [
       { key: 'SELLER_NAME', label: 'Seller Legal Name', defaultValue: 'Horizon Land Holdings LLC', type: 'text' },
@@ -92,7 +92,7 @@ Date: ____________________________     Date: ____________________________`
     id: 'residential_real_estate_contract',
     title: 'Residential Real Estate Purchase Contract',
     category: 'real_estate',
-    jurisdiction: 'State of Governing Residential Law (50-State)',
+    jurisdiction: '50-State U.S. Residential Real Property',
     description: 'Comprehensive residential single-family purchase agreement incorporating financing contingencies, statutory home inspection rights, federal lead-based paint disclosures, and closing terms.',
     variables: [
       { key: 'SELLER_NAME', label: 'Seller Full Legal Name', defaultValue: 'Jonathan Mercer & Elena Mercer', type: 'text' },
@@ -220,7 +220,7 @@ Date: ____________________________`
     id: 'commercial_triple_net_lease',
     title: 'Commercial Triple Net (NNN) Lease Agreement',
     category: 'real_estate',
-    jurisdiction: 'State of Commercial Situs (50-State)',
+    jurisdiction: '50-State U.S. Commercial Leasing',
     description: 'Institutional commercial Triple Net (NNN) lease shifting property taxes, casualty insurance, and CAM maintenance expenses to Tenant with strict indemnification and default remedies.',
     variables: [
       { key: 'LANDLORD_NAME', label: 'Landlord Legal Name', defaultValue: 'Apex Retail Realty Trust LLC', type: 'text' },
@@ -807,6 +807,7 @@ export const STATE_SPECIFIC_RIDERS = {
     name: 'California Statutory Addendum (Cal. Civ. Code § 1671)',
     shortName: 'California (CA)',
     badge: 'Cal. Civ. Code §§ 1671 / 1103',
+    defaults: { GOVERNING_STATE: 'State of California', VENUE_COUNTY: 'Superior Court of California' },
     legalReason: 'Mandatory Cal. Civ. Code § 1677(b) separate-initials liquidated damages enforceability and Natural Hazard Disclosure (NHD) compliance.',
     riderClause: `ADDENDUM A. CALIFORNIA STATUTORY REAL ESTATE RIDER
 
@@ -820,6 +821,7 @@ A.2 Environmental and hazard disclosures. Seller shall timely furnish a statutor
     name: 'Texas Statutory Addendum (Tex. Prop. Code § 5.014)',
     shortName: 'Texas (TX)',
     badge: 'Tex. Prop. Code / TREC Baseline',
+    defaults: { GOVERNING_STATE: 'State of Texas', VENUE_COUNTY: 'District Courts of Texas' },
     legalReason: 'Incorporates mandatory Texas Municipal Utility District (MUD) notice, statutory POA disclosures, and independent option-fee consideration enforceability.',
     riderClause: `ADDENDUM A. TEXAS STATUTORY REAL ESTATE RIDER
 
@@ -832,6 +834,7 @@ A.2 Statutory utility and district notices. Seller shall deliver written statuto
     name: 'New York Statutory Addendum (NY RPL § 258)',
     shortName: 'New York (NY)',
     badge: 'NY GOL § 5-703 / Attorney Review',
+    defaults: { GOVERNING_STATE: 'State of New York', VENUE_COUNTY: 'Supreme Court of the State of New York' },
     legalReason: 'Incorporates New York Statute of Frauds compliance, Bargain and Sale Deed with Covenant Against Grantor Acts, and local transfer tax allocation rules.',
     riderClause: `ADDENDUM A. NEW YORK STATUTORY REAL ESTATE RIDER
 
@@ -844,6 +847,7 @@ A.2 Writing requirement. Pursuant to New York general obligations law § 5-703, 
     name: 'Florida Statutory Addendum (Fla. Stat. § 404.056)',
     shortName: 'Florida (FL)',
     badge: 'Fla. Stat. §§ 404.056 / 689.261',
+    defaults: { GOVERNING_STATE: 'State of Florida', VENUE_COUNTY: 'Circuit Courts of Florida' },
     legalReason: 'Incorporates mandatory Florida statutory Radon Gas health notice and Fla. Stat. § 689.261 property tax reassessment summary.',
     riderClause: `ADDENDUM A. FLORIDA STATUTORY REAL ESTATE RIDER
 
