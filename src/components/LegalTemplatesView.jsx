@@ -14,76 +14,244 @@ const STATUTORY_GUIDANCE_MAP = {
   commercial_land_psa: {
     badge: 'FIRPTA (IRC § 1445) & ALTA',
     statuteName: 'FIRPTA IRC § 1445 Withholding & Phase I Environmental',
-    summary: 'Foreign Investment in Real Property Tax Act requires 15% gross withholding unless Seller signs a Non-Foreign Certification under penalty of perjury. Environmental due diligence (Phase I/II ESA) and ALTA Title review are fully integrated.',
+    summary: 'Foreign Investment in Real Property Tax Act requires 15% gross withholding unless Seller signs a Non-Foreign Affidavit under penalty of perjury. Environmental due diligence (Phase I/II) and ALTA Title review are fully integrated.',
     counselAdvisory: 'Calibrate closing timelines, earnest money escrow release terms, and state title search periods to suit your deal.',
   },
-  residential_purchase: {
+  residential_real_estate_contract: {
     badge: 'Lead Paint (42 U.S.C. § 4852d)',
     statuteName: 'Residential Lead-Based Paint Hazard Reduction Act',
-    summary: 'Federally required for residential housing constructed before 1978. Incorporates mandatory EPA booklet disclosure, property condition disclosures, and a 10-day risk assessment window.',
+    summary: 'Federally mandated for residential housing constructed prior to 1978. Incorporates federal lead-based paint disclosure under 42 U.S.C. § 4852d, financing contingency, and physical inspection rights.',
     counselAdvisory: 'Attach local state real estate disclosure forms and customize radon/home inspection contingency periods as negotiated.',
   },
-  commercial_loi: {
+  commercial_real_estate_loi: {
     badge: 'Binding Exclusivity Covenant',
     statuteName: 'Binding No-Shop Exclusivity vs. Non-Binding Commercial Intent',
     summary: 'Delineates non-binding economic terms from strictly binding exclusivity (no-shop) and confidentiality covenants enforceable during the diligence period.',
     counselAdvisory: 'Adjust exclusivity duration (typically 30–60 days) and diligence parameters prior to circulation.',
   },
-  nnn_lease: {
+  commercial_triple_net_lease: {
     badge: 'Absolute Net & CAM Prorations',
     statuteName: 'Commercial Triple Net (NNN) Real Property Principles',
-    summary: 'Tenant covenants to bear Base Rent plus 100% of Property Taxes, Hazard Insurance, and Common Area Maintenance (CAM). Express CAM exclusions protect against Landlord capital improvements.',
+    summary: 'Tenant covenants to bear Base Rent plus 100% of real property taxes, casualty insurance, and Common Area Maintenance (CAM), while Landlord retains structural roof/foundation duties.',
     counselAdvisory: 'Review CAM reconciliation caps, initial base year expenses, and tenant alteration thresholds before execution.',
   },
-  asset_purchase_apa: {
+  commercial_asset_purchase_agreement: {
     badge: 'SEC EDGAR Model APA',
-    statuteName: 'Delaware Corporate Asset Purchase & Working Capital Escrow',
-    summary: 'Strict delineation of Acquired Assets vs. Excluded Liabilities, Indemnification Escrow Holdback, Non-Compete covenants, and post-closing Working Capital reconciliation.',
+    statuteName: 'Delaware Corporate Asset Purchase & IRC § 1060 Allocation',
+    summary: 'Strict delineation of Purchased Assets vs. Excluded Liabilities, indemnity escrow holdback, IRS Form 8594 tax allocation, and fraud/willful misconduct carve-outs.',
     counselAdvisory: 'Tailor disclosure schedules, basket thresholds, indemnity caps, and reps & warranties survival periods to transaction specifics.',
   },
-  llc_operating: {
+  llc_operating_agreement: {
     badge: 'Delaware LLC Act & IRC § 704(b)',
-    statuteName: 'Delaware Limited Liability Company Act (6 Del. C. § 18)',
-    summary: 'Comprehensive capital account maintenance under IRC § 704(b), pass-through tax treatment, Manager-Managed fiduciary authority, and Right of First Refusal (ROFR) transfer restrictions.',
-    counselAdvisory: 'Customize membership units, voting majorities, tax distribution cadences, and buy-sell triggers with corporate counsel.',
+    statuteName: 'Delaware Limited Liability Company Act (6 Del. C. § 18-101)',
+    summary: 'Maintains Capital Accounts under Treasury Reg. 26 C.F.R. § 1.704-1(b)(2)(iv), designates Bipartisan Budget Act partnership representative under IRC § 6223, and enforces ROFR transfer restrictions.',
+    counselAdvisory: 'Customize membership percentage interests, unanimous voting thresholds, and tax distribution cadences with corporate counsel.',
   },
-  msa_tech: {
+  master_services_agreement: {
     badge: 'Work Made for Hire + Present IP Assignment',
     statuteName: 'U.S. Copyright Act (17 U.S.C. § 101) & Assignment Rule',
-    summary: 'Features SOW framework, mutual confidentiality, service level commitments, and explicit present assignment ("hereby unconditionally assigns") to guarantee undivided IP title.',
+    summary: 'Features SOW framework, Pre-Existing IP licensing, mutual indemnification, defense-fee direct damages deeming, and explicit present assignment of Work Product.',
     counselAdvisory: 'Adjust liability caps, warranty periods, and acceptance testing windows to align with specific delivery scopes.',
   },
-  mutual_nda: {
+  mutual_nda_trade_secrets: {
     badge: '18 U.S.C. § 1833 DTSA Safe Harbor',
     statuteName: 'Defend Trade Secrets Act Whistleblower Immunity',
-    summary: 'Mandatory statutory immunity disclosure under 18 U.S.C. § 1833 for confidential government reports, preserving federal punitive damages and attorney fee recoveries.',
-    counselAdvisory: 'Select 2-year or 5-year confidentiality duration based on the proprietary sensitivity of technical data.',
+    summary: 'Incorporates mandatory statutory immunity notice under 18 U.S.C. § 1833(b) for confidential disclosures to government officials or counsel, preserving federal exemplary damages and attorneys’ fees.',
+    counselAdvisory: 'Select 2-year or 5-year confidentiality survival based on sensitivity of proprietary technical disclosures.',
   },
-  independent_contractor: {
+  independent_contractor_agreement: {
     badge: '1099 Classification & IP Assignment',
-    statuteName: 'IRS Independent Contractor Guidelines & 17 U.S.C. § 101',
-    summary: 'Affirms non-employee status, complete lack of benefits entitlement, and an unconditional assignment of all inventions, code, and deliverables with power-of-attorney execution.',
-    counselAdvisory: 'Calibrate state-specific independent contractor tests (e.g., California AB 5 ABC test) if operating in regulated jurisdictions.',
+    statuteName: 'IRS 1099-NEC Guidelines & 17 U.S.C. § 101 Assignment',
+    summary: 'Establishes independent contractor tax status, present assignment ("hereby irrevocably assigns") of Work Product, moral-rights waiver, and DTSA whistleblower compliance.',
+    counselAdvisory: 'Verify state-specific independent contractor classification standards (e.g., California ABC test) before execution.',
   },
-  executive_employment: {
+  executive_employment_agreement: {
     badge: 'IRC § 409A Compliance',
-    statuteName: 'Internal Revenue Code Section 409A Deferred Compensation',
-    summary: 'Severance triggers, bonus plans, and post-termination payments are structured to prevent the 20% federal excise tax penalty under IRC § 409A, with clear Cause vs. Good Reason definitions.',
-    counselAdvisory: 'Refine executive equity grants, non-solicitation durations, and golden parachute thresholds with compensation counsel.',
+    statuteName: 'Internal Revenue Code § 409A Deferred Compensation',
+    summary: 'Severance triggers, bonus eligibility, and 6-month specified-employee delay rules comply with 26 U.S.C. § 409A, alongside clear Cause vs. Good Reason separation definitions.',
+    counselAdvisory: 'Refine executive equity awards, non-solicitation duration, and release execution timelines with compensation counsel.',
   },
-  promissory_note_secured: {
+  commercial_promissory_note: {
     badge: 'UCC Article 9 & UCC-1 Perfection',
     statuteName: 'Uniform Commercial Code Article 9 Security Agreement',
-    summary: 'Secures commercial debt with an explicit security interest grant under UCC § 9-203, authorization to file Form UCC-1 with the Secretary of State, and default acceleration.',
-    counselAdvisory: 'Verify collateral descriptions with lender counsel and coordinate UCC-1 financing statement filing in debtor state of formation.',
+    summary: 'Secures commercial debt with a first-priority UCC Article 9 security interest grant, UCC-1 financing statement authorization, default acceleration, and usury savings clause.',
+    counselAdvisory: 'Verify collateral descriptions with lender counsel and file Form UCC-1 in the debtor’s jurisdiction of formation.',
   },
-  settlement_release: {
+  settlement_and_release_agreement: {
     badge: 'Cal. Civ. Code § 1542 Waiver',
-    statuteName: 'California Civil Code § 1542 Statutory Waiver & Dismissal',
-    summary: 'Capitalized statutory waiver of unknown claims under Cal. Civ. Code § 1542, dismissal of pending litigation with prejudice, and mutual non-disparagement covenants.',
-    counselAdvisory: 'Ensure mutual release language covers all intended parties and coordinate filing of joint stipulation for dismissal with the court.',
+    statuteName: 'California Civil Code § 1542 Statutory Unknown-Claims Waiver',
+    summary: 'Includes statutory unknown-claims waiver under Cal. Civ. Code § 1542, strict no-admission clause, W-9 wire mechanics, mutual general release, and confidentiality.',
+    counselAdvisory: 'Confirm release scope covers all affiliates/claims and attach court dismissal stipulation if litigation is pending.',
   },
 };
+
+/**
+ * Formats plain legal contract text into an authentic U.S. institutional law-firm document sheet.
+ * Renders centered bold captions, justified subsections with bold-only lead-ins, and 2-column signature blocks.
+ */
+function LegalDocumentPaper({ compiledText, title, jurisdiction }) {
+  const blocks = useMemo(() => {
+    const rawLines = (compiledText || '').split(/\r?\n/);
+    const rendered = [];
+    let inExec = false;
+    let sigRows = [];
+
+    const flushSig = (keyPrefix) => {
+      if (sigRows.length === 0) return;
+      const hasRight = sigRows.some(r => r[1]);
+      if (hasRight) {
+        rendered.push(
+          <div key={`${keyPrefix}-siggrid`} className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-1.5 mt-5 pt-2 text-[12.5px] leading-snug text-stone-900">
+            <div className="space-y-1.5">
+              {sigRows.map(([left], idx) => {
+                if (!left) return null;
+                const isRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(left);
+                return (
+                  <p key={idx} className={`${isRole ? 'font-bold tracking-wide uppercase text-[11.5px] mt-2' : ''} ${/^(By:|Name:|Title:|Date:)/i.test(left) ? 'pt-2 font-mono text-[11.5px] text-stone-800' : ''}`}>
+                    {left}
+                  </p>
+                );
+              })}
+            </div>
+            <div className="space-y-1.5">
+              {sigRows.map(([, right], idx) => {
+                if (!right) return null;
+                const isRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(right);
+                return (
+                  <p key={idx} className={`${isRole ? 'font-bold tracking-wide uppercase text-[11.5px] mt-2' : ''} ${/^(By:|Name:|Title:|Date:)/i.test(right) ? 'pt-2 font-mono text-[11.5px] text-stone-800' : ''}`}>
+                    {right}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+        );
+      } else {
+        rendered.push(
+          <div key={`${keyPrefix}-sigsingle`} className="mt-4 space-y-1.5 text-[12.5px] leading-snug text-stone-900">
+            {sigRows.map(([left], idx) => {
+              const isRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(left);
+              return (
+                <p key={idx} className={`${isRole ? 'font-bold tracking-wide uppercase text-[11.5px] mt-3' : ''} ${/^(By:|Name:|Title:|Date:)/i.test(left) ? 'pt-1.5 font-mono text-[11.5px] text-stone-800' : ''}`}>
+                  {left}
+                </p>
+              );
+            })}
+          </div>
+        );
+      }
+      sigRows = [];
+    };
+
+    rawLines.forEach((rawLine, idx) => {
+      const trimmed = rawLine.trim();
+      if (!trimmed) {
+        if (inExec && sigRows.length > 0 && sigRows.every(r => !r[1])) {
+          const next = rawLines.slice(idx + 1).find(l => l.trim() !== '');
+          if (next && /^(ACKNOWLEDGED AND AGREED|SELLER:|HOLDER:)/i.test(next.trim())) {
+            flushSig(`empty-${idx}`);
+          }
+        }
+        return;
+      }
+
+      if (/^(IN WITNESS WHEREOF|ACKNOWLEDGED AND AGREED)/i.test(trimmed)) {
+        flushSig(`witness-${idx}`);
+        inExec = true;
+        const isAck = /^ACKNOWLEDGED AND AGREED/i.test(trimmed);
+        rendered.push(
+          <p key={idx} className={`mt-7 mb-2 text-[13px] leading-[1.68] text-justify ${isAck ? 'font-bold uppercase tracking-wide text-[11.5px] text-stone-900' : 'text-stone-900'}`}>
+            {trimmed}
+          </p>
+        );
+        return;
+      }
+
+      if (/^(Sincerely,|PURCHASER:|SELLER:|LANDLORD:|TENANT:|CLIENT:|FIRST PARTY:|PARTY A:|COMPANY:|EMPLOYER:|MAKER:|MEMBER 1:)/i.test(trimmed) || inExec) {
+        if (!inExec && /^(Sincerely,|PURCHASER:|SELLER:)/i.test(trimmed)) {
+          inExec = true;
+        }
+        if (/^Sincerely,/i.test(trimmed)) {
+          flushSig(`sincerely-${idx}`);
+          rendered.push(
+            <p key={idx} className="mt-5 mb-2 text-[13px] text-stone-900">
+              {trimmed}
+            </p>
+          );
+          return;
+        }
+        const pairMatch = rawLine.match(/^(.+?)\s{3,}(.+)$/);
+        if (pairMatch) {
+          sigRows.push([pairMatch[1].trim(), pairMatch[2].trim()]);
+        } else {
+          sigRows.push([trimmed, '']);
+        }
+        return;
+      }
+
+      const isCenteredHeading = /^(RECITALS|WITNESSETH|AGREEMENT|EXHIBIT\s+[A-Z0-9]+|SCHEDULE\s+[A-Z0-9]+)$/i.test(trimmed)
+        || /^(ARTICLE\s+[0-9IVXLCDM]+|ADDENDUM\s+[A-Z0-9]+)\b/i.test(trimmed);
+      const isMetaHeader = /^(VIA\s+ELECTRONIC|Date:|TO:|FROM:|RE:|PRINCIPAL\s+(?:SUM|AMOUNT):|INTEREST\s+RATE:)/i.test(trimmed);
+      const subsectionMatch = trimmed.match(/^([0-9]+\.[0-9]+|[A-Z]\.[0-9]+)\s+([^.]+?\.)\s*(.*)$/);
+      const recitalMatch = trimmed.match(/^(WHEREAS,|NOW,\s*THEREFORE,)\s*(.*)$/);
+
+      if (isCenteredHeading) {
+        rendered.push(
+          <h4 key={idx} className="text-center font-bold uppercase tracking-[0.04em] text-[12.5px] text-stone-950 mt-6 mb-2.5 border-b border-stone-300/70 pb-1">
+            {trimmed}
+          </h4>
+        );
+      } else if (recitalMatch) {
+        rendered.push(
+          <p key={idx} className="text-[13px] leading-[1.68] text-justify indent-7 mb-3 text-stone-900">
+            <strong className="font-bold text-stone-950">{recitalMatch[1]}</strong>{' '}
+            {recitalMatch[2]}
+          </p>
+        );
+      } else if (subsectionMatch) {
+        rendered.push(
+          <p key={idx} className="text-[13px] leading-[1.68] text-justify indent-7 mb-3 text-stone-900">
+            <strong className="font-bold text-stone-950">
+              {subsectionMatch[1]} {subsectionMatch[2]}
+            </strong>{' '}
+            {subsectionMatch[3]}
+          </p>
+        );
+      } else if (isMetaHeader) {
+        rendered.push(
+          <p key={idx} className={`text-[12.5px] leading-relaxed text-left ${/^(VIA\s+ELECTRONIC)/i.test(trimmed) ? 'font-bold tracking-wider uppercase text-[11px] mb-1' : 'font-medium text-stone-900 mb-0.5'}`}>
+            {trimmed}
+          </p>
+        );
+      } else {
+        rendered.push(
+          <p key={idx} className="text-[13px] leading-[1.68] text-justify mb-3 text-stone-900">
+            {trimmed}
+          </p>
+        );
+      }
+    });
+
+    flushSig('end');
+    return rendered;
+  }, [compiledText]);
+
+  return (
+    <div className="max-w-[760px] mx-auto bg-[#FAF9F5] text-[#141414] shadow-[0_14px_42px_rgba(0,0,0,0.55)] border border-stone-300/80 px-7 sm:px-12 py-10 font-legal selection:bg-emerald-200 selection:text-black rounded-sm">
+      {/* Formal US BigLaw Header & Caption */}
+      <div className="text-center pb-4 mb-6 border-b-2 border-stone-900">
+        <h3 className="text-[15px] sm:text-[16px] font-bold uppercase tracking-[0.05em] text-stone-950 leading-snug">
+          {title}
+        </h3>
+        <p className="text-[11.5px] italic text-stone-600 mt-1.5">
+          Governing Jurisdiction: {jurisdiction}
+        </p>
+      </div>
+
+      <div>{blocks}</div>
+    </div>
+  );
+}
 
 export default function LegalTemplatesView({ 
   onSendToAudit,
@@ -253,19 +421,19 @@ export default function LegalTemplatesView({
             {isDemoMode ? (
               <button
                 onClick={() => onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Legal PDF download requires an active license.')}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border border-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Unlock PDF export with lifetime license"
               >
-                <Lock size={13} className="text-amber-400 group-hover:scale-110 transition-transform" />
+                <Lock size={13} className="text-amber-400" />
                 <span>Unlock PDF</span>
               </button>
             ) : (
               <button
                 onClick={handleDownloadPdf}
                 disabled={isGeneratingPdf}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.1] transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
-                {isGeneratingPdf ? <RefreshCw className="animate-spin" size={14} /> : <FileDown size={14} />}
+                {isGeneratingPdf ? <RefreshCw className="animate-spin" size={13} /> : <FileDown size={13} />}
                 <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Legal PDF'}</span>
               </button>
             )}
@@ -274,7 +442,7 @@ export default function LegalTemplatesView({
             {isDemoMode ? (
               <button
                 onClick={() => onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Full template clipboard copying requires an active license.')}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-zinc-400 border border-zinc-800 transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-400 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Unlock copying with lifetime license"
               >
                 <Lock size={13} className="text-amber-400" />
@@ -443,33 +611,35 @@ export default function LegalTemplatesView({
             </div>
           </div>
 
-          {/* Right Column: Live Compiled Legal Document Preview */}
-          <div className="lg:col-span-7 flex flex-col rounded-lg bg-[#0E0E12] border border-white/[0.08] overflow-hidden">
+          {/* Right Column: Live Compiled Legal Document Paper Preview */}
+          <div className="lg:col-span-7 flex flex-col rounded-lg bg-[#111115] border border-white/[0.08] overflow-hidden">
             <div className="px-4 py-2.5 bg-[#111115] border-b border-white/[0.06] flex items-center justify-between">
               <span className="text-[11px] font-mono text-zinc-300 flex items-center gap-1.5">
                 {isDemoMode ? <Lock size={12} className="text-amber-400" /> : <CheckCircle2 size={12} className="text-emerald-400" />}
-                {isDemoMode ? 'PREVIEW MODE · READ-ONLY' : 'COMPILED DRAFT · READY FOR EXPORT'}
+                {isDemoMode ? 'U.S. EXECUTION PREVIEW · READ-ONLY' : 'U.S. EXECUTION DRAFT · READY FOR EXPORT'}
               </span>
               <span className="text-[11px] font-mono text-zinc-500 tabular-nums">
-                {compiledText.split(/\s+/).filter(Boolean).length} Words
+                {compiledText.split(/\s+/).filter(Boolean).length} Words · Times Roman
               </span>
             </div>
 
-            <div className="flex-1 bg-[#0E0E12] p-6 text-sm font-legal leading-relaxed text-zinc-200 overflow-y-auto custom-scrollbar select-text">
-              <pre className="whitespace-pre-wrap font-legal text-[13.5px] leading-relaxed text-zinc-200">
-                {compiledText}
-              </pre>
+            <div className="flex-1 bg-[#16161B] p-4 sm:p-6 overflow-y-auto custom-scrollbar select-text max-h-[680px]">
+              <LegalDocumentPaper
+                compiledText={compiledText}
+                title={selectedTemplate.title}
+                jurisdiction={selectedTemplate.jurisdiction}
+              />
             </div>
 
             {/* Bottom Action Footer */}
-            <div className="p-3 bg-zinc-950 border-t border-zinc-800/80 text-[11px] text-zinc-400 flex items-center justify-between gap-3 leading-relaxed">
+            <div className="px-4 py-2.5 bg-[#09090B] border-t border-white/[0.06] text-[11px] text-zinc-400 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
-                <span>Standard AmLaw 100 model. Download as Word (.docx) to customize freely with counsel before execution.</span>
+                <span>Standard U.S. commercial layout. Export editable Word (.docx) or Court PDF for counsel review.</span>
               </div>
               <button
                 onClick={() => isDemoMode ? (onTriggerUpgrade ? onTriggerUpgrade('export') : alert('Template Word DOCX export requires an active license.')) : handleDownloadDocx()}
-                className="text-cyan-400 hover:text-cyan-300 text-xs font-mono font-bold flex items-center gap-1 shrink-0 cursor-pointer"
+                className="text-emerald-400 hover:text-emerald-300 text-xs font-mono font-medium flex items-center gap-1 shrink-0 cursor-pointer"
               >
                 {isDemoMode && <Lock size={12} className="text-amber-400" />}
                 <span>{isDemoMode ? 'Unlock .docx' : 'Export .docx'}</span>
@@ -495,17 +665,17 @@ export default function LegalTemplatesView({
   return (
     <div className="max-w-6xl mx-auto h-full flex flex-col gap-5 font-ui">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-zinc-900/60 border border-white/10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl bg-[#111115] border border-white/[0.08]">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
-            <BookOpen className="text-emerald-400" size={24} />
-            <span>AmLaw 100 Legal Drafting Vault</span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-              All 50 U.S. States
+          <h2 className="text-lg font-semibold text-zinc-100 flex items-center gap-2.5 tracking-tight">
+            <BookOpen className="text-emerald-400" size={18} />
+            <span>AmLaw 100 U.S. Contract Vault</span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              50-State Precedents
             </span>
           </h2>
-          <p className="text-gray-400 text-xs mt-1 max-w-2xl">
-            Pre-assembled, battle-tested institutional contract models adaptable to all 50 U.S. jurisdictions, complying with Delaware corporate law, the Uniform Commercial Code (UCC), FIRPTA, and American commercial jurisprudence.
+          <p className="text-zinc-400 text-xs mt-1.5 max-w-2xl leading-relaxed">
+            Pre-assembled U.S. institutional contract models calibrated for Delaware corporate law, the Uniform Commercial Code (UCC), FIRPTA, DTSA, and IRC Section 409A compliance.
           </p>
         </div>
 
@@ -513,23 +683,23 @@ export default function LegalTemplatesView({
           {onOpenGuide && (
             <button
               onClick={() => onOpenGuide('templates')}
-              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm group"
+              className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-300 hover:text-white border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
               title="How to Use Template Vault"
             >
-              <HelpCircle size={14} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+              <HelpCircle size={13} className="text-emerald-400" />
               <span>How to Use</span>
             </button>
           )}
           <button
             onClick={() => setShowStatutoryGuide(!showStatutoryGuide)}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-md text-xs font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <Scale size={14} />
-            <span>{showStatutoryGuide ? 'Hide Statutory Guide' : 'Statutory & Compliance Guide'}</span>
+            <Scale size={13} className="text-sky-400" />
+            <span>{showStatutoryGuide ? 'Hide Statutory Guide' : 'Statutory Guide'}</span>
             {showStatutoryGuide ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
           </button>
-          <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-            {LEGAL_TEMPLATES.length} Institutional Models
+          <span className="px-2.5 py-1 rounded-md text-[11px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+            {LEGAL_TEMPLATES.length} Models
           </span>
         </div>
       </div>
@@ -544,54 +714,54 @@ export default function LegalTemplatesView({
 
       {/* Expandable Statutory Compliance Guide (FIRPTA, Lead Paint, DTSA, 409A, UCC, § 1542) */}
       {showStatutoryGuide && (
-        <div className="p-5 rounded-2xl bg-zinc-950/80 border border-cyan-500/30 space-y-4 text-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
-            <div className="flex items-center gap-2 text-cyan-300 font-bold">
-              <Scale size={18} />
+        <div className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] space-y-4 text-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2 text-zinc-100 font-semibold">
+              <Scale size={15} className="text-sky-400" />
               <span>Core U.S. Statutory Mandates & Drafting Rules (Counsel Reference)</span>
             </div>
-            <span className="text-[10px] font-mono text-zinc-400">AmLaw 100 Standards</span>
+            <span className="text-[10px] font-mono text-zinc-500">AmLaw 100 Standards</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-            <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase">
+            <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06] space-y-1">
+              <span className="text-[11px] font-mono font-medium text-emerald-400 uppercase">
                 FIRPTA (IRC § 1445)
               </span>
-              <p className="text-zinc-300 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Applies to purchasers of U.S. real property interests from foreign sellers. Contractual notice alone is insufficient; buyer must obtain an executed Non-Foreign Affidavit or withhold 15% of gross sales price via IRS Form 8288.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[11px] font-mono font-bold text-amber-400 uppercase">
+            <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06] space-y-1">
+              <span className="text-[11px] font-mono font-medium text-amber-400 uppercase">
                 Lead Paint (42 U.S.C. § 4852d)
               </span>
-              <p className="text-zinc-300 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Mandatory for residential purchase or lease of target housing built before 1978. Requires EPA pamphlet disclosure, known lead report handover, and a 10-day risk assessment window before contract execution.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase">
+            <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06] space-y-1">
+              <span className="text-[11px] font-mono font-medium text-sky-400 uppercase">
                 DTSA Whistleblower (18 U.S.C. § 1833)
               </span>
-              <p className="text-zinc-300 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Every trade secret confidentiality agreement must provide statutory whistleblower immunity notice for confidential disclosures to government officials. Omission eliminates federal punitive damages and attorney fee recoveries.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[11px] font-mono font-bold text-purple-400 uppercase">
+            <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06] space-y-1">
+              <span className="text-[11px] font-mono font-medium text-zinc-200 uppercase">
                 Work-Made-for-Hire Assignment
               </span>
-              <p className="text-zinc-300 text-[11px] leading-relaxed">
+              <p className="text-zinc-400 text-[11px] leading-relaxed">
                 Labeling contractor deliverables "Work Made for Hire" under 17 U.S.C. § 101 is legally inadequate for most technology consultants. An express present assignment ("hereby unconditionally assigns all right, title, and interest") is mandatory.
               </p>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-1">
-              <span className="text-[11px] font-mono font-bold text-rose-400 uppercase">
+            <div className="p-3.5 rounded-lg bg-[#09090B] border border-white/[0.06] space-y-1">
+              <span className="text-[11px] font-mono font-medium text-rose-400 uppercase">
                 IRC Section 409A Compliance
               </span>
               <p className="text-zinc-300 text-[11px] leading-relaxed">
@@ -657,52 +827,52 @@ export default function LegalTemplatesView({
           return (
             <div
               key={tpl.id}
-              className="p-5 rounded-2xl bg-zinc-900/60 border border-white/5 hover:border-emerald-500/40 hover:bg-zinc-900/80 transition-all flex flex-col justify-between gap-4 group"
+              className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] hover:border-emerald-500/40 hover:bg-[#141419] transition-all flex flex-col justify-between gap-4 group"
             >
               <div>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <div className="flex items-center justify-between gap-2 mb-2.5">
+                  <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     {tpl.category.toUpperCase().replace('_', ' ')}
                   </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.2 rounded font-bold">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-zinc-300 bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded">
                       .DOCX + PDF
                     </span>
-                    <span className="text-[10px] font-mono text-zinc-400">
-                      {tpl.variables?.length || 0} Dynamic Fields
+                    <span className="text-[10px] font-mono text-zinc-500">
+                      {tpl.variables?.length || 0} Fields
                     </span>
                   </div>
                 </div>
 
-                <h3 className="text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
+                <h3 className="text-[15px] font-semibold text-zinc-100 group-hover:text-emerald-300 transition-colors">
                   {tpl.title}
                 </h3>
-                <p className="text-xs text-zinc-400 mt-2 leading-relaxed line-clamp-3">
-                  {tpl.summary}
+                <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed line-clamp-3">
+                  {tpl.description || tpl.summary}
                 </p>
 
                 {statute?.badge && (
-                  <div className="mt-3 flex items-center gap-1.5 text-[10.5px] font-mono text-cyan-400">
+                  <div className="mt-3 flex items-center gap-1.5 text-[10.5px] font-mono text-sky-400">
                     <Scale size={12} className="shrink-0" />
                     <span className="truncate">{statute.badge}</span>
                   </div>
                 )}
               </div>
 
-              <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between">
-                <span className="text-[11px] font-mono text-zinc-400">
+              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                <span className="text-[11px] font-mono text-zinc-500 truncate">
                   {tpl.jurisdiction}
                 </span>
                 <button
                   onClick={() => handleOpenTemplate(tpl)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm ${
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 ${
                     isDemoMode
-                      ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700'
-                      : 'bg-emerald-500 hover:bg-emerald-400 text-black'
+                      ? 'bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08]'
+                      : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                   }`}
                 >
                   {isDemoMode && <Lock size={12} className="text-amber-400" />}
-                  <span>{isDemoMode ? 'Preview Agreement' : 'Customize & Generate'}</span>
+                  <span>{isDemoMode ? 'Preview' : 'Customize & Draft'}</span>
                   <ArrowRight size={13} />
                 </button>
               </div>
@@ -719,10 +889,10 @@ export default function LegalTemplatesView({
  * Explains lex loci rei sitae statutory overrides (CA, TX, NY, FL) vs 50-State multi-jurisdiction baseline.
  */
 function StateDossierModal({ isOpen, onClose, selectedStateRider, onSelectStateRider, isEditorActive }) {
-  if (!isOpen) return null;
-
   const [activeTab, setActiveTab] = useState(selectedStateRider || 'california');
   const [copiedClause, setCopiedClause] = useState(false);
+
+  if (!isOpen) return null;
 
   const activeRider = STATE_SPECIFIC_RIDERS[activeTab] || STATE_SPECIFIC_RIDERS.general;
 
@@ -769,8 +939,8 @@ function StateDossierModal({ isOpen, onClose, selectedStateRider, onSelectStateR
   const riskInfo = statutoryRisks[activeTab] || statutoryRisks.general;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-4xl max-h-[92vh] bg-gradient-to-b from-zinc-950 via-zinc-900 to-black border border-cyan-500/30 rounded-3xl shadow-[0_25px_80px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden text-zinc-200 font-ui">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="relative w-full max-w-4xl max-h-[92vh] bg-[#09090B] border border-white/[0.1] rounded-xl shadow-2xl flex flex-col overflow-hidden text-zinc-200 font-ui">
         {/* Header */}
         <div className="p-5 border-b border-white/[0.08] bg-[#111115] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -908,55 +1078,57 @@ function StateDossierModal({ isOpen, onClose, selectedStateRider, onSelectStateR
             </div>
           </div>
 
-          {/* Contractual Rider Language Injected into Article VIII */}
-          <div className="p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-2.5">
+          {/* Contractual Rider Language Injected as Addendum A */}
+          <div className="p-4 rounded-lg bg-[#111115] border border-white/[0.08] space-y-2.5">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-white font-mono">
+              <div className="flex items-center gap-2 text-xs font-medium text-zinc-200 font-mono">
                 <FileText size={14} className="text-emerald-400" />
-                <span>Article VIII Statutory Contract Clause (Live Injected Rider)</span>
+                <span>Addendum A Statutory Contract Clause (Live Injected Rider)</span>
               </div>
-              <button
-                onClick={() => handleCopy(activeRider.riderClause)}
-                className="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                {copiedClause ? (
-                  <>
-                    <Check size={12} className="text-emerald-400" />
-                    <span>Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy size={12} />
-                    <span>Copy Clause</span>
-                  </>
-                )}
-              </button>
+              {activeRider.riderClause && (
+                <button
+                  onClick={() => handleCopy(activeRider.riderClause)}
+                  className="px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-[#18181B] hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  {copiedClause ? (
+                    <>
+                      <Check size={12} className="text-emerald-400" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={12} />
+                      <span>Copy Clause</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
 
-            <pre className="p-3.5 rounded-xl bg-black/70 border border-zinc-800 text-[11.5px] font-mono leading-relaxed text-zinc-300 whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar select-text">
-              {activeRider.riderClause}
+            <pre className="p-3.5 rounded-md bg-[#09090B] border border-white/[0.06] text-[11.5px] font-mono leading-relaxed text-zinc-300 whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar select-text">
+              {activeRider.riderClause || 'No additional state-specific statutory rider is injected in the 50-State Baseline mode.'}
             </pre>
           </div>
 
           {/* Lex Loci Rei Sitae Jurisprudential Context Note */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/20 via-zinc-900/60 to-cyan-950/20 border border-emerald-500/25 flex items-start gap-3 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#111115] border border-white/[0.08] border-l-2 border-l-emerald-500/60 flex items-start gap-3 text-xs">
             <Info size={16} className="text-emerald-400 shrink-0 mt-0.5" />
-            <div className="space-y-1 text-zinc-300 leading-relaxed text-[11.5px]">
-              <span className="text-white font-bold">Lex Loci Rei Sitae Doctrine (Law of the Situs): </span>
-              Under American commercial law, real property transfers are invariably adjudicated under the law of the state where the physical real estate is situated. While 85%–90% of contract covenants (purchase consideration, escrow mechanics, ALTA title review, CERCLA environmental review, and FIRPTA withholdings) remain identical nationwide, these 4 jurisdictions impose strict statutory wording rules that, if omitted, can invalidate remedies or grant statutory cancellation rights. For the remaining 46 states, the <strong className="text-white">50-State Multi-Jurisdiction Baseline</strong> delivers seamless enforceability under the Restatement (Second) of Contracts.
+            <div className="space-y-1 text-zinc-400 leading-relaxed text-[11.5px]">
+              <span className="text-zinc-200 font-semibold">Lex Loci Rei Sitae Doctrine (Law of the Situs): </span>
+              Under American commercial law, real property transfers are invariably adjudicated under the law of the state where the physical real estate is situated. While 85%–90% of contract covenants (purchase consideration, escrow mechanics, ALTA title review, CERCLA environmental review, and FIRPTA withholdings) remain identical nationwide, these 4 jurisdictions impose strict statutory wording rules that, if omitted, can invalidate remedies or grant statutory cancellation rights. For the remaining 46 states, the <strong className="text-zinc-200">50-State Multi-Jurisdiction Baseline</strong> delivers seamless enforceability under the Restatement (Second) of Contracts.
             </div>
           </div>
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center justify-between text-xs text-zinc-400">
+        <div className="px-5 py-3.5 bg-[#111115] border-t border-white/[0.08] flex items-center justify-between text-xs text-zinc-400">
           <div className="flex items-center gap-2">
             <ShieldCheck size={14} className="text-emerald-400" />
             <span>Calibrated to AmLaw 100 Real Estate Practice Standards</span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold cursor-pointer transition-colors"
+            className="px-3.5 py-1.5 rounded-md bg-[#18181B] hover:bg-zinc-800 border border-white/[0.08] text-zinc-200 font-medium cursor-pointer transition-colors"
           >
             Close Dossier
           </button>

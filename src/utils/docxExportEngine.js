@@ -1,5 +1,64 @@
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  HeadingLevel,
+  AlignmentType,
+  Table,
+  TableRow,
+  TableCell,
+  WidthType,
+  BorderStyle,
+  Footer,
+  PageNumber
+} from 'docx';
 import { generatePreSigningAmendmentRiderText } from './statutoryCodex.js';
+
+const NO_BORDERS = {
+  top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+  bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+  left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+  right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+  insideHorizontal: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+  insideVertical: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+};
+
+function splitTwoColumnLine(line) {
+  const match = line.match(/^(.+?)\s{3,}(.+)$/);
+  if (match) {
+    return [match[1].trim(), match[2].trim()];
+  }
+  return [line.trim(), ''];
+}
+
+function buildSignatureCell(lines, isHeaderRow = false) {
+  const paras = lines.map((txt, idx) => {
+    const isRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(txt);
+    const isLine = /^By:|^Name:|^Title:|^Date:/i.test(txt);
+    return new Paragraph({
+      spacing: {
+        before: idx === 0 && isHeaderRow ? 80 : isLine ? 110 : 40,
+        after: idx === lines.length - 1 ? 80 : 40
+      },
+      children: [
+        new TextRun({
+          text: txt,
+          bold: isRole,
+          size: 21, // 10.5pt
+          font: 'Times New Roman'
+        })
+      ]
+    });
+  });
+
+  return new TableCell({
+    width: { size: 50, type: WidthType.PERCENTAGE },
+    borders: NO_BORDERS,
+    margins: { top: 40, bottom: 40, left: 60, right: 120 },
+    children: paras.length ? paras : [new Paragraph({ children: [] })]
+  });
+}
 
 /**
  * Nexus ContractGuard — Institutional DOCX Export Engine
@@ -20,72 +79,174 @@ export async function downloadContractDOCX(contractText, options = {}) {
   const rawLines = contractText.split(/\r?\n/);
   const children = [];
 
-  // Formal Header Block: Document Title
+  // Formal Top Caption: Ruled Centered Uppercase Legal Title
   children.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 200, after: 120 },
+      spacing: { before: 120, after: 100 },
+      border: {
+        bottom: { style: BorderStyle.DOUBLE, size: 6, color: '111111', space: 6 }
+      },
       children: [
         new TextRun({
           text: title.toUpperCase(),
           bold: true,
-          size: 28, // 14pt
+          size: 26, // 13pt
           font: 'Times New Roman'
         })
       ]
     })
   );
 
-  // Subtitle / Standard Caption
+  // Jurisdiction Subtitle Caption
   children.push(
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      spacing: { before: 0, after: 360 },
+      spacing: { before: 80, after: 320 },
       children: [
         new TextRun({
-          text: `AmLaw 100 Model Form — ${jurisdiction}`,
+          text: `Governing Jurisdiction: ${jurisdiction}`,
           italics: true,
           size: 19, // 9.5pt
           font: 'Times New Roman',
-          color: '555555'
+          color: '444444'
         })
       ]
     })
   );
 
-  // Parse lines into structured Word paragraphs
-  for (let i = 0; i < rawLines.length; i++) {
-    const line = rawLines[i];
-    const trimmed = line.trim();
+  let inExecutionBlock = false;
+  const sigLeftLines = [];
+  const sigRightLines = [];
 
-    // Preserve paragraph break for empty lines
+  const flushSignatureTable = () => {
+    if (sigLeftLines.length === 0 && sigRightLines.length === 0) return;
+    if (sigRightLines.some(Boolean)) {
+      children.push(
+        new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          borders: NO_BORDERS,
+          rows: [
+            new TableRow({
+              cantSplit: true,
+              children: [
+                buildSignatureCell(sigLeftLines.filter(Boolean), true),
+                buildSignatureCell(sigRightLines.filter(Boolean), true)
+              ]
+            })
+          ]
+        })
+      );
+    } else {
+      sigLeftLines.filter(Boolean).forEach((lineTxt, idx) => {
+        const isRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(lineTxt);
+        children.push(
+          new Paragraph({
+            spacing: { before: isRole ? 180 : 100, after: 40 },
+            keepNext: idx < sigLeftLines.length - 1,
+            children: [
+              new TextRun({
+                text: lineTxt,
+                bold: isRole,
+                size: 21,
+                font: 'Times New Roman'
+              })
+            ]
+          })
+        );
+      });
+    }
+    sigLeftLines.length = 0;
+    sigRightLines.length = 0;
+  };
+
+  // Parse lines into authentic US legal paragraphs
+  for (let i = 0; i < rawLines.length; i++) {
+    const rawLine = rawLines[i];
+    const trimmed = rawLine.trim();
+
     if (!trimmed) {
+      if (inExecutionBlock && sigLeftLines.length > 0 && !sigRightLines.some(Boolean)) {
+        // Blank line between stacked single-party blocks (e.g. LOI Purchaser then Seller)
+        const nextNonEmpty = rawLines.slice(i + 1).find(l => l.trim() !== '');
+        if (nextNonEmpty && /^(ACKNOWLEDGED AND AGREED|SELLER:|HOLDER:)/i.test(nextNonEmpty.trim())) {
+          flushSignatureTable();
+        }
+      }
       continue;
     }
 
-    // Detect Major Section / Article Header
-    const isMajorHeading = /^(ARTICLE\s+[0-9IVXLCDM]+|SECTION\s+[0-9]+|RECITALS|AGREEMENT|WITNESSETH|IN WITNESS WHEREOF|EXHIBIT\s+[A-Z0-9]+|SCHEDULE\s+[A-Z0-9]+)/i.test(trimmed);
-    const isSubsectionHeading = /^([0-9]+\.[0-9]+|\([a-z0-9]+\))\s+[A-Z]/i.test(trimmed);
-
-    if (isMajorHeading) {
+    // Detect signature trigger markers
+    if (/^(IN WITNESS WHEREOF|ACKNOWLEDGED AND AGREED)/i.test(trimmed)) {
+      inExecutionBlock = true;
       children.push(
         new Paragraph({
-          heading: HeadingLevel.HEADING_2,
-          spacing: { before: 280, after: 120 },
+          spacing: { before: 260, after: 180, line: 276 },
+          alignment: AlignmentType.JUSTIFIED,
+          keepNext: true,
           children: [
             new TextRun({
               text: trimmed,
-              bold: true,
-              size: 23, // 11.5pt
+              bold: /^(ACKNOWLEDGED AND AGREED)/i.test(trimmed),
+              size: 22,
               font: 'Times New Roman'
             })
           ]
         })
       );
-    } else if (isSubsectionHeading) {
+      continue;
+    }
+
+    if (/^(Sincerely,|PURCHASER:|SELLER:|LANDLORD:|TENANT:|CLIENT:|FIRST PARTY:|PARTY A:|COMPANY:|EMPLOYER:|MAKER:|MEMBER 1:)/i.test(trimmed) || inExecutionBlock) {
+      if (!inExecutionBlock && /^(Sincerely,|PURCHASER:|SELLER:)/i.test(trimmed)) {
+        inExecutionBlock = true;
+      }
+      if (/^ACKNOWLEDGED AND AGREED/i.test(trimmed)) {
+        flushSignatureTable();
+        children.push(
+          new Paragraph({
+            spacing: { before: 240, after: 140 },
+            keepNext: true,
+            children: [
+              new TextRun({ text: trimmed, bold: true, size: 21, font: 'Times New Roman' })
+            ]
+          })
+        );
+        continue;
+      }
+      if (/^Sincerely,/i.test(trimmed)) {
+        children.push(
+          new Paragraph({
+            spacing: { before: 160, after: 120 },
+            keepNext: true,
+            children: [
+              new TextRun({ text: trimmed, size: 22, font: 'Times New Roman' })
+            ]
+          })
+        );
+        continue;
+      }
+
+      const [leftCol, rightCol] = splitTwoColumnLine(rawLine);
+      sigLeftLines.push(leftCol);
+      if (rightCol) sigRightLines.push(rightCol);
+      continue;
+    }
+
+    // Centered Uppercase Structural Headers
+    const isCenteredHeading = /^(RECITALS|WITNESSETH|AGREEMENT|EXHIBIT\s+[A-Z0-9]+|SCHEDULE\s+[A-Z0-9]+)$/i.test(trimmed)
+      || /^(ARTICLE\s+[0-9IVXLCDM]+|ADDENDUM\s+[A-Z0-9]+)\b/i.test(trimmed);
+    const isMetaHeader = /^(VIA\s+ELECTRONIC|Date:|TO:|FROM:|RE:|PRINCIPAL\s+(?:SUM|AMOUNT):|INTEREST\s+RATE:)/i.test(trimmed);
+    const subsectionMatch = trimmed.match(/^([0-9]+\.[0-9]+|[A-Z]\.[0-9]+)\s+([^.]+?\.)\s*(.*)$/);
+    const recitalMatch = trimmed.match(/^(WHEREAS,|NOW,\s*THEREFORE,)\s*(.*)$/);
+
+    if (isCenteredHeading) {
       children.push(
         new Paragraph({
-          spacing: { before: 160, after: 100, line: 276 },
+          heading: HeadingLevel.HEADING_2,
+          alignment: AlignmentType.CENTER,
+          keepNext: true,
+          spacing: { before: 260, after: 120 },
           children: [
             new TextRun({
               text: trimmed,
@@ -96,11 +257,70 @@ export async function downloadContractDOCX(contractText, options = {}) {
           ]
         })
       );
+    } else if (recitalMatch) {
+      children.push(
+        new Paragraph({
+          alignment: AlignmentType.JUSTIFIED,
+          indent: { firstLine: 360 }, // 0.25in formal recital lead-in
+          spacing: { before: 60, after: 120, line: 276 },
+          children: [
+            new TextRun({
+              text: `${recitalMatch[1]} `,
+              bold: true,
+              size: 22,
+              font: 'Times New Roman'
+            }),
+            new TextRun({
+              text: recitalMatch[2],
+              size: 22,
+              font: 'Times New Roman'
+            })
+          ]
+        })
+      );
+    } else if (subsectionMatch) {
+      // Bold ONLY the Section number & lead-in title; keep body regular weight!
+      children.push(
+        new Paragraph({
+          alignment: AlignmentType.JUSTIFIED,
+          indent: { firstLine: 360 },
+          spacing: { before: 120, after: 120, line: 276 },
+          children: [
+            new TextRun({
+              text: `${subsectionMatch[1]} ${subsectionMatch[2]} `,
+              bold: true,
+              size: 22, // 11pt
+              font: 'Times New Roman'
+            }),
+            new TextRun({
+              text: subsectionMatch[3],
+              bold: false,
+              size: 22,
+              font: 'Times New Roman'
+            })
+          ]
+        })
+      );
+    } else if (isMetaHeader) {
+      children.push(
+        new Paragraph({
+          alignment: AlignmentType.LEFT,
+          spacing: { before: 40, after: 60, line: 240 },
+          children: [
+            new TextRun({
+              text: trimmed,
+              bold: /^(VIA\s+ELECTRONIC)/i.test(trimmed),
+              size: 21,
+              font: 'Times New Roman'
+            })
+          ]
+        })
+      );
     } else {
       children.push(
         new Paragraph({
           spacing: { before: 0, after: 140, line: 276 }, // 1.15 line spacing
-          alignment: AlignmentType.LEFT,
+          alignment: AlignmentType.JUSTIFIED,
           children: [
             new TextRun({
               text: trimmed,
@@ -113,12 +333,14 @@ export async function downloadContractDOCX(contractText, options = {}) {
     }
   }
 
-  // Construct Document with 1-inch standard legal margins (1440 twips = 1 inch)
+  flushSignatureTable();
+
+  // Construct Document with 1-inch standard legal margins (1440 twips = 1 inch) and clean page footer
   const doc = new Document({
     title: title,
     subject: `Institutional Legal Agreement — ${jurisdiction}`,
     creator: 'Nexus ContractGuard Legal Drafting Suite',
-    description: 'Pre-signing commercial contract draft generated for client review and redlining.',
+    description: 'Pre-signing commercial contract draft formatted to U.S. commercial legal conventions.',
     sections: [
       {
         properties: {
@@ -130,6 +352,41 @@ export async function downloadContractDOCX(contractText, options = {}) {
               right: 1440
             }
           }
+        },
+        footers: {
+          default: new Footer({
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [
+                  new TextRun({
+                    text: 'Page ',
+                    size: 18,
+                    font: 'Times New Roman',
+                    color: '555555'
+                  }),
+                  new TextRun({
+                    children: [PageNumber.CURRENT],
+                    size: 18,
+                    font: 'Times New Roman',
+                    color: '555555'
+                  }),
+                  new TextRun({
+                    text: ' of ',
+                    size: 18,
+                    font: 'Times New Roman',
+                    color: '555555'
+                  }),
+                  new TextRun({
+                    children: [PageNumber.TOTAL_PAGES],
+                    size: 18,
+                    font: 'Times New Roman',
+                    color: '555555'
+                  })
+                ]
+              })
+            ]
+          })
         },
         children
       }

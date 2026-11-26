@@ -259,24 +259,183 @@ export async function generateRedactedPDFBytes(rawText = '', metadata = {}) {
     cursorY -= (noticeHeight + 18);
   }
 
+  // Helper to ensure enough vertical room and handle pagination cleanly
+  const ensureSpace = (neededHeight) => {
+    if (cursorY < marginBottom + neededHeight) {
+      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+      pagesList.push(currentPage);
+      drawRunningHeader(currentPage, pagesList.length);
+      cursorY = pageHeight - marginTop - 16;
+    }
+  };
+
+  // Helper to draw a rich paragraph with a bold lead-in phrase followed inline by regular body text
+  const drawRichParagraph = (boldPrefix, regularBody, indentPts = 0) => {
+    const startX = marginX + indentPts;
+    const maxW = usableWidth - indentPts;
+    const boldTokens = boldPrefix ? boldPrefix.split(/\s+/).filter(Boolean).map(t => ({ text: t, font: fontBold })) : [];
+    const bodyTokens = regularBody ? regularBody.split(/\s+/).filter(Boolean).map(t => ({ text: t, font: fontRegular })) : [];
+    const tokens = [...boldTokens, ...bodyTokens];
+    if (tokens.length === 0) return;
+
+    const lines = [];
+    let currentLineTokens = [];
+    let currentLineWidth = 0;
+    const spaceWidth = fontRegular.widthOfTextAtSize(' ', bodyFontSize);
+
+    for (const tok of tokens) {
+      const tokWidth = tok.font.widthOfTextAtSize(tok.text, bodyFontSize);
+      const addedWidth = currentLineTokens.length === 0 ? tokWidth : spaceWidth + tokWidth;
+      if (currentLineWidth + addedWidth <= maxW) {
+        currentLineTokens.push(tok);
+        currentLineWidth += addedWidth;
+      } else {
+        if (currentLineTokens.length > 0) lines.push(currentLineTokens);
+        currentLineTokens = [tok];
+        currentLineWidth = tokWidth;
+      }
+    }
+    if (currentLineTokens.length > 0) lines.push(currentLineTokens);
+
+    for (const lineToks of lines) {
+      ensureSpace(24);
+      let drawX = startX;
+      lineToks.forEach((tok, idx) => {
+        if (idx > 0) drawX += spaceWidth;
+        currentPage.drawText(tok.text, {
+          x: drawX,
+          y: cursorY,
+          size: bodyFontSize,
+          font: tok.font,
+          color: blackColor
+        });
+        drawX += tok.font.widthOfTextAtSize(tok.text, bodyFontSize);
+      });
+      cursorY -= bodyLineHeight;
+    }
+  };
+
+  // Helper to draw dual-column signature rows cleanly when two columns exist
+  let inExecutionBlock = false;
+  let sigPairs = [];
+  const flushPdfSignatures = () => {
+    if (sigPairs.length === 0) return;
+    ensureSpace(sigPairs.length * 16 + 24);
+    const col2X = pageWidth / 2 + 16;
+    for (const [leftTxt, rightTxt] of sigPairs) {
+      ensureSpace(24);
+      const isLeftRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(leftTxt);
+      const isRightRole = /^[A-Z][A-Z0-9\s/().:-]+:$/.test(rightTxt);
+      if (/^(By:|Name:|Title:|Date:)/i.test(leftTxt)) cursorY -= 4;
+      if (leftTxt) {
+        currentPage.drawText(leftTxt, {
+          x: marginX,
+          y: cursorY,
+          size: 9.5,
+          font: isLeftRole ? fontBold : fontRegular,
+          color: blackColor
+        });
+      }
+      if (rightTxt) {
+        currentPage.drawText(rightTxt, {
+          x: col2X,
+          y: cursorY,
+          size: 9.5,
+          font: isRightRole ? fontBold : fontRegular,
+          color: blackColor
+        });
+      }
+      cursorY -= 14;
+    }
+    sigPairs = [];
+  };
+
   // Iterate over paragraphs and render lines
   for (let pIdx = 0; pIdx < rawParagraphs.length; pIdx++) {
-    const rawPara = rawParagraphs[pIdx].trim();
+    const rawLine = rawParagraphs[pIdx];
+    const rawPara = rawLine.trim();
 
     if (rawPara === '') {
-      // Empty line -> add vertical paragraph spacing
-      cursorY -= 8;
+      if (inExecutionBlock && sigPairs.length > 0 && sigPairs.every(p => !p[1])) {
+        const nextNonEmpty = rawParagraphs.slice(pIdx + 1).find(l => l.trim() !== '');
+        if (nextNonEmpty && /^(ACKNOWLEDGED AND AGREED|SELLER:|HOLDER:)/i.test(nextNonEmpty.trim())) {
+          flushPdfSignatures();
+        }
+      } else if (!inExecutionBlock) {
+        cursorY -= 6;
+      }
       continue;
     }
 
-    // Identify if this paragraph is a major legal heading (e.g. ARTICLE, EXHIBIT, RECITALS, SCHEDULE)
+    if (isDraft) {
+      if (/^(IN WITNESS WHEREOF|ACKNOWLEDGED AND AGREED)/i.test(rawPara)) {
+        flushPdfSignatures();
+        inExecutionBlock = true;
+        cursorY -= 6;
+        const isBoldLead = /^(ACKNOWLEDGED AND AGREED)/i.test(rawPara);
+        drawRichParagraph(isBoldLead ? rawPara : '', isBoldLead ? '' : rawPara, 0);
+        cursorY -= 8;
+        continue;
+      }
+
+      if (/^(Sincerely,|PURCHASER:|SELLER:|LANDLORD:|TENANT:|CLIENT:|FIRST PARTY:|PARTY A:|COMPANY:|EMPLOYER:|MAKER:|MEMBER 1:)/i.test(rawPara) || inExecutionBlock) {
+        if (!inExecutionBlock && /^(Sincerely,|PURCHASER:|SELLER:)/i.test(rawPara)) {
+          inExecutionBlock = true;
+        }
+        if (/^Sincerely,/i.test(rawPara)) {
+          flushPdfSignatures();
+          drawRichParagraph('', rawPara, 0);
+          cursorY -= 6;
+          continue;
+        }
+        const colMatch = rawLine.match(/^(.+?)\s{3,}(.+)$/);
+        if (colMatch) {
+          sigPairs.push([colMatch[1].trim(), colMatch[2].trim()]);
+        } else {
+          sigPairs.push([rawPara, '']);
+        }
+        continue;
+      }
+
+      const isCenteredHeading = /^(RECITALS|WITNESSETH|AGREEMENT|EXHIBIT\s+[A-Z0-9]+|SCHEDULE\s+[A-Z0-9]+)$/i.test(rawPara)
+        || /^(ARTICLE\s+[0-9IVXLCDM]+|ADDENDUM\s+[A-Z0-9]+)\b/i.test(rawPara);
+      const subsectionMatch = rawPara.match(/^([0-9]+\.[0-9]+|[A-Z]\.[0-9]+)\s+([^.]+?\.)\s*(.*)$/);
+      const recitalMatch = rawPara.match(/^(WHEREAS,|NOW,\s*THEREFORE,)\s*(.*)$/);
+
+      if (isCenteredHeading) {
+        cursorY -= 8;
+        ensureSpace(32);
+        const headingWidth = fontBold.widthOfTextAtSize(rawPara, headingFontSize);
+        const headingX = headingWidth < usableWidth ? (pageWidth - headingWidth) / 2 : marginX;
+        currentPage.drawText(rawPara, {
+          x: headingX,
+          y: cursorY,
+          size: headingFontSize,
+          font: fontBold,
+          color: blackColor
+        });
+        cursorY -= (bodyLineHeight + 2);
+        continue;
+      }
+
+      if (recitalMatch) {
+        drawRichParagraph(recitalMatch[1], recitalMatch[2], 14);
+        continue;
+      }
+
+      if (subsectionMatch) {
+        drawRichParagraph(`${subsectionMatch[1]} ${subsectionMatch[2]}`, subsectionMatch[3], 14);
+        continue;
+      }
+    }
+
+    // Standard fallback (Redacted Discovery mode & plain body paragraphs)
     const isArticleHeader = /^(ARTICLE\s+[IVXLCDM\d]+|EXHIBIT\s+[A-Z\d]|SCHEDULE\s+[A-Z\d]|RECITALS:?|WITNESSETH:?|IN\s+WITNESS\s+WHEREOF)/i.test(rawPara);
-    const isSectionHeader = /^(SECTION\s+\d+(\.\d+)?|\d+\.\d+)\s+/i.test(rawPara);
+    const isSectionHeader = /^(SECTION\s+\d+(\.\d+)?)\s+/i.test(rawPara);
 
     const activeFont = isArticleHeader || isSectionHeader ? fontBold : fontRegular;
     const activeFontSize = isArticleHeader ? headingFontSize : bodyFontSize;
 
-    // If starting an article, add extra breath spacing
     if (isArticleHeader) {
       cursorY -= 8;
     }
@@ -284,13 +443,7 @@ export async function generateRedactedPDFBytes(rawText = '', metadata = {}) {
     const wrappedLines = wrapParagraph(rawPara, activeFont, activeFontSize, usableWidth);
 
     for (const line of wrappedLines) {
-      // Check page break condition
-      if (cursorY < marginBottom + 24) {
-        currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-        pagesList.push(currentPage);
-        drawRunningHeader(currentPage, pagesList.length);
-        cursorY = pageHeight - marginTop - 16;
-      }
+      ensureSpace(24);
 
       if (line !== '') {
         currentPage.drawText(line, {
@@ -305,6 +458,8 @@ export async function generateRedactedPDFBytes(rawText = '', metadata = {}) {
       cursorY -= bodyLineHeight;
     }
   }
+
+  flushPdfSignatures();
 
   // Draw Bottom Pagination & Footer on all pages
   const totalPages = pagesList.length;
