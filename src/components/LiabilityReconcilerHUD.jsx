@@ -100,7 +100,7 @@ export default function LiabilityReconcilerHUD({
           <div className="flex items-center gap-4">
             <div className={`w-16 h-16 rounded-xl border flex flex-col items-center justify-center shrink-0 ${getScoreColor()}`}>
               <span className="text-2xl font-bold font-mono tabular-nums leading-none">{score}</span>
-              <span className="text-[9px] uppercase font-mono tracking-wider opacity-80 mt-1">Score</span>
+              <span className="text-[9px] uppercase font-mono tracking-wider opacity-80 mt-1">Health</span>
             </div>
 
             <div>
@@ -116,6 +116,9 @@ export default function LiabilityReconcilerHUD({
                     : 'bg-emerald-500/12 text-emerald-400 border-emerald-500/25'
                 }`}>
                   {statusBadge}
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-zinc-300 border border-white/[0.08]">
+                  Liability Risk: {Math.max(0, 100 - score)} / 100
                 </span>
               </div>
               <p className="text-xs text-zinc-400 mt-1 tabular-nums">

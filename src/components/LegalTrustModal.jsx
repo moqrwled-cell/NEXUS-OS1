@@ -17,7 +17,7 @@ const TABS = [
   { id: 'refund', label: 'Refund Policy', icon: CreditCard }
 ];
 
-export default function LegalTrustModal({ isOpen, onClose, initialTab = 'privacy' }) {
+export default function LegalTrustModal({ isOpen, onClose, initialTab = 'privacy', onOpenSupport }) {
   const [activeTab, setActiveTab] = useState(initialTab);
 
   // Sync active tab whenever caller opens modal for a specific footer link
@@ -321,14 +321,24 @@ export default function LegalTrustModal({ isOpen, onClose, initialTab = 'privacy
 
           {/* Footer */}
           <div className="px-6 py-3.5 bg-[#0C0C0F] border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-zinc-500 shrink-0">
-            <span>
+            <span className="flex items-center gap-2">
               Support Desk:{' '}
-              <a
-                href="mailto:nexus.os.store@gmail.com"
-                className="text-zinc-300 hover:text-emerald-400 transition-colors"
-              >
-                nexus.os.store@gmail.com
-              </a>
+              {onOpenSupport ? (
+                <button
+                  type="button"
+                  onClick={onOpenSupport}
+                  className="text-zinc-300 hover:text-emerald-400 underline underline-offset-4 transition-colors cursor-pointer"
+                >
+                  Contact Support (nexus.os.store@gmail.com)
+                </button>
+              ) : (
+                <a
+                  href="mailto:nexus.os.store@gmail.com"
+                  className="text-zinc-300 hover:text-emerald-400 transition-colors"
+                >
+                  nexus.os.store@gmail.com
+                </a>
+              )}
             </span>
             <button
               type="button"

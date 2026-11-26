@@ -370,7 +370,7 @@ export default function ContractGuardDemo() {
       if (!isInitial) {
         const currentRemaining = getDemoAuditsRemaining();
         setAuditToast({
-          ms: res?.processingDurationMs || 79,
+          ms: res?.meta?.processingTimeMs ?? res?.processingDurationMs ?? 45,
           remaining: hasActiveLicense ? 'Unlimited' : currentRemaining
         });
         setTimeout(() => setAuditToast(null), 8000);
@@ -520,7 +520,13 @@ export default function ContractGuardDemo() {
 
   const handleFileUpload = (e, setTargetText, statusKey) => {
     const file = e.target.files?.[0];
-    if (file) processDocumentFile(file, setTargetText, statusKey);
+    if (file) {
+      if (statusKey === 'target') {
+        cancelAnalysis();
+      }
+      processDocumentFile(file, setTargetText, statusKey);
+    }
+    if (e?.target) e.target.value = '';
   };
 
   const handleFileDrop = (e, setTargetText, statusKey, setDragActive) => {
@@ -644,9 +650,11 @@ export default function ContractGuardDemo() {
     return [];
   }, [enrichedAudit, auditResults, contractText]);
 
-  const riskScore = auditResults?.overallRiskScore?.score ?? null;
-  const riskLevel = auditResults?.overallRiskScore?.level || null;
-  const processingMs = auditResults?.processingDurationMs ?? null;
+  const riskScore = typeof auditResults?.overallRiskScore === 'number'
+    ? auditResults.overallRiskScore
+    : (auditResults?.overallRiskScore?.score ?? null);
+  const riskLevel = auditResults?.riskLevel || auditResults?.overallRiskScore?.level || null;
+  const processingMs = auditResults?.meta?.processingTimeMs ?? auditResults?.processingDurationMs ?? null;
 
   return (
     <div className="min-h-screen bg-[#030712] text-white font-ui flex flex-col md:flex-row relative overflow-hidden">

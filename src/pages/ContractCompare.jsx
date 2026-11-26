@@ -57,6 +57,7 @@ import HarmonizerResultsHUD from '../components/HarmonizerResultsHUD';
 import LiabilityReconcilerHUD from '../components/LiabilityReconcilerHUD';
 import SystemGuideModal from '../components/SystemGuideModal';
 import LicensePlanModal from '../components/LicensePlanModal';
+import ContactModal from '../components/ContactModal';
 import { restateAndPolishContract } from '../utils/forensicRestatementEngine';
 import { analyzeLiabilityInterlocks, SAMPLE_DEALS } from '../utils/liabilityMatrixEngine';
 
@@ -73,6 +74,7 @@ export default function ContractCompare({ isDemoMode = false }) {
   const [analysisMode, setAnalysisMode] = useState('single'); // single | comparative | harmonizer
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPlanModal, setShowPlanModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [guideModalTab, setGuideModalTab] = useState('analyzer');
   const [isUnlocked, setIsUnlocked] = useState(isDemo);
   const [restoredSession, setRestoredSession] = useState(null);
@@ -433,6 +435,18 @@ export default function ContractCompare({ isDemoMode = false }) {
                 <HelpCircle size={13} />
                 <span>Guide</span>
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isDemo && !workstationFp) loadDeviceLicenseData();
+                  setShowContactModal(true);
+                }}
+                className="px-2.5 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04] transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="Contact Practitioner Support"
+              >
+                <Mail size={13} />
+                <span>Support</span>
+              </button>
             </div>
           </div>
         )}
@@ -506,7 +520,7 @@ export default function ContractCompare({ isDemoMode = false }) {
               <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
                 <AuditVaultView 
                   onSelectDiff={(session) => {
-                    setRestoredSession(session);
+                    setRestoredSession({ ...session, _sessionKey: Date.now() });
                     setActiveTool('analyzer');
                   }}
                   onOpenGuide={() => {
@@ -521,7 +535,7 @@ export default function ContractCompare({ isDemoMode = false }) {
                 <LegalTemplatesView 
                   isDemoMode={isDemo}
                   onSendToAudit={(contractText, title) => {
-                    setRestoredSession({ originalText: contractText, title });
+                    setRestoredSession({ originalText: contractText, title, _sessionKey: Date.now() });
                     setActiveTool('analyzer');
                   }} 
                   onTriggerUpgrade={(trigger) => {
@@ -547,6 +561,10 @@ export default function ContractCompare({ isDemoMode = false }) {
             licenseData={licenseData}
             workstationFp={workstationFp}
             onDeactivate={handleDeactivate}
+            onOpenSupport={() => {
+              setShowSettingsModal(false);
+              setShowContactModal(true);
+            }}
           />
         )}
       </AnimatePresence>
@@ -578,6 +596,14 @@ export default function ContractCompare({ isDemoMode = false }) {
         )}
       </AnimatePresence>
 
+      {/* Contact Practitioner Support Modal */}
+      <ContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        workstationId={workstationFp}
+        planTier={!isDemo && licenseData?.plan ? (licenseData.plan === 'firm' ? 'Law Firm Suite ($299)' : 'Solo Practitioner ($199)') : 'Live Evaluation Sandbox'}
+      />
+
       
     </div>
   );
@@ -586,7 +612,7 @@ export default function ContractCompare({ isDemoMode = false }) {
 // =========================================================================
 // WORKSTATION & LICENSE SETTINGS MODAL (Hardware ID, Seats, Migration, Support)
 // =========================================================================
-function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactivate }) {
+function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactivate, onOpenSupport }) {
   const [copiedField, setCopiedField] = useState(null);
   const [showConfirmDeactivate, setShowConfirmDeactivate] = useState(false);
 
@@ -912,13 +938,26 @@ function SettingsModal({ isOpen, onClose, licenseData, workstationFp, onDeactiva
             </div>
           </div>
 
-          <button
-            onClick={() => copyText('nexus.os.store@gmail.com', 'support_email')}
-            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 cursor-pointer self-end sm:self-auto"
-          >
-            {copiedField === 'support_email' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            <span>{copiedField === 'support_email' ? 'Copied' : 'Copy Email'}</span>
-          </button>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <button
+              type="button"
+              onClick={() => copyText('nexus.os.store@gmail.com', 'support_email')}
+              className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-mono flex items-center gap-1.5 cursor-pointer"
+            >
+              {copiedField === 'support_email' ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+              <span>{copiedField === 'support_email' ? 'Copied' : 'Copy Email'}</span>
+            </button>
+            {onOpenSupport && (
+              <button
+                type="button"
+                onClick={onOpenSupport}
+                className="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+              >
+                <Mail size={12} />
+                <span>Support Desk</span>
+              </button>
+            )}
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -1139,6 +1178,8 @@ function ContractAnalyzerView({
     resetAnalysis
   } = useContractWorker();
 
+  const lastAuditedSnapshotRef = useRef({ text: '', baselineText: '', mode: 'single' });
+
   // Reset active audit findings when switching between analysis tools / modes
   const prevModeRef = useRef(analysisMode);
   useEffect(() => {
@@ -1148,6 +1189,7 @@ function ContractAnalyzerView({
       setHarmonizedData(null);
       setLiabilityAuditData(null);
       setDiffDecisions({});
+      lastAuditedSnapshotRef.current = { text: '', baselineText: '', mode: analysisMode };
     }
   }, [analysisMode, resetAnalysis]);
 
@@ -1158,10 +1200,12 @@ function ContractAnalyzerView({
     setDocumentTitle('');
     setClientParty('');
     setCounterparty('');
+    setUploadStatus({ target: '', baseline: '' });
     setHarmonizedData(null);
     setLiabilityAuditData(null);
     setDiffDecisions({});
     setParsingProgress({ active: false, statusKey: '', percent: 0, currentPage: 0, totalPages: 0, message: '' });
+    lastAuditedSnapshotRef.current = { text: '', baselineText: '', mode: analysisMode };
     resetAnalysis();
   };
 
@@ -1301,18 +1345,32 @@ function ContractAnalyzerView({
   const [riskSeverityFilter, setRiskSeverityFilter] = useState('all'); // all | critical | warning | info
   const [saveStatus, setSaveStatus] = useState('');
 
-  // Restore session if loaded from local DB
+  // Restore session if loaded from local DB or Template Vault
   useEffect(() => {
     if (initialSession) {
+      const nextText = initialSession.modifiedText || initialSession.originalText || '';
+      const nextBaseline = initialSession.modifiedText ? (initialSession.originalText || '') : '';
+      const meta = nextText ? detectContractMetadata(nextText) : {};
+
+      resetAnalysis();
+      setHarmonizedData(null);
+      setLiabilityAuditData(null);
+      setDiffDecisions({});
+      setUploadStatus({ target: '', baseline: '' });
+      lastAuditedSnapshotRef.current = { text: '', baselineText: '', mode: analysisMode };
+
       if (initialSession.modifiedText) {
         setText(initialSession.modifiedText);
-        setBaselineText(initialSession.originalText || '');
+        setBaselineText(nextBaseline);
         setAnalysisMode('comparative');
       } else if (initialSession.originalText) {
         setText(initialSession.originalText);
+        setBaselineText('');
         setAnalysisMode('single');
       }
-      if (initialSession.title) setDocumentTitle(initialSession.title);
+      setDocumentTitle(initialSession.title || meta.title || 'Contract Integrity Audit');
+      setClientParty(initialSession.clientParty || meta.clientParty || '');
+      setCounterparty(initialSession.counterparty || meta.counterparty || '');
     }
   }, [initialSession]);
 
@@ -1326,6 +1384,18 @@ function ContractAnalyzerView({
       alert(`File "${file.name}" exceeds the maximum institutional in-RAM limit of 50MB. Please select a standard contract draft.`);
       setUploadStatus(prev => ({ ...prev, [statusKey]: 'File size exceeded (max 50MB).' }));
       return;
+    }
+
+    // Purge previous audit verdict and downstream caches before parsing new file so stale scores never linger
+    if (statusKey === 'target') {
+      resetAnalysis();
+      setHarmonizedData(null);
+      setLiabilityAuditData(null);
+      setDiffDecisions({});
+      lastAuditedSnapshotRef.current = { text: '', baselineText: '', mode: analysisMode };
+    } else if (statusKey === 'baseline' && analysisMode === 'comparative') {
+      resetAnalysis();
+      setDiffDecisions({});
     }
 
     setUploadStatus(prev => ({ ...prev, [statusKey]: `Reading ${file.name}...` }));
@@ -1415,15 +1485,16 @@ function ContractAnalyzerView({
         setUploadStatus(prev => ({ ...prev, [statusKey]: '' }));
       }
 
-      // Automatically detect Agreement Title, Client Party, and Counterparty upon upload
+      // Refresh Agreement Title, Client Party, and Counterparty cleanly upon upload without retaining previous file parties
       if (extractedContent) {
         const meta = detectContractMetadata(extractedContent, file.name);
-        if (meta.title && (!documentTitle || statusKey === 'target')) {
-          setDocumentTitle(meta.title);
-        }
+        const fallbackTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
         if (statusKey === 'target') {
-          if (meta.clientParty) setClientParty(meta.clientParty);
-          if (meta.counterparty) setCounterparty(meta.counterparty);
+          setDocumentTitle(meta.title || fallbackTitle || 'Uploaded Contract Draft');
+          setClientParty(meta.clientParty || '');
+          setCounterparty(meta.counterparty || '');
+        } else if (meta.title && !documentTitle) {
+          setDocumentTitle(meta.title);
         }
       }
     } catch (err) {
@@ -1439,6 +1510,7 @@ function ContractAnalyzerView({
     if (file) {
       processDocumentFile(file, setTargetText, statusKey);
     }
+    if (e?.target) e.target.value = '';
   };
 
   const handleFileDrop = (e, setTargetText, statusKey, setDragActive) => {
@@ -1499,6 +1571,11 @@ function ContractAnalyzerView({
       const auditData = await runAnalysis(payload);
 
       if (auditData) {
+        lastAuditedSnapshotRef.current = {
+          text: payload.text,
+          baselineText: payload.baselineText,
+          mode: payload.mode
+        };
         // Automatically compute forensic linguistic proofreading
         try {
           const harmonized = restateAndPolishContract(targetText.trim(), {
@@ -1609,6 +1686,12 @@ function ContractAnalyzerView({
   }, [liabilityAuditData, auditResults, text]);
 
   // Calculations for score badges (Restrained Institutional Palette)
+  const isAuditStale = Boolean(
+    auditResults &&
+    lastAuditedSnapshotRef.current.text &&
+    (text.trim() !== lastAuditedSnapshotRef.current.text ||
+      (analysisMode === 'comparative' && baselineText.trim() !== lastAuditedSnapshotRef.current.baselineText))
+  );
   const riskScore = auditResults?.overallRiskScore ?? 0;
   const riskLevel = auditResults?.riskLevel || 'low';
   const riskScoreBadgeColor = riskScore >= 75 ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
@@ -2186,6 +2269,22 @@ function ContractAnalyzerView({
       {/* Analysis Results HUD & Workstation */}
       {auditResults && text.trim() && (analysisMode === 'single' || analysisMode === 'comparative') && (
         <div className="w-full flex flex-col gap-5 animate-fade-in mt-1">
+          {isAuditStale && (
+            <div className="px-4 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/25 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-300">
+              <div className="flex items-center gap-2">
+                <AlertCircle size={14} className="shrink-0" />
+                <span>Document text changed since last audit — run a fresh audit to refresh this risk score.</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleExecuteAudit()}
+                disabled={isProcessing}
+                className="px-3 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-200 font-medium transition-colors cursor-pointer"
+              >
+                Re-Run Audit
+              </button>
+            </div>
+          )}
           {/* Executive Verdict & Action Dock */}
           <div className="p-5 rounded-xl bg-[#111115] border border-white/[0.08] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -4280,6 +4379,7 @@ function PIIRedactorView({ onOpenGuide }) {
     if (file) {
       processFile(file);
     }
+    if (e?.target) e.target.value = '';
   };
 
   const handleFileDrop = (e) => {

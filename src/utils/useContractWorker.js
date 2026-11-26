@@ -36,6 +36,8 @@ export function useContractWorker(hookOptions = {}) {
 
   const abortControllerRef = useRef(null);
   const activeJobIdRef = useRef(null);
+  const hookOptionsRef = useRef(hookOptions);
+  hookOptionsRef.current = hookOptions;
 
   // Clean up on unmount
   useEffect(() => {
@@ -78,7 +80,7 @@ export function useContractWorker(hookOptions = {}) {
           if (activeJobIdRef.current === jobId && !abortController.signal.aborted) {
             const progState = { stage, percent, msg };
             setProgress(progState);
-            hookOptions.onProgress?.(progState);
+            hookOptionsRef.current?.onProgress?.(progState);
           }
         },
         abortController.signal
@@ -114,7 +116,7 @@ export function useContractWorker(hookOptions = {}) {
         abortControllerRef.current = null;
       }
     }
-  }, [hookOptions]);
+  }, []);
 
   /**
    * Instantly cancels the currently running analysis and resets state.

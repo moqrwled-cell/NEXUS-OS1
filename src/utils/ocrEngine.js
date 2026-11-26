@@ -6,6 +6,7 @@
  */
 
 import { createWorker } from 'tesseract.js';
+import { normalizeExtractedContractText } from './textNormalizer.js';
 
 let sharedWorker = null;
 let isInitializing = false;
@@ -154,7 +155,7 @@ export async function recognizeImage(imageSource, options = {}) {
   const result = await worker.recognize(targetInput);
   const durationMs = Math.round(performance.now() - startTime);
 
-  const cleanText = (result?.data?.text || '').trim();
+  const cleanText = normalizeExtractedContractText(result?.data?.text || '', { mode: 'ocr' });
   const confidence = result?.data?.confidence || 0;
 
   return {

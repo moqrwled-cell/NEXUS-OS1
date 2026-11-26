@@ -750,13 +750,23 @@ export default function App() {
       <ContactModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
-        services={['Nexus ContractGuard Enterprise']}
+        services={[
+          'License Key & Workstation Activation',
+          'Pricing & Tier Upgrades (Solo $199 / Firm $299)',
+          'Audit Accuracy & Document Support',
+          '30-Day Refund & Billing Request',
+          'General Inquiry'
+        ]}
       />
 
       <LegalTrustModal
         isOpen={Boolean(legalModalTab)}
         onClose={() => setLegalModalTab(null)}
         initialTab={legalModalTab || 'privacy'}
+        onOpenSupport={() => {
+          setLegalModalTab(null);
+          setIsContactModalOpen(true);
+        }}
       />
     </div>
   );

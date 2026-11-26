@@ -7,6 +7,7 @@
 
 import * as pdfjsLib from 'pdfjs-dist';
 import { recognizeImage } from './ocrEngine.js';
+import { normalizePdfPageItems, normalizeExtractedContractText } from './textNormalizer.js';
 
 // Configure worker source in browser environments without external network CDNs
 if (typeof window !== 'undefined' && pdfjsLib.GlobalWorkerOptions && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -122,25 +123,9 @@ export async function extractTextFromPDF(pdfSource, options = {}) {
       const page = await pdfDoc.getPage(pageNum);
       const textContent = await page.getTextContent();
 
-      // Reconstruct lines preserving paragraph flow and legal clauses
-      let pageText = '';
-      let lastY = null;
-
-      for (const item of textContent.items) {
-        if (!item || typeof item.str !== 'string') continue;
-
-        // When vertical Y position changes significantly, insert newline
-        if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
-          pageText += '\n';
-        } else if (pageText.length > 0 && !pageText.endsWith('\n') && !pageText.endsWith(' ') && !item.str.startsWith(' ')) {
-          pageText += ' ';
-        }
-
-        pageText += item.str;
-        lastY = item.transform[5];
-      }
-
-      let trimmedPageText = pageText.trim();
+      // Reconstruct rows in visual reading order (Y desc, X asc) and reflow wrapped clause lines
+      const rawPageText = normalizePdfPageItems(textContent.items);
+      let trimmedPageText = normalizeExtractedContractText(rawPageText, { mode: 'pdf' });
       let isOcrApplied = false;
 
       // If page has insufficient text (< 25 chars), it is likely a scanned image/exhibit
@@ -156,7 +141,7 @@ export async function extractTextFromPDF(pdfSource, options = {}) {
             });
           }
 
-          const viewport = page.getViewport({ scale: 1.75 });
+          const viewport = page.getViewport({ scale: 2.0 });
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           canvas.width = viewport.width;
