@@ -370,7 +370,15 @@ export function auditDefinedTerms(text = '', options = {}) {
   const issues = [];
 
   for (const item of definedTerms) {
-    const termRegex = new RegExp(`\\b${escapeRegex(item.term)}s?\\b`, 'gi');
+    let termPatternStr = `\\b${escapeRegex(item.term)}(?:s|es)?\\b`;
+    if (/ies$/i.test(item.term)) {
+      const singularStem = item.term.slice(0, -3);
+      termPatternStr = `\\b(?:${escapeRegex(item.term)}|${escapeRegex(singularStem)}y)\\b`;
+    } else if (/[^aeiou]y$/i.test(item.term)) {
+      const pluralStem = item.term.slice(0, -1);
+      termPatternStr = `\\b(?:${escapeRegex(item.term)}|${escapeRegex(pluralStem)}ies)\\b`;
+    }
+    const termRegex = new RegExp(termPatternStr, 'gi');
     let occurrences = 0;
 
     lines.forEach((lineText, idx) => {
@@ -438,8 +446,8 @@ export function auditDefinedTerms(text = '', options = {}) {
         !/\b(?:shall|must|may|will|agrees?|covenants?)\b/i.test(trimmed));
     if (isStandaloneHeading) return;
 
-    // Detect subsection heading title prefix: "2.1 Performance of Services. Provider shall..." or "(c) Environmental Compliance. To Seller's..."
-    const headingPrefixMatch = trimmed.match(/^(?:[0-9]+(?:\.[0-9]+)+|[IVXLCDM]+\.|\([a-z0-9]+\))\s+([A-Za-z0-9\s—–\-_/]+?)\.\s+/i);
+    // Detect subsection heading title prefix: "2.1 Performance of Services. Provider shall..." or "2. Confidentiality and AI Prohibition. Each Party..."
+    const headingPrefixMatch = trimmed.match(/^(?:[0-9]+(?:\.[0-9]+)+\.?|[0-9]+\.|[IVXLCDM]+\.|\([a-z0-9]+\))\s+([A-Za-z0-9\s—–\-_/,&']+?)\.\s+/i);
     const headingEndIndex = headingPrefixMatch ? lineText.indexOf(headingPrefixMatch[0]) + headingPrefixMatch[0].length : -1;
 
     // Detect judicial case citation spans safely (only invoke regex when marker exists; flattened to prevent ReDoS)

@@ -488,98 +488,98 @@ export default function ContractCompare({ isDemoMode = false }) {
             </button>
           </div>
         ) : (
-          <AnimatePresence mode="wait">
-            {activeTool === 'analyzer' && (
-              <motion.div key="analyzer" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <ContractAnalyzerView 
-                  initialSession={restoredSession}
-                  analysisMode={analysisMode}
-                  onAnalysisModeChange={setAnalysisMode}
-                  isDemo={isDemo}
-                  auditsLeft={auditsLeft}
-                  onConsumeAudit={() => {
-                    const next = consumeDemoAudit();
-                    setAuditsLeft(next);
-                    return next;
-                  }}
-                  onOpenCheckout={(plan) => {
-                    setShowPlanModal(true);
-                  }}
-                  onOpenGuide={(tab) => {
-                    setGuideModalTab(tab || 'analyzer');
-                    setShowGuideModal(true);
-                  }}
-                />
-              </motion.div>
-            )}
-            {activeTool === 'redact' && (
-              <motion.div key="redact" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <PIIRedactorView 
-                  onOpenGuide={() => {
-                    setGuideModalTab('redact');
-                    setShowGuideModal(true);
-                  }}
-                />
-              </motion.div>
-            )}
-            {activeTool === 'bates' && (
-              <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <BatesStamperView 
-                  isDemo={isDemo}
-                  onTriggerUpgrade={(plan) => {
-                    setShowPlanModal(true);
-                  }}
-                  onOpenGuide={() => {
-                    setGuideModalTab('bates');
-                    setShowGuideModal(true);
-                  }}
-                />
-              </motion.div>
-            )}
-            {activeTool === 'history' && (
-              <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <AuditVaultView 
-                  onSelectDiff={(session) => {
-                    setRestoredSession({ ...session, _sessionKey: Date.now() });
-                    setActiveTool('analyzer');
-                  }}
-                  onOpenGuide={() => {
-                    setGuideModalTab('history');
-                    setShowGuideModal(true);
-                  }}
-                />
-              </motion.div>
-            )}
-            {activeTool === 'playbook' && (
-              <motion.div key="playbook" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <ClausePlaybookView
-                  onSendClauseToAudit={(clauseText, clauseTitle) => {
-                    setRestoredSession({ originalText: clauseText, title: clauseTitle, _sessionKey: Date.now() });
-                    setAnalysisMode('single');
-                    setActiveTool('analyzer');
-                  }}
-                />
-              </motion.div>
-            )}
-            {activeTool === 'templates' && (
-              <motion.div key="templates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
-                <LegalTemplatesView 
-                  isDemoMode={isDemo}
-                  onSendToAudit={(contractText, title) => {
-                    setRestoredSession({ originalText: contractText, title, _sessionKey: Date.now() });
-                    setActiveTool('analyzer');
-                  }} 
-                  onTriggerUpgrade={(trigger) => {
-                    setShowPlanModal(true);
-                  }}
-                  onOpenGuide={() => {
-                    setGuideModalTab('templates');
-                    setShowGuideModal(true);
-                  }}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <>
+            <div className={activeTool === 'analyzer' ? 'h-full' : 'hidden'}>
+              <ContractAnalyzerView 
+                initialSession={restoredSession}
+                analysisMode={analysisMode}
+                onAnalysisModeChange={setAnalysisMode}
+                isDemo={isDemo}
+                auditsLeft={auditsLeft}
+                onConsumeAudit={() => {
+                  const next = consumeDemoAudit();
+                  setAuditsLeft(next);
+                  return next;
+                }}
+                onOpenCheckout={(plan) => {
+                  setShowPlanModal(true);
+                }}
+                onOpenGuide={(tab) => {
+                  setGuideModalTab(tab || 'analyzer');
+                  setShowGuideModal(true);
+                }}
+              />
+            </div>
+            <AnimatePresence mode="wait">
+              {activeTool === 'redact' && (
+                <motion.div key="redact" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                  <PIIRedactorView 
+                    onOpenGuide={() => {
+                      setGuideModalTab('redact');
+                      setShowGuideModal(true);
+                    }}
+                  />
+                </motion.div>
+              )}
+              {activeTool === 'bates' && (
+                <motion.div key="bates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                  <BatesStamperView 
+                    isDemo={isDemo}
+                    onTriggerUpgrade={(plan) => {
+                      setShowPlanModal(true);
+                    }}
+                    onOpenGuide={() => {
+                      setGuideModalTab('bates');
+                      setShowGuideModal(true);
+                    }}
+                  />
+                </motion.div>
+              )}
+              {activeTool === 'history' && (
+                <motion.div key="history" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                  <AuditVaultView 
+                    onSelectDiff={(session) => {
+                      setRestoredSession({ ...session, isFromVault: true, _sessionKey: Date.now() });
+                      setActiveTool('analyzer');
+                    }}
+                    onOpenGuide={() => {
+                      setGuideModalTab('history');
+                      setShowGuideModal(true);
+                    }}
+                  />
+                </motion.div>
+              )}
+              {activeTool === 'playbook' && (
+                <motion.div key="playbook" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                  <ClausePlaybookView
+                    onSendClauseToAudit={(clauseText, clauseTitle) => {
+                      setRestoredSession({ originalText: clauseText, title: clauseTitle, _sessionKey: Date.now() });
+                      setAnalysisMode('single');
+                      setActiveTool('analyzer');
+                    }}
+                  />
+                </motion.div>
+              )}
+              {activeTool === 'templates' && (
+                <motion.div key="templates" initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-8}} className="h-full">
+                  <LegalTemplatesView 
+                    isDemoMode={isDemo}
+                    onSendToAudit={(contractText, title) => {
+                      setRestoredSession({ originalText: contractText, title, _sessionKey: Date.now() });
+                      setActiveTool('analyzer');
+                    }} 
+                    onTriggerUpgrade={(trigger) => {
+                      setShowPlanModal(true);
+                    }}
+                    onOpenGuide={() => {
+                      setGuideModalTab('templates');
+                      setShowGuideModal(true);
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
         )}
       </main>
 
@@ -1120,6 +1120,8 @@ function ContractAnalyzerView({
   const [liabilityAuditData, setLiabilityAuditData] = useState(null);
   const [isAnalyzingLiability, setIsAnalyzingLiability] = useState(false);
   const [partyRole, setPartyRole] = useState('balanced'); // 'balanced' | 'buyer_client' | 'vendor_contractor'
+  const manualMetaDirtyRef = useRef(false);
+  const lastRestoredKeyRef = useRef(null);
 
   // Pre-Signing Diligence Certificate State
   const [showCertificateModal, setShowCertificateModal] = useState(false);
@@ -1154,6 +1156,7 @@ function ContractAnalyzerView({
 
   // 1-Click Interactive Benchmark Contract Loader (Loads text; executes on user click)
   const handleLoadSampleCase = (caseType = 'ma', autoExecute = false) => {
+    manualMetaDirtyRef.current = false;
     if (caseType === 'ma') {
       setText(HAZARDOUS_SAMPLE_CONTRACT);
       setBaselineText(HAZARDOUS_BASELINE_CONTRACT);
@@ -1393,30 +1396,50 @@ function ContractAnalyzerView({
 
   // Restore session if loaded from local DB or Template Vault
   useEffect(() => {
-    if (initialSession) {
-      const nextText = initialSession.modifiedText || initialSession.originalText || '';
-      const nextBaseline = initialSession.modifiedText ? (initialSession.originalText || '') : '';
-      const meta = nextText ? detectContractMetadata(nextText) : {};
+    if (!initialSession) return;
+    const sessionKey = initialSession._sessionKey || 'initial-mount';
+    if (lastRestoredKeyRef.current === sessionKey) return;
+    lastRestoredKeyRef.current = sessionKey;
 
-      resetAnalysis();
-      setHarmonizedData(null);
-      setLiabilityAuditData(null);
-      setDiffDecisions({});
-      setUploadStatus({ target: '', baseline: '' });
-      lastAuditedSnapshotRef.current = { text: '', baselineText: '', mode: analysisMode };
+    const nextText = initialSession.modifiedText || initialSession.originalText || '';
+    const nextBaseline = initialSession.modifiedText ? (initialSession.originalText || '') : '';
+    const meta = nextText ? detectContractMetadata(nextText) : {};
 
-      if (initialSession.modifiedText) {
-        setText(initialSession.modifiedText);
-        setBaselineText(nextBaseline);
-        setAnalysisMode('comparative');
-      } else if (initialSession.originalText) {
-        setText(initialSession.originalText);
-        setBaselineText('');
-        setAnalysisMode('single');
-      }
-      setDocumentTitle(initialSession.title || meta.title || 'Contract Integrity Audit');
-      setClientParty(initialSession.clientParty || meta.clientParty || '');
-      setCounterparty(initialSession.counterparty || meta.counterparty || '');
+    resetAnalysis();
+    setHarmonizedData(null);
+    setLiabilityAuditData(null);
+    setDiffDecisions({});
+    setUploadStatus({ target: '', baseline: '' });
+    lastAuditedSnapshotRef.current = { text: '', baselineText: '', mode: analysisMode };
+    manualMetaDirtyRef.current = false;
+
+    const nextMode = initialSession.modifiedText ? 'comparative' : 'single';
+    if (initialSession.modifiedText) {
+      setText(initialSession.modifiedText);
+      setBaselineText(nextBaseline);
+      setAnalysisMode('comparative');
+    } else if (initialSession.originalText) {
+      setText(initialSession.originalText);
+      setBaselineText('');
+      setAnalysisMode('single');
+    }
+    const nextTitle = initialSession.title || meta.title || 'Contract Integrity Audit';
+    const nextClient = initialSession.clientParty || meta.clientParty || '';
+    const nextCounter = initialSession.counterparty || meta.counterparty || '';
+    setDocumentTitle(nextTitle);
+    setClientParty(nextClient);
+    setCounterparty(nextCounter);
+
+    if (nextText.trim()) {
+      handleExecuteAudit({
+        text: nextText,
+        baselineText: nextBaseline,
+        title: nextTitle,
+        clientParty: nextClient,
+        counterparty: nextCounter,
+        mode: nextMode,
+        isRestoredSession: !!initialSession.isFromVault
+      });
     }
   }, [initialSession]);
 
@@ -1533,6 +1556,7 @@ function ContractAnalyzerView({
 
       // Refresh Agreement Title, Client Party, and Counterparty cleanly upon upload without retaining previous file parties
       if (extractedContent) {
+        manualMetaDirtyRef.current = false;
         const meta = detectContractMetadata(extractedContent, file.name);
         const fallbackTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim();
         if (statusKey === 'target') {
@@ -1572,9 +1596,13 @@ function ContractAnalyzerView({
 
 
   const handleExecuteAudit = async (overridePayload) => {
-    const isInitial = !!overridePayload?.isInitialDemo;
+    const isFreeInternalRefresh = !!(
+      overridePayload?.isInitialDemo ||
+      overridePayload?.isClauseInsertion ||
+      overridePayload?.isRestoredSession
+    );
 
-    if (isDemo && !isInitial) {
+    if (isDemo && !isFreeInternalRefresh) {
       if (auditsLeft <= 0) {
         if (onOpenCheckout) {
           onOpenCheckout('firm');
@@ -1589,9 +1617,9 @@ function ContractAnalyzerView({
     const targetText = overridePayload?.text !== undefined ? overridePayload.text : text;
     const targetBaseline = overridePayload?.baselineText !== undefined ? overridePayload.baselineText : baselineText;
     const targetMode = overridePayload?.mode || analysisMode;
-    const targetTitle = overridePayload?.title || documentTitle;
-    const targetClient = overridePayload?.clientParty || clientParty;
-    const targetCounter = overridePayload?.counterparty || counterparty;
+    let targetTitle = overridePayload?.title || documentTitle;
+    let targetClient = overridePayload?.clientParty !== undefined ? overridePayload.clientParty : clientParty;
+    let targetCounter = overridePayload?.counterparty !== undefined ? overridePayload.counterparty : counterparty;
 
     if (!targetText.trim()) {
       alert("Please paste or upload a contract text to audit.");
@@ -1602,6 +1630,20 @@ function ContractAnalyzerView({
       return;
     }
 
+    // Prevent stale metadata from an earlier preset or uploaded file bleeding into newly pasted contracts
+    const isBuiltInPreset =
+      targetText.trim() === HAZARDOUS_SAMPLE_CONTRACT.trim() ||
+      targetText.trim() === SAAS_SAMPLE_CONTRACT.trim();
+    if (!overridePayload?.title && !manualMetaDirtyRef.current && !isBuiltInPreset) {
+      const detected = detectContractMetadata(targetText);
+      targetTitle = detected.title || 'Commercial Contract Agreement';
+      targetClient = detected.clientParty || '';
+      targetCounter = detected.counterparty || '';
+      setDocumentTitle(targetTitle);
+      setClientParty(targetClient);
+      setCounterparty(targetCounter);
+    }
+
     try {
       const payload = {
         mode: targetMode,
@@ -1610,6 +1652,8 @@ function ContractAnalyzerView({
         clientParty: targetClient.trim(),
         counterparty: targetCounter.trim(),
         options: {
+          title: targetTitle,
+          partyRole,
           diffOptions: { granularity: diffGranularity }
         }
       };
@@ -1668,27 +1712,9 @@ function ContractAnalyzerView({
     }
   }, [isDemo]);
 
-  // Automatically execute audit on initial mount ONLY if a pre-existing session was passed (e.g. from Vault or Templates)
+  // Keep mount hook clean — [initialSession] effect handles restored sessions & template/playbook triggers
   useEffect(() => {
-    if (!auditResults && !isProcessing) {
-      const initialText = initialSession?.modifiedText || initialSession?.originalText;
-      const initialBaseline = initialSession?.originalText || '';
-      if (initialText && initialText.trim()) {
-        setText(initialText);
-        setBaselineText(initialBaseline);
-        setDocumentTitle(initialSession?.title || 'Contract Integrity Audit');
-        setClientParty(initialSession?.clientParty || '');
-        setCounterparty(initialSession?.counterparty || '');
-        handleExecuteAudit({
-          text: initialText,
-          baselineText: initialBaseline,
-          title: initialSession?.title || 'Contract Integrity Audit',
-          clientParty: initialSession?.clientParty || '',
-          counterparty: initialSession?.counterparty || '',
-          mode: analysisMode
-        });
-      }
-    }
+    // intentionally handled by initialSession effect above
   }, []);
 
   // Obligations filter logic
@@ -1854,7 +1880,7 @@ function ContractAnalyzerView({
             <input
               type="text"
               value={documentTitle}
-              onChange={(e) => setDocumentTitle(e.target.value)}
+              onChange={(e) => { manualMetaDirtyRef.current = true; setDocumentTitle(e.target.value); }}
               placeholder="Master Services Agreement..."
               className="w-full bg-[#09090B] border border-white/[0.08] focus:border-emerald-500/60 rounded-lg px-3 py-1.5 text-xs text-zinc-100 outline-none transition-colors"
             />
@@ -1864,7 +1890,7 @@ function ContractAnalyzerView({
             <input
               type="text"
               value={clientParty}
-              onChange={(e) => setClientParty(e.target.value)}
+              onChange={(e) => { manualMetaDirtyRef.current = true; setClientParty(e.target.value); }}
               placeholder="Acme Corporation..."
               className="w-full bg-[#09090B] border border-white/[0.08] focus:border-emerald-500/60 rounded-lg px-3 py-1.5 text-xs text-zinc-100 outline-none transition-colors"
             />
@@ -1874,7 +1900,7 @@ function ContractAnalyzerView({
             <input
               type="text"
               value={counterparty}
-              onChange={(e) => setCounterparty(e.target.value)}
+              onChange={(e) => { manualMetaDirtyRef.current = true; setCounterparty(e.target.value); }}
               placeholder="Globex Systems Inc..."
               className="w-full bg-[#09090B] border border-white/[0.08] focus:border-emerald-500/60 rounded-lg px-3 py-1.5 text-xs text-zinc-100 outline-none transition-colors"
             />
@@ -2629,7 +2655,7 @@ function ContractAnalyzerView({
                 alertTone: liabilityTrapCount > 0 ? 'rose' : 'neutral',
                 onClickExtra: () => {
                   if (!liabilityAuditData && text.trim()) {
-                    handleRunLiabilityAudit();
+                    setLiabilityAuditData(analyzeLiabilityInterlocks(text.trim()));
                   }
                 }
               },
@@ -2687,7 +2713,7 @@ function ContractAnalyzerView({
               onInsertClause={(clauseText) => {
                 const nextText = `${text.trim()}\n\n${clauseText}`;
                 setText(nextText);
-                handleExecuteAudit({ text: nextText, mode: analysisMode });
+                handleExecuteAudit({ text: nextText, mode: analysisMode, isClauseInsertion: true });
               }}
             />
           )}

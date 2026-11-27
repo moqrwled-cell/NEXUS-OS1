@@ -29,8 +29,8 @@ export function getDocumentBlocks(text) {
   const blocks = [];
 
   for (const para of rawParagraphs) {
-    // If a paragraph contains numbered subsections (e.g. 12.1 and 12.2), split them
-    const subBlocks = para.split(/(?=(?:^|\n)\s*(?:[0-9]+(?:\.[0-9]+)+|\([a-z0-9]+\))\s+)/i);
+    // If a paragraph contains numbered sections/subsections (e.g. "1. Fees", "12.1 Scope", "(a) Term"), split them
+    const subBlocks = para.split(/(?=(?:^|\n)\s*(?:[0-9]+(?:\.[0-9]+)+\.?|[1-9][0-9]*\.|\([a-z0-9]+\))\s+)/i);
     for (const sb of subBlocks) {
       const trimmed = sb.trim();
       if (trimmed.length > 20) {

@@ -202,7 +202,7 @@ export default function DealIntelligenceHUD({
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
                         win.urgency === 'high' ? 'bg-amber-500/15 text-amber-300' : 'bg-white/[0.05] text-zinc-400'
                       }`}>
-                        {win.durationText} days/yrs
+                        {win.durationDisplay || win.durationText}
                       </span>
                     </div>
                     <p className="text-[11px] text-zinc-500 mt-1 font-mono truncate">{win.snippet}</p>
@@ -303,7 +303,7 @@ export default function DealIntelligenceHUD({
                       <span>{copiedKey === `pb-${shield.id}` ? 'Saved' : '+ Playbook'}</span>
                     </button>
 
-                    {onInsertClause && !isDemoMode && (
+                    {onInsertClause && (
                       <button
                         type="button"
                         onClick={() => {

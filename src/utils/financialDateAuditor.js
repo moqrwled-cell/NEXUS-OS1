@@ -464,9 +464,18 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     }
 
     // Effective Date
-    const effMatch = lineText.match(/(?:Effective Date|commences on|commencing on|effective as of)/i);
+    const effMatch = lineText.match(/(?:Effective Date|commences on|commencing on|effective as of|(?:made\s+and\s+)?entered\s+into\s+(?:on|as\s+of))/i);
     if (effMatch) {
-      const dateInfo = extractDateFromText(lineText.slice(effMatch.index));
+      const forwardSlice = lineText
+        .slice(effMatch.index, effMatch.index + 95)
+        .split(/\b(?:expiring|expires?|terminat(?:e|ing|ion)|ending|ends?)\b/i)[0];
+      const backwardSlice = lineText.slice(Math.max(0, effMatch.index - 50), effMatch.index);
+      const isParentheticalEffectiveTag = /\(\s*(?:the\s+)?["“'‘]?Effective Date["”'’]?\s*\)/i.test(
+        lineText.slice(Math.max(0, effMatch.index - 10), effMatch.index + 25)
+      );
+      const dateInfo = isParentheticalEffectiveTag
+        ? (extractDateFromText(backwardSlice) || extractDateFromText(forwardSlice))
+        : (extractDateFromText(forwardSlice) || extractDateFromText(backwardSlice));
       if (dateInfo) {
         effectiveDateIso = dateInfo.parsedDate;
         timeline.push({
@@ -480,7 +489,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     }
 
     // Expiration Date
-    const expMatch = lineText.match(/(?:expiration date|shall terminate on|shall expire on|expires on|expire on|ending on|end on|term expires on)/i);
+    const expMatch = lineText.match(/(?:expiration date|shall terminate on|shall expire on|expires on|expire on|expiring on|terminating on|ending on|end on|ends on|term expires on)/i);
     if (expMatch) {
       const dateInfo = extractDateFromText(lineText.slice(expMatch.index));
       if (dateInfo) {
@@ -509,7 +518,7 @@ export function auditFinancialAndDates(text = '', referenceDate = new Date()) {
     }
 
     // Execution Date
-    const execMatch = lineText.match(/(?:executed on|signed on|made and entered into as of|execution date)/i);
+    const execMatch = lineText.match(/(?:executed on|signed on|(?:made\s+and\s+)?entered\s+into\s+(?:on|as\s+of)|execution date)/i);
     if (execMatch) {
       const dateInfo = extractDateFromText(lineText.slice(execMatch.index));
       if (dateInfo) {

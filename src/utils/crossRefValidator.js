@@ -226,6 +226,29 @@ export function validateCrossReferences(text = '') {
       return;
     }
 
+    // 3b. Single-level inline numbered section with heading prefix: "2. Confidentiality. Each Party..."
+    const inlineTopNumMatch = trimmed.match(/^(?:#{1,6}\s+)?([1-9][0-9]{0,2})\.\s+([A-Z][A-Za-z0-9\s—–\-_/,&'()]{1,75}?)\.(?:\s+|$)/);
+    if (inlineTopNumMatch) {
+      const rawId = inlineTopNumMatch[1].trim();
+      const title = inlineTopNumMatch[2].trim();
+      const words = title.split(/\s+/);
+      if (words.length <= 9 && !/^(?:Dollars?|USD|Days?|Months?|Years?|Percent)\b/i.test(title)) {
+        const entry = { id: rawId, title, line: lineNum };
+        indexedSections.push(entry);
+
+        registerSectionKey(rawId, entry);
+        registerSectionKey(`section ${rawId}`, entry);
+        registerSectionKey(`article ${rawId}`, entry);
+        registerSectionKey(`clause ${rawId}`, entry);
+        const roman = arabicToRoman(parseInt(rawId, 10));
+        if (roman) {
+          registerSectionKey(roman, entry);
+          registerSectionKey(`article ${roman}`, entry);
+        }
+        return;
+      }
+    }
+
     // 4. Check Numbered / Decimal Headings (e.g. "1. DEFINITIONS", "1. Definitions.", "SECTION 2")
     const numMatch = trimmed.match(RE_NUMBERED_HEADING);
     if (numMatch && numMatch[2] && numMatch[2].trim().length > 0) {

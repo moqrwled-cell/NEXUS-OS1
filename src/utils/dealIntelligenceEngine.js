@@ -11,13 +11,15 @@
  */
 
 const ARCHETYPE_SIGNATURES = [
-  { id: 'nda', pattern: /\b(?:non-disclosure|confidentiality\s+agreement|mutual\s+nda|proprietary\s+information)\b/i },
-  { id: 'real_estate', pattern: /\b(?:earnest\s+money|escrow\s+agent|parcel|title\s+commitment|warranty\s+deed|lease\s+agreement|triple\s+net|landlord|tenant|premises)\b/i },
-  { id: 'corporate_ma', pattern: /\b(?:asset\s+purchase|excluded\s+liabilities|operating\s+agreement|membership\s+interest|capital\s+account|section\s+1060)\b/i },
-  { id: 'employment_contractor', pattern: /\b(?:independent\s+contractor|executive\s+employment|severance|good\s+reason|1099|base\s+salary|work\s+made\s+for\s+hire)\b/i },
+  { id: 'nda', pattern: /\b(?:non-disclosure|confidentiality\s+agreement|mutual\s+nda|trade\s+secrets\s+agreement)\b/i },
   { id: 'lending', pattern: /\b(?:promissory\s+note|principal\s+sum|principal\s+amount|usury|ucc-1|maturity\s+date|collateral)\b/i },
-  { id: 'settlement', pattern: /\b(?:settlement\s+and\s+(?:mutual\s+)?release|civil\s+code\s+(?:§|section)\s*1542|no\s+admission\s+of\s+liability)\b/i },
-  { id: 'services_msa', pattern: /\b(?:master\s+(?:commercial\s+)?services|statement\s+of\s+work|deliverables|subscription|saas|software\s+license|sow)\b/i }
+  { id: 'settlement', pattern: /\b(?:settlement\s+and\s+(?:mutual\s+)?(?:general\s+)?release|civil\s+code\s+(?:§|section)\s*1542|no\s+admission\s+of\s+liability)\b/i },
+  { id: 'governance', pattern: /\b(?:operating\s+agreement|membership\s+interest|capital\s+account|704\(b\)|llc\s+act)\b/i },
+  { id: 'corporate_ma', pattern: /\b(?:asset\s+purchase|excluded\s+liabilities|section\s+1060)\b/i },
+  { id: 'real_estate', pattern: /\b(?:earnest\s+money|escrow\s+agent|parcel|title\s+commitment|warranty\s+deed|lease\s+agreement|triple\s+net|landlord|tenant|premises|letter\s+of\s+intent)\b/i },
+  { id: 'executive_employment', pattern: /\b(?:executive\s+employment|severance|good\s+reason|base\s+salary|409a)\b/i },
+  { id: 'employment_contractor', pattern: /\b(?:independent\s+contractor|\b1099\b)\b/i },
+  { id: 'services_msa', pattern: /\b(?:master\s+(?:commercial\s+)?services|master\s+subscription|statement\s+of\s+work|deliverables|subscription|saas|software\s+license|\bsow\b|work\s+made\s+for\s+hire)\b/i }
 ];
 
 export function detectContractArchetype(text = '', title = '') {
@@ -46,7 +48,7 @@ const MISSING_SHIELD_RULES = [
   {
     id: 'missing-conseq',
     title: 'Missing Mutual Consequential & Lost-Profits Waiver',
-    appliesTo: ['services_msa', 'employment_contractor', 'corporate_ma', 'nda', 'general'],
+    appliesTo: ['services_msa', 'employment_contractor', 'corporate_ma', 'general'],
     testPresence: (t) => /\b(?:consequential|indirect|special|incidental|punitive|lost\s+profits?)\s+damages\b/i.test(t),
     severityByRole: { balanced: 'critical', vendor_contractor: 'critical', buyer_client: 'warning' },
     plainEnglish: {
@@ -75,7 +77,7 @@ const MISSING_SHIELD_RULES = [
     id: 'missing-conf-exclusions',
     title: 'Missing Standard Confidentiality Carve-Outs (Public Domain / Legal Compulsion)',
     appliesTo: ['nda', 'services_msa', 'employment_contractor', 'corporate_ma'],
-    testPresence: (t) => /\bconfidential\b/i.test(t) && /\b(?:generally\s+available\s+to\s+the\s+public|public\s+domain|independently\s+developed|subpoena|court\s+order|18\s+u\.s\.c\.\s*(?:§|section)\s*1833)\b/i.test(t),
+    testPresence: (t) => !/\bconfidential\b/i.test(t) || /\b(?:generally\s+available\s+to\s+the\s+public|publicly\s+available|publicly\s+known|public\s+domain|without\s+breach\s+hereof|independently\s+developed|subpoena|court\s+order|required\s+by\s+(?:applicable\s+)?law|18\s+u\.s\.c\.?\s*(?:§|section)\s*1833)\b/i.test(t),
     severityByRole: { balanced: 'critical', vendor_contractor: 'critical', buyer_client: 'warning' },
     plainEnglish: {
       vendor_contractor: 'Without standard NDA exclusions, you can become liable for mentioning publicly known industry facts or obeying a lawful court subpoena.',
@@ -130,7 +132,7 @@ const MISSING_SHIELD_RULES = [
   {
     id: 'missing-governing-law',
     title: 'Missing Governing Law & Exclusive Venue Clause',
-    appliesTo: ['services_msa', 'nda', 'real_estate', 'employment_contractor', 'corporate_ma', 'lending', 'settlement', 'general'],
+    appliesTo: ['services_msa', 'employment_contractor', 'corporate_ma', 'real_estate', 'nda', 'executive_employment', 'governance', 'lending', 'settlement', 'general'],
     testPresence: (t) => /\b(?:governed\s+by\s+(?:and\s+construed\s+in\s+accordance\s+with\s+)?the\s+laws\s+of|governing\s+law|choice\s+of\s+law|exclusive\s+venue|exclusive\s+jurisdiction)\b/i.test(t),
     severityByRole: { balanced: 'warning', buyer_client: 'warning', vendor_contractor: 'warning' },
     plainEnglish: {
@@ -149,7 +151,7 @@ export function detectMissingShields(text = '', contractType = 'general', partyR
   const missing = [];
 
   for (const rule of MISSING_SHIELD_RULES) {
-    if (!rule.appliesTo.includes(contractType) && !rule.appliesTo.includes('general')) continue;
+    if (!rule.appliesTo.includes(contractType)) continue;
     const isPresent = rule.testPresence(text);
     if (!isPresent) {
       missing.push({
@@ -169,11 +171,32 @@ export function detectMissingShields(text = '', contractType = 'general', partyR
 
 export function extractDealEconomicsAndDeadlines(text = '', financialDates = {}, obligations = {}) {
   const safeText = typeof text === 'string' ? text : '';
-  const amounts = financialDates?.amounts || [];
+  const parsedDollars = [];
 
-  const parsedDollars = amounts
-    .map(a => ({ raw: a.raw, value: typeof a.value === 'number' ? a.value : parseFloat(String(a.raw).replace(/[^0-9.]/g, '')) }))
-    .filter(a => !Number.isNaN(a.value) && a.value > 0);
+  // Pull raw monetary expressions directly from contract text (handles $5,000,000, $1.5M, $250,000.00)
+  const dollarRegex = /(?:US)?\$\s*([0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\.([0-9]{1,2}))?(?:\s*(billion|million|thousand|bn\b|mn\b|mm\b|m\b|k\b))?/gi;
+  let dm;
+  while ((dm = dollarRegex.exec(safeText)) !== null) {
+    const numStr = `${dm[1].replace(/,/g, '')}${dm[2] ? `.${dm[2]}` : ''}`;
+    let value = parseFloat(numStr);
+    if (Number.isNaN(value) || value <= 0) continue;
+    const mult = (dm[3] || '').toLowerCase();
+    if (mult.startsWith('b')) value *= 1e9;
+    else if (mult.startsWith('m')) value *= 1e6;
+    else if (mult.startsWith('t') || mult === 'k') value *= 1e3;
+    parsedDollars.push({ raw: dm[0].replace(/\s+/g, ' ').trim(), value });
+  }
+
+  // Merge optional structured amounts or pairings if provided
+  for (const a of (financialDates?.amounts || [])) {
+    const val = typeof a.value === 'number' ? a.value : parseFloat(String(a.raw).replace(/[^0-9.]/g, ''));
+    if (!Number.isNaN(val) && val > 0) parsedDollars.push({ raw: a.raw, value: val });
+  }
+  for (const p of (financialDates?.financialPairings || [])) {
+    if (typeof p.numericVal === 'number' && p.numericVal > 0 && p.numeric) {
+      parsedDollars.push({ raw: p.numeric, value: p.numericVal });
+    }
+  }
 
   const uniqueAmountsMap = new Map();
   for (const item of parsedDollars) {
@@ -185,12 +208,14 @@ export function extractDealEconomicsAndDeadlines(text = '', financialDates = {},
 
   // Detect liability cap dollar figure or months-of-fees cap
   let liabilityCapSummary = 'Not Specified (Potential Uncapped Exposure)';
-  const capDollarMatch = safeText.match(/(?:aggregate\s+liability|shall\s+not\s+exceed|capped\s+at)[^.;\n]{0,120}(\$[0-9,]+(?:\.[0-9]{2})?(?:\s*(?:million|thousand))?)/i);
-  const capMonthsMatch = safeText.match(/(?:aggregate\s+liability|shall\s+not\s+exceed)[^.;\n]{0,140}\b(?:total\s+)?fees\s+paid(?:\s+or\s+payable)?[^.;\n]{0,60}(\d+\s*\(\d+\)\s*months?|\d+\s+months?|twelve\s+\(12\)\s+months)/i);
+  const capDollarMatch = safeText.match(/(?:aggregate\s+liability|liability\s+(?:is|shall\s+be)\s+capped|shall\s+not\s+exceed|capped\s+at)[^.;\n]{0,120}((?:US)?\$[0-9,]+(?:\.[0-9]{1,2})?(?:\s*(?:billion|million|thousand|[kmb]\b))?)/i);
+  const capMonthsMatch = safeText.match(/(?:aggregate\s+liability|shall\s+not\s+exceed)[^.;\n]{0,160}\b(?:total\s+)?fees\s+paid(?:\s+or\s+payable)?[^.;\n]{0,70}?\b((?:one|two|three|six|twelve|eighteen|twenty[- ]four)\s*\(\s*\d{1,2}\s*\)\s*months?|\d{1,2}\s*\(\s*\d{1,2}\s*\)\s*months?|\d{1,2}\s+(?:calendar\s+)?months?)/i);
   if (capDollarMatch) {
     liabilityCapSummary = capDollarMatch[1];
   } else if (capMonthsMatch) {
-    liabilityCapSummary = `Fees Paid (${capMonthsMatch[1]})`;
+    liabilityCapSummary = `Fees Paid (${capMonthsMatch[1].replace(/\s+/g, ' ').trim()})`;
+  } else if (/\b(?:aggregate\s+liability|shall\s+not\s+exceed)[^.;\n]{0,120}\b(?:total\s+)?fees\s+paid\b/i.test(safeText)) {
+    liabilityCapSummary = 'Fees Paid Cap';
   } else if (/\bunlimited\s+liability\b/i.test(safeText)) {
     liabilityCapSummary = 'Explicitly Unlimited Liability';
   }
@@ -232,27 +257,54 @@ export function extractDealEconomicsAndDeadlines(text = '', financialDates = {},
     }
   ];
 
+  const DUR_WORD_NUMS = {
+    two: '2', three: '3', five: '5', ten: '10', fourteen: '14',
+    fifteen: '15', thirty: '30', 'forty-five': '45', 'forty five': '45', sixty: '60', ninety: '90'
+  };
+
   for (const wp of windowPatterns) {
     const m = wp.regex.exec(safeText);
     if (m && !seenLabels.has(wp.label)) {
       seenLabels.add(wp.label);
       const snippet = m[0].replace(/\s+/g, ' ').trim();
+      const rawDur = String(m[1] || '').trim().toLowerCase();
+      const afterNumIdx = m[0].toLowerCase().indexOf(rawDur);
+      const tailAfterNum = afterNumIdx >= 0 ? m[0].slice(afterNumIdx + rawDur.length) : m[0];
+      const isYears = /^\s*(?:\(\s*\d+\s*\)\s*)?(?:calendar\s+)?years?\b/i.test(tailAfterNum);
+      const normNum = DUR_WORD_NUMS[rawDur] || m[1];
+      const unitLabel = isYears ? (normNum === '1' ? 'yr' : 'yrs') : (normNum === '1' ? 'day' : 'days');
       noticeWindows.push({
         label: wp.label,
         durationText: m[1],
+        durationDisplay: `${normNum} ${unitLabel}`,
         urgency: wp.urgency,
         snippet: snippet.length > 130 ? `${snippet.slice(0, 127)}...` : snippet
       });
     }
   }
 
-  const dates = (financialDates?.dates || []).slice(0, 10).map(d => ({
-    label: d.contextLabel || 'Contract Milestone',
-    rawDate: d.raw,
-    isoDate: d.parsed ? new Date(d.parsed).toISOString().slice(0, 10) : null
-  }));
+  const rawDates = Array.isArray(financialDates?.timeline) && financialDates.timeline.length > 0
+    ? financialDates.timeline
+    : (financialDates?.dates || []);
+
+  const dates = rawDates.slice(0, 12).map((d) => {
+    const candidateIso = d.parsedDate || d.parsed || null;
+    let isoDate = null;
+    if (typeof candidateIso === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(candidateIso)) {
+      isoDate = candidateIso;
+    } else if (candidateIso) {
+      const dtObj = new Date(candidateIso);
+      if (!Number.isNaN(dtObj.getTime())) isoDate = dtObj.toISOString().slice(0, 10);
+    }
+    return {
+      label: d.event || d.contextLabel || 'Contract Milestone',
+      rawDate: d.date || d.raw || '',
+      isoDate
+    };
+  });
 
   const stats = obligations?.stats || {};
+  const partyBreakdown = obligations?.partyBreakdown || {};
 
   return {
     uniqueMonetaryCount: uniqueAmounts.length,
@@ -263,9 +315,9 @@ export function extractDealEconomicsAndDeadlines(text = '', financialDates = {},
     dates,
     obligationSplit: {
       total: stats.totalObligations || 0,
-      client: stats.clientCount || 0,
-      counterparty: stats.counterpartyCount || 0,
-      mutual: stats.mutualCount || 0
+      client: partyBreakdown.clientCount ?? stats.clientCount ?? 0,
+      counterparty: partyBreakdown.counterpartyCount ?? stats.counterpartyCount ?? 0,
+      mutual: partyBreakdown.mutualCount ?? stats.mutualCount ?? 0
     }
   };
 }

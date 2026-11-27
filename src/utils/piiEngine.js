@@ -163,7 +163,8 @@ export function sanitizeDocumentPII(
   };
 
   // 1. Process active standard rules
-  const activeRules = PII_RULES.filter(r => activeRuleIds.includes(r.id));
+  const enabledIds = Array.isArray(activeRuleIds) ? activeRuleIds : [];
+  const activeRules = PII_RULES.filter(r => enabledIds.includes(r.id));
 
   activeRules.forEach((rule) => {
     let count = 0;
@@ -198,19 +199,22 @@ export function sanitizeDocumentPII(
     }
   });
 
-  // 2. Process custom sensitive keywords/parties
-  const cleanKeywords = (customKeywords || [])
+  // 2. Process custom sensitive keywords/parties (Unicode-safe boundaries for international names)
+  const rawKeywords = Array.isArray(customKeywords)
+    ? customKeywords
+    : (typeof customKeywords === 'string' ? customKeywords.split(',') : []);
+  const cleanKeywords = rawKeywords
     .map(k => (typeof k === 'string' ? k.trim() : ''))
-    .filter(k => k.length > 1);
+    .filter(k => k.length > 1)
+    .sort((a, b) => b.length - a.length);
 
   if (cleanKeywords.length > 0) {
     let customCount = 0;
     const customOccurrences = [];
 
     cleanKeywords.forEach((word) => {
-      // Escape regex special chars
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const customRegex = new RegExp(`\\b${escaped}\\b`, 'gi');
+      const customRegex = new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, 'giu');
 
       sanitized = sanitized.replace(customRegex, (match) => {
         customCount++;

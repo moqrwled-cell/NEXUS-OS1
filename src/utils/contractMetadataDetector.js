@@ -55,14 +55,17 @@ export function detectContractMetadata(text = '', fileName = '') {
   // --------------------------------------------------------------------------
   const preambleChunk = text.slice(0, 3000);
 
-  // Pattern A: Entities associated with defined roles in parentheses
-  // e.g. 'Acme Holdings LLC ("Client") and Globex Systems Inc ("Provider")'
-  const partyRegex = /\b([A-Z][A-Za-z0-9&',.\s-]{2,60}?(?:\s+(?:LLC|L\.L\.C\.|Inc\.?|Incorporated|Corp\.?|Corporation|Ltd\.?|Limited|LLP|L\.L\.P\.|GmbH|S\.A\.))?)\s*(?:,\s*(?:a|an)\s+[^,()]+,?)?\s*\(\s*(?:the|hereinafter)?\s*["“'‘]([A-Za-z\s]+)["”'’]\s*\)/g;
+  // Pattern A: Entities associated with defined roles in parentheses (Unicode-safe for accented names)
+  // e.g. 'Acme Holdings LLC ("Client") and María José García-Peña LLC ("Provider")'
+  const partyRegex = /(?<![\p{L}\p{N}])(\p{Lu}[\p{L}\p{N}&',.\s-]{2,60}?(?:\s+(?:LLC|L\.L\.C\.|Inc\.?|Incorporated|Corp\.?|Corporation|Ltd\.?|Limited|LLP|L\.L\.P\.|GmbH|S\.A\.))?)\s*(?:,\s*(?:a|an)\s+[^,()]+,?)?\s*\(\s*(?:the|hereinafter)?\s*["“'‘]([A-Za-z\s]+)["”'’]\s*\)/gu;
 
   const foundParties = [];
   let pMatch;
   while ((pMatch = partyRegex.exec(preambleChunk)) !== null) {
-    const rawName = pMatch[1].replace(/^(?:and|by|between|parties|the|each)\s+/i, '').trim();
+    const rawName = pMatch[1]
+      .replace(/^[\s\S]*?\b(?:by\s+and\s+between|by\s+and\s+among|between|among)\s+/i, '')
+      .replace(/^(?:and|by|between|parties|the|each)\s+/i, '')
+      .trim();
     const role = pMatch[2].trim().toLowerCase();
 
     // Disqualify statutory references, headings, or generic contract words

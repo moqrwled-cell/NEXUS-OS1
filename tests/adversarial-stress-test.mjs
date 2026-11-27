@@ -47,14 +47,14 @@ const identicalText = 'This is a standard confidentiality agreement between Part
 const identicalDiff = computeContractDiff(identicalText, identicalText);
 assert(identicalDiff.stats.similarity === 100, 'Identical text produces 100% similarity', 'diffEngine');
 assert(identicalDiff.stats.additions === 0 && identicalDiff.stats.deletions === 0, 'Identical text produces 0 additions and 0 deletions', 'diffEngine');
-assert(identicalDiff.stats.unchanged === 17, `Identical text matches exact word count (got ${identicalDiff.stats.unchanged}, expected 17)`, 'diffEngine');
+assert(identicalDiff.stats.unchanged === 19, `Identical text matches exact word count (got ${identicalDiff.stats.unchanged}, expected 19)`, 'diffEngine');
 
 const completelyDifferentA = 'Alpha beta gamma delta epsilon zeta eta theta iota kappa.';
 const completelyDifferentB = 'One two three four five six seven eight nine ten eleven.';
 const diffDiff = computeContractDiff(completelyDifferentA, completelyDifferentB);
 assert(diffDiff.stats.similarity === 0, 'Completely different texts produce 0% similarity', 'diffEngine');
 assert(diffDiff.stats.deletions === 10, `Deletions counted correctly (expected 10, got ${diffDiff.stats.deletions})`, 'diffEngine');
-assert(diffDiff.stats.additions === 10, `Additions counted correctly (expected 10, got ${diffDiff.stats.additions})`, 'diffEngine');
+assert(diffDiff.stats.additions === 11, `Additions counted correctly (expected 11, got ${diffDiff.stats.additions})`, 'diffEngine');
 
 // Test 1.2: No word truncation check (Old 100-word limit verification)
 console.log('\n--- 1.2 Truncation & Word Limit Verification (Old 100-word limit removal) ---');
